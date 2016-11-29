@@ -4,29 +4,18 @@
         <meta charset="utf-8"/>
         <title>Calendar</title>
         
-        <!-- including jquery --> 
-        <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" 
-        crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
         
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+        
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
         integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        
-        <!-- including moment.js -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-        <!-- datepicker js -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
-        <!-- datepicker css -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.min.css">
-        
         <script type ="text/javascript" src="calendar.js"></script> 
         <link rel="stylesheet" href="style.css">
         
@@ -67,29 +56,36 @@
   </nav> <!-- /.navbar navbar-default -->
 </div> <!-- /#navbarContainer -->
 
+
+
+
 <div id="contentWrapper">
 
 <div id="calendarTitleContainer">
   <div class="container">
     <div class="row">
-      <div class="col-md-offset-4 col-md-4">
-        <div class="input-group">
-          <!-- label for screen readers -->
-          <label for="calendarTitle" class="sr-only">Calendar Title</label>
-          <input type="text" class="form-control" id="calendarTitle" placeholder="Calendar Title">
-        </div>
+      <div class="col-md-offset-1 col-md-6">
+          
+            
+          <div class="input-group">
+            <!-- label for screen readers -->
+            <label for="calendarTitle" class="sr-only">Calendar Title</label>
+           
+              <input type="text" class="form-control" id="calendarTitle" placeholder="What are we tracking? Eg Good Deeds Done, Days Without Smoking, etc.">
+          </div> <!-- /.input-group -->
+         
+        
+        
       </div> <!-- /.col-md-4 -->
     </div> <!-- /.row -->
   </div> <!-- /.container -->
 </div> <!-- /#calendarTitleContainer -->
 
 
-
-
 <div id="datepickerContainer">
   <div class="container">
     <div class="row">
-      <div class='col-md-6'>
+      <div class='col-md-offset-1 col-md-6'>
         <div class="form-group">
           <div class='input-group date' id='datetimepicker1'>
             <input type='text' class="form-control" />
@@ -101,7 +97,7 @@
       </div>
       <script type="text/javascript">
         $(function () {
-        $('#datetimepicker1').datepicker({format: 'yyyy-mm-dd'});
+        $('#datetimepicker1').datetimepicker({format: "dddd, MMMM Do, YYYY"});
         });
       </script>
     </div>
