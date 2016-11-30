@@ -53,32 +53,51 @@ var removeFromLocalStorage = function() {
     //remove item from localstorage
 };
 
-//DO I ACTUALLY NEED THE FOLLOWING FIVE FUNCTIONS?
-var getMonthIndex = function(date) {
-    //get the index of the month of a given date
-};
-
 var getMonthName = function(index) {
-    //given a month index, return the name of the month
+    //  Returns the name of the month of the given index. If no index is given,
+    
+    //  Parameters: 
+    //  index: int
+    //      0 index 0-11, 0 being January
+    var months = {
+        0:"January", 1:"February", 2:"March", 3:"April", 4:"May", 5:"June",
+        6:"July", 7:"August", 8:"September", 9:"October", 10:"November",
+        11:"December"};
+    return months[index];
 };
-
-var numberOfDays = function(date) {
-    //given a date, get the number of days in the month of that date
-};
-
-var getYear = function(date) {
-    //returns the full year of a given date
-};
-
-var getDayOfWeek = function(date) {
-    //returns the index of the day of the week (0 is Sunday, 6 is Saturday)
-};
-
 
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
-var Month = function() {
+var emptyMonthState = function() {
+    //a dictionary of all the information you need for one month object
+    return {
+        //first day of the month index
+        firstDayIndex : 0,
+        //number many days in a month
+        numberOfDays: 30,
+        // month year
+        monthYear: "",
+        // index of month
+        monthIndex: 0,
+        // month name
+        monthName: "",
+        //the day someone wants to start in this month, doesn't necessarily 
+        // have to be the first of the month
+        startDay: 1
+        
+        // object (dictionary) containing which days are checked index:daynumber
+        checkedDays: {},
+        // day and their indices pairs daynumber:index
+        dayIndex: {},
+    }
+};
+
+var Month = function(date) {
+    //date will be a string of the format "MM-DD-YYYY"
+    
     var self = this;
+    self.date = moment(date, "MM-DD-YYYY");
+    self.monthState = emptyMonthState();
     
     self.storeMonth = function() {
         //save month data, whether on a database, localstorage, whatever 
@@ -90,8 +109,33 @@ var Month = function() {
         //to store
     };
     
-    self.generateEmptyMonthDiv = function() {
+    self.initializeMonthState = function() {
+        //fill the monthState with all the information given by the chosen 
+        //date when the month object was initialized.
+        
+        self.monthState.firstDayIndex = self.date.day();
+        self.monthState.numberOfDays = self.date.daysInMonth();
+        self.monthState.monthYear = self.date.year();
+        self.monthState.monthIndex = self.date.month();
+        self.monthState.monthName = getMonthName(self.monthState.monthIndex);
+        self.monthState.startDay = self.date.date();
+        
+        
+    };
+    
+    self.generateEmptyMonthDiv = function(div) {
         //add a div to html code containing the table template for a month 
+        
+        //Parameters: 
+        //    div: string
+        
+        //    the id of the div where you want to place your month div, this
+        //    will probably end up being hardcoded in
+        
+        //HARDCODED FOR NOW
+        var $div = $('#calendarDiv');
+        $div.append('<div class="monthframe"></div>');
+        $('.monthframe').append($('#template').html());
     };
     
     self.collectCheckedDays = function() {
