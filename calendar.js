@@ -148,8 +148,21 @@ var Month = function(date) {
     };
     
      self.attachClickHandler = function() {
-        //add functionality to the day squares, allowing it to be checked
+        //add functionality to the day tds, allowing it to be checked
         //with a checkmark when clicked
+        
+        // Attaches a function to the divs with class "cell" to be triggered
+        // when "cell" is clicked. The function toggles the hidden class
+        // between the children (daynumber and fa fa-check) of "cell"
+        
+        //HARDCODED FOR NOW
+        var $div = $('#calendarDiv');
+        var $monthId = $('#' + self.monthState.monthId);
+        $div.find($monthId).find('.cell').click(function (event) {
+            console.log(event);  // prints so you can look at the event object in the console
+            $( this ).children().toggleClass("hidden");
+            
+        });
     };
     
     self.fillMonthDiv = function() {
@@ -186,7 +199,7 @@ var Month = function(date) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><i class="fa fa-check hidden"></i></div>'
+                 dayOfMonth.toString() + '"></div><i class="fa fa-check fa-2x hidden"></i></div>'
                  
                  //add html inside td element
                  $(this).append(toAdd);
