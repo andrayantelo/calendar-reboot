@@ -257,21 +257,31 @@ var Month = function(date) {
 
 //generate a year/multiple years
 
-var emptyMonthListState = function() {
+var emptyCalendarState = function() {
     return{
-        //number of milliseconds since the unix epoch to the startdate
-        startDate: "",
+        //moment object with the date being the startDate
+        startDate: undefined,
         //list of years
         years: [],
-        //list of month objects monthStates
+        //dictionary of monthId: monthState
         monthStates: [],
         //list name under which it will be saved
         listName: ''
     }
 };
 
-var manyMonths = function() {
+var Calendar = function(startDate, numberOfYears) {
     
     var self = this;
+    //startDate is a moment object
+    self.startDate = startDate;
+    self.calendarState = emptyCalendarState();
+    //numberOfYears is a number given by user, how many years do they want
+    //to track, we will default to 1 right now
+    self.numberOfYears = 1;
+    //number of months we will need to be able to cover all the years the
+    //user wants to track
+    self.numberOfMonths = self.numberOfYears * 12;
+    
     
 };
