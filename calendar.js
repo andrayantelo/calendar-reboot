@@ -66,6 +66,15 @@ var getMonthName = function(index) {
     return months[index];
 };
 
+var setStartDate = function() {
+    // return the startDate as a moment object
+    
+    var startDate = $('#datetimepicker1').data("DateTimePicker").date();
+    //startDate = startDate.format("YYYY-MM-DD");
+    
+    return startDate;
+};
+
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 var emptyMonthState = function() {
@@ -95,10 +104,10 @@ var emptyMonthState = function() {
 };
 
 var Month = function(date) {
-    //date will be a string of the format "MM-DD-YYYY"
     
     var self = this;
-    self.date = moment(date, "MM-DD-YYYY");
+    //date will be a moment object of the format moment("MM-DD-YYYY")
+    self.date = date;
     self.monthState = emptyMonthState();
     
     self.storeMonth = function() {
@@ -145,6 +154,20 @@ var Month = function(date) {
     
     self.collectCheckedDays = function() {
         //go through table and store which days the user checked
+        // Stores index: daynumber pairs in monthState.checkedDays. These
+        // pertain to the days which have the daynumber div hidden.
+        
+        //HARDCODED FOR NOW
+        var $div = $('#calendarDiv');
+        var $monthId = $('#'+ self.monthState.monthId);
+        //retrieves the daynumber attribute of the checked days and stores it in monthState.checkedDays
+        $monthId.find('.month').find('.daynumber.hidden').each(function () {
+            var daynumber = $(this).attr('daynumber');
+            //the key is the index of the day for now, which is stored in the
+            //dayIndex dictionary, which was made when you filled the month div
+            self.monthState.checkedDays[self.monthState.dayIndex[daynumber]] = daynumber;
+        });
+        //}
     };
     
      self.attachClickHandler = function() {
@@ -214,8 +237,41 @@ var Month = function(date) {
         })
     };
     
-   
-    
-    
+    self.generateCheckMarks = function() {
+        // Toggles the hidden class between the children of the div class="cell" 
+        // of the cells whose indices are in the monthState.checkedDays
+        // object.
+        
+        var $div = $('#calendarDiv');
+        var monthId = '#'+ self.monthState.monthId;
+        $div.find(monthId).find('.month').find('td').each( function(index) {
+            
+            if (self.monthState.checkedDays[index]) {
+                $(this).find('.cell').children().toggleClass("hidden");
+            }
+         })
+    };
     
 }
+
+
+//generate a year/multiple years
+
+var emptyMonthListState = function() {
+    return{
+        //number of milliseconds since the unix epoch to the startdate
+        startDate: "",
+        //list of years
+        years: [],
+        //list of month objects monthStates
+        monthStates: [],
+        //list name under which it will be saved
+        listName: ''
+    }
+};
+
+var manyMonths = function() {
+    
+    var self = this;
+    
+};
