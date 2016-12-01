@@ -75,6 +75,30 @@ var setStartDate = function() {
     return startDate;
 };
 
+var generateMonthObj = function(mState) {
+    // Returns a month object with the given state as it's monthState.
+    
+    // Parameters:
+    // mState: dictionary
+    //     contains month information (numberOfDays, firstIndex, etc)
+    var monthIndex = mState.monthIndex + 1;
+    monthIndex = monthIndex.toString();
+    var month = new Month(monthIndex + '-' + mState.startDay.toString() + '-' + mState.monthYear.toString(),  'MM-DD-YYYY');
+    month.monthState = mState;
+    return month;
+};
+
+var extractMonthState = function(monthObj) {
+    // Takes a month object, extracts it's monthState, and returns it.
+    
+    // Parameters:
+    // monthObj: object
+    //     An instance of the Month class
+    
+    return monthObj.monthState;
+};
+
+
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 var emptyMonthState = function() {
@@ -83,31 +107,31 @@ var emptyMonthState = function() {
         //first day of the month index
         firstDayIndex : 0,
         //number many days in a month
-        numberOfDays: 30,
+        numberOfDays : 30,
         // month year
-        monthYear: "",
+        monthYear : "",
         // index of month
-        monthIndex: 0,
+        monthIndex : 0,
         // month name
-        monthName: "",
+        monthName : "",
         //the day someone wants to start in this month, doesn't necessarily 
         // have to be the first of the month
-        startDay: 1,
+        startDay : 1,
         //use month index and year as the month Div Id
         monthId : 0,
         
         // object (dictionary) containing which days are checked index:daynumber
-        checkedDays: {},
+        checkedDays : {},
         // day and their indices pairs daynumber:index
-        dayIndex: {},
+        dayIndex : {},
     }
 };
 
 var Month = function(date) {
     
     var self = this;
-    //date will be a moment object of the format moment("MM-DD-YYYY")
-    self.date = date;
+    //date will be of the format moment("MM-DD-YYYY")
+    self.date = moment(date, "MM-DD-YYYY");
     self.monthState = emptyMonthState();
     
     self.storeMonth = function() {
@@ -257,31 +281,111 @@ var Month = function(date) {
 
 //generate a year/multiple years
 
+var generateCalendarObj = function(state) {
+    // Returns a calendar object with the given state as it's calendarState.
+    
+    // Parameters:
+    // state: dictionary
+    //     contains calendar information (numberOfYears, startDate, etc)
+    var startDate = state.startDate;
+    var numberOfYears = state.numberOfYears
+    var calendar = new Calendar(startDate, numberOfYears);
+    calendar.calendarState = state;
+    return calendar;
+};
+
+var extractCalendarState = function(calendarObj) {
+    // Takes a calendar object, extracts it's calendarState, and returns it.
+    
+    // Parameters:
+    // calendarObj: object
+    //     An instance of the Calendar class
+    
+    return calendarObj.calendarState;
+};
+
 var emptyCalendarState = function() {
     return{
-        //moment object with the date being the startDate
-        startDate: undefined,
+        //"MM-DD-YYYY" string
+        startDate : undefined,
         //list of years
-        years: [],
+        years : [],
         //dictionary of monthId: monthState
-        monthStates: [],
+        monthStates : [],
         //list name under which it will be saved
-        listName: ''
+        listName : '',
+        //self.numberOfYears
+        numberOfYears : 1,
+        //self.numberOfMonths
+        numberOfMonths : 12
     }
 };
 
 var Calendar = function(startDate, numberOfYears) {
     
     var self = this;
-    //startDate is a moment object
-    self.startDate = startDate;
+    //startDate is a "MM-DD-YYYY" string
+    self.startDate = moment(startDate, "MM-DD-YYYY");
     self.calendarState = emptyCalendarState();
     //numberOfYears is a number given by user, how many years do they want
     //to track, we will default to 1 right now
-    self.numberOfYears = 1;
+    self.numberOfYears = numberOfYears;
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.numberOfYears * 12;
     
+    self.initCalendarState = function() {
+        self.calendarState.startDate = self.startDate.format();
+        self.calendarState.years = self.getYears();
+        //workin on 
+        //self.monthStates
+        //self.listName
+        self.calendarState.numberOfYears = self.numberOfYears;
+        self.calendarState.numberOfMonths = self.numberOfMonths;
+    };
     
+    self.getYears = function() {
+        //get all the years user wants to track and store in calendarState
+        var years = []
+        var startYear = self.startDate.year();
+        years.push(startYear);
+        
+        for (i=1; i <= self.numberOfYears; i++)
+        {
+            years.push(startYear + i);
+        }
+        return years;
+    };
+    
+    self.getMonthStates = function(numberOfMonths) {
+        //get the required monthStates
+        
+        var monthStates = [];
+        
+        for (i = self.startDate.month(); i< self.startDate.month() + self.numberOfMonths; i++) {
+            monthIndex = i%12;
+            if (monthIndex == self.startDateMoment.month() && desiredYear == self.startDateMoment.year()) {
+                console.log("inside first conditional if statement");
+                console.log(self.monthListState.startDate);
+                var month = new Month(self.calendarState.startDate);
+            }
+            else {
+                monthIndex += 1;
+                var dateEpoch = moment(desiredYear.toString() + '-' + monthIndex.toString() + '-01', "YYYY-MM-DD");
+                
+                var month = new Month(dateEpoch);
+            }
+            month.initCurrentMonthState();
+            monthStates.push(month.monthState);
+            if (i == 11) {
+                desiredYear += 1;
+                self.monthListState.years.push(desiredYear);
+            }
+            //if (desiredYear == 2017) {
+            //    console.log("breaking");
+            //    break;
+            //}
+        }
+        return monthStates;
+    };
 };
