@@ -359,33 +359,58 @@ var Calendar = function(startDate, numberOfYears) {
     
     self.getMonthStates = function(numberOfMonths) {
         //get the required monthStates
-        
         var monthStates = [];
+        var yearsLength = self.calendarState.years.length;
         
-        for (i = self.startDate.month(); i< self.startDate.month() + self.numberOfMonths; i++) {
-            monthIndex = i%12;
-            if (monthIndex == self.startDateMoment.month() && desiredYear == self.startDateMoment.year()) {
-                console.log("inside first conditional if statement");
-                console.log(self.monthListState.startDate);
-                var month = new Month(self.calendarState.startDate);
+        //iterating over the years
+        for (i = 0; i < yearsLength; i++) {
+            //in year i, get monthStates for months in it
+            if (self.calendarState.years[i] == self.startDate.year()) {
+                
+                for (j = self.startDate.month(); j < self.startdate.month() + 12; i ++) 
+                {
+                    
+                    var month = new Month(self.startDate.format("MM-DD-YYYY"));
+                    monthStates.push(month.monthState);
+                }
             }
             else {
-                monthIndex += 1;
-                var dateEpoch = moment(desiredYear.toString() + '-' + monthIndex.toString() + '-01', "YYYY-MM-DD");
+                var month = new Month(
+            }
+        };
+        
+        
+        
+        // FIGURE OUT HOW THE ABOVE AND BELOW WORK
+        
+        
+        
+        
+        //for(i = self.startDate.month()...
+        //for (i = 0; i< self.startDate.month() + self.numberOfMonths; i++) {
+            //monthIndex = i%12;
+        //    if (i=0) {
+        //        console.log("inside first conditional if statement");
+        //        console.log(self.monthListState.startDate);
+        //        var month = new Month(self.calendarState.startDate);
+        //    }
+        //    else {
+               //monthIndex += 1;
+               // var dateEpoch = moment(desiredYear.toString() + '-' + monthIndex.toString() + '-01', "YYYY-MM-DD");
                 
-                var month = new Month(dateEpoch);
-            }
-            month.initCurrentMonthState();
-            monthStates.push(month.monthState);
-            if (i == 11) {
-                desiredYear += 1;
-                self.monthListState.years.push(desiredYear);
-            }
+        //        var month = new Month(dateEpoch);
+        //    }
+        //    month.initCurrentMonthState();
+        //    monthStates.push(month.monthState);
+        //    if (i == 11) {
+        //        desiredYear += 1;
+        //        self.monthListState.years.push(desiredYear);
+        //    }
             //if (desiredYear == 2017) {
             //    console.log("breaking");
             //    break;
             //}
-        }
-        return monthStates;
+        //}
+        //return monthStates;
     };
 };
