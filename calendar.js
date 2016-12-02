@@ -75,7 +75,7 @@ var setStartDate = function() {
     return startDate;
 };
 
-var generateMonthObj = function(mState) {
+var makeMonthObj = function(mState) {
     // Returns a month object with the given state as it's monthState.
     
     // Parameters:
@@ -96,6 +96,20 @@ var extractMonthState = function(monthObj) {
     //     An instance of the Month class
     
     return monthObj.monthState;
+};
+
+var leadingZero = function(n) {
+    // if n < 10 put one leading zero infront of it. n is an integer
+    // but we will be returning a string.
+    
+    if (n < 10) {
+        n = "0" + n.toString();
+        return n;
+    }
+    else {
+        return n.toString();
+    }
+        
 };
 
 
@@ -119,6 +133,8 @@ var emptyMonthState = function() {
         startDay : 1,
         //use month index and year as the month Div Id
         monthId : 0,
+        //string of the date
+        dateString : "",
         
         // object (dictionary) containing which days are checked index:daynumber
         checkedDays : {},
@@ -131,6 +147,7 @@ var Month = function(date) {
     
     var self = this;
     //date will be of the format moment("MM-DD-YYYY")
+    self.dateString = date;
     self.date = moment(date, "MM-DD-YYYY");
     self.monthState = emptyMonthState();
     
@@ -155,6 +172,7 @@ var Month = function(date) {
         self.monthState.monthName = getMonthName(self.monthState.monthIndex);
         self.monthState.startDay = self.date.date();
         self.monthState.monthId = self.monthState.monthIndex.toString() + self.monthState.monthYear.toString();
+        self.monthState.dateString = self.dateString;
         
         
     };
@@ -281,7 +299,7 @@ var Month = function(date) {
 
 //generate a year/multiple years
 
-var generateCalendarObj = function(state) {
+var makeCalendarObj = function(state) {
     // Returns a calendar object with the given state as it's calendarState.
     
     // Parameters:
@@ -357,33 +375,66 @@ var Calendar = function(startDate, numberOfYears) {
         return years;
     };
     
-    self.getMonthStates = function(numberOfMonths) {
-        //get the required monthStates
+    
+    self.getMonthStates = function() {
+        //get the required monthStates for the calendar, filled in month
+        //states not blank
         var monthStates = [];
+        //how many years is the calendar going to cover
         var yearsLength = self.calendarState.years.length;
+        console.log("this is how many years we have " + yearsLength);
         
         //iterating over the years
-        for (i = 0; i < yearsLength; i++) {
+        for (i = 0; i < 6; i++) {
             //in year i, get monthStates for months in it
             if (self.calendarState.years[i] == self.startDate.year()) {
+                console.log("this is iterating over years " + i);
                 
-                for (j = self.startDate.month(); j < self.startdate.month() + 12; i ++) 
+                for (j = self.startDate.month(); j < 12; j ++) 
                 {
-                    
-                    var month = new Month(self.startDate.format("MM-DD-YYYY"));
-                    monthStates.push(month.monthState);
+                    console.log("this is iterating over months " + j);
+                    if (j == self.startDate.month() && self.calendarState.years[i] == 2016) {
+                        console.log("this is the current year " + j);
+                        //var month = "month" + leadingZero(j) + self.calendarState.years[i].toString();
+                        //console.log("Potential month Ids " + month);
+                        var month = new Month(self.startDate.format("MM-DD-YYYY"));
+                        month.initializeMonthState();
+                        monthStates.push(month.monthState);
+                    }
+                    else {
+                        var month = new Month(leadingZero(j) + "01" + self.calendarState.years[i]);
+                        month.initializeMonthState();
+                        monthStates.push(month.monthState);
+                    }
+                } // end of for loop
+                
+            } //end of first if statement
+            
+            //if the year is not the same as the startDate year, so the
+            //remaining years in the calendar
+            else
+            {
+                //for loop for the 12 months of each year
+                for (k = 0; k  < 12; k ++)
+                {
+                console.log("the year is " + self.calendarState.years[i]);
+                var month = new Month(leadingZero(k) + "01" + self.calendarState.years[i]);
+                month.initializeMonthState();
+                monthStates.push(month.monthState);
+                
                 }
             }
-            else {
-                var month = new Month(
-            }
-        };
+            
+        }
+        return monthStates;
+    };
         
         
         
         // FIGURE OUT HOW THE ABOVE AND BELOW WORK
         
-        
+      //you could make all the required month objects for the calendar, and then 
+      //you can extract their monthStates to be stored in calendarState  
         
         
         //for(i = self.startDate.month()...
@@ -412,5 +463,12 @@ var Calendar = function(startDate, numberOfYears) {
             //}
         //}
         //return monthStates;
+    
+    self.generateMonthObjects = function() {
+        //instantiate all the required Month objects for the calendar
+        //using the monthStates that we have already generated in 
+        //getMonthStates
+        
+        
     };
 };
