@@ -109,6 +109,7 @@ var leadingZero = function(n) {
     if (n < 10) {
         n = "0" + n.toString();
         return n;
+        
     }
     else {
         return n.toString();
@@ -150,7 +151,10 @@ fillMonthState = function(date) {
     //fills in an empty monthState with information from the 
     //date provided
     dateString = date;
+    console.log("inside the fillMonthState this is the dateString " + dateString);
     date = moment(date, "MM-DD-YYYY");
+    console.log("inside the fillMonthState, this is the date accessing it \
+    by using the moment object " + date.format("MM DD YYYY"));
     monthState = emptyMonthState();
     
     monthState.firstDayIndex = date.day();
@@ -211,11 +215,12 @@ var Month = function(date) {
         //    will probably end up being hardcoded in
         
         //HARDCODED FOR NOW
+        
         var $div = $('#calendarDiv');
         
         //the div ID is the monthID
         $div.append('<div class="monthframe" id=' + self.monthState.monthId + '></div>');
-        $('.monthframe').append($('#template').html());
+        $('#' + self.monthState.monthId).append($('#template').html());
     };
     
     self.collectCheckedDays = function() {
@@ -401,6 +406,7 @@ var Calendar = function(startDate, numberOfYears) {
     
     
     self.getMonthStates = function() {
+        
         //get the required monthStates for the calendar, filled in month
         //states not blank
         var monthStates = [];
@@ -410,23 +416,27 @@ var Calendar = function(startDate, numberOfYears) {
         //iterating over the years
         for (i = 0; i < self.calendarState.years.length; i++) {
             //in year i, get monthStates for months in it
+            
             if (self.calendarState.years[i] == self.startDate.year()) {
                 
                 for (j = self.startDate.month(); j < 12; j ++) 
                 {
+                    
                     //iterating over months inside startDate Year
-                    if (j == self.startDate.month() && self.calendarState.years[i] == 2016) {
+                    if (j == self.startDate.month()) {
+                        
                         //var month = "month" + leadingZero(j) + self.calendarState.years[i].toString();
                         //console.log("Potential month Ids " + month);
-                        var monthState = fillMonthState(self.startDate);
+                        var monthState = fillMonthState(self.startDate.format("MM-DD-YYYY"));
                         monthStates.push(monthState);
+                        
                     }
                     else {
                         var monthState = fillMonthState(leadingZero(j) + "01" + self.calendarState.years[i]);
                         monthStates.push(monthState);
                     }
                 } // end of for loop
-                
+            continue;
             } //end of first if statement
             
             //if the year is not the same as the startDate year, so the
@@ -434,10 +444,10 @@ var Calendar = function(startDate, numberOfYears) {
             else
             {
                 //for loop for the 12 months of each remaining year
-                for (k = 0; k  < 12; k ++)
+                for (k = 1; k  <= 12; k ++)
                 {
-                console.log("the year is " + self.calendarState.years[i]);
-                var monthState = fillMonthState(leadingZero(k) + "01" + self.calendarState.years[i]);
+                var the_date = leadingZero(k) + "01" + self.calendarState.years[i];
+                var monthState = fillMonthState(leadingZero(k) + "-" + "01" + "-" + + self.calendarState.years[i]);
                 monthStates.push(monthState);
                 
                 }
@@ -475,7 +485,7 @@ var Calendar = function(startDate, numberOfYears) {
                         monthStates.push(month.monthState);
                     }
                 } // end of for loop
-                
+            continue;
             } //end of first if statement
             
             //if the year is not the same as the startDate year, so the
@@ -483,7 +493,7 @@ var Calendar = function(startDate, numberOfYears) {
             else
             {
                 //for loop for the 12 months of each remaining year
-                for (k = 0; k  < 12; k ++)
+                for (k = 1; k  <= 12; k ++)
                 {
                 console.log("the year is " + self.calendarState.years[i]);
                 var month = new Month(leadingZero(k) + "01" + self.calendarState.years[i]);
@@ -500,8 +510,28 @@ var Calendar = function(startDate, numberOfYears) {
     self.generateMonthObjects = function() {
         //instantiate all the required Month objects for the calendar
         //using the monthStates that we have already generated in 
-        //getMonthStates
+        //getMonthStates or loaded monthStates from local storage or 
+        //wherever they are being stored
         
+        var monthObjects = [];
+        //iterate over the monthStates in calendarState
+        var iterationLength = self.calendarState.monthStates.length;
+        for (i=0; i< iterationLength; i++) {
+            var month = makeMonthObj(self.calendarState.monthStates[i]);
+            monthObjects.push(month);
+        }
+        
+        return monthObjects;
+    };
+    
+    self.generateEmptyCalendar = function(monthObjectsArray) {
+        // generates the empty month divs for the calendar
+    
+        monthObjectsArray.forEach (function(monthObj) {
+            monthObj.generateEmptyMonthDiv();
+        });
         
     };
+    
+    
 };
