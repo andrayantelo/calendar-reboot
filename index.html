@@ -22,19 +22,14 @@
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
-        
-        <!-- Include Jquery UI and jquery UI CSS -->
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
-        <script src="//code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-        
+
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
         integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         
         <!-- include font awesome -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-        
-        
+                
         <script type ="text/javascript" src="calendar.js"></script> 
         <link rel="stylesheet" href="style.css">
         
@@ -82,73 +77,56 @@
 
 <div id="contentWrapper">
 
-<div id="calendarTitleContainer">
+<div id="calendarFormContainer">
   <div class="container">
     <div class="row">
       <div class="col-md-offset-2 col-md-6">
-          
-            
-          <div class="input-group">
-            <!-- label for screen readers -->
-            <label for="calendarTitle" class="sr-only">Calendar Title</label>
-           
-              <input type="text" class="form-control" id="calendarTitle" placeholder="What are we tracking? Eg Good Deeds Done, Days Without Smoking, etc.">
-          </div> <!-- /.input-group -->
-         
+          <form>
+              <div class="form-group">
+                  <label for="calendarTitle" class="sr-only">Calendar Title</label>
+                  <input type="text" class="form-control" id="calendarTitle" placeholder=
+                  "What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
+              </div>
+              <div class="form-group">
+                  <!--<label for="startDate">Pick a Start Date:</label> -->
+                  <div class='input-group date' id='datetimepicker1'>
+                      
+                      <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div> <!-- /.input-group date -->
+                  <script type="text/javascript">
+                      $(function () {
+                      $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
+                      });
+                  </script>
+              </div> <!--/.form-group -->
+          <!--</form>
+          <form class="form-inline"> -->
+              <div class="form-group" id="spinnerContainer">
+                  <!--<label for="spinner">Number of Years to Track:</label>-->
+                  <input type="number" class="form-control" id="spinner" min="1" max="20" placeholder=
+                  "Number Of Years to Track">
+              </div> <!-- /.form-group -->
+                      
+          </form>
         
-        
-      </div> <!-- /.col-md-4 -->
+      </div> <!-- /.col-md-6 -->
     </div> <!-- /.row -->
+    <div class="row">
+        <div class="col-md-offset-2 col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">Set</button>
+        </div>
+    </div>
   </div> <!-- /.container -->
 </div> <!-- /#calendarTitleContainer -->
-
-
-<div id="datepickerContainer">
-  <div class="container">
-    <div class="row">
-      <div class='col-md-offset-2 col-md-6'>
-        <div class="form-group">
-          <div class='input-group date' id='datetimepicker1'>
-            <input type='text' class="form-control" />
-              <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </span>
-          </div> <!-- /.input-group date -->
-        </div> <!-- /.form-group -->
-      </div> <!-- /.col -->
-      <script type="text/javascript">
-        $(function () {
-        $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
-        });
-      </script>
-      
-    </div> <!-- /.row -->
-  </div> <!-- /.container -->
-</div> <!-- /#datepikerContainer -->
-
-<div id="numberOfYearsContainer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-offset-2 col-md-3">
-                <div id="spinnerContainer">
-                    <label for="spinner">Number of Years to Track:</label>
-                    <input id="spinner">
-                </div>
-            </div><!--/.col -->
-            <div id="setButtonContainer">
-            <div class="col-md-1">
-                <button type="button" class="btn btn-primary">Set</button>
-            </div> <!-- /.col-md-offset-8, col-md-2" -->
-            </div> <!--/.#setButtonContainer -->
-        </div><!--/.row -->
-    </div><!--/.container -->
-</div><!--#numberOfYearsContainer -->
  
 <div id="buttonContainer">
     <div class="container">
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
-                <div class="btn-group" role="group" aria-label="button group">
+                <div id="buttonGroup" class="btn-group hide" role="group" aria-label="button group">
                     <button type="button" class="btn btn-default">Save Calendar</button>
                     <button type="button" class="btn btn-default">Delete Calendar</button>
                 </div>

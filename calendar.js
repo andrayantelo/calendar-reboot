@@ -42,24 +42,6 @@ $(document).ready(function() {
         }
     });
     
-    //spinner jquery code
-    //initialize the spnner with the icons option specified
-    $('#spinner').spinner();
-    $('#spinner').spinner({
-        //icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" },
-        max: 20,
-        min: 1
-    });
-    
-    $('#spinner').width(40);
-    //get or set the icons option after initialization
-    //getter
-    //var icons = $("#spinner").spinner("option", "icons");
-    //setter
-    //$("#spinner").spinner("option", "icons", { down: "custom-down-icon", 
-    //    up: "custom-up-icon" });
-    
-   
    
 });
 
