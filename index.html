@@ -2,16 +2,30 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <!-- The X-UA-Compatible meta tag allows web authors to choose what
+        version of Internet Explorer the page should be rendered as.
+        Edge mode tells IE to display content in the highest mode available.
+        -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
         <title>Calendar</title>
         
-        <!-- include jquery, bootstrap, moment, datetimepicker, bootstrap ss, datetimepicker css -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+        <!-- include jquery -->
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        
+        <!-- bootstrap, moment, datetimepicker, bootstrap css, datetimepicker css -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
+        <<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+          
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+        
+        <!-- Include Jquery UI and jquery UI CSS -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
         
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
@@ -19,9 +33,12 @@
         
         <!-- include font awesome -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        
+        
         <script type ="text/javascript" src="calendar.js"></script> 
         <link rel="stylesheet" href="style.css">
+        
+        
         
     </head>
 <body>
@@ -99,11 +116,6 @@
           </div> <!-- /.input-group date -->
         </div> <!-- /.form-group -->
       </div> <!-- /.col -->
-      <div id="setButtonContainer">
-          <div class="col-md-offset-8, col-md-2">
-              <button type="button" class="btn btn-primary">Set</button>
-          </div> <!-- /.col-md-offset-8, col-md-2" -->
-      </div> <!--/.#setButtonContainer -->
       <script type="text/javascript">
         $(function () {
         $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
@@ -113,6 +125,24 @@
     </div> <!-- /.row -->
   </div> <!-- /.container -->
 </div> <!-- /#datepikerContainer -->
+
+<div id="numberOfYearsContainer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-3">
+                <div id="spinnerContainer">
+                    <label for="spinner">Number of Years to Track:</label>
+                    <input id="spinner">
+                </div>
+            </div><!--/.col -->
+            <div id="setButtonContainer">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary">Set</button>
+            </div> <!-- /.col-md-offset-8, col-md-2" -->
+            </div> <!--/.#setButtonContainer -->
+        </div><!--/.row -->
+    </div><!--/.container -->
+</div><!--#numberOfYearsContainer -->
  
 <div id="buttonContainer">
     <div class="container">

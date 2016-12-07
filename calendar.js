@@ -1,5 +1,7 @@
 $(document).ready(function() {
     
+    //have the calendar show when you click in the input section of the date
+    //timepicker
     $('#datetimepicker1 input').click(function(event){
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
@@ -39,22 +41,72 @@ $(document).ready(function() {
          }
         }
     });
+    
+    //spinner jquery code
+    //initialize the spnner with the icons option specified
+    $('#spinner').spinner();
+    $('#spinner').spinner({
+        //icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" },
+        max: 20,
+        min: 1
+    });
+    
+    $('#spinner').width(40);
+    //get or set the icons option after initialization
+    //getter
+    //var icons = $("#spinner").spinner("option", "icons");
+    //setter
+    //$("#spinner").spinner("option", "icons", { down: "custom-down-icon", 
+    //    up: "custom-up-icon" });
+    
    
    
 });
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
 
-var storeInLocalStorage = function() {
+var storeInLocalStorage = function(storageKey, storageItem) {
     //store information in database/ might start with localstorage though
+    // Convert a javascript value (storageItem) to a JSON string and
+    // accesses the current domain's local Storage object and adds a data item
+    //  (storageString) to it.
+    
+    //  Parameters:
+    //  storageItemKey: string
+    //      The localstorage key to be used to store the data item.
+    //  storageItem: string
+    //      The item to be stored in localstorage
+    
+    localStorage.setItem(storageItemKey, JSON.stringify(storageItem));
 };
 
-var loadFromLocalStorage = function() {
-    //load information from localstorage
+var loadFromLocalStorage = function(storageItemKey) {
+    //  Loads an item from localstorage with key storageItemKey and returns the item
+    //  if the item is not in localStorage, then it returns null
+        
+    //  Parameters:
+    //  storageItemKey: "string"
+    //      The key used to store the item and to be used to retrieve it from
+    //      localstorage.
+    
+    var storageItem = localStorage.getItem(storageItemKey)
+        
+        
+    if (storageItem === null) {
+        console.log(storageItemKey + "not found in localstorage");
+        return;   
+    }
+                                                                                                   
+    else {
+        var storageItem = JSON.parse(storageItem);  
+        return storageItem
+    }     
 };
 
-var removeFromLocalStorage = function() {
-    //remove item from localstorage
+var removeFromLocalStorage = function(storageItemKey) {
+    // removes item with key storageItemKey from localStorage
+    
+    localStorage.removeItem(storageItemKey)
 };
 
 var getMonthName = function(index) {
@@ -254,7 +306,7 @@ var Month = function(date) {
         var $monthId = $('#' + self.monthState.monthId);
         $div.find($monthId).find('.cell').click(function (event) {
             console.log(event);  // prints so you can look at the event object in the console
-            $( this ).children().toggleClass("hidden");
+            $( this ).children('.fa').toggleClass("hidden");
             
         });
     };
@@ -533,5 +585,50 @@ var Calendar = function(startDate, numberOfYears) {
         
     };
     
+    self.fillCalendar = function(monthObjectsArray) {
+        //fills an empty calendar with month names, dates, etc
+        
+        monthObjectsArray.forEach (function(monthObj) {
+            monthObj.fillMonthDiv();
+        })
+    };
+    
+    self.attachClickForCalendar = function(monthObjectsArray) {
+        //attach the click handler to the entire calendar.
+        
+        monthObjectsArray.forEach (function(monthObj) {
+            monthObj.attachClickHandler();
+        })
+    };
+    
+    self.collectCalendarCheckmarks = function(monthObjectsArray) {
+        //gather all the checkmarks to store inside of the monthStates
+        
+        monthObjectsArray.forEach(function(monthObj) {
+            monthObj.collectCheckedDays();
+        })
+    };
+    
+    self.placeCheckmarks = function(monthObjectsArray) {
+        //place checkmarks in the calendar according to what is stored in 
+        //the month's monthState under checkedDays
+        
+        monthObjectsArray.forEach(function(monthObj) {
+            monthObj.generateCheckMarks();
+        })
+    };
+    
+    self.storeCalendarState = function(listTitle) {  // SHOULD THE CALENDARSTATE BE A PARAMETER IN THE FUNCTION?
+        //Store the calendarState in localStorage with storageKey = listTitle
+        //and the storageItem = calendarState
+        
+        storeInLocalStorage(listTitle, self.calendarState);
+    };
+    
+    self.loadCalendarState = function(listTitle) {
+        //Load the calendarState with storageKey = listTitle from localStorage
+        
+        loadFromLocalStorage(listTitle);
+    };
     
 };
