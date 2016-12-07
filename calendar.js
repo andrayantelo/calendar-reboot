@@ -173,7 +173,6 @@ var emptyMonthState = function() {
         monthId : 0,
         //string of the date
         dateString : "",
-        
         // object (dictionary) containing which days are checked index:daynumber
         checkedDays : {},
         // day and their indices pairs daynumber:index
@@ -185,10 +184,8 @@ fillMonthState = function(date) {
     //fills in an empty monthState with information from the 
     //date provided
     dateString = date;
-    console.log("inside the fillMonthState this is the dateString " + dateString);
     date = moment(date, "MM-DD-YYYY");
-    console.log("inside the fillMonthState, this is the date accessing it \
-    by using the moment object " + date.format("MM DD YYYY"));
+    
     monthState = emptyMonthState();
     
     monthState.firstDayIndex = date.day();
@@ -251,10 +248,18 @@ var Month = function(date) {
         //HARDCODED FOR NOW
         
         var $div = $('#calendarDiv');
+        var yearHeader = "<div class='page-header text-center'>" +
+            "<h2 id='yearHeader'>" + self.monthState.monthYear + "</h2>" +
+            "</div>"
         
         //the div ID is the monthID
         $div.append('<div class="monthframe" id=' + self.monthState.monthId + '></div>');
+        if (self.monthState.monthId == "0" + self.monthState.monthYear.toString()) {
+            $('#' + self.monthState.monthId).append(yearHeader);
+        }
         $('#' + self.monthState.monthId).append($('#template').html());
+        
+        
     };
     
     self.collectCheckedDays = function() {
@@ -560,9 +565,21 @@ var Calendar = function(startDate, numberOfYears) {
     
     self.generateEmptyCalendar = function(monthObjectsArray) {
         // generates the empty month divs for the calendar
-    
+        
+        var $div = $('#calendarDiv');
         monthObjectsArray.forEach (function(monthObj) {
-            monthObj.generateEmptyMonthDiv();
+            if (self.startDate.month() == monthObj.date.month() && self.startDate.year() == monthObj.date.year()) {
+                $div.append('<div class="monthframe" id=' + monthObj.monthState.monthId + '></div>');
+                var yearHeader = "<div class='page-header text-center'>" +
+                "<h2 id='yearHeader'>" + self.startDate.year() + "</h2>" +
+                "</div>"
+            
+                $('#' + monthObj.monthState.monthId).append(yearHeader);
+                $('#' + monthObj.monthState.monthId).append($('#template').html());
+            }
+            else {
+                monthObj.generateEmptyMonthDiv();
+            }
         });
         
     };
