@@ -9,7 +9,6 @@ $(document).ready(function() {
     //have the input textbox be same size as placeholder
     function sizePlaceholder() {
         $(this).attr('size', $(this).attr('placeholder').length);
-        console.log($(this).prop("id") + " this is the id of this");
     };
     
  
@@ -40,6 +39,33 @@ $(document).ready(function() {
              $('input[type=text]:eq(' + next_index + ')').focus();
          }
         }
+    });
+    
+    $('#setButton').click(function(){
+        //make a calendar object with information given in the form
+        //required info are startDate and title. default to tracking 1 
+        //year
+        
+        var calendarTitle = $("#calendarTitle").val();
+        var startDate = $("#startDate").val();
+        var numberOfYears = $("#numberOfYears").val() || 1;
+        var monthObjects;
+        
+        console.log(calendarTitle + " this is the calendar title");
+        console.log(startDate + " this is the startDate");
+        console.log(numberOfYears + " this is the number of years");
+        
+        calendar =  new Calendar(startDate, numberOfYears, calendarTitle);
+        calendar.initCalendarState();
+        calendar.getYears();
+        
+        calendar.calendarState.monthStates = calendar.getMonthStates();
+        monthObjects = calendar.generateMonthObjects();
+        calendar.generateEmptyCalendar(monthObjects);
+        calendar.fillCalendar(monthObjects);
+        calendar.attachClickForCalendar(monthObjects);
+        calendar.removeEmptyWeeksFromCalendar(monthObjects);
+       
     });
     
    
@@ -355,6 +381,10 @@ var Month = function(date) {
                  //inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
             }
+            
+            else {
+                $(this).addClass('emptyDay');
+            }
         })
     };
     
@@ -371,6 +401,24 @@ var Month = function(date) {
                 $(this).find('.cell').children().toggleClass("hidden");
             }
          })
+    };
+    
+    self.removeEmptyWeeks = function() {
+        //remove empty weeks from the month view
+        
+        var $div = $('#calendarDiv');
+        var monthId = '#' + self.monthState.monthId;
+        
+        $div.find(monthId).find('.month').find('.week').each( function(index) {
+            var counter = 0;
+            $(this).find('td').each(function(td) {
+                if ($(this).hasClass("emptyDay")) 
+                counter +=1;
+            })
+            if (counter == 7) {
+                $(this).remove();
+            }
+        })
     };
     
 }
@@ -418,7 +466,7 @@ var emptyCalendarState = function() {
     }
 };
 
-var Calendar = function(startDate, numberOfYears) {
+var Calendar = function(startDate, numberOfYears, title) {
     
     var self = this;
     //startDate is a "MM-DD-YYYY" string
@@ -430,12 +478,13 @@ var Calendar = function(startDate, numberOfYears) {
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.numberOfYears * 12;
+    self.title = title;
     
     self.initCalendarState = function() {
         self.calendarState.startDate = self.startDate.format();
         self.calendarState.years = self.getYears();
         self.calendarState.monthStates = self.getMonthStates();
-        //self.calendarTitle
+        self.calendarState.calendarTitle = self.title;
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
     };
@@ -506,55 +555,6 @@ var Calendar = function(startDate, numberOfYears) {
         return monthStates;
     };
         
-    self.getMonthStatesUsingMonthObject = function() {
-        //get the required monthStates for the calendar, filled in month
-        //states not blank
-        var monthStates = [];
-        //how many years is the calendar going to cover
-        var yearsLength = self.calendarState.years.length;
-        
-        //iterating over the years
-        for (i = 0; i < self.calendarState.years.length; i++) {
-            //in year i, get monthStates for months in it
-            if (self.calendarState.years[i] == self.startDate.year()) {
-                
-                for (j = self.startDate.month(); j < 12; j ++) 
-                {
-                    //iterating over months of the startDate's year
-                    if (j == self.startDate.month() && self.calendarState.years[i] == 2016) {
-                        //var month = "month" + leadingZero(j) + self.calendarState.years[i].toString();
-                        //console.log("Potential month Ids " + month);
-                        var month = new Month(self.startDate.format("MM-DD-YYYY"));
-                        month.initializeMonthState();
-                        monthStates.push(month.monthState);
-                    }
-                    else {
-                        var month = new Month(leadingZero(j) + "01" + self.calendarState.years[i]);
-                        month.initializeMonthState();
-                        monthStates.push(month.monthState);
-                    }
-                } // end of for loop
-            continue;
-            } //end of first if statement
-            
-            //if the year is not the same as the startDate year, so the
-            //remaining years in the calendar
-            else
-            {
-                //for loop for the 12 months of each remaining year
-                for (k = 1; k  <= 12; k ++)
-                {
-                console.log("the year is " + self.calendarState.years[i]);
-                var month = new Month(leadingZero(k) + "01" + self.calendarState.years[i]);
-                month.initializeMonthState();
-                monthStates.push(month.monthState);
-                
-                }
-            }
-            
-        }
-        return monthStates;
-    };
     
     self.generateMonthObjects = function() {
         //instantiate all the required Month objects for the calendar
@@ -610,6 +610,15 @@ var Calendar = function(startDate, numberOfYears) {
         })
     };
     
+    self.removeEmptyWeeksFromCalendar = function(monthObjectsArray) {
+        //remove empty weeks from each month
+        
+        monthObjectsArray.forEach (function(monthObj) {
+            monthObj.removeEmptyWeeks();
+        })
+    };
+    
+
     self.collectCalendarCheckmarks = function(monthObjectsArray) {
         //gather all the checkmarks to store inside of the monthStates
         
@@ -632,7 +641,6 @@ var Calendar = function(startDate, numberOfYears) {
         //get most current version of monthState
         updatedMonthStates = [];
         monthObjectsArray.forEach(function(monthObj) {
-            console.log("updating month states");
             updatedMonthStates.push(extractMonthState(monthObj));
         })
         return updatedMonthStates;
@@ -650,19 +658,15 @@ var Calendar = function(startDate, numberOfYears) {
         self.calendarState.startDate = self.startDate.format();
         self.calendarState.years = self.getYears();
         self.calendarState.calendarTitle = $('#calendarTitle').val();
-        console.log($('#calendarTitle').val());
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
-        
-        
-        
     };
     
-    self.storeCalendarState = function(listTitle) {  // SHOULD THE CALENDARSTATE BE A PARAMETER IN THE FUNCTION?
+    self.storeCalendarState = function() {  // SHOULD THE TITLE BE A PARAMETER IN THE FUNCTION?
         //Store the calendarState in localStorage with storageKey = listTitle
         //and the storageItem = calendarState
         
-        storeInLocalStorage(listTitle, self.calendarState);
+        storeInLocalStorage(self.calendarState.calendarTitle, self.calendarState);
     };
     
     self.loadCalendarState = function(listTitle) {
