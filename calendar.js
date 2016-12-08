@@ -151,6 +151,17 @@ var leadingZero = function(n) {
         
 };
 
+var clearPage = function(yearArray) {
+    // Remove all divs from page except #template
+    //Parameters:
+    // yearArray: array
+    yearArray.forEach(function(year) {
+        $('#' + year).remove();
+        $('.monthframe').remove();
+    })
+    
+};
+
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 var emptyMonthState = function() {
@@ -271,7 +282,7 @@ var Month = function(date) {
         var $div = $('#calendarDiv');
         var $monthId = $('#'+ self.monthState.monthId);
         //retrieves the daynumber attribute of the checked days and stores it in monthState.checkedDays
-        $monthId.find('.month').find('.daynumber.hidden').each(function () {
+        $monthId.find('.month').find('td').find('.cell').find('.checkedDay').each(function () {
             var daynumber = $(this).attr('daynumber');
             //the key is the index of the day for now, which is stored in the
             //dayIndex dictionary, which was made when you filled the month div
@@ -292,8 +303,8 @@ var Month = function(date) {
         var $div = $('#calendarDiv');
         var $monthId = $('#' + self.monthState.monthId);
         $div.find($monthId).find('.cell').click(function (event) {
-            console.log(event);  // prints so you can look at the event object in the console
             $( this ).children('.fa').toggleClass("hidden");
+            $( this ).children('.daynumber').addClass("checkedDay");
             
         });
     };
@@ -332,7 +343,7 @@ var Month = function(date) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><i class="fa fa-check fa-2x hidden"></i></div>'
+                 dayOfMonth.toString() + '"></div><i class="fa fa-check hidden"></i></div>'
                  
                  //add html inside td element
                  $(this).append(toAdd);
@@ -399,7 +410,7 @@ var emptyCalendarState = function() {
         //dictionary of monthId: monthState
         monthStates : [],
         //list name under which it will be saved
-        listName : '',
+        calendarTitle : '',
         //self.numberOfYears
         numberOfYears : 1,
         //self.numberOfMonths
@@ -423,9 +434,8 @@ var Calendar = function(startDate, numberOfYears) {
     self.initCalendarState = function() {
         self.calendarState.startDate = self.startDate.format();
         self.calendarState.years = self.getYears();
-        //workin on 
-        //self.monthStates
-        //self.listName
+        self.calendarState.monthStates = self.getMonthStates();
+        //self.calendarTitle
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
     };
@@ -604,6 +614,7 @@ var Calendar = function(startDate, numberOfYears) {
         //gather all the checkmarks to store inside of the monthStates
         
         monthObjectsArray.forEach(function(monthObj) {
+            console.log("collecting check marks");
             monthObj.collectCheckedDays();
         })
     };
@@ -615,6 +626,36 @@ var Calendar = function(startDate, numberOfYears) {
         monthObjectsArray.forEach(function(monthObj) {
             monthObj.generateCheckMarks();
         })
+    };
+    
+    self.updateMonthStates = function(monthObjectsArray) {
+        //get most current version of monthState
+        updatedMonthStates = [];
+        monthObjectsArray.forEach(function(monthObj) {
+            console.log("updating month states");
+            updatedMonthStates.push(extractMonthState(monthObj));
+        })
+        return updatedMonthStates;
+    };
+    
+    self.updateCalendarState = function(monthObjectsArray) {
+        //updates calendarState to most current version, and includes the
+        //calendarTitle for the first time
+        
+        //update the individual monthState checkedDays object
+        self.collectCalendarCheckmarks(monthObjectsArray);
+        //update calendarStates monthStates object
+        self.calendarState.monthStates = self.updateMonthStates(monthObjectsArray);
+        
+        self.calendarState.startDate = self.startDate.format();
+        self.calendarState.years = self.getYears();
+        self.calendarState.calendarTitle = $('#calendarTitle').val();
+        console.log($('#calendarTitle').val());
+        self.calendarState.numberOfYears = self.numberOfYears;
+        self.calendarState.numberOfMonths = self.numberOfMonths;
+        
+        
+        
     };
     
     self.storeCalendarState = function(listTitle) {  // SHOULD THE CALENDARSTATE BE A PARAMETER IN THE FUNCTION?
