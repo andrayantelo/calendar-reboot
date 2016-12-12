@@ -16,7 +16,7 @@
         
         <!-- bootstrap, moment, datetimepicker, bootstrap css, datetimepicker css -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
           
         
@@ -88,13 +88,16 @@
   <div class="container">
     <div class="row">
       <div class="col-md-offset-2 col-md-6">
-          <form>
-              <div class="form-group">
+          <form id="fullForm">
+              <div id="titleFormGroup" class="form-group">
                   <label for="calendarTitle" class="sr-only">Calendar Title</label>
-                  <input type="text" class="form-control text-center" id="calendarTitle" placeholder=
-                  "What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
+                  <input type="text" class="form-control" id="calendarTitle"
+                      maxlength="140" placeholder="What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
+                  <span id="span-titleFormGroup" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
+                  <span id="inputError-titleFormGroup" class="sr-only hidden">(error)</span>
+                  <!--<small class="form-text text-muted">Required.</small> -->
               </div>
-              <div class="form-group">
+              <div id="dateFormGroup" class="form-group">
                   <!--<label for="startDate">Pick a Start Date:</label> -->
                   <div class='input-group date' id='datetimepicker1'>
                       
@@ -108,10 +111,10 @@
                       $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
                       });
                   </script>
+                  <span id="span-dateFormGroup" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
+                  <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
               </div> <!--/.form-group -->
-          <!--</form>
-          <form class="form-inline"> -->
-              <div class="form-group" id="spinnerContainer">
+              <div class="form-group" id="spinnerFormGroup">
                   <!--<label for="spinner">Number of Years to Track:</label>-->
                   <input type="number" class="form-control" id="numberOfYears" min="1" max="20" placeholder=
                   "Number Of Years to Track">
