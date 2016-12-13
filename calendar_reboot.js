@@ -195,27 +195,30 @@ var leadingZero = function(n) {
 };
 
 
-var zeroIndexMonth = function(monthIndex) {
-    //takes a monthindex from 1-12 and returns it's zero index equivalent
-    var zeroIndexDictionary = {
-        1: 0,
-        2: 1,
-        3: 2,
-        4: 3,
-        5: 4,
-        6: 5,
-        7: 6,
-        8: 7,
-        9: 8,
-        10: 9,
-        11: 10,
-        12: 11
+var oneIndexMonth = function(monthIndex) {
+    //takes a monthindex from 0-11 and returns it's one-based index equivalent
+    var oneIndexDictionary = {
+        0: 1,
+        1: 2,
+        2: 3,
+        3: 4,
+        4: 5,
+        5: 6,
+        6: 7,
+        7: 8,
+        8: 9,
+        9: 10,
+        10: 11,
+        11: 12
     };
-    console.log("zeroIndexMonth() ran");
-    return zeroIndexDictionary.monthIndex;
-    };
-        
+    if (monthIndex >= 0 && monthIndex < 12) {
+        return oneIndexDictionary[monthIndex];
+    }
+    else {
+        throw "Invalid Month Index"
+    }
 };
+        
 
 var clearPage = function(yearArray) {
     // Remove all divs from page except #template
@@ -578,7 +581,7 @@ var Calendar = function(startDate, numberOfYears, title) {
                     }
                     else 
                     {
-                        monthState = fillMonthState(leadingZero(j) + "01" + 
+                        monthState = fillMonthState(leadingZero(oneIndexMonth(j)) + "01" + 
                                          self.calendarState.years[i]);
                         monthStates.push(monthState);
                     }
@@ -591,9 +594,9 @@ var Calendar = function(startDate, numberOfYears, title) {
             else
             {
                 //for loop for the 12 months of each remaining year
-                for (k = 1; k  < 13; k ++)
+                for (k = 0; k  < 12; k ++)
                 {
-                monthState = fillMonthState(leadingZero(k) + "-" + "01" + "-" +
+                monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
                                  self.calendarState.years[i]);
                 monthStates.push(monthState);
                 
