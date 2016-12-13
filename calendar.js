@@ -194,6 +194,29 @@ var leadingZero = function(n) {
         
 };
 
+
+var zeroIndexMonth = function(monthIndex) {
+    //takes a monthindex from 1-12 and returns it's zero index equivalent
+    var zeroIndexDictionary = {
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        5: 4,
+        6: 5,
+        7: 6,
+        8: 7,
+        9: 8,
+        10: 9,
+        11: 10,
+        12: 11
+    };
+    
+    return zeroIndexDictionary.monthIndex;
+    };
+        
+};
+
 var clearPage = function(yearArray) {
     // Remove all divs from page except #template
     //Parameters:
@@ -568,7 +591,7 @@ var Calendar = function(startDate, numberOfYears, title) {
             else
             {
                 //for loop for the 12 months of each remaining year
-                for (k = 1; k  <= 12; k ++)
+                for (k = 1; k  < 13; k ++)
                 {
                 monthState = fillMonthState(leadingZero(k) + "-" + "01" + "-" +
                                  self.calendarState.years[i]);
