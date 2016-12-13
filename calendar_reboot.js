@@ -1,34 +1,3 @@
-function validateForm(formGroupId) {
-    
-    //make sure all the fields of the form are filled out with 
-    //valid information
-    //for errors need to add has-error and has-feedback and have to add
-    //the entire span for the glyphicon
-    var id = formGroupId;
-    var $id = $('#' + formGroupId);
-    var inputValue = $id.find('input[type=text]').val();
-    
-    if (inputValue === "" || inputValue === null) 
-    {
-        console.log("#span-" + id);
-        $id.addClass('has-error has-feedback');
-        $('#span-' +  id).removeClass('hidden');
-        $('#inputError-' + id).removeClass('hidden');
-        return false;
-    }
-    else {
-        $id.removeClass('has-error has-feedback');
-        $('#span-' + id).addClass('hidden');
-        $('#inputError-' + id).addClass('hidden');
-        return true;
-    }
-};
-    
-//have the input textbox be same size as placeholder
-function sizePlaceholder() {
-    $(this).attr('size', $(this).attr('placeholder').length);
-}
-
 $(document).ready(function() {
     
     //have the calendar show when you click in the input section of the date
@@ -37,16 +6,45 @@ $(document).ready(function() {
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
     
- 
-    //have title resize when page is loaded, and when keys are pressed and released
-    $('#calendarTitle')
-        // event handler
-        .keyup(sizePlaceholder)
-        // resize on page load
-        .each(sizePlaceholder);
-    
+    var validateForm = function(formGroupId) {
+        //make sure all the fields of the form are filled out with 
+        //valid information
+        //for errors need to add has-error and has-feedback and have to add
+        //the entire span for the glyphicon
+        
+        var id = formGroupId;
+        var $id = $('#' + formGroupId);
+        var inputValue = $id.find('input[type=text]').val();
+        
+        if (inputValue === "" || inputValue === null) 
+        {
+            if (id === 'dateFormGroup') {
+                $id.addClass('has-error has-feedback');
+                $('#inputError-' + id).removeClass('hidden');
+            }
+            else {
+                $id.addClass('has-error has-feedback');
+                $('#span-' +  id).removeClass('hidden');
+                $('#inputError-' + id).removeClass('hidden');
+            }
+            return false;
+        }
+        else {
+            if (id === 'dateFormGroup') {
+                $id.removeClass('has-error has-feedback');
+                $('#inputError-' + id).addClass('hidden');
+            }
+            else {
+                $id.removeClass('has-error has-feedback');
+                $('#span-' + id).addClass('hidden');
+                $('#inputError-' + id).addClass('hidden');
+            }
+            return true;
+        }
+    };
     
     $('#setButton').click(function(){
+        console.log("set Button clicked");
         //make a calendar object with information given in the form
         //required info are startDate and title. default to tracking 1 
         //year
@@ -61,8 +59,8 @@ $(document).ready(function() {
         var monthObjects;
         
         //if there is no valid startDate, prompt user for a valid startDate
-        var validateTitle = validateForm('titleFormGroup');
-        var validateDate = validateForm('dateFormGroup');
+        var validateTitle = validateForm(calendarTitleId);
+        var validateDate = validateForm(startDateId);
         
         if (validateTitle && validateDate) {
             

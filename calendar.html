@@ -88,6 +88,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-offset-2 col-md-6">
+          
           <form id="fullForm">
               <div id="titleFormGroup" class="form-group">
                   <label for="calendarTitle">Calendar Title</label>
@@ -103,7 +104,7 @@
                       
                       <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
                       <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-calendar"></span>
+                          <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
                       </span>
                   </div> <!-- /.input-group date -->
                   <script type="text/javascript">
@@ -111,7 +112,6 @@
                       $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
                       });
                   </script>
-                  <span id="span-dateFormGroup" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
                   <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
               </div> <!--/.form-group -->
               <div class="form-group" id="spinnerFormGroup">
@@ -120,28 +120,34 @@
                   "1">
                   <small class="form-text text-muted">Maximum 20 years.</small>
               </div> <!-- /.form-group -->
-          </form>
+          
         
         </div> <!-- /.col-md-6 -->
     </div> <!-- /.row -->
     </div> <!-- /.container -->
+    
     <div class="container">
         <div class="row">
             <div class="col-md-offset-2 col-md-2">
-                <button id="setButton" type="submit" class="btn btn-primary btn-block">Set</button>
+                
+                <!-- MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
+                
+                <button id="setButton" type="button" class="btn btn-primary btn-block">Set</button>
             </div>
         </div><!--/.row-->
     </div><!-- /.container-->
+    
+    </form>
   
-</div> <!-- /#calendarTitleContainer -->
+</div> <!-- /#calendarFormContainer -->
  
 <div id="buttonContainer">
     <div class="container">
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
                 <div id="buttonGroup" class="btn-group hide" role="group" aria-label="button group">
-                    <button type="button" class="btn btn-default">Save Calendar</button>
-                    <button type="button" class="btn btn-default">Delete Calendar</button>
+                    <button id="saveButton" type="button" class="btn btn-default">Save Calendar</button>
+                    <button id="deleteButton" type="button" class="btn btn-default">Delete Calendar</button>
                 </div>
             </div>
         </div>
