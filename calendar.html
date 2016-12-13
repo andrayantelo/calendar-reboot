@@ -89,55 +89,72 @@
     <div class="row">
       <div class="col-md-offset-2 col-md-6">
           
-          <form id="fullForm">
-              <div id="titleFormGroup" class="form-group">
-                  <label for="calendarTitle">Calendar Title</label>
-                  <input type="text" class="form-control" id="calendarTitle"
-                      maxlength="140" placeholder="What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
-                  <span id="span-titleFormGroup" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
-                  <span id="inputError-titleFormGroup" class="sr-only hidden">(error)</span>
-                  <!--<small class="form-text text-muted">This field is required.</small> -->
-              </div>
-              <div id="dateFormGroup" class="form-group">
-                  <label for="startDate">Start Date</label> 
-                  <div class='input-group date' id='datetimepicker1'>
-                      
-                      <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
-                      <span class="input-group-addon">
-                          <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
-                      </span>
-                  </div> <!-- /.input-group date -->
-                  <script type="text/javascript">
-                      $(function () {
-                      $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
-                      });
-                  </script>
-                  <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
-              </div> <!--/.form-group -->
-              <div class="form-group" id="spinnerFormGroup">
-                  <label for="spinner">Number of Years to Track</label>
-                  <input type="number" class="form-control" id="numberOfYears" min="1" max="20" placeholder=
-                  "1">
-                  <small class="form-text text-muted">Maximum 20 years.</small>
-              </div> <!-- /.form-group -->
-          
+          <!-- put form inside of accordion -->
+         
+          <div id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                  <h5 class="mb-0">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Build Calendar
+                    </a>
+                  </h5>
+                </div>
+
+        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="card-block">
+              
+              <form id="fullForm">
+                  <div id="titleFormGroup" class="form-group">
+                      <label for="calendarTitle">Calendar Title</label>
+                      <input type="text" class="form-control" id="calendarTitle"
+                          maxlength="140" placeholder="What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
+                      <span id="span-titleFormGroup" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
+                      <span id="inputError-titleFormGroup" class="sr-only hidden">(error)</span>
+                      <!--<small class="form-text text-muted">This field is required.</small> -->
+                  </div>
+                  <div id="dateFormGroup" class="form-group">
+                      <label for="startDate">Start Date</label> 
+                      <div class='input-group date' id='datetimepicker1'>
+                          
+                          <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
+                          <span class="input-group-addon">
+                              <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                      </div> <!-- /.input-group date -->
+                      <script type="text/javascript">
+                          $(function () {
+                          $('#datetimepicker1').datetimepicker({format: "MM-DD-YYYY"});
+                          });
+                      </script>
+                      <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
+                  </div> <!--/.form-group -->
+                  <div class="form-group" id="spinnerFormGroup">
+                      <label for="spinner">Number of Years to Track</label>
+                      <input type="number" class="form-control" id="numberOfYears" min="1" max="20" placeholder=
+                      "1">
+                      <small class="form-text text-muted">Maximum 20 years.</small>
+                  </div> <!-- /.form-group -->
         
-        </div> <!-- /.col-md-6 -->
-    </div> <!-- /.row -->
-    </div> <!-- /.container -->
-    
-    <div class="container">
-        <div class="row">
-            <div class="col-md-offset-2 col-md-2">
-                
-                <!-- MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
-                
-                <button id="setButton" type="button" class="btn btn-primary btn-block">Set</button>
-            </div>
-        </div><!--/.row-->
-    </div><!-- /.container-->
-    
-    </form>
+                    
+                    <!-- MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
+                <div class="row">
+                    <div class="col-md-4">
+                      <div id="setButtonContainer">
+                        <button id="setButton" type="button" class="btn btn-primary btn-block">Set</button>
+                      </div>
+                    </div> <!--/.col-md-3-->
+                  </div>  <!-- /.row -->
+                  
+              </div> <!-- /.col-md-6 -->
+            </div> <!-- /.row -->
+          </div> <!-- /.container -->
+        
+        </form>
+      </div> <!--/.card-block -->
+    </div> <!--/.collapseOne -->
+  </div> <!--/.card -->
+</div> <!-- /.accordion -->
   
 </div> <!-- /#calendarFormContainer -->
  
@@ -145,15 +162,31 @@
     <div class="container">
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
-                <div id="buttonGroup" class="btn-group hide" role="group" aria-label="button group">
-                    <button id="saveButton" type="button" class="btn btn-default">Save Calendar</button>
-                    <button id="deleteButton" type="button" class="btn btn-default">Delete Calendar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
  
+                <div class="card">
+                    <div class="card-header" role="tab" id="headingTwo">
+                      <h5 class="mb-0">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                          Calendar Functions
+                        </a>
+                      </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                      <div class="card-block">
+     
+                        <div id="buttonGroup" class="btn-group" role="group" aria-label="button group">
+                            <button id="saveButton" type="button" class="btn btn-default">Save Calendar</button>
+                            <button id="deleteButton" type="button" class="btn btn-default">Delete Calendar</button>
+                        </div> <!-- /.#buttonGroup -->
+
+                    </div> <!--/.card-block -->
+                  </div> <!-- /.collapse -->
+                </div> <!--/.card -->
+ 
+              </div><!-- ./col -->
+            </div><!-- ./row -->
+        </div><!-- /.container-->
+    </div><!-- /.buttonContainer -->
  
 </div> <!-- /#contentWrapper -->
 

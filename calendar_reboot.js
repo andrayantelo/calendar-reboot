@@ -50,6 +50,7 @@ $(document).ready(function() {
         //year
         
         
+        
         var calendarTitleId = 'titleFormGroup';
         var startDateId = 'dateFormGroup';
         
@@ -63,9 +64,14 @@ $(document).ready(function() {
         var validateDate = validateForm(startDateId);
         
         if (validateTitle && validateDate) {
+            //clear the previously displayed calendar <-- or should i reload the page???
+            clearPage();
+            //collapse the build calendar form
+            $('#collapseOne').collapse('toggle'); 
+            //show the calendar function buttons
+            $('#collapseTwo').collapse('toggle');
             
-            
-            calendar =  new Calendar(startDate, numberOfYears, calendarTitle);
+            calendar = new Calendar(startDate, numberOfYears, calendarTitle);
             calendar.initCalendarState();
             calendar.getYears();
             
@@ -218,16 +224,13 @@ var oneIndexMonth = function(monthIndex) {
 };
         
 
-var clearPage = function(yearArray) {
+var clearPage = function() {
     // Remove all divs from page except #template
     //Parameters:
     // yearArray: array
-    yearArray.forEach(function(year) 
-    {
-        $('#' + year).remove();
-        $('.monthframe').remove();
-    });
+    var $div = $("#calendarDiv");
     
+    $div.children('.monthframe').remove();
 };
 
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
