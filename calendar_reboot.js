@@ -49,8 +49,6 @@ $(document).ready(function() {
         //required info are startDate and title. default to tracking 1 
         //year
         
-        
-        
         var calendarTitleId = 'titleFormGroup';
         var startDateId = 'dateFormGroup';
         
@@ -71,6 +69,10 @@ $(document).ready(function() {
             //show the calendar function buttons
             $('#collapseTwo').collapse('toggle');
             
+            
+            //should I make a separate function for the below
+            //Do i need to make the actual calendar object outside of this function 
+            // so that it is available in the global environment?
             calendar = new Calendar(startDate, numberOfYears, calendarTitle);
             calendar.initCalendarState();
             calendar.getYears();
@@ -82,6 +84,17 @@ $(document).ready(function() {
             calendar.attachClickForCalendar(monthObjects);
             calendar.removeEmptyWeeksFromCalendar(monthObjects);
        }
+    });
+    
+    $('#saveButton').click(function() {
+        //stores current calendar in localStorage, adds the name to
+        //the saved calendars dropdown
+        
+    });
+    
+    $('#deleteButton').click(function() {
+        //deletes the current calendar on display, removes
+        //the name from the saved calendars dropdown
     });
     
    

@@ -91,18 +91,18 @@
           
           <!-- put form inside of accordion -->
          
-          <div id="accordion" role="tablist" aria-multiselectable="true">
-              <div class="card">
-                <div class="card-header" role="tab" id="headingOne">
-                  <h5 class="mb-0">
+          <div id="accordion" class="panel-group" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h5 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                       Build Calendar
                     </a>
                   </h5>
-                </div>
+                </div> <!--/.panel-heading -->
 
-        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
-          <div class="card-block">
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
               
               <form id="fullForm">
                   <div id="titleFormGroup" class="form-group">
@@ -151,10 +151,10 @@
           </div> <!-- /.container -->
         
         </form>
-      </div> <!--/.card-block -->
-    </div> <!--/.collapseOne -->
-  </div> <!--/.card -->
-</div> <!-- /.accordion -->
+      </div> <!--/.panel-body -->
+    </div> <!--/.collapseOne panel-collapse-->
+  </div> <!--/.panel -->
+</div> <!-- /.accordion panel-group -->
   
 </div> <!-- /#calendarFormContainer -->
  
@@ -163,25 +163,28 @@
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
  
-                <div class="card">
-                    <div class="card-header" role="tab" id="headingTwo">
-                      <h5 class="mb-0">
-                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+ 
+            <div class="panel-group" id="accordion2">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                      <h5 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                           Calendar Functions
                         </a>
                       </h5>
                     </div>
-                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                      <div class="card-block">
+                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                      <div class="panel-body">
      
                         <div id="buttonGroup" class="btn-group" role="group" aria-label="button group">
                             <button id="saveButton" type="button" class="btn btn-default">Save Calendar</button>
                             <button id="deleteButton" type="button" class="btn btn-default">Delete Calendar</button>
                         </div> <!-- /.#buttonGroup -->
 
-                    </div> <!--/.card-block -->
-                  </div> <!-- /.collapse -->
-                </div> <!--/.card -->
+                    </div> <!--/.panel-body -->
+                  </div> <!-- /.panel-collapse -->
+                </div> <!--/.panel panel-default -->
+              </div> <!--/.panel-group -->
  
               </div><!-- ./col -->
             </div><!-- ./row -->
