@@ -51,10 +51,7 @@ $(document).ready(function() {
         
         var calendarTitleId = 'titleFormGroup';
         var startDateId = 'dateFormGroup';
-        
-        var calendarTitle = $("#calendarTitle").val();
-        var startDate = $("#startDate").val();
-        var numberOfYears = $("#numberOfYears").val() || 1;
+    
         var monthObjects;
         
         //if there is no valid startDate, prompt user for a valid startDate
@@ -69,26 +66,67 @@ $(document).ready(function() {
             //show the calendar function buttons
             $('#collapseTwo').collapse('toggle');
             
+            //update the calendar's startDate, title, and numberOfYears attributes
+            //with information given in the form
+            var calendarTitle = $("#calendarTitle").val();
+            var startDate = $("#startDate").val();
+            var numberOfYears = $("#numberOfYears").val() || 1;
+            
+            calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
             
             //should I make a separate function for the below
             //Do i need to make the actual calendar object outside of this function 
             // so that it is available in the global environment?
-            calendar = new Calendar(startDate, numberOfYears, calendarTitle);
             calendar.initCalendarState();
+            
             calendar.getYears();
             
             calendar.calendarState.monthStates = calendar.getMonthStates();
             monthObjects = calendar.generateMonthObjects();
-            calendar.generateEmptyCalendar(monthObjects);
-            calendar.fillCalendar(monthObjects);
-            calendar.attachClickForCalendar(monthObjects);
-            calendar.removeEmptyWeeksFromCalendar(monthObjects);
+            calendar.monthObjects = monthObjects;
+            console.log("about to run generateEmptyCalendar");
+            calendar.generateEmptyCalendar(calendar.monthObjects);
+            console.log("generateEmptyCalendar just ran");
+            calendar.fillCalendar(calendar.monthObjects);
+            calendar.attachClickForCalendar(calendar.monthObjects);
+            calendar.removeEmptyWeeksFromCalendar(calendar.monthObjects);
        }
     });
     
     $('#saveButton').click(function() {
         //stores current calendar in localStorage, adds the name to
         //the saved calendars dropdown
+        
+        //what needs to happen when you save:
+        //the monthStates attribute(property?) checkedDays needs to be 
+        //updated with the day indices of days that have a checkmark
+        //all monthStates need to have the most current information about
+        //the calendar, this is done by updating the calendarState
+        //maybe user changed numberOfYears to track or the calendarTitle, 
+        //or even the start date? (should they be able to change the startdate?
+        //probably not)
+        //then the updated calendarState needs to be stored in localStorage
+        
+        //update the calendarState
+        calendar.updateCalendarState(calendar.monthObjects);
+        
+        //declare a variable that stores the storage key for this calendar
+        var calendarStorageKey = calendar.calendarState.calendarTitle;
+        
+        //store it in localStorage
+        storeInLocalStorage(calendarStorageKey, 
+                            calendar.calendarState);
+        
+        //check it was stored in localStorage -- > probably not needed later
+        if (loadFromLocalStorage(calendar.calendarState.calendarTitle)) {
+            console.log("it is stored in local Storage");
+        }
+        
+        //add list title to saved calendars dropdown
+        console.log("adding calendar title to dropdown menu");
+        $('#savedCalendarsDropdown').append('<li id="#"' + calendarStorageKey + 
+        '> <a href=#>' + calendarStorageKey + '</a></li>');
+        console.log("calendar title added to dropdown menu");
         
     });
     
@@ -97,12 +135,16 @@ $(document).ready(function() {
         //the name from the saved calendars dropdown
     });
     
+    
+    //WHEN PAGE LOADS
+    //make an empty calendar object
+    calendar = new Calendar("", 0, "");
    
 });
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
 
-var storeInLocalStorage = function(storageKey, storageItem) {
+var storeInLocalStorage = function(storageItemKey, storageItem) {
     //store information in database/ might start with localstorage though
     // Convert a javascript value (storageItem) to a JSON string and
     // accesses the current domain's local Storage object and adds a data item
@@ -243,6 +285,7 @@ var clearPage = function() {
     // yearArray: array
     var $div = $("#calendarDiv");
     
+    $div.find('#calendarTitleHeading').remove();
     $div.children('.monthframe').remove();
 };
 
@@ -426,7 +469,7 @@ var Month = function(date) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><i class="fa fa-check hidden"></i></div>';
+                 dayOfMonth.toString() + '"></div><i class="fa fa-check fa-2x hidden"></i></div>';
                  
                  //add html inside td element
                  $(this).append(toAdd);
@@ -539,6 +582,18 @@ var Calendar = function(startDate, numberOfYears, title) {
     //user wants to track
     self.numberOfMonths = self.numberOfYears * 12;
     self.title = title;
+    self.monthObjects = [];
+    
+    self.updateCalendarAttributes = function(startDate, numberOfYears, title) {
+        //update the startDate, numberOfYears, and title.
+        //startDate is a string, numberOfyears is an int, and title is
+        //a string
+        
+        self.startDate = moment(startDate, "MM-DD-YYYY");
+        self.numberOfYears = numberOfYears;
+        self.title = title;
+        self.numberOfMonths = self.numberOfYears * 12;
+    };
     
     self.initCalendarState = function() {
         self.calendarState.startDate = self.startDate.format();
@@ -643,7 +698,13 @@ var Calendar = function(startDate, numberOfYears, title) {
     self.generateEmptyCalendar = function(monthObjectsArray) {
         // generates the empty month divs for the calendar
         
+        
+        
         var $div = $('#calendarDiv');
+    
+        $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
+                  $('#calendarTitle').val() + '</h1></div>');
+        
         monthObjectsArray.forEach (function(monthObj) {
             if (self.startDate.month() === monthObj.date.month() && self.startDate.year() === monthObj.date.year()) 
             {
@@ -717,8 +778,7 @@ var Calendar = function(startDate, numberOfYears, title) {
     };
     
     self.updateCalendarState = function(monthObjectsArray) {
-        //updates calendarState to most current version, and includes the
-        //calendarTitle for the first time
+        //updates calendarState to most current version
         
         //update the individual monthState checkedDays object
         self.collectCalendarCheckmarks(monthObjectsArray);
