@@ -1,5 +1,10 @@
 $(document).ready(function() {
     
+    var calendarTitleId = 'titleFormGroup';
+    var startDateId = 'dateFormGroup';
+    
+    var monthObjects;
+    
     //have the calendar show when you click in the input section of the date
     //timepicker
     $('#datetimepicker1 input').click(function(event){
@@ -49,10 +54,6 @@ $(document).ready(function() {
         //required info are startDate and title. default to tracking 1 
         //year
         
-        var calendarTitleId = 'titleFormGroup';
-        var startDateId = 'dateFormGroup';
-    
-        var monthObjects;
         
         //if there is no valid startDate, prompt user for a valid startDate
         var validateTitle = validateForm(calendarTitleId);
@@ -63,8 +64,6 @@ $(document).ready(function() {
             clearPage();
             //collapse the build calendar form
             $('#collapseOne').collapse('toggle'); 
-            //show the calendar function buttons
-            $('#collapseTwo').collapse('toggle');
             
             //update the calendar's startDate, title, and numberOfYears attributes
             //with information given in the form
@@ -82,11 +81,12 @@ $(document).ready(function() {
             calendar.getYears();
             
             calendar.calendarState.monthStates = calendar.getMonthStates();
+            
+            //should I do the below two lines this way?
             monthObjects = calendar.generateMonthObjects();
             calendar.monthObjects = monthObjects;
-            console.log("about to run generateEmptyCalendar");
+            
             calendar.generateEmptyCalendar(calendar.monthObjects);
-            console.log("generateEmptyCalendar just ran");
             calendar.fillCalendar(calendar.monthObjects);
             calendar.attachClickForCalendar(calendar.monthObjects);
             calendar.removeEmptyWeeksFromCalendar(calendar.monthObjects);
@@ -128,6 +128,15 @@ $(document).ready(function() {
         '> <a href=#>' + calendarStorageKey + '</a></li>');
         console.log("calendar title added to dropdown menu");
         
+        console.log("checking if item can be clicked");
+        
+        
+    });
+    
+    $('#savedCalendarsDropdown').click(function() {
+        //going to just print something to console to test it out first
+        var whatIClickedOn = $(this).text();
+        console.log(whatIClickedOn);
     });
     
     $('#deleteButton').click(function() {
@@ -610,7 +619,7 @@ var Calendar = function(startDate, numberOfYears, title) {
         var startYear = self.startDate.year();
         years.push(startYear);
         
-        for (i = 1; i <= self.numberOfYears; i++)
+        for (i = 1; i < self.numberOfYears; i++)
         {
             years.push(startYear + i);
         }
