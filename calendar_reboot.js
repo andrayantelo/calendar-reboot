@@ -69,7 +69,7 @@ $(document).ready(function() {
             //with information given in the form
             var calendarTitle = $("#calendarTitle").val();
             var startDate = $("#startDate").val();
-            var numberOfYears = $("#numberOfYears").val() || 1;
+            var numberOfYears = parseInt($("#numberOfYears").val()) || 1;
             
             calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
             
@@ -77,9 +77,7 @@ $(document).ready(function() {
             //Do i need to make the actual calendar object outside of this function 
             // so that it is available in the global environment?
             calendar.initCalendarState();
-            
-            calendar.getYears();
-            
+         
             calendar.calendarState.monthStates = calendar.getMonthStates();
             
             //should I do the below two lines this way?
@@ -133,7 +131,7 @@ $(document).ready(function() {
         
     });
     
-    $('#savedCalendarsDropdown').click(function() {
+    $('#savedCalendarsDropdown').children().click(function() {
         //going to just print something to console to test it out first
         var whatIClickedOn = $(this).text();
         console.log(whatIClickedOn);
@@ -574,15 +572,18 @@ var emptyCalendarState = function() {
         //self.numberOfYears
         numberOfYears: 1,
         //self.numberOfMonths
-        numberOfMonths: 12
+        numberOfMonths: 12,
+        //the last day of tracking
+        endDate: undefined
     };
 };
 
-var Calendar = function(startDate, numberOfYears, title) {
+var Calendar = function(startDateString, numberOfYears, title) {
     
     var self = this;
-    //startDate is a "MM-DD-YYYY" string
-    self.startDate = moment(startDate, "MM-DD-YYYY");
+    //startDate is a moment object , the argument startDateString is 
+    //"MM-DD-YYYY" string
+    self.startDate = moment(startDateString, "MM-DD-YYYY");
     self.calendarState = emptyCalendarState();
     //numberOfYears is a number given by user, how many years do they want
     //to track, we will default to 1 right now
@@ -592,25 +593,49 @@ var Calendar = function(startDate, numberOfYears, title) {
     self.numberOfMonths = self.numberOfYears * 12;
     self.title = title;
     self.monthObjects = [];
+    //endDate is a moment object
+    self.endDate = undefined;
     
-    self.updateCalendarAttributes = function(startDate, numberOfYears, title) {
+    self.updateCalendarAttributes = function(startDateString, numberOfYears, title) {
         //update the startDate, numberOfYears, and title.
         //startDate is a string, numberOfyears is an int, and title is
         //a string
         
-        self.startDate = moment(startDate, "MM-DD-YYYY");
+        self.startDate = moment(startDateString, "MM-DD-YYYY");
         self.numberOfYears = numberOfYears;
         self.title = title;
         self.numberOfMonths = self.numberOfYears * 12;
+        self.endDate = self.getEndDate();
     };
     
     self.initCalendarState = function() {
+        //store all the information needed for a calendarState
+        //you store the strings "MM-DD-YYYY" for startDate and endDate
+        
         self.calendarState.startDate = self.startDate.format();
         self.calendarState.years = self.getYears();
         self.calendarState.monthStates = self.getMonthStates();
         self.calendarState.calendarTitle = self.title;
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
+        self.calendarState.endDate = self.endDate.format();
+    };
+    
+    
+    self.getEndDate = function() {
+        //endDate depends on the startDate and numberOfYears
+        // Someone picks dec 15 2016 as startDate and then wants to 
+        //track 3 years, the last day should be dec 15, 2019
+        
+        var endYear = (self.startDate.year() + self.numberOfYears).toString();
+        var endMonth = oneIndexMonth(self.startDate.month()).toString();
+        var endDate = self.startDate.date().toString();
+        
+        var endDate = moment(endMonth + "-" + endDate + "-" + endYear,
+                             "MM-DD-YYYY");
+        
+        return endDate;
+        
     };
     
     self.getYears = function() {
@@ -619,12 +644,26 @@ var Calendar = function(startDate, numberOfYears, title) {
         var startYear = self.startDate.year();
         years.push(startYear);
         
-        for (i = 1; i < self.numberOfYears; i++)
+        
+        
+        for (i = 0; i < self.numberOfYears; i++)
         {
-            years.push(startYear + i);
+            years.push(startYear += 1);
         }
         return years;
     };
+    
+    
+    
+    
+    self.getMonthStatesDraft = function() {
+        var monthStates = [];
+        //number of years that will be covered
+        var yearsLength = self.calendarState.years.length;
+        
+    };
+    
+    
     
     
     self.getMonthStates = function() {
@@ -674,14 +713,15 @@ var Calendar = function(startDate, numberOfYears, title) {
                 //for loop for the 12 months of each remaining year
                 for (k = 0; k  < 12; k ++)
                 {
-                monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
-                                 self.calendarState.years[i]);
-                monthStates.push(monthState);
                 
-                }
-            }
+                    monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
+                                     self.calendarState.years[i]);
+                    monthStates.push(monthState);
+                         
+                } // end of k for loop
+            } //end of else conditional
             
-        }
+        } //end of i for loop
         return monthStates;
     };
         
