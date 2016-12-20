@@ -11,6 +11,8 @@ $(document).ready(function() {
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
     
+    
+    
     var validateForm = function(formGroupId) {
         //make sure all the fields of the form are filled out with 
         //valid information
@@ -77,8 +79,6 @@ $(document).ready(function() {
             //Do i need to make the actual calendar object outside of this function 
             // so that it is available in the global environment?
             calendar.initCalendarState();
-         
-            calendar.calendarState.monthStates = calendar.getMonthStates();
             
             //should I do the below two lines this way?
             monthObjects = calendar.generateMonthObjects();
@@ -122,8 +122,14 @@ $(document).ready(function() {
         
         //add list title to saved calendars dropdown
         console.log("adding calendar title to dropdown menu");
-        $('#savedCalendarsDropdown').append('<li id="#"' + calendarStorageKey + 
+        
+        //HAVE TO STORE TIMESTAMP ID WITH CALENDAR STATE
+        
+        //NEED UNIQUE ID FOR DROPDOWN ITEMS
+        $('#savedCalendarsDropdown').append('<li id="#"' + Date.now() + 
         '> <a href=#>' + calendarStorageKey + '</a></li>');
+        
+        
         console.log("calendar title added to dropdown menu");
         
         console.log("checking if item can be clicked");
@@ -133,7 +139,7 @@ $(document).ready(function() {
     
     $('#savedCalendarsDropdown').children().click(function() {
         //going to just print something to console to test it out first
-        var whatIClickedOn = $(this).text();
+        var whatIClickedOn = $(this);
         console.log(whatIClickedOn);
     });
     
@@ -150,6 +156,9 @@ $(document).ready(function() {
 });
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
+
+var generateUniqueId = function() {
+};
 
 var storeInLocalStorage = function(storageItemKey, storageItem) {
     //store information in database/ might start with localstorage though
@@ -435,7 +444,7 @@ var Month = function(date) {
         var $div = $('#calendarDiv');
         var $monthId = $('#' + self.monthState.monthId);
         $div.find($monthId).find('.cell').click(function (event) {
-            $( this ).children('.fa').toggleClass("hidden");
+            $( this ).children('.element').toggleClass("hidden");
             $( this ).children('.daynumber').addClass("checkedDay");
             
         });
@@ -476,7 +485,7 @@ var Month = function(date) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><i class="fa fa-check fa-2x hidden"></i></div>';
+                 dayOfMonth.toString() + '"></div><div class="element hidden"></div></div>';
                  
                  //add html inside td element
                  $(this).append(toAdd);
@@ -574,7 +583,9 @@ var emptyCalendarState = function() {
         //self.numberOfMonths
         numberOfMonths: 12,
         //the last day of tracking
-        endDate: undefined
+        endDate: undefined,
+        //unique ID for calendar
+        calendarId: 0
     };
 };
 
@@ -660,6 +671,13 @@ var Calendar = function(startDateString, numberOfYears, title) {
         var monthStates = [];
         //number of years that will be covered
         var yearsLength = self.calendarState.years.length;
+        var monthState = null;
+        
+        //iterating over the number of Years.
+        for (i = 0; i < self.numberOfYears; i++) {
+            console.log("we are on iteration " + i);
+        }
+        return 0;
         
     };
     
@@ -678,6 +696,7 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //iterating over the years
         for (i = 0; i < yearsLength; i++) 
         {
+            console.log("this is the i we are on in the i for loop " + i);
             //in year i, get monthStates for months in it
             
             if (self.calendarState.years[i] === self.startDate.year()) 
@@ -703,7 +722,7 @@ var Calendar = function(startDateString, numberOfYears, title) {
                         monthStates.push(monthState);
                     }
                 } // end of for loop
-            continue;
+            
             } //end of first if statement
             
             //if the year is not the same as the startDate year, so the
@@ -713,9 +732,13 @@ var Calendar = function(startDateString, numberOfYears, title) {
                 //for loop for the 12 months of each remaining year
                 for (k = 0; k  < 12; k ++)
                 {
-                
+                    
                     monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
                                      self.calendarState.years[i]);
+                    
+                    if (i === yearsLength - 1 && k === self.endDate.month()) {
+                        monthState.numberOfDays = self.endDate.date();
+                    }
                     monthStates.push(monthState);
                          
                 } // end of k for loop

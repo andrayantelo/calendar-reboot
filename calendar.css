@@ -3,27 +3,13 @@ body{
 }
 
 #navbarContainer{
-  top: 0;
-  height: 30px;
+  top: 0; 
 }
 
-@media screen and (min-width: 980px) /* Desktop */ {
-  #contentWrapper {
-  margin: 50px auto 0;
-}
+#contentWrapper {
+  padding-top: 70px;
 }
 
-@media screen and (max-width: 979px) /*tablet*/ {
-  #contentWrapper {
-  margin: 50px auto 0;
-  }
-}
-
-@media screen and (max-width: 500px) /* mobile */ {
-  #contentWrapper {
-  margin: 50px auto 0;
-}
-}
 
 html {
     font-size:100%;
@@ -56,13 +42,38 @@ table {
     border-collapse: collapse;
 }
 
-td {
+
+@media screen and (min-width: 980px) /* Desktop */ {
+  td {
     width:80px;
     height: 80px;
     text-align: center;
     cursor:default;
     border:1px solid #e6e6e6;
     
+}
+}
+
+@media screen and (max-width: 979px) /*tablet*/ {
+  td {
+    width:70px;
+    height: 70px;
+    text-align: center;
+    cursor:default;
+    border:1px solid #e6e6e6;
+    
+}
+}
+
+@media screen and (max-width: 500px) /* mobile*/  {
+  td {
+    width:70px;
+    height: 70px;
+    text-align: center;
+    cursor:default;
+    border:1px solid #e6e6e6;
+    
+}
 }
     
 #days {
@@ -77,13 +88,34 @@ td {
 }
 
 
-
-.monthframe, #template {
+@media screen and (min-width: 980px) /* Desktop */ {
+  .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
     margin-top: 25px;
     position: relative;
     width: 50%
+}
+}
+
+@media screen and (max-width: 979px) /*tablet*/ {
+  .monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
+}
+
+@media screen and (max-width: 500px) /* mobile*/  {
+  .monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
 }
 
 .month {
@@ -111,10 +143,46 @@ td {
 
 .daynumber {
     text-align:left;
+    position: relative;
 } 
 
-.daynumber, .fa-fa check {
+.element {
+    position: relative;
+}
+ 
+/*replace the content value with the
+corresponding value from the list below*/
+ 
+.element:before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+/*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
     position: absolute;
+    top: 5%;
+    left: 30%;
+}
+@media screen and (min-width: 980px) /* Desktop */ {
+  .element {
+    font-size: 22px;
+}
+}
+
+@media screen and (max-width: 979px) /*tablet*/ {
+  .element {
+  font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 500px) /* mobile*/  {
+  .element {
+  font-size: 14px;
+}
 }
 
 .cell, .nill {
