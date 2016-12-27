@@ -12,47 +12,69 @@ $(document).ready(function() {
     });
     
     
+    var titleCheck = function(title) {
+        //make sure that the title the user provides for their calendar is 
+        //unique. Need to have unique titles for calendar so that you can 
+        //use the calendarUniqueId object (dictionary) properly. Can't have
+        //the same title pointing to different unique Ids. 
+        
+        if (calendarUniqueId[title]) {
+            console.log("that title already exists");
+        }
+    };
+    
+    var addFormError = function(id, srId) {
+        //toggles the visibility of the has-error and has-feedback
+        //classes on the date input and the title input tags.
+        
+        //id is the id of the eleent with the error glyphicon
+        //srId is the id for the span tag with the instructions for 
+        //screen readers, span has class sr-only
+        
+        id.addClass('has-error has-feedback');
+        srId.removeClass('hidden');
+        
+    };
     
     var validateForm = function(formGroupId) {
-        //make sure all the fields of the form are filled out with 
-        //valid information
-        //for errors need to add has-error and has-feedback and have to add
-        //the entire span for the glyphicon
         
+        //make a variable for the id string
         var id = formGroupId;
+        //a variable for the id string with the # infront of it
         var $id = $('#' + formGroupId);
+        //a variable for the input tag value
         var inputValue = $id.find('input[type=text]').val();
         
-        if (inputValue === "" || inputValue === null) 
-        {
-            if (id === 'dateFormGroup') {
-                $id.addClass('has-error has-feedback');
-                $('#inputError-' + id).removeClass('hidden');
-            }
-            else {
-                $id.addClass('has-error has-feedback');
+        //if the user hasn't written anything in the input tag
+        // then we need to bring up the error, the glyphicon needs
+        //to appear
+        if (inputValue === "" || inputValue === null) {
+            //the form group gets the classes has-error and has-feedback
+            $id.addClass('has-error has-feedback');
+            //remove the hidden class from the sr-only span
+            $('#inputError-' + id).removeClass('hidden');
+            //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
+            //check if we are dealing with the title
+            if ($id.find("input").attr("id") === "calendarTitle") {
                 $('#span-' +  id).removeClass('hidden');
-                $('#inputError-' + id).removeClass('hidden');
             }
             return false;
         }
         else {
-            if (id === 'dateFormGroup') {
-                $id.removeClass('has-error has-feedback');
-                $('#inputError-' + id).addClass('hidden');
-            }
-            else {
-                $id.removeClass('has-error has-feedback');
+            $id.removeClass('has-error has-feedback');
+            $('#inputError-' + id).addClass('hidden');
+            if ($id.find("input").attr('id') === "calendarTitle") {
                 $('#span-' + id).addClass('hidden');
-                $('#inputError-' + id).addClass('hidden');
             }
-            return true;
+                
         }
+        return true;
     };
     
     $('#setButton').click(function(){
         console.log("set Button clicked");
-        //make a calendar object with information given in the form
+        //take the empty calendar object made when the page is loaded
+        // and fill it with the information given in the form
         //required info are startDate and title. default to tracking 1 
         //year
         
@@ -91,6 +113,7 @@ $(document).ready(function() {
        }
     });
     
+    //determines what happens when the save Button is clicked
     $('#saveButton').click(function() {
         //stores current calendar in localStorage, adds the name to
         //the saved calendars dropdown
@@ -121,7 +144,6 @@ $(document).ready(function() {
         }
         
         //add list title to saved calendars dropdown
-        console.log("adding calendar title to dropdown menu");
         
         //HAVE TO STORE TIMESTAMP ID WITH CALENDAR STATE, the timestamp will
         //be the unique ID associated with a calendar, and will also be the
@@ -129,10 +151,8 @@ $(document).ready(function() {
         
         calendarUniqueId[calendarTitle] = Date.now();
         
-        console.log("the unique ID is equal to " + calendarUniqueId[calendarTitle]);
-        console.log("the type of unique Id is " + typeof(calendarUniqueId[calendarTitle]));
-        
-        //NEED UNIQUE ID FOR DROPDOWN ITEMS
+        //Use timestamp as Id for dropdown list item, make sure to put 
+        //quotation marks around the timestamp (not sure if necessary)
         $('#savedCalendarsDropdown').append('<li id="#"' + '"' + calendarUniqueId[calendarTitle] + '"'
           + '> <a href=#>' + calendarTitle + '</a></li>');
         
@@ -140,7 +160,7 @@ $(document).ready(function() {
         console.log("calendar title added to dropdown menu");
         
         console.log("checking if item can be clicked");
-        //still have to do this 
+        $('#' + '"' + calendarUniqueId[calendarTitle] + '"').trigger("click");
         
         
     });
