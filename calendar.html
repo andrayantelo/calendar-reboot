@@ -61,21 +61,30 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="main-navbar">
           <ul class="nav navbar-nav">
+              
+            <!--first item in navbar -->
             <li>
                 <button id="saveButton" type="button" class="btn btn-default navbar-btn">Save Calendar</button>
             </li>
+            
+            <!-- second item in navbar -->
             <li>
                 <button id="deleteButton" type="button" class="btn btn-default navbar-btn">Delete Calendar</button>
             </li>
+            
+            <!-- third item in navbar, list item containing dropdown menu -->
+            
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
               aria-haspopup="true" aria-expanded="false">Saved Calendars <span class="caret">
               </span></a>
               <!-- the list of SAVED CALENDARS inside of the dropdown -->
-              <ul class="dropdown-menu" id="savedCalendarsDropdown">
+              <ul class="dropdown-menu" id="calendarDropdown">
                 <li></li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
+            
+            
           </ul> <!-- /.nav navbar-nav -->
           
         </div> <!-- /#main-navbar -->

@@ -19,13 +19,18 @@ $(document).ready(function() {
         //the same title pointing to different unique Ids. 
         
         if (calendarUniqueId[title]) {
-            console.log("that title already exists");
+            return false;
+        }
+        else {
+            return true;
         }
     };
     
     var addFormError = function(id, srId) {
-        //toggles the visibility of the has-error and has-feedback
-        //classes on the date input and the title input tags.
+        //adds the classes has-error and has-feedback
+        //on the div with the class form-group and it removes the hidden
+        //class on the span with class sr-only (for screen readers to notify
+        //that there has been an error
         
         //id is the id of the eleent with the error glyphicon
         //srId is the id for the span tag with the instructions for 
@@ -34,6 +39,25 @@ $(document).ready(function() {
         id.addClass('has-error has-feedback');
         srId.removeClass('hidden');
         
+    };
+    
+    var removeFormError = function(id, srId) {
+        //removes the classes has-error and has-feedback from the div
+        //with the class form-group, also adds the hidden class on the span
+        //with class sr-only (for screen readers)
+        
+        id.removeClass('has-error has-feedback');
+        srId.removeClass('hidden');
+    };
+    
+    var addGlyphicon = function(id) {
+        //removes the hidden class to the glyphicon tag with id = id
+        id.removeClass('hidden');
+    };
+    
+    var removeGlyphicon = function(id) {
+        //adds the hidden class to the glyphicon tag with id=id
+        id.addClass('hidden');
     };
     
     var validateForm = function(formGroupId) {
@@ -49,24 +73,21 @@ $(document).ready(function() {
         // then we need to bring up the error, the glyphicon needs
         //to appear
         if (inputValue === "" || inputValue === null) {
-            //the form group gets the classes has-error and has-feedback
-            $id.addClass('has-error has-feedback');
-            //remove the hidden class from the sr-only span
-            $('#inputError-' + id).removeClass('hidden');
+            addFormError($id, $('#inputError-' + id) )
+            
             //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
             //check if we are dealing with the title
             if ($id.find("input").attr("id") === "calendarTitle") {
-                $('#span-' +  id).removeClass('hidden');
+                addGlyphicon($('#span-' +  id));
             }
             return false;
         }
         else {
-            $id.removeClass('has-error has-feedback');
-            $('#inputError-' + id).addClass('hidden');
+            removeFormError($id, $('#inputError-' + id) );
+            //remove glyphicon, only for title input tag
             if ($id.find("input").attr('id') === "calendarTitle") {
-                $('#span-' + id).addClass('hidden');
+                removeGlyphicon($('#span-' + id));
             }
-                
         }
         return true;
     };
@@ -134,6 +155,10 @@ $(document).ready(function() {
         //calendarTitle will be the storageKey
         var calendarTitle = calendar.calendarState.calendarTitle;
         
+        //determine whether the title is unique or not, titleValue is true
+        //if unique, false otherwise
+        var titleValue = titleCheck(calendarTitle);
+        
         //store it in localStorage
         storeInLocalStorage(calendarTitle, 
                             calendar.calendarState);
@@ -153,23 +178,27 @@ $(document).ready(function() {
         
         //Use timestamp as Id for dropdown list item, make sure to put 
         //quotation marks around the timestamp (not sure if necessary)
-        $('#savedCalendarsDropdown').append('<li id="#"' + '"' + calendarUniqueId[calendarTitle] + '"'
+        $('#calendarDropdown').append('<li id="#"' + '"' + calendarUniqueId[calendarTitle] + '"'
           + '> <a href=#>' + calendarTitle + '</a></li>');
         
         
         console.log("calendar title added to dropdown menu");
         
-        console.log("checking if item can be clicked");
-        $('#' + '"' + calendarUniqueId[calendarTitle] + '"').trigger("click");
         
+        //else {
+        //    console.log("that title already exists");
+        //    addFormError($('#' + calendarTitleId), $('#inputError-' + calendarTitleId));
+        //    addGlyphicon($('#span-' +  calendarTitleId));
+        //}
         
     });
     
-    $('#savedCalendarsDropdown').children().click(function() {
-        //going to just print something to console to test it out first
-        var whatIClickedOn = $(this);
-        console.log(whatIClickedOn);
+    $('#calendarDropdown').on('click', 'li', function() {
+        console.log("clicked");
+        console.log("this was clicked " + $(this).text());
+        
     });
+
     
     $('#deleteButton').click(function() {
         //deletes the current calendar on display, removes
