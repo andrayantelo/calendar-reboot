@@ -92,6 +92,22 @@ $(document).ready(function() {
         return true;
     };
     
+    var buildCalendar = function(calendarObject) {
+        // builds the front end of a calendar object. creates the html
+        //this function assumes the calendarObject already has it's
+        //calendarState updated with the correct information. 
+        
+        monthObjects = calendar.generateMonthObjects();
+        calendar.monthObjects = monthObjects;
+        
+        calendar.generateEmptyCalendar(calendar.monthObjects);
+        calendar.fillCalendar(calendar.monthObjects);
+        calendar.attachClickForCalendar(calendar.monthObjects);
+        calendar.removeEmptyWeeksFromCalendar(calendar.monthObjects);
+        calendar.placeCheckmarks(calendar.monthObjects);
+        
+    };
+    
     $('#setButton').click(function(){
         console.log("set Button clicked");
         //take the empty calendar object made when the page is loaded
@@ -123,14 +139,8 @@ $(document).ready(function() {
             // so that it is available in the global environment?
             calendar.initCalendarState();
             
-            //should I do the below two lines this way?
-            monthObjects = calendar.generateMonthObjects();
-            calendar.monthObjects = monthObjects;
-            
-            calendar.generateEmptyCalendar(calendar.monthObjects);
-            calendar.fillCalendar(calendar.monthObjects);
-            calendar.attachClickForCalendar(calendar.monthObjects);
-            calendar.removeEmptyWeeksFromCalendar(calendar.monthObjects);
+            //should I do the below lines this way?
+            buildCalendar(calendar);
        }
     });
     
@@ -182,20 +192,18 @@ $(document).ready(function() {
           + '> <a href=#>' + calendarTitle + '</a></li>');
         
         
-        console.log("calendar title added to dropdown menu");
-        
-        
-        //else {
-        //    console.log("that title already exists");
-        //    addFormError($('#' + calendarTitleId), $('#inputError-' + calendarTitleId));
-        //    addGlyphicon($('#span-' +  calendarTitleId));
-        //}
-        
     });
     
     $('#calendarDropdown').on('click', 'li', function() {
         console.log("clicked");
         console.log("this was clicked " + $(this).text());
+        
+        //when a calendar is clicked on in the dropdown menu
+        //the calendar that is currently on display (if there is one)
+        //needs to be removed and replaced with the calendar that was clicked on
+        //from the dropdown menu. Its' data will be loaded from localstorage
+        //where it was stored. load the data, clear the page, build the saved
+        //calendar
         
     });
 
