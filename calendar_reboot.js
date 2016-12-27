@@ -108,31 +108,39 @@ $(document).ready(function() {
         //update the calendarState
         calendar.updateCalendarState(calendar.monthObjects);
         
-        //declare a variable that stores the storage key for this calendar
-        var calendarStorageKey = calendar.calendarState.calendarTitle;
+        //calendarTitle will be the storageKey
+        var calendarTitle = calendar.calendarState.calendarTitle;
         
         //store it in localStorage
-        storeInLocalStorage(calendarStorageKey, 
+        storeInLocalStorage(calendarTitle, 
                             calendar.calendarState);
         
         //check it was stored in localStorage -- > probably not needed later
-        if (loadFromLocalStorage(calendar.calendarState.calendarTitle)) {
+        if (loadFromLocalStorage(calendarTitle)) {
             console.log("it is stored in local Storage");
         }
         
         //add list title to saved calendars dropdown
         console.log("adding calendar title to dropdown menu");
         
-        //HAVE TO STORE TIMESTAMP ID WITH CALENDAR STATE
+        //HAVE TO STORE TIMESTAMP ID WITH CALENDAR STATE, the timestamp will
+        //be the unique ID associated with a calendar, and will also be the
+        // dropdown list item id for this calendar
+        
+        calendarUniqueId[calendarTitle] = Date.now();
+        
+        console.log("the unique ID is equal to " + calendarUniqueId[calendarTitle]);
+        console.log("the type of unique Id is " + typeof(calendarUniqueId[calendarTitle]));
         
         //NEED UNIQUE ID FOR DROPDOWN ITEMS
-        $('#savedCalendarsDropdown').append('<li id="#"' + Date.now() + 
-        '> <a href=#>' + calendarStorageKey + '</a></li>');
+        $('#savedCalendarsDropdown').append('<li id="#"' + '"' + calendarUniqueId[calendarTitle] + '"'
+          + '> <a href=#>' + calendarTitle + '</a></li>');
         
         
         console.log("calendar title added to dropdown menu");
         
         console.log("checking if item can be clicked");
+        //still have to do this 
         
         
     });
@@ -876,5 +884,11 @@ var Calendar = function(startDateString, numberOfYears, title) {
         
         loadFromLocalStorage(listTitle);
     };
+    
+};
+
+//dictionary of savedCalendars, calendar title: unique ID
+
+var calendarUniqueId = {
     
 };
