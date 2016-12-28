@@ -97,14 +97,14 @@ $(document).ready(function() {
         //this function assumes the calendarObject already has it's
         //calendarState updated with the correct information. 
         
-        monthObjects = calendar.generateMonthObjects();
-        calendar.monthObjects = monthObjects;
+        monthObjects = calendarObject.generateMonthObjects();
+        calendarObject.monthObjects = monthObjects;
         
-        calendar.generateEmptyCalendar(calendar.monthObjects);
-        calendar.fillCalendar(calendar.monthObjects);
-        calendar.attachClickForCalendar(calendar.monthObjects);
-        calendar.removeEmptyWeeksFromCalendar(calendar.monthObjects);
-        calendar.placeCheckmarks(calendar.monthObjects);
+        calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
+        calendarObject.fillCalendar(calendarObject.monthObjects);
+        calendarObject.attachClickForCalendar(calendarObject.monthObjects);
+        calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
+        calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
     };
     
@@ -134,9 +134,13 @@ $(document).ready(function() {
             
             calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
             
-            //should I make a separate function for the below
-            //Do i need to make the actual calendar object outside of this function 
-            // so that it is available in the global environment?
+            //initialize calendar object's state here instead of in build calendar because
+            //you don't want to refill the calendarState every time you load a calendar
+            //when a calendar is loaded, the calendar state will be equal to the 
+            //loaded calendar state, so we do not need to run initCalendarState when we
+            //build calendars after loading them. buildCalendar builds the html, not
+            //the calendar object
+            
             calendar.initCalendarState();
             
             //should I do the below lines this way?
@@ -159,45 +163,49 @@ $(document).ready(function() {
         //probably not)
         //then the updated calendarState needs to be stored in localStorage
         
-        //update the calendarState
-        calendar.updateCalendarState(calendar.monthObjects);
-        
-        //calendarTitle will be the storageKey
+        var storageKey = calendar.calendarState.uniqueId;
+        console.log("this is " + calendar.calendarState.calendarTitle + "'s storage key " + storageKey);
+        //get the calendar title to put in the dropdown
         var calendarTitle = calendar.calendarState.calendarTitle;
+        
+        
+        //check if it was already stored in localStorage 
+        if (loadFromLocalStorage(storageKey)) {
+            console.log("it is stored in local Storage");
+            console.log("calendar has already been saved");
+        }
+        
+        else {
+            console.log("calendar has never been saved");
+            
+            //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary
+            calendarUniqueId[calendarTitle] = Date.now().toString(); //maybe store it differently because titles are not unique
+            
+            //update the calendarState
+            calendar.updateCalendarState(calendar.monthObjects);
+            //store it in localStorage
+            
+            console.log("this is uniqueId before stored in localstorage " + calendar.calendarState.uniqueId);
+            storeInLocalStorage(storageKey, 
+                            calendar.calendarState);
+            
+            console.log("this is uniqueId after stored in localstorage " + calendar.calendarState.uniqueId);
+            //add to dropdown
+            $('#calendarDropdown').append('<li id="' + calendar.calendarState.uniqueId
+                + '"><a href=#>' + calendarTitle + '</a></li>');
+            
+        }
+        //check if the calendar is already a saved calendar and you are 
+        //overriding it
         
         //determine whether the title is unique or not, titleValue is true
         //if unique, false otherwise
-        var titleValue = titleCheck(calendarTitle);
-        
-        //store it in localStorage
-        storeInLocalStorage(calendarTitle, 
-                            calendar.calendarState);
-        
-        //check it was stored in localStorage -- > probably not needed later
-        if (loadFromLocalStorage(calendarTitle)) {
-            console.log("it is stored in local Storage");
-        }
-        
-        //add list title to saved calendars dropdown
-        
-        //HAVE TO STORE TIMESTAMP ID WITH CALENDAR STATE, the timestamp will
-        //be the unique ID associated with a calendar, and will also be the
-        // dropdown list item id for this calendar
-        
-        calendarUniqueId[calendarTitle] = Date.now();
-        
-        //Use timestamp as Id for dropdown list item, make sure to put 
-        //quotation marks around the timestamp (not sure if necessary)
-        $('#calendarDropdown').append('<li id="#"' + '"' + calendarUniqueId[calendarTitle] + '"'
-          + '> <a href=#>' + calendarTitle + '</a></li>');
-        
+        //var titleValue = titleCheck(calendarTitle);
+
         
     });
     
     $('#calendarDropdown').on('click', 'li', function() {
-        console.log("clicked");
-        console.log("this was clicked " + $(this).text());
-        
         //when a calendar is clicked on in the dropdown menu
         //the calendar that is currently on display (if there is one)
         //needs to be removed and replaced with the calendar that was clicked on
@@ -205,12 +213,34 @@ $(document).ready(function() {
         //where it was stored. load the data, clear the page, build the saved
         //calendar
         
+        //load the saved calendar with the title that was clicked
+        console.log("this is uniqueId before loading from storage " + calendar.calendarState.uniqueId);
+        //make sure calendar object is empty before loading new state into it <-- do i need this
+        
+        alert($(this).attr('class'));
+        
+        console.log("the storage key you are using " + $(this).attr('id'));
+        var loadedCalendarState = loadFromLocalStorage($(this).attr('id'));
+        
+        if (loadedCalendarState === null) {
+            console.log('calendar does not exist/has not been saved');
+        }
+        else {
+            calendar.calendarState = loadedCalendarState;
+            console.log("this is uniqueId after loading from storage " + calendar.calendarState.uniqueId);
+            clearPage();
+            buildCalendar(calendar);
+        }
+        
+        
     });
 
     
     $('#deleteButton').click(function() {
         //deletes the current calendar on display, removes
         //the name from the saved calendars dropdown
+        
+        console.log("the current calendar is " + calendar.calendarState.calendarTitle);
     });
     
     
@@ -255,7 +285,7 @@ var loadFromLocalStorage = function(storageItemKey) {
     if (storageItem === null) 
     {
         console.log(storageItemKey + "not found in localstorage");
-        return;   
+        return storageItem;   
     }
                                                                                                    
     else 
@@ -650,7 +680,7 @@ var emptyCalendarState = function() {
         //the last day of tracking
         endDate: undefined,
         //unique ID for calendar
-        calendarId: 0
+        uniqueId: 0
     };
 };
 
@@ -684,6 +714,11 @@ var Calendar = function(startDateString, numberOfYears, title) {
         self.endDate = self.getEndDate();
     };
     
+    self.resetCalendarState = function() {
+        //reset calendarState to factory settings... as in empty calendarState
+        self.calendarState = emptyCalendarState();
+    };
+    
     self.initCalendarState = function() {
         //store all the information needed for a calendarState
         //you store the strings "MM-DD-YYYY" for startDate and endDate
@@ -695,6 +730,9 @@ var Calendar = function(startDateString, numberOfYears, title) {
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
         self.calendarState.endDate = self.endDate.format();
+        self.calendarState.uniqueId = Date.now().toString();
+        
+        console.log("after initialization, the calendar's unique Id is equal to " + self.calendarState.uniqueId);
     };
     
     
@@ -840,7 +878,7 @@ var Calendar = function(startDateString, numberOfYears, title) {
         var $div = $('#calendarDiv');
     
         $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-                  $('#calendarTitle').val() + '</h1></div>');
+                  self.calendarState.calendarTitle + '</h1></div>');
         
         monthObjectsArray.forEach (function(monthObj) {
             if (self.startDate.month() === monthObj.date.month() && self.startDate.year() === monthObj.date.year()) 
