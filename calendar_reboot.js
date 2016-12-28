@@ -163,45 +163,48 @@ $(document).ready(function() {
         //probably not)
         //then the updated calendarState needs to be stored in localStorage
         
+        //the storage key is the calendar's unique Id
         var storageKey = calendar.calendarState.uniqueId;
         console.log("this is " + calendar.calendarState.calendarTitle + "'s storage key " + storageKey);
+        
         //get the calendar title to put in the dropdown
         var calendarTitle = calendar.calendarState.calendarTitle;
         
+        //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary UPDATE UPDATE
+        calendarUniqueId[calendarTitle] = calendar.calendarState.uniqueId; //maybe store it differently because titles are not unique
+        
+        
+        console.log("before updating the calendar state the title is " + calendar.calendarState.calendarTitle);
+        //update the calendarState (with checkmark information)
+        
+        //should I be updating the attributes with what's inside of calendarState? 
+        calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
+        calendar.updateCalendarState(calendar.monthObjects);
+        
+        console.log("after updating calendar state the title is " + calendar.calendarState.calendarTitle);
         
         //check if it was already stored in localStorage 
+        //if it isn't we add it to the dropdown, if it is, then it's already
+        //in the dropdown.
         if (loadFromLocalStorage(storageKey)) {
             console.log("it is stored in local Storage");
             console.log("calendar has already been saved");
+            
         }
-        
         else {
-            console.log("calendar has never been saved");
-            
-            //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary
-            calendarUniqueId[calendarTitle] = Date.now().toString(); //maybe store it differently because titles are not unique
-            
-            //update the calendarState
-            calendar.updateCalendarState(calendar.monthObjects);
-            //store it in localStorage
-            
-            console.log("this is uniqueId before stored in localstorage " + calendar.calendarState.uniqueId);
-            storeInLocalStorage(storageKey, 
-                            calendar.calendarState);
-            
-            console.log("this is uniqueId after stored in localstorage " + calendar.calendarState.uniqueId);
             //add to dropdown
             $('#calendarDropdown').append('<li id="' + calendar.calendarState.uniqueId
                 + '"><a href=#>' + calendarTitle + '</a></li>');
-            
         }
-        //check if the calendar is already a saved calendar and you are 
-        //overriding it
         
-        //determine whether the title is unique or not, titleValue is true
-        //if unique, false otherwise
-        //var titleValue = titleCheck(calendarTitle);
-
+        //store it in localStorage
+        //localstorage will override things with the same key
+        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " before stored in localstorage " + calendar.calendarState.uniqueId);
+        storeInLocalStorage(storageKey, 
+                        calendar.calendarState);
+        
+        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
+        
         
     });
     
@@ -214,10 +217,9 @@ $(document).ready(function() {
         //calendar
         
         //load the saved calendar with the title that was clicked
-        console.log("this is uniqueId before loading from storage " + calendar.calendarState.uniqueId);
+        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " before loading from storage " + calendar.calendarState.uniqueId);
         //make sure calendar object is empty before loading new state into it <-- do i need this
         
-        alert($(this).attr('class'));
         
         console.log("the storage key you are using " + $(this).attr('id'));
         var loadedCalendarState = loadFromLocalStorage($(this).attr('id'));
@@ -227,7 +229,7 @@ $(document).ready(function() {
         }
         else {
             calendar.calendarState = loadedCalendarState;
-            console.log("this is uniqueId after loading from storage " + calendar.calendarState.uniqueId);
+            console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after loading from storage " + calendar.calendarState.uniqueId);
             clearPage();
             buildCalendar(calendar);
         }
@@ -962,9 +964,11 @@ var Calendar = function(startDateString, numberOfYears, title) {
         
         self.calendarState.startDate = self.startDate.format();
         self.calendarState.years = self.getYears();
-        self.calendarState.calendarTitle = $('#calendarTitle').val();
+        self.calendarState.calendarTitle = self.title;
         self.calendarState.numberOfYears = self.numberOfYears;
         self.calendarState.numberOfMonths = self.numberOfMonths;
+        self.calendarState.endDate = self.getEndDate();
+        //uniqueId is set when calendar is initialized, and never changes
     };
     
     self.storeCalendarState = function() {  // SHOULD THE TITLE BE A PARAMETER IN THE FUNCTION?
