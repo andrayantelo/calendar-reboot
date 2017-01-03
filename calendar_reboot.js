@@ -1,5 +1,9 @@
 $(document).ready(function() {
     
+    //will need to use a better key than this for masterKey (if this is
+    //even a good way to do this)
+    var masterKey = 'masterKey';
+    
     var calendarTitleId = 'titleFormGroup';
     var startDateId = 'dateFormGroup';
     
@@ -12,6 +16,7 @@ $(document).ready(function() {
     });
     
     
+    //probably don't need titleCheck since titles don't need to be unique anymore
     var titleCheck = function(title) {
         //make sure that the title the user provides for their calendar is 
         //unique. Need to have unique titles for calendar so that you can 
@@ -25,6 +30,15 @@ $(document).ready(function() {
             return true;
         }
     };
+    
+    var addToCalendarDropdown = function(uniqueId, title) {
+        //add the calendar with unique Id, uniqueId, and title, title, to
+        //the saved calendars dropdown on the navbar.
+        
+        $('#calendarDropdown').append('<li id="' + uniqueId
+                + '"><a href=#>' + title + '</a></li>');
+    };
+    
     
     var addFormError = function(id, srId) {
         //adds the classes has-error and has-feedback
@@ -132,6 +146,8 @@ $(document).ready(function() {
             var startDate = $("#startDate").val();
             var numberOfYears = parseInt($("#numberOfYears").val()) || 1;
             
+            console.log("the number of years you chose is equal to " + numberOfYears);
+            
             calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
             
             //initialize calendar object's state here instead of in build calendar because
@@ -171,7 +187,15 @@ $(document).ready(function() {
         var calendarTitle = calendar.calendarState.calendarTitle;
         
         //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary UPDATE UPDATE
-        calendarUniqueId[calendarTitle] = calendar.calendarState.uniqueId; //maybe store it differently because titles are not unique
+        calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; //maybe store it differently because titles are not unique
+        console.log(calendarUniqueId + ' the uniqueId dictionary');
+        console.log(calendarUniqueId[calendar.calendarState.uniqueId] + ' the uniqueId dictionary with key uniqueid');
+        //in order to use this this has to be stored in localstorage as well THIS IS WHAT I WAS WORKING ON LAST
+        //MAY NEED TO USE THIS DICTIONARY TO MAKE THE DROPDOWN WHEN THE PAGE LOADS
+        
+        //the calendarUniqueId dictionary also needs to be stored in localstorage. use 
+        //global variable masterKey as the storage key
+        storeInLocalStorage(masterKey, calendarUniqueId);
         
         
         console.log("before updating the calendar state the title is " + calendar.calendarState.calendarTitle);
@@ -185,7 +209,7 @@ $(document).ready(function() {
         
         //check if it was already stored in localStorage 
         //if it isn't we add it to the dropdown, if it is, then it's already
-        //in the dropdown.
+        //in the dropdown. DO I NEED THIS??  
         if (loadFromLocalStorage(storageKey)) {
             console.log("it is stored in local Storage");
             console.log("calendar has already been saved");
@@ -193,8 +217,8 @@ $(document).ready(function() {
         }
         else {
             //add to dropdown
-            $('#calendarDropdown').append('<li id="' + calendar.calendarState.uniqueId
-                + '"><a href=#>' + calendarTitle + '</a></li>');
+            addToCalendarDropdown(calendar.calendarState.uniqueId, calendarTitle);
+            
         }
         
         //store it in localStorage
@@ -249,6 +273,23 @@ $(document).ready(function() {
     //WHEN PAGE LOADS
     //make an empty calendar object
     calendar = new Calendar("", 0, "");
+    
+    //first load the calendarUniqueId from storage.
+    console.log("loading calendarUniqueId from localStorage");
+    calendarUniqueId = loadFromLocalStorage(masterKey);
+    //if it's not in localstorage make it an empty object
+    if (calendarUniqueId === null) {
+        calendarUniqueId = {};
+    }
+    
+    //GOING THROUGH THE KEYS OF THE DICTIONARY calendarUniqueId
+    for (var key in calendarUniqueId) {
+      if (calendarUniqueId.hasOwnProperty(key)) {
+        console.log("the uniqueId exists inside the calendarUniqueId dictionary");
+        console.log(key + " -> " + calendarUniqueId[key]);
+        addToCalendarDropdown(key, calendarUniqueId[key]);
+      }
+    }
    
 });
 
@@ -758,13 +799,10 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //get all the years user wants to track and store in calendarState
         var years = [];
         var startYear = self.startDate.year();
-        years.push(startYear);
-        
-        
         
         for (i = 0; i < self.numberOfYears; i++)
         {
-            years.push(startYear += 1);
+            years.push(startYear += i);
         }
         return years;
     };
@@ -795,7 +833,8 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //states not blank
         var monthStates = [];
         //how many years is the calendar going to cover
-        var yearsLength = self.calendarState.years.length;
+        var yearsLength = self.numberOfYears;
+        console.log("this is the yearsLength " + yearsLength);
         var monthState = null;
         
         //iterating over the years
