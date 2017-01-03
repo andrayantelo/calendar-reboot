@@ -561,11 +561,17 @@ var Month = function(date) {
         
         var $monthId = $('#'+ self.monthState.monthId);
         //retrieves the daynumber attribute of the checked days and stores it in monthState.checkedDays
+        
+        //empty the checkedDays object first, so that if someone is unchecking days
+        // then they don't show up when you generate the calendar again
+        self.monthState.checkedDays = {};
+        
         $monthId.find('.month').find('td').find('.cell').find('.checkedDay').each(function () {
             var daynumber = $(this).attr('daynumber');
             //the key is the index of the day for now, which is stored in the
             //dayIndex dictionary, which was made when you filled the month div
             self.monthState.checkedDays[self.monthState.dayIndex[daynumber]] = daynumber;
+            console.log("this day is checked " + daynumber);
         });
         //}
     };
@@ -583,7 +589,12 @@ var Month = function(date) {
         var $monthId = $('#' + self.monthState.monthId);
         $div.find($monthId).find('.cell').click(function (event) {
             $( this ).children('.element').toggleClass("hidden");
-            $( this ).children('.daynumber').addClass("checkedDay");
+            if ( $( this ).children('.element').hasClass("hidden") ) {
+                $( this ).children('.daynumber').removeClass('checkedDay');
+            }
+            else {
+                $( this ).children('.daynumber').addClass("checkedDay");
+            }
             
         });
     };
@@ -634,6 +645,7 @@ var Month = function(date) {
                  //add the daynumber into the div with class .daynumber, which is 
                  //inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                 
             }
             
             else {
@@ -654,7 +666,8 @@ var Month = function(date) {
             
             if (self.monthState.checkedDays[index]) 
             {
-                $(this).find('.cell').children().toggleClass("hidden");
+                $(this).find('.cell').children('.element').toggleClass("hidden");
+                $(this).find('.cell').children('.daynumber').addClass('checkedDay');
             }
          });
     };
