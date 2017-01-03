@@ -39,6 +39,13 @@ $(document).ready(function() {
                 + '"><a href=#>' + title + '</a></li>');
     };
     
+    var removeFromCalendarDropdown = function(uniqueId) {
+        //remove the calendar with uniqueId from the saved calendars dropdown
+        //in the navbar
+        
+        $('#calendarDropdown').children('#' + uniqueId).remove();
+    };
+    
     
     var addFormError = function(id, srId) {
         //adds the classes has-error and has-feedback
@@ -179,55 +186,55 @@ $(document).ready(function() {
         //probably not)
         //then the updated calendarState needs to be stored in localStorage
         
-        //the storage key is the calendar's unique Id
-        var storageKey = calendar.calendarState.uniqueId;
-        console.log("this is " + calendar.calendarState.calendarTitle + "'s storage key " + storageKey);
+        //check if the calendar has a uniqueId (in other words, has a calendar been built?)
+        //if not then we do not save anything.
         
-        //get the calendar title to put in the dropdown
-        var calendarTitle = calendar.calendarState.calendarTitle;
-        
-        //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary UPDATE UPDATE
-        calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; //maybe store it differently because titles are not unique
-        console.log(calendarUniqueId + ' the uniqueId dictionary');
-        console.log(calendarUniqueId[calendar.calendarState.uniqueId] + ' the uniqueId dictionary with key uniqueid');
-        //in order to use this this has to be stored in localstorage as well THIS IS WHAT I WAS WORKING ON LAST
-        //MAY NEED TO USE THIS DICTIONARY TO MAKE THE DROPDOWN WHEN THE PAGE LOADS
-        
-        //the calendarUniqueId dictionary also needs to be stored in localstorage. use 
-        //global variable masterKey as the storage key
-        storeInLocalStorage(masterKey, calendarUniqueId);
-        
-        
-        console.log("before updating the calendar state the title is " + calendar.calendarState.calendarTitle);
-        //update the calendarState (with checkmark information)
-        
-        //should I be updating the attributes with what's inside of calendarState? 
-        calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
-        calendar.updateCalendarState(calendar.monthObjects);
-        
-        console.log("after updating calendar state the title is " + calendar.calendarState.calendarTitle);
-        
-        //check if it was already stored in localStorage 
-        //if it isn't we add it to the dropdown, if it is, then it's already
-        //in the dropdown. DO I NEED THIS??  
-        if (loadFromLocalStorage(storageKey)) {
-            console.log("it is stored in local Storage");
-            console.log("calendar has already been saved");
-            
+        if (calendar.calendarState.uniqueId === null) {
+            console.log("no calendar has been built");
         }
+        
         else {
-            //add to dropdown
-            addToCalendarDropdown(calendar.calendarState.uniqueId, calendarTitle);
+        
+            //the storage key is the calendar's unique Id
+            var storageKey = calendar.calendarState.uniqueId;
             
+            //get the calendar title to put in the dropdown
+            var calendarTitle = calendar.calendarState.calendarTitle;
+            
+            //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary UPDATE UPDATE
+            calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; //maybe store it differently because titles are not unique
+       
+            //in order to use this this has to be stored in localstorage as well THIS IS WHAT I WAS WORKING ON LAST
+            //MAY NEED TO USE THIS DICTIONARY TO MAKE THE DROPDOWN WHEN THE PAGE LOADS
+            
+            //the calendarUniqueId dictionary also needs to be stored in localstorage. use 
+            //global variable masterKey as the storage key
+            storeInLocalStorage(masterKey, calendarUniqueId);
+            
+            //update the calendarState (with checkmark information)
+            calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
+            calendar.updateCalendarState(calendar.monthObjects);
+            
+            //check if it was already stored in localStorage 
+            //if it isn't we add it to the dropdown, if it is, then it's already
+            //in the dropdown. DO I NEED THIS??  
+            if (loadFromLocalStorage(storageKey)) {
+                console.log("it is stored in local Storage");
+                console.log("calendar has already been saved");
+                
+            }
+            else {
+                //add to dropdown
+                addToCalendarDropdown(calendar.calendarState.uniqueId, calendarTitle);
+                
+            }
+        
+            //store it in localStorage
+            //localstorage will override things with the same key
+            storeInLocalStorage(storageKey, calendar.calendarState);
+            
+            console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
         }
-        
-        //store it in localStorage
-        //localstorage will override things with the same key
-        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " before stored in localstorage " + calendar.calendarState.uniqueId);
-        storeInLocalStorage(storageKey, 
-                        calendar.calendarState);
-        
-        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
         
         
     });
@@ -266,7 +273,34 @@ $(document).ready(function() {
         //deletes the current calendar on display, removes
         //the name from the saved calendars dropdown
         
-        console.log("the current calendar is " + calendar.calendarState.calendarTitle);
+        //when you delete a calendar, it needs to be removed from local Storage
+        //it's unique Id needs to be removed from the calendarUniqueId dictionary
+        //it's name needs to be removed from the saved calendars dropdown
+        //clear the calendar from the page and uncollapse build calendar
+        
+        //need to check if there is a calendar loaded that needs to be deleted.
+        //in other words, are we currently looking at a calendar? (you can't
+        //have a calendar be loaded without it being displayed on the screen)
+        //to check maybe we can check if calendarState's uniqueId exists
+        //in the calendarUniqueId dictionary, because if it isn't then this is
+        //not a saved calendar
+        
+        if (calendarUniqueId[calendar.calendarState.uniqueId]) {
+            console.log("deleting calendar " + calendar.calendarState.calendarTitle);
+            
+            removeFromCalendarDropdown(calendar.calendarState.uniqueId);
+            delete calendarUniqueId[calendar.calendarState.uniqueId];
+            removeFromLocalStorage(calendar.calendarState.uniqueId);
+            
+            //clear the page
+            clearPage();
+            $('#collapseOne').collapse('toggle'); 
+            
+        }
+        else {
+            console.log("need to load a calendar in order to delete it");
+        }
+        
     });
     
     
@@ -472,7 +506,7 @@ var emptyMonthState = function() {
     };
 };
 
-fillMonthState = function(date) {
+ fillMonthState = function(date) {
     //fills in an empty monthState with information from the 
     //date provided
     dateString = date;
@@ -491,6 +525,7 @@ fillMonthState = function(date) {
     
     return monthState;
 };
+
 
 
 var Month = function(date) {
@@ -736,7 +771,7 @@ var emptyCalendarState = function() {
         //the last day of tracking
         endDate: undefined,
         //unique ID for calendar
-        uniqueId: 0
+        uniqueId: null
     };
 };
 
