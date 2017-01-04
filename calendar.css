@@ -67,7 +67,7 @@ table {
     margin-bottom: 25px;
     margin-top: 25px;
     position: relative;
-    width: 100%
+    width: 60%
 }
   .element {
     font-size: 40px;
@@ -77,13 +77,14 @@ table {
     padding-right: 0.5em;
     position: absolute;
     margin: 0 0 0 -20px;
-    top: 30%;
+    top: 20%;
     left: 50%;
   }
   td {
-    height: 124px;
-    /*width: 80px;*/
+    height: 90px;
+    width: 90px;
   }
+  
   
 
 }
@@ -109,6 +110,7 @@ table {
     }
   td {
     height: 103px;
+    width: 103px;
 }
   /*body {
     background-color: red;
@@ -136,7 +138,7 @@ table {
     left: 50%;
   }
   td {
-    /*width: 55px;*/
+    width: 55px;
     height: 55px;
 }
 
@@ -147,6 +149,13 @@ table {
     border-top-left-radius: 0px;
     border-bottom-right-radius: 0px;
   } 
+}
+
+@media screen and (max-width: 320px) {
+    td {
+      width: 40px;
+      height: 40px;
+    }
 }
 
 /*@media screen and (max-width: 170px) for when you resize your screen {
@@ -210,7 +219,6 @@ corresponding value from the list below*/
 .cell, .nill {
     width: 100%;
     height: 100%; 
-    /*margin: 5px;*/
 }
 
 

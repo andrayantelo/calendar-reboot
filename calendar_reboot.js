@@ -866,8 +866,11 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //get all the years user wants to track and store in calendarState
         var years = [];
         var startYear = self.startDate.year();
+        var endYear = self.endDate.year();
         
-        for (i = 0; i < self.numberOfYears; i++)
+        console.log("this is the end year " + endYear);
+        
+        for (i = 0; i <= self.numberOfYears; i++)
         {
             years.push(startYear += i);
         }
@@ -884,7 +887,7 @@ var Calendar = function(startDateString, numberOfYears, title) {
         var monthState = null;
         
         //iterating over the number of Years.
-        for (i = 0; i < self.numberOfYears; i++) {
+        for (i = 0; i < yearsLength; i++) {
             console.log("we are on iteration " + i);
         }
         return 0;
@@ -900,7 +903,7 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //states not blank
         var monthStates = [];
         //how many years is the calendar going to cover
-        var yearsLength = self.numberOfYears;
+        var yearsLength = self.calendarState.years.length;
         console.log("this is the yearsLength " + yearsLength);
         var monthState = null;
         
@@ -949,6 +952,8 @@ var Calendar = function(startDateString, numberOfYears, title) {
                     
                     if (i === yearsLength - 1 && k === self.endDate.month()) {
                         monthState.numberOfDays = self.endDate.date();
+                        monthStates.push(monthState);
+                        return monthStates
                     }
                     monthStates.push(monthState);
                          
