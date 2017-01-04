@@ -15,6 +15,23 @@ $(document).ready(function() {
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
     
+    //PROBABLY DON'T NEED THE BELOW COMMENTED CODE
+    //$('input').on("keypress", function(e) {
+    //    var n = $('input').length;
+    //    console.log('input length is equal to ' + n);
+    //    if (e.which === 13) {
+    //        e.preventDefault();
+    //        var nextIndex = $('input').index(this) + 1;
+    //        console.log("the next index is " + nextIndex);
+    //        if (nextIndex < n) {
+    //            $('input')[nextIndex].focus();
+    //        }
+    //        else {
+                //focus back on first input
+    //            $('input').first().focus();
+    //        }
+    //    }
+    //}); 
     
     //probably don't need titleCheck since titles don't need to be unique anymore
     var titleCheck = function(title) {
@@ -144,8 +161,10 @@ $(document).ready(function() {
         if (validateTitle && validateDate) {
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
+            
+            //maybe don't need below two lines
             //collapse the build calendar form
-            $('#collapseOne').collapse('toggle'); 
+            //$('#collapseOne').collapse('toggle'); 
             
             //update the calendar's startDate, title, and numberOfYears attributes
             //with information given in the form

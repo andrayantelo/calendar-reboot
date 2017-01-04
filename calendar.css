@@ -6,13 +6,13 @@ body{
   top: 0; 
 }
 
-#contentWrapper {
-  padding-top: 70px;
-}
-
 
 html {
     font-size:100%;
+}
+
+#contentWrapper {
+    padding-top: 70px;
 }
 
    
@@ -42,39 +42,6 @@ table {
     border-collapse: collapse;
 }
 
-
-@media screen and (min-width: 980px) /* Desktop */ {
-  td {
-    width:80px;
-    height: 80px;
-    text-align: center;
-    cursor:default;
-    border:1px solid #e6e6e6;
-    
-}
-}
-
-@media screen and (max-width: 979px) /*tablet*/ {
-  td {
-    width:70px;
-    height: 70px;
-    text-align: center;
-    cursor:default;
-    border:1px solid #e6e6e6;
-    
-}
-}
-
-@media screen and (max-width: 500px) /* mobile*/  {
-  td {
-    width:70px;
-    height: 70px;
-    text-align: center;
-    cursor:default;
-    border:1px solid #e6e6e6;
-    
-}
-}
     
 #days {
     background: #e1e1e1;
@@ -87,6 +54,12 @@ table {
     display: table;
 }
 
+ td {
+    text-align: center;
+    cursor:default;
+    border:1px solid #e6e6e6;
+}
+
 
 @media screen and (min-width: 980px) /* Desktop */ {
   .monthframe, #template {
@@ -94,8 +67,25 @@ table {
     margin-bottom: 25px;
     margin-top: 25px;
     position: relative;
-    width: 50%
+    width: 100%
 }
+  .element {
+    font-size: 40px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    margin: 0 0 0 -20px;
+    top: 30%;
+    left: 50%;
+  }
+  td {
+    height: 124px;
+    /*width: 80px;*/
+  }
+  
+
 }
 
 @media screen and (max-width: 979px) /*tablet*/ {
@@ -106,6 +96,24 @@ table {
     position: relative;
     width: 100%
 }
+  .element {
+    font-size: 36px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -18px;
+    left: 50%;
+    }
+  td {
+    height: 103px;
+}
+  /*body {
+    background-color: red;
+  }*/
+  
 }
 
 @media screen and (max-width: 500px) /* mobile*/  {
@@ -116,7 +124,44 @@ table {
     position: relative;
     width: 100%
 }
+  .element {
+    font-size: 14px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -7px;
+    left: 50%;
+  }
+  td {
+    /*width: 55px;*/
+    height: 55px;
 }
+
+  #setButton, #clearButton {
+    /*padding: 5px 10px 5px 10px; */
+    font-size: 16px; 
+    line-height: 1.5; 
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  } 
+}
+
+/*@media screen and (max-width: 170px) for when you resize your screen {
+  .navbar-brand {
+    font-size: 15px;
+    line-height: 15px;
+  }
+  #contentWrapper {
+    padding-top: 110px;
+  }
+  #setButton, #clearButton {
+    margin-top: 5px;
+  }
+}
+*/
 
 .month {
     width: 100%
@@ -147,7 +192,7 @@ table {
 } 
 
 .element {
-    position: relative;
+    position: absolute;
 }
  
 /*replace the content value with the
@@ -159,31 +204,8 @@ corresponding value from the list below*/
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
-/*--adjust as necessary--*/
-    color: #000;
-    /*font-size: 28px;*/
-    padding-right: 0.5em;
-    position: absolute;
-    top: 5%;
-    left: 30%;
-}
-@media screen and (min-width: 980px) /* Desktop */ {
-  .element {
-    font-size: 22px;
-}
 }
 
-@media screen and (max-width: 979px) /*tablet*/ {
-  .element {
-  font-size: 20px;
-  }
-}
-
-@media screen and (max-width: 500px) /* mobile*/  {
-  .element {
-  font-size: 14px;
-}
-}
 
 .cell, .nill {
     width: 100%;
@@ -210,5 +232,6 @@ corresponding value from the list below*/
 }
 */
 label {
-    font-weight: normal !important;
+    font-weight: normal;
 }
+

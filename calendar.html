@@ -40,7 +40,7 @@
         
         
     </head>
-<body>
+<body id="bootstrap-overrides">
     
     
 <div id ="navbarContainer">
@@ -124,6 +124,7 @@
                       <span id="inputError-titleFormGroup" class="sr-only hidden">(error)</span>
                       <!--<small class="form-text text-muted">This field is required.</small> -->
                   </div>
+                  
                   <div id="dateFormGroup" class="form-group">
                       <label for="startDate">Start Date</label> 
                       <div class='input-group date' id='datetimepicker1'>
@@ -140,6 +141,7 @@
                       </script>
                       <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
                   </div> <!--/.form-group -->
+                  
                   <div class="form-group" id="spinnerFormGroup">
                       <label for="spinner">Number of Years to Track</label>
                       <input type="number" class="form-control" id="numberOfYears" min="1" max="20" placeholder=
@@ -151,8 +153,9 @@
                     <!-- MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
                 <div class="row">
                     <div class="col-md-4">
-                      <div id="setButtonContainer">
-                        <button id="setButton" type="button" class="btn btn-primary btn-block">Set</button>
+                      <div id="setButtonContainer" class="btn-group-lg" role="group">
+                        <button id="setButton" type="button" class="btn btn-primary">Set</button>
+                        <button id="clearButton" type="button" class="btn btn-primary">Clear</button>
                       </div>
                     </div> <!--/.col-md-3-->
                   </div>  <!-- /.row -->
