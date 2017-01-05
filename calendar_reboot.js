@@ -685,8 +685,6 @@ var Month = function(date) {
             //than the number of days in the month
             if (dayOfMonth >= self.monthState.startDay && dayOfMonth <= self.monthState.numberOfDays) 
             { 
-                console.log("the first day of month to be considered " + dayOfMonth);
-                console.log("and it's index is going to be " + indexOfTableTd);
                 //store the day of months with their indices in dayIndex object (dictionary)
                 //in month state
                  self.monthState.dayIndex[dayOfMonth] = indexOfTableTd;
@@ -727,7 +725,6 @@ var Month = function(date) {
       
         $div.find(monthId).find('.month').find('td').each( function(index) 
         {
-            console.log("this is the daynumebr inside the td " + $(this).text());
             
             if (self.monthState.checkedDays[index]) 
             {
