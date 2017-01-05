@@ -142,6 +142,9 @@ $(document).ready(function() {
         calendarObject.fillCalendar(calendarObject.monthObjects);
         calendarObject.attachClickForCalendar(calendarObject.monthObjects);
         calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
+        
+        //CORRECTDAYINDEX IS A METHOD ON MONTH OBJECT
+        //calendarObject.correctDayIndex();
         calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
     };
@@ -671,7 +674,10 @@ var Month = function(date) {
             // or 7 columns 
             
             //gives the day of the month
-            var dayOfMonth = indexOfTableTd - (self.monthState.firstDayIndex - 1);
+            
+            
+            var dayOfMonth = indexOfTableTd - (self.monthState.firstDayIndex - self.monthState.startDay);
+            
             
             //if the day of the month is >= to the startDay, so for example
             //if you have startDay as 20th of Nov, then the following code
@@ -679,6 +685,8 @@ var Month = function(date) {
             //than the number of days in the month
             if (dayOfMonth >= self.monthState.startDay && dayOfMonth <= self.monthState.numberOfDays) 
             { 
+                console.log("the first day of month to be considered " + dayOfMonth);
+                console.log("and it's index is going to be " + indexOfTableTd);
                 //store the day of months with their indices in dayIndex object (dictionary)
                 //in month state
                  self.monthState.dayIndex[dayOfMonth] = indexOfTableTd;
@@ -715,14 +723,18 @@ var Month = function(date) {
         
         var $div = $('#calendarDiv');
         var monthId = '#'+ self.monthState.monthId;
+        
+      
         $div.find(monthId).find('.month').find('td').each( function(index) 
         {
+            console.log("this is the daynumebr inside the td " + $(this).text());
             
             if (self.monthState.checkedDays[index]) 
             {
                 $(this).find('.cell').children('.element').toggleClass("hidden");
                 $(this).find('.cell').children('.daynumber').addClass('checkedDay');
             }
+            
          });
     };
     
@@ -743,6 +755,35 @@ var Month = function(date) {
                 $(this).remove();
             }
         });
+    };
+    
+    self.correctDayIndex = function() {
+        //Once a calendar is generated, the indices for the days of the first
+        // month are incorrect if the month does not start on the first of the month
+        //correctDayIndex corrects the indices in the dayIndex object of monthState
+        
+        if (self.monthState.startDay !== 1) {
+            var firstDay = self.monthState.startDay;
+            var lastDay = self.monthState.numberOfDays;
+            var firstIndex = self.monthState.dayIndex[firstDay] % 7;
+            
+            console.log("the first day is " + firstDay);
+            console.log("the last day is " + lastDay);
+            
+            
+            //loop over the days in the month
+            for (i = firstDay; i <= lastDay; i ++) {
+                
+                console.log("the first index is supposed to be " + firstIndex);
+                
+                self.monthState.dayIndex[i] = firstIndex;
+                console.log("the new index for day " + i + " is equal to " + self.monthState.dayIndex[i]);
+                
+                //checked days -> index:daynumber
+                self.monthState.
+                firstIndex += 1;
+            }
+        }
     };
     
 };
