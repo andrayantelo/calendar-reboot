@@ -262,7 +262,7 @@ $(document).ready(function() {
             storeInLocalStorage(storageKey, calendar.calendarState);
             
             //hide build calendar form so that user can admire their calendar
-            $('#collapseOne').collapse('show'); 
+            $('#collapseOne').collapse('hide'); 
             
             console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
         }
@@ -318,23 +318,29 @@ $(document).ready(function() {
         //in the calendarUniqueId dictionary, because if it isn't then this is
         //not a saved calendar
         
-        if (calendarUniqueId[calendar.calendarState.uniqueId]) {
-            console.log("deleting calendar " + calendar.calendarState.calendarTitle);
-            
-            removeFromCalendarDropdown(calendar.calendarState.uniqueId);
-            delete calendarUniqueId[calendar.calendarState.uniqueId];
-            //save the new calendarUniqueId
-            storeInLocalStorage(masterKey, calendarUniqueId);
-            removeFromLocalStorage(calendar.calendarState.uniqueId);
-            
-            //clear the page
-            clearPage();
-            //show build calendar form so that user can build a new one
-            $('#collapseOne').collapse('show'); 
-            
-        }
-        else {
-            console.log("need to load a calendar in order to delete it");
+        //ask the user if they are sure they want to delete their calendar
+        var confirmation = confirm("Are you sure you want to delete your calendar?");
+        if (confirmation === true) {
+        
+            if (calendarUniqueId[calendar.calendarState.uniqueId]) {
+                console.log("deleting calendar " + calendar.calendarState.calendarTitle);
+                
+                removeFromCalendarDropdown(calendar.calendarState.uniqueId);
+                delete calendarUniqueId[calendar.calendarState.uniqueId];
+                //save the new calendarUniqueId
+                storeInLocalStorage(masterKey, calendarUniqueId);
+                removeFromLocalStorage(calendar.calendarState.uniqueId);
+                
+                //clear the page
+                clearPage();
+                //show build calendar form so that user can build a new one
+                $('#collapseOne').collapse('show'); 
+                
+            }
+            else {
+                console.log("need to load a calendar in order to delete it");
+            }
+        
         }
         
     });
@@ -718,6 +724,8 @@ var Month = function(date) {
                  //add the daynumber into the div with class .daynumber, which is 
                  //inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                 
+                 console.log("today's date is " + oneIndexMonth(self.monthState.monthIndex) + "-" + dayOfMonth + "-" + self.monthState.monthYear);
                  
             }
             
