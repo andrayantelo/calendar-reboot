@@ -16,23 +16,15 @@ $(document).ready(function() {
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
     
-    //PROBABLY DON'T NEED THE BELOW COMMENTED CODE
-    //$('input').on("keypress", function(e) {
-    //    var n = $('input').length;
-    //    console.log('input length is equal to ' + n);
-    //    if (e.which === 13) {
-    //        e.preventDefault();
-    //        var nextIndex = $('input').index(this) + 1;
-    //        console.log("the next index is " + nextIndex);
-    //        if (nextIndex < n) {
-    //            $('input')[nextIndex].focus();
-    //        }
-    //        else {
-                //focus back on first input
-    //            $('input').first().focus();
-    //        }
-    //    }
-    //}); 
+    //update the current active calendar
+    var updateActiveCalendar = function(uniqueId) {
+        //store the calendar's unique id as the value in the key value pair
+        //current_active_calendar : uniqueId, in the calendarUniqueId object
+        //and save this in localStorage
+        
+        calendarUniqueId[current_active_calendar] = uniqueId;
+        storeInLocalStorage(masterKey, calendarUniqueId);
+    };
     
     //probably don't need titleCheck since titles don't need to be unique anymore
     var titleCheck = function(title) {
@@ -260,8 +252,7 @@ $(document).ready(function() {
             $('#collapseOne').collapse('hide'); 
             
             console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-            calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
-            storeInLocalStorage(masterKey, calendarUniqueId);
+            updateActiveCalendar(calendar.calendarState.uniqueId);
             
         }
         
@@ -297,8 +288,7 @@ $(document).ready(function() {
             
             //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
             console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-            calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
-            storeInLocalStorage(masterKey, calendarUniqueId);
+            updateActiveCalendar(calendar.calendarState.uniqueId);
         }
         
         
@@ -377,8 +367,7 @@ $(document).ready(function() {
         
         //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
         console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-        calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
-        storeInLocalStorage(masterKey, calendarUniqueId);
+        updateActiveCalendar(calendar.calendarState.uniqueId);
         }
    
     
