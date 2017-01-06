@@ -52,6 +52,7 @@ $(document).ready(function() {
         //add the calendar with unique Id, uniqueId, and title, title, to
         //the saved calendars dropdown on the navbar.
         
+        console.log("adding calendar to dropdown");
         $('#calendarDropdown').append('<li id="' + uniqueId
                 + '"><a href=#>' + title + '</a></li>');
     };
@@ -241,24 +242,18 @@ $(document).ready(function() {
             //check if it was already stored in localStorage 
             //if it isn't we add it to the dropdown, if it is, then it's already
             //in the dropdown. DO I NEED THIS??  
-            if (loadFromLocalStorage(storageKey)) {
-                console.error("Calendar is already stored in localStorage");
-                
-            }
-            else {
+            if (loadFromLocalStorage(storageKey) === null) { //is null false in javascript
                 //add to dropdown
+                console.log('not in storage yet..');
                 addToCalendarDropdown(calendar.calendarState.uniqueId, calendarTitle);
-                
             }
-        
+            
             //store it in localStorage
             //localstorage will override things with the same key
             storeInLocalStorage(storageKey, calendar.calendarState);
             
             //hide build calendar form so that user can admire their calendar
             $('#collapseOne').collapse('hide'); 
-            
-            console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
         }
         
         
@@ -325,6 +320,7 @@ $(document).ready(function() {
                 storeInLocalStorage(masterKey, calendarUniqueId);
                 removeFromLocalStorage(calendar.calendarState.uniqueId);
                 
+                console.log("clearing the page");
                 //clear the page
                 clearPage();
                 //show build calendar form so that user can build a new one
@@ -332,7 +328,7 @@ $(document).ready(function() {
                 
             }
             else {
-                console.error("need to load a calendar in order to delete it");
+                clearPage();
             }
         
         }
@@ -397,7 +393,7 @@ var loadFromLocalStorage = function(storageItemKey) {
         
     if (storageItem === null) 
     {
-        console.error(storageItemKey + "not found in localstorage");
+        console.log(storageItemKey + "not found in localstorage");
         return storageItem;   
     }
                                                                                                    
@@ -718,8 +714,6 @@ var Month = function(date) {
                  //add the daynumber into the div with class .daynumber, which is 
                  //inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
-                 
-                 console.log("today's date is " + oneIndexMonth(self.monthState.monthIndex) + "-" + dayOfMonth + "-" + self.monthState.monthYear);
                  
             }
             
