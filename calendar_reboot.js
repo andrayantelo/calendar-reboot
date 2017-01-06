@@ -3,6 +3,7 @@ $(document).ready(function() {
     //will need to use a better key than this for masterKey (if this is
     //even a good way to do this)
     var masterKey = 'masterKey';
+    var current_active_calendar = 'current_active_calendar';
     
     var calendarTitleId = 'titleFormGroup';
     var startDateId = 'dateFormGroup';
@@ -145,11 +146,6 @@ $(document).ready(function() {
         calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
         calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
-        //store the uniqueId and calendarTitle inside of an object (dictionary) 
-        //do this before saving because when you are about to save, checking
-        //if the calendar was actually built is done by seeing if it's in this object
-        calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; 
-        
     };
     
     $('#clearButton').click(function() {
@@ -218,7 +214,7 @@ $(document).ready(function() {
         //check if the calendar has a uniqueId (in other words, has a calendar been built?)
         //if not then we do not save anything.
         
-        if (!calendarUniqueId[calendar.calendarState.uniqueId]) {
+        if (calendar.calendarState.uniqueId === null) {
             console.error("no calendar has been built");
         }
         
@@ -242,6 +238,11 @@ $(document).ready(function() {
             calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
             calendar.updateCalendarState(calendar.monthObjects);
             
+            //store the uniqueId and calendarTitle inside of an object (dictionary) 
+            console.log("calendar stored in calendarUniqueId");
+            calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; 
+            storeInLocalStorage(masterKey, calendarUniqueId);
+            
             //check if it was already stored in localStorage 
             //if it isn't we add it to the dropdown, if it is, then it's already
             //in the dropdown. DO I NEED THIS??  
@@ -259,6 +260,9 @@ $(document).ready(function() {
             $('#collapseOne').collapse('hide'); 
             
             console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
+            calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
+            storeInLocalStorage(masterKey, calendarUniqueId);
+            
         }
         
         
@@ -293,6 +297,8 @@ $(document).ready(function() {
             
             //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
             console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
+            calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
+            storeInLocalStorage(masterKey, calendarUniqueId);
         }
         
         
@@ -331,6 +337,8 @@ $(document).ready(function() {
             console.log("clearing the page");
             //clear the page
             clearPage();
+            //calendar object needs to be empty again
+            calendar = new Calendar("", 0, "");
             //show build calendar form so that user can build a new one
             $('#collapseOne').collapse('show'); 
                 
@@ -345,7 +353,6 @@ $(document).ready(function() {
     
     
     //WHEN PAGE LOADS
-    //make an empty calendar object
     calendar = new Calendar("", 0, "");
     
     //first load the calendarUniqueId from storage.
@@ -356,14 +363,37 @@ $(document).ready(function() {
         calendarUniqueId = {};
     }
     
+    //load the current_active_calendar
+    var activeCalendarState = loadFromLocalStorage(calendarUniqueId[current_active_calendar]);
+    
+    if (activeCalendarState !== null) {
+        console.log("loading last active calendar");
+        calendar.calendarState = activeCalendarState;
+        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after loading from storage " + calendar.calendarState.uniqueId);
+        clearPage();
+        buildCalendar(calendar);
+        //hide the build calendar form
+        $('#collapseOne').collapse('hide'); 
+        
+        //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
+        console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
+        calendarUniqueId[current_active_calendar] = calendar.calendarState.uniqueId;
+        storeInLocalStorage(masterKey, calendarUniqueId);
+        }
+   
+    
     //GOING THROUGH THE KEYS OF THE DICTIONARY calendarUniqueId
     for (var key in calendarUniqueId) {
       if (calendarUniqueId.hasOwnProperty(key)) {
-        console.log("the uniqueId exists inside the calendarUniqueId dictionary");
-        console.log(key + " -> " + calendarUniqueId[key]);
-        addToCalendarDropdown(key, calendarUniqueId[key]);
+          if (key !== "current_active_calendar") {
+            console.log("the uniqueId exists inside the calendarUniqueId dictionary");
+            console.log(key + " -> " + calendarUniqueId[key]);
+            addToCalendarDropdown(key, calendarUniqueId[key]);
+          }
       }
     }
+    
+    
    
 });
 
@@ -1126,4 +1156,5 @@ var Calendar = function(startDateString, numberOfYears, title) {
 //dictionary of savedCalendars, calendar title: unique ID
 
 var calendarUniqueId = {
+    'current_active_calendar' : null
 };
