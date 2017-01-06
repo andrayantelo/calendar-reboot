@@ -142,9 +142,6 @@ $(document).ready(function() {
         calendarObject.fillCalendar(calendarObject.monthObjects);
         calendarObject.attachClickForCalendar(calendarObject.monthObjects);
         calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
-        
-        //CORRECTDAYINDEX IS A METHOD ON MONTH OBJECT
-        //calendarObject.correctDayIndex();
         calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
     };
@@ -181,8 +178,6 @@ $(document).ready(function() {
             var startDate = $("#startDate").val();
             var numberOfYears = parseInt($("#numberOfYears").val()) || 1;
             
-            console.log("the number of years you chose is equal to " + numberOfYears);
-            
             calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
             
             //initialize calendar object's state here instead of in build calendar because
@@ -218,7 +213,7 @@ $(document).ready(function() {
         //if not then we do not save anything.
         
         if (calendar.calendarState.uniqueId === null) {
-            console.log("no calendar has been built");
+            console.error("no calendar has been built");
         }
         
         else {
@@ -247,8 +242,7 @@ $(document).ready(function() {
             //if it isn't we add it to the dropdown, if it is, then it's already
             //in the dropdown. DO I NEED THIS??  
             if (loadFromLocalStorage(storageKey)) {
-                console.log("it is stored in local Storage");
-                console.log("calendar has already been saved");
+                console.error("Calendar is already stored in localStorage");
                 
             }
             else {
@@ -287,7 +281,7 @@ $(document).ready(function() {
         var loadedCalendarState = loadFromLocalStorage($(this).attr('id'));
         
         if (loadedCalendarState === null) {
-            console.log('calendar does not exist/has not been saved');
+            console.error('calendar does not exist/has not been saved');
         }
         else {
             calendar.calendarState = loadedCalendarState;
@@ -338,7 +332,7 @@ $(document).ready(function() {
                 
             }
             else {
-                console.log("need to load a calendar in order to delete it");
+                console.error("need to load a calendar in order to delete it");
             }
         
         }
@@ -403,7 +397,7 @@ var loadFromLocalStorage = function(storageItemKey) {
         
     if (storageItem === null) 
     {
-        console.log(storageItemKey + "not found in localstorage");
+        console.error(storageItemKey + "not found in localstorage");
         return storageItem;   
     }
                                                                                                    
@@ -773,35 +767,6 @@ var Month = function(date) {
                 $(this).remove();
             }
         });
-    };
-    
-    self.correctDayIndex = function() {
-        //Once a calendar is generated, the indices for the days of the first
-        // month are incorrect if the month does not start on the first of the month
-        //correctDayIndex corrects the indices in the dayIndex object of monthState
-        
-        if (self.monthState.startDay !== 1) {
-            var firstDay = self.monthState.startDay;
-            var lastDay = self.monthState.numberOfDays;
-            var firstIndex = self.monthState.dayIndex[firstDay] % 7;
-            
-            console.log("the first day is " + firstDay);
-            console.log("the last day is " + lastDay);
-            
-            
-            //loop over the days in the month
-            for (i = firstDay; i <= lastDay; i ++) {
-                
-                console.log("the first index is supposed to be " + firstIndex);
-                
-                self.monthState.dayIndex[i] = firstIndex;
-                console.log("the new index for day " + i + " is equal to " + self.monthState.dayIndex[i]);
-                
-                //checked days -> index:daynumber
-                self.monthState.
-                firstIndex += 1;
-            }
-        }
     };
     
 };
