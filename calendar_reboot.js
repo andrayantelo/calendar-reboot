@@ -213,7 +213,7 @@ $(document).ready(function() {
         //check if the calendar has a uniqueId (in other words, has a calendar been built?)
         //if not then we do not save anything.
         
-        if (calendar.calendarState.uniqueId === null) {
+        if (!calendarUniqueId[calendar.calendarState.uniqueId]) {
             console.error("no calendar has been built");
         }
         
@@ -255,6 +255,8 @@ $(document).ready(function() {
             
             //hide build calendar form so that user can admire their calendar
             $('#collapseOne').collapse('hide'); 
+            
+            console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
         }
         
         
@@ -288,6 +290,7 @@ $(document).ready(function() {
             $('#collapseOne').collapse('hide'); 
             
             //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
+            console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
         }
         
         
@@ -314,25 +317,25 @@ $(document).ready(function() {
         var confirmation = confirm("Are you sure you want to delete your calendar?");
         if (confirmation === true) {
         
-            if (calendarUniqueId[calendar.calendarState.uniqueId]) {
-                console.log("deleting calendar " + calendar.calendarState.calendarTitle);
+            //if (calendarUniqueId[calendar.calendarState.uniqueId]) {
+            console.log("deleting calendar " + calendar.calendarState.calendarTitle);
+            
+            removeFromCalendarDropdown(calendar.calendarState.uniqueId);
+            delete calendarUniqueId[calendar.calendarState.uniqueId];
+            //save the new calendarUniqueId
+            storeInLocalStorage(masterKey, calendarUniqueId);
+            removeFromLocalStorage(calendar.calendarState.uniqueId);
+            
+            console.log("clearing the page");
+            //clear the page
+            clearPage();
+            //show build calendar form so that user can build a new one
+            $('#collapseOne').collapse('show'); 
                 
-                removeFromCalendarDropdown(calendar.calendarState.uniqueId);
-                delete calendarUniqueId[calendar.calendarState.uniqueId];
-                //save the new calendarUniqueId
-                storeInLocalStorage(masterKey, calendarUniqueId);
-                removeFromLocalStorage(calendar.calendarState.uniqueId);
-                
-                console.log("clearing the page");
-                //clear the page
-                clearPage();
-                //show build calendar form so that user can build a new one
-                $('#collapseOne').collapse('show'); 
-                
-            }
-            else {
-                clearPage();
-            }
+            //}
+            //else {
+            //    clearPage();
+            //}
         
         }
         
