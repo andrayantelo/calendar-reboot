@@ -149,6 +149,12 @@ $(document).ready(function() {
         
     };
     
+    $('#clearButton').click(function() {
+        //clear all the entries in the build calendar form
+        console.log("clearing form...");
+        $('#fullForm')[0].reset();
+    });
+    
     $('#setButton').click(function(){
         console.log("set Button clicked");
         //take the empty calendar object made when the page is loaded
@@ -254,6 +260,9 @@ $(document).ready(function() {
             //store it in localStorage
             //localstorage will override things with the same key
             storeInLocalStorage(storageKey, calendar.calendarState);
+            
+            //hide build calendar form so that user can admire their calendar
+            $('#collapseOne').collapse('show'); 
             
             console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after stored in localstorage " + calendar.calendarState.uniqueId);
         }
