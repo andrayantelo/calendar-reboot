@@ -312,6 +312,8 @@ $(document).ready(function() {
             
             removeFromCalendarDropdown(calendar.calendarState.uniqueId);
             delete calendarUniqueId[calendar.calendarState.uniqueId];
+            //save the new calendarUniqueId
+            storeInLocalStorage(masterKey, calendarUniqueId);
             removeFromLocalStorage(calendar.calendarState.uniqueId);
             
             //clear the page
@@ -628,7 +630,6 @@ var Month = function(date) {
             //the key is the index of the day for now, which is stored in the
             //dayIndex dictionary, which was made when you filled the month div
             self.monthState.checkedDays[self.monthState.dayIndex[daynumber]] = daynumber;
-            console.log("this day is checked " + daynumber);
         });
         //}
     };
@@ -906,8 +907,6 @@ var Calendar = function(startDateString, numberOfYears, title) {
         var startYear = self.startDate.year();
         var endYear = self.endDate.year();
         
-        console.log("this is the end year " + endYear);
-        
         for (i = 0; i <= self.numberOfYears; i++)
         {
             years.push(startYear += i);
@@ -1079,7 +1078,6 @@ var Calendar = function(startDateString, numberOfYears, title) {
         //gather all the checkmarks to store inside of the monthStates
         
         monthObjectsArray.forEach(function(monthObj) {
-            console.log("collecting check marks");
             monthObj.collectCheckedDays();
         });
     };
