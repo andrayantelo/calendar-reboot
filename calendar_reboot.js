@@ -145,6 +145,11 @@ $(document).ready(function() {
         calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
         calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
+        //store the uniqueId and calendarTitle inside of an object (dictionary) 
+        //do this before saving because when you are about to save, checking
+        //if the calendar was actually built is done by seeing if it's in this object
+        calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; 
+        
     };
     
     $('#clearButton').click(function() {
@@ -225,9 +230,6 @@ $(document).ready(function() {
             
             //get the calendar title to put in the dropdown
             var calendarTitle = calendar.calendarState.calendarTitle;
-            
-            //store the uniqueId and calendarTitle inside of an object (dictionary) <-- dunno if neccessary UPDATE UPDATE
-            calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; //maybe store it differently because titles are not unique
        
             //in order to use this this has to be stored in localstorage as well THIS IS WHAT I WAS WORKING ON LAST
             //MAY NEED TO USE THIS DICTIONARY TO MAKE THE DROPDOWN WHEN THE PAGE LOADS
