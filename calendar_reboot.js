@@ -285,6 +285,8 @@ $(document).ready(function() {
             console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after loading from storage " + calendar.calendarState.uniqueId);
             clearPage();
             buildCalendar(calendar);
+            //hide the build calendar form
+            $('#collapseOne').collapse('hide'); 
         }
         
         
@@ -318,7 +320,8 @@ $(document).ready(function() {
             
             //clear the page
             clearPage();
-            $('#collapseOne').collapse('toggle'); 
+            //show build calendar form so that user can build a new one
+            $('#collapseOne').collapse('show'); 
             
         }
         else {
