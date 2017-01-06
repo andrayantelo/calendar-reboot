@@ -218,6 +218,7 @@ $(document).ready(function() {
         }
         
         else {
+            console.log("Saving progress...");
         
             //the storage key is the calendar's unique Id
             var storageKey = calendar.calendarState.uniqueId;
@@ -285,6 +286,8 @@ $(document).ready(function() {
             buildCalendar(calendar);
             //hide the build calendar form
             $('#collapseOne').collapse('hide'); 
+            
+            //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
         }
         
         
@@ -661,6 +664,9 @@ var Month = function(date) {
             else {
                 $( this ).children('.daynumber').addClass("checkedDay");
             }
+            
+            //save your progress
+            $('#saveButton').trigger('click');
             
         });
     };
@@ -1115,5 +1121,4 @@ var Calendar = function(startDateString, numberOfYears, title) {
 //dictionary of savedCalendars, calendar title: unique ID
 
 var calendarUniqueId = {
-    
 };
