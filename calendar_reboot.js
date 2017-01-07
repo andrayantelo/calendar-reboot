@@ -42,10 +42,6 @@ $(document).ready(function() {
             
             //get the calendar title to put in the dropdown
             var calendarTitle = calendar.calendarState.calendarTitle;
-       
-            //the calendarUniqueId dictionary also needs to be stored in localstorage. use 
-            //global variable masterKey as the storage key
-            storeInLocalStorage(masterKey, calendarUniqueId);
             
             //update the calendarState (with checkmark information)
             calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
@@ -574,16 +570,16 @@ var Month = function(date) {
         //HARDCODED FOR NOW
         
         var $div = $('#calendarDiv');
-        var yearHeader = "<div class='page-header text-center'>" +
-            "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
-            "</div>";
+        //var yearHeader = "<div class='page-header text-center'>" +
+        //    "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
+        //    "</div>";
         
         //the div ID is the monthID
         $div.append('<div class="monthframe" id=' + self.monthId + '></div>');
-       // $div.append('<div class="monthframe"></div>');
-        if (self.monthIndex === "0") {
-            $('#' + self.monthId).append(yearHeader);
-        }
+        $div.append('<div class="monthframe"></div>');
+        //if (self.monthIndex === 0) {
+        //    $('#' + self.monthId).append(yearHeader);
+        //}
         $('#' + self.monthId).append($('#template').html());
         
         
@@ -622,7 +618,7 @@ var Month = function(date) {
         
         //HARDCODED FOR NOW
         var $div = $('#calendarDiv');
-        var $monthId = $('#' + self.monthId);
+        
         $div.find('.cell').click(function (event) {
             $( this ).children('.element').toggleClass("hidden");
             if ( $( this ).children('.element').hasClass("hidden") ) {
@@ -722,7 +718,6 @@ var Month = function(date) {
         //remove empty weeks from the month view
         
         var $div = $('#calendarDiv');
-        var monthId = '#' + self.monthId;
         
         $div.find('.month').find('.week').each( function(index) {
             var counter = 0;
