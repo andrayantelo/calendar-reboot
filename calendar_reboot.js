@@ -1,45 +1,33 @@
+var masterKey = 'masterKey';
+var current_active_calendar = 'current_active_calendar';
+
 $(document).ready(function() {
     
     //will need to use a better key than this for masterKey (if this is
     //even a good way to do this)
-    var masterKey = 'masterKey';
-    var current_active_calendar = 'current_active_calendar';
     
-    var calendarTitleId = 'titleFormGroup';
-    var startDateId = 'dateFormGroup';
+    
+    var calendarTitleId = 'titleFormGroup'; //actual div id
+    var startDateId = 'dateFormGroup';  //also div id
+    var endDateId = 'dateFormGroup2'
     
     var monthObjects;
     
     //have the calendar show when you click in the input section of the date
     //timepicker
+    
+    $('#datetimepicker1').datetimepicker({format: "YYYY-MM-DD"});
     $('#datetimepicker1 input').click(function(event){
         $('#datetimepicker1 ').data("DateTimePicker").show();
     });
     
-    //update the current active calendar
-    var updateActiveCalendar = function(uniqueId) {
-        //store the calendar's unique id as the value in the key value pair
-        //current_active_calendar : uniqueId, in the calendarUniqueId object
-        //and save this in localStorage
-        
-        calendarUniqueId[current_active_calendar] = uniqueId;
-        storeInLocalStorage(masterKey, calendarUniqueId);
-    };
+    $('#datetimepicker2').datetimepicker({format: "YYYY-MM-DD"});
+    $('#datetimepicker2 input').click(function(event){
+        $('#datetimepicker2 ').data("DateTimePicker").show();
+    });
     
-    //probably don't need titleCheck since titles don't need to be unique anymore
-    var titleCheck = function(title) {
-        //make sure that the title the user provides for their calendar is 
-        //unique. Need to have unique titles for calendar so that you can 
-        //use the calendarUniqueId object (dictionary) properly. Can't have
-        //the same title pointing to different unique Ids. 
-        
-        if (calendarUniqueId[title]) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    };
+    //update the current active calendar
+
     
     var addToCalendarDropdown = function(uniqueId, title) {
         //add the calendar with unique Id, uniqueId, and title, title, to
@@ -92,7 +80,24 @@ $(document).ready(function() {
         id.addClass('hidden');
     };
     
-    var validateForm = function(formGroupId) {
+    validateForm = function(startDate, endDate) {
+        //check that endDate comes after startDate
+        //checks 
+          //if there is no valid startDate, prompt user for a valid startDate
+        
+        var startDateMoment = moment(startDate, "YYYYMMDD");
+        var endDateMoment = moment(endDate, "YYYYMMDD");
+        
+        if (startDateMoment.isBefore(endDateMoment)) {
+            return true;
+        }
+        else {
+            console.log("endDate is before startDate");
+            return false;
+        }
+    };
+    
+    var validateInput = function(formGroupId) {
         
         //make a variable for the id string
         var id = formGroupId;
@@ -129,15 +134,19 @@ $(document).ready(function() {
         //this function assumes the calendarObject already has it's
         //calendarState updated with the correct information. 
         
-        monthObjects = calendarObject.generateMonthObjects();
-        calendarObject.monthObjects = monthObjects;
-        
         calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
         calendarObject.fillCalendar(calendarObject.monthObjects);
-        calendarObject.attachClickForCalendar(calendarObject.monthObjects);
-        calendarObject.removeEmptyWeeksFromCalendar(calendarObject.monthObjects);
-        calendarObject.placeCheckmarks(calendarObject.monthObjects);
         
+    };
+    
+    var displayCalendar = function(uniqueId) {
+        //load a calendarState and build the calendar on the page
+        
+        var state = loadFromLocalStorage(uniqueId);
+        var calendar = new Calendar(state);
+        
+        buildCalendar(calendar);
+        calendar.saveCalendar();
     };
     
     $('#clearButton').click(function() {
@@ -152,112 +161,34 @@ $(document).ready(function() {
         // and fill it with the information given in the form
         //required info are startDate and title. default to tracking 1 
         //year
+        var calendarTitle = $("#calendarTitle").val();
+        var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+            
         
+        var validateTitle = validateInput(calendarTitleId);
+        var validateStartDate = validateInput(startDateId);
+        var validateEndDate = validateInput(endDateId);
+        var validateDates = validateForm(startDate, endDate);
         
-        //if there is no valid startDate, prompt user for a valid startDate
-        var validateTitle = validateForm(calendarTitleId);
-        var validateDate = validateForm(startDateId);
-        
-        if (validateTitle && validateDate) {
+        if (validateTitle && validateStartDate && validateEndDate && validateDates) {
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
+        
             
-            //maybe don't need below two lines
-            //collapse the build calendar form
-            //$('#collapseOne').collapse('toggle'); 
+            //make a calendar State
+            var calendarState = emptyCalendarState(startDate, endDate, calendarTitle);
             
-            //update the calendar's startDate, title, and numberOfYears attributes
-            //with information given in the form
-            var calendarTitle = $("#calendarTitle").val();
-            var startDate = $("#startDate").val();
-            var numberOfYears = parseInt($("#numberOfYears").val()) || 1;
             
-            calendar.updateCalendarAttributes(startDate, numberOfYears, calendarTitle);
-            
-            //initialize calendar object's state here instead of in build calendar because
-            //you don't want to refill the calendarState every time you load a calendar
-            //when a calendar is loaded, the calendar state will be equal to the 
-            //loaded calendar state, so we do not need to run initCalendarState when we
-            //build calendars after loading them. buildCalendar builds the html, not
-            //the calendar object
-            
-            calendar.initCalendarState();
-            
-            //should I do the below lines this way?
-            buildCalendar(calendar);
+            //make calendar object
+            var calendar = new Calendar(calendarState);
+            calendar.saveCalendar();
+        
+            //build the calendar
+           buildCalendar(calendar);
        }
     });
     
-    //determines what happens when the save Button is clicked
-    $('#saveButton').click(function() {
-        //stores current calendar in localStorage, adds the name to
-        //the saved calendars dropdown
-        
-        //what needs to happen when you save:
-        //the monthStates attribute(property?) checkedDays needs to be 
-        //updated with the day indices of days that have a checkmark
-        //all monthStates need to have the most current information about
-        //the calendar, this is done by updating the calendarState
-        //maybe user changed numberOfYears to track or the calendarTitle, 
-        //or even the start date? (should they be able to change the startdate?
-        //probably not)
-        //then the updated calendarState needs to be stored in localStorage
-        
-        //check if the calendar has a uniqueId (in other words, has a calendar been built?)
-        //if not then we do not save anything.
-        
-        if (calendar.calendarState.uniqueId === null) {
-            console.error("no calendar has been built");
-        }
-        
-        else {
-            console.log("Saving progress...");
-        
-            //the storage key is the calendar's unique Id
-            var storageKey = calendar.calendarState.uniqueId;
-            
-            //get the calendar title to put in the dropdown
-            var calendarTitle = calendar.calendarState.calendarTitle;
-       
-            //in order to use this this has to be stored in localstorage as well THIS IS WHAT I WAS WORKING ON LAST
-            //MAY NEED TO USE THIS DICTIONARY TO MAKE THE DROPDOWN WHEN THE PAGE LOADS
-            
-            //the calendarUniqueId dictionary also needs to be stored in localstorage. use 
-            //global variable masterKey as the storage key
-            storeInLocalStorage(masterKey, calendarUniqueId);
-            
-            //update the calendarState (with checkmark information)
-            calendar.updateCalendarAttributes(calendar.calendarState.startDate, calendar.calendarState.numberOfYears, calendar.calendarState.calendarTitle);
-            calendar.updateCalendarState(calendar.monthObjects);
-            
-            //store the uniqueId and calendarTitle inside of an object (dictionary) 
-            console.log("calendar stored in calendarUniqueId");
-            calendarUniqueId[calendar.calendarState.uniqueId] = calendarTitle; 
-            storeInLocalStorage(masterKey, calendarUniqueId);
-            
-            //check if it was already stored in localStorage 
-            //if it isn't we add it to the dropdown, if it is, then it's already
-            //in the dropdown. DO I NEED THIS??  
-            if (loadFromLocalStorage(storageKey) === null) { //is null false in javascript
-                //add to dropdown
-                console.log('not in storage yet..');
-                addToCalendarDropdown(calendar.calendarState.uniqueId, calendarTitle);
-            }
-            
-            //store it in localStorage
-            //localstorage will override things with the same key
-            storeInLocalStorage(storageKey, calendar.calendarState);
-            
-            //hide build calendar form so that user can admire their calendar
-            $('#collapseOne').collapse('hide'); 
-            
-            console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-            updateActiveCalendar(calendar.calendarState.uniqueId);
-            
-        }
-        
-        
-    });
     
     $('#calendarDropdown').on('click', 'li', function() {
         //when a calendar is clicked on in the dropdown menu
@@ -268,10 +199,7 @@ $(document).ready(function() {
         //calendar
         
         //load the saved calendar with the title that was clicked
-        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " before loading from storage " + calendar.calendarState.uniqueId);
-        //make sure calendar object is empty before loading new state into it <-- do i need this
-        
-        
+    
         console.log("the storage key you are using " + $(this).attr('id'));
         var loadedCalendarState = loadFromLocalStorage($(this).attr('id'));
         
@@ -279,16 +207,12 @@ $(document).ready(function() {
             console.error('calendar does not exist/has not been saved');
         }
         else {
-            calendar.calendarState = loadedCalendarState;
-            console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after loading from storage " + calendar.calendarState.uniqueId);
+            var calendar = new Calendar(loadedCalendarState);
             clearPage();
             buildCalendar(calendar);
             //hide the build calendar form
             $('#collapseOne').collapse('hide'); 
-            
-            //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
-            console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-            updateActiveCalendar(calendar.calendarState.uniqueId);
+            calendar.saveCalendar();
         }
         
         
@@ -314,28 +238,22 @@ $(document).ready(function() {
         //ask the user if they are sure they want to delete their calendar
         var confirmation = confirm("Are you sure you want to delete your calendar?");
         if (confirmation === true) {
-        
-            //if (calendarUniqueId[calendar.calendarState.uniqueId]) {
-            console.log("deleting calendar " + calendar.calendarState.calendarTitle);
             
-            removeFromCalendarDropdown(calendar.calendarState.uniqueId);
-            delete calendarUniqueId[calendar.calendarState.uniqueId];
-            //save the new calendarUniqueId
+            var currentCalendarId = loadFromLocalStorage(current_active_calendar);
+            console.log(currentCalendarId);
+            delete calendarUniqueId[currentCalendarId];
             storeInLocalStorage(masterKey, calendarUniqueId);
-            removeFromLocalStorage(calendar.calendarState.uniqueId);
+            
+            removeFromCalendarDropdown(currentCalendarId);
+            //remove the calendarstate from localStorage
+            removeFromLocalStorage(currentCalendarId);
+            
+            removeFromLocalStorage(current_active_calendar);
             
             console.log("clearing the page");
             //clear the page
             clearPage();
-            //calendar object needs to be empty again
-            calendar = new Calendar("", 0, "");
-            //show build calendar form so that user can build a new one
             $('#collapseOne').collapse('show'); 
-                
-            //}
-            //else {
-            //    clearPage();
-            //}
         
         }
         
@@ -343,33 +261,12 @@ $(document).ready(function() {
     
     
     //WHEN PAGE LOADS
-    calendar = new Calendar("", 0, "");
-    
     //first load the calendarUniqueId from storage.
-    console.log("loading calendarUniqueId from localStorage");
     calendarUniqueId = loadFromLocalStorage(masterKey);
     //if it's not in localstorage make it an empty object
     if (calendarUniqueId === null) {
         calendarUniqueId = {};
     }
-    
-    //load the current_active_calendar
-    var activeCalendarState = loadFromLocalStorage(calendarUniqueId[current_active_calendar]);
-    
-    if (activeCalendarState !== null) {
-        console.log("loading last active calendar");
-        calendar.calendarState = activeCalendarState;
-        console.log("this is uniqueId of " + calendar.calendarState.calendarTitle + " after loading from storage " + calendar.calendarState.uniqueId);
-        clearPage();
-        buildCalendar(calendar);
-        //hide the build calendar form
-        $('#collapseOne').collapse('hide'); 
-        
-        //ADD LAST USED CALENDAR TO CALENDARUNIQUEID
-        console.log("the last used calendar is " + calendar.calendarState.calendarTitle + " with unique Id " + calendar.calendarState.uniqueId);
-        updateActiveCalendar(calendar.calendarState.uniqueId);
-        }
-   
     
     //GOING THROUGH THE KEYS OF THE DICTIONARY calendarUniqueId
     for (var key in calendarUniqueId) {
@@ -381,6 +278,15 @@ $(document).ready(function() {
           }
       }
     }
+    
+    
+    var activeCalendar = loadFromLocalStorage(current_active_calendar);
+    
+    if (activeCalendar !== null) {
+        displayCalendar(activeCalendar);
+        
+    }
+    
     
     
    
@@ -458,72 +364,6 @@ var setStartDate = function() {
     
     return startDate;
 };
-
-var makeMonthObj = function(mState) {
-    // Returns a month object with the given state as it's monthState.
-    
-    // Parameters:
-    // mState: dictionary
-    //     contains month information (numberOfDays, firstIndex, etc)
-    var monthIndex = mState.monthIndex + 1;
-    monthIndex = monthIndex.toString();
-    var month = new Month(monthIndex + '-' + mState.startDay.toString() +
-     '-' + mState.monthYear.toString(),  'MM-DD-YYYY');
-    month.monthState = mState;
-    return month;
-};
-
-var extractMonthState = function(monthObj) {
-    // Takes a month object, extracts it's monthState, and returns it.
-    
-    // Parameters:
-    // monthObj: object
-    //     An instance of the Month class
-    
-    return monthObj.monthState;
-};
-
-var leadingZero = function(n) {
-    // if n < 10 put one leading zero infront of it. n is an integer
-    // but we will be returning a string.
-    
-    if (n < 10) 
-    {
-        n = "0" + n.toString();
-        return n;
-        
-    }
-    else 
-    {
-        return n.toString();
-    }
-        
-};
-
-
-var oneIndexMonth = function(monthIndex) {
-    //takes a monthindex from 0-11 and returns it's one-based index equivalent
-    var oneIndexDictionary = {
-        0: 1,
-        1: 2,
-        2: 3,
-        3: 4,
-        4: 5,
-        5: 6,
-        6: 7,
-        7: 8,
-        8: 9,
-        9: 10,
-        10: 11,
-        11: 12
-    };
-    if (monthIndex >= 0 && monthIndex < 12) {
-        return oneIndexDictionary[monthIndex];
-    }
-    else {
-        throw "Invalid Month Index"
-    }
-};
         
 
 var clearPage = function() {
@@ -538,91 +378,24 @@ var clearPage = function() {
 
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
-var emptyMonthState = function() {
-    //a dictionary of all the information you need for one month object
-    return {
-        //first day of the month index
-        firstDayIndex: 0,
-        //number many days in a month
-        numberOfDays: 30,
-        // month year
-        monthYear: "",
-        // index of month
-        monthIndex: 0,
-        // month name
-        monthName: "",
-        //the day someone wants to start in this month, doesn't necessarily 
-        // have to be the first of the month
-        startDay: 1,
-        //use month index and year as the month Div Id
-        monthId: 0,
-        //string of the date
-        dateString: "",
-        // object (dictionary) containing which days are checked index:daynumber
-        checkedDays: {},
-        // day and their indices pairs daynumber:index
-        dayIndex: {},
-    };
-};
 
- fillMonthState = function(date) {
-    //fills in an empty monthState with information from the 
-    //date provided
-    dateString = date;
-    date = moment(date, "MM-DD-YYYY");
-    
-    monthState = emptyMonthState();
-    
-    monthState.firstDayIndex = date.day();
-    monthState.numberOfDays = date.daysInMonth();
-    monthState.monthYear = date.year();
-    monthState.monthIndex = date.month();
-    monthState.monthName = getMonthName(monthState.monthIndex);
-    monthState.startDay = date.date();
-    monthState.monthId = monthState.monthIndex.toString() + monthState.monthYear.toString();
-    monthState.dateString = dateString;
-    
-    return monthState;
-};
-
-
-
-var Month = function(date) {
+var Month = function(dateString, calendarObj) {
     
     var self = this;
-    //date will be of the format moment("MM-DD-YYYY")
-    self.dateString = date;
-    self.date = moment(date, "MM-DD-YYYY");
-    self.monthState = emptyMonthState();
+    //date will be of the format moment("YYYYMMDD")
+    self.dateString = dateString;
+    self.date = moment(dateString, "YYYYMMDD");
+    self.firstDayIndex = self.date.day();
+    self.numberOfDays = self.date.daysInMonth();
+    self.monthYear = self.date.year();
+    self.monthIndex = self.date.month();
+    self.monthName = getMonthName(self.monthIndex);
+    self.startDay = self.date.date();
+    self.dayIndex = {};
+    self.monthId = self.monthYear.toString() + self.monthIndex.toString()
+    self.calendar = calendarObj;
     
-    self.storeMonth = function() {
-        //save month data, whether on a database, localstorage, whatever 
-        //ends up being used
-    };
-    
-    self.loadMonth = function() {
-        //load month data from database/localstorage, whatever is used
-        //to store
-    };
-    
-    //MIGHT NOT NEED THIS ANYMORE, INITIALIZE MONTHSTATE
-    self.initializeMonthState = function() {
-        //fill the monthState with all the information given by the chosen 
-        //date when the month object was initialized.
-        
-        self.monthState.firstDayIndex = self.date.day();
-        self.monthState.numberOfDays = self.date.daysInMonth();
-        self.monthState.monthYear = self.date.year();
-        self.monthState.monthIndex = self.date.month();
-        self.monthState.monthName = getMonthName(self.monthState.monthIndex);
-        self.monthState.startDay = self.date.date();
-        self.monthState.monthId = self.monthState.monthIndex.toString() + self.monthState.monthYear.toString();
-        self.monthState.dateString = self.dateString;
-        
-        
-    };
-    
-    self.generateEmptyMonthDiv = function(div) {
+    self.generateEmptyMonthDiv = function(isFirst) {
         //add a div to html code containing the table template for a month 
         
         //Parameters: 
@@ -632,41 +405,21 @@ var Month = function(date) {
         //    will probably end up being hardcoded in
         
         //HARDCODED FOR NOW
-        
         var $div = $('#calendarDiv');
         var yearHeader = "<div class='page-header text-center'>" +
-            "<h2 id='yearHeader'>" + self.monthState.monthYear + "</h2>" +
+            "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
             "</div>";
         
         //the div ID is the monthID
-        $div.append('<div class="monthframe" id=' + self.monthState.monthId + '></div>');
-        if (self.monthState.monthId == "0" + self.monthState.monthYear.toString()) {
-            $('#' + self.monthState.monthId).append(yearHeader);
+        console.log(self.monthId + " this is the monthId");
+        $div.append('<div class="monthframe" id=' + self.monthId + '></div>');
+        $div.append('<div class="monthframe"></div>');
+        if (self.monthIndex === 0 || isFirst) {
+            $('#' + self.monthId).append(yearHeader);
         }
-        $('#' + self.monthState.monthId).append($('#template').html());
+        $('#' + self.monthId).append($('#template').html());
         
         
-    };
-    
-    self.collectCheckedDays = function() {
-        //go through table and store which days the user checked
-        // Stores index: daynumber pairs in monthState.checkedDays. These
-        // pertain to the days which have the daynumber div hidden.
-        
-        var $monthId = $('#'+ self.monthState.monthId);
-        //retrieves the daynumber attribute of the checked days and stores it in monthState.checkedDays
-        
-        //empty the checkedDays object first, so that if someone is unchecking days
-        // then they don't show up when you generate the calendar again
-        self.monthState.checkedDays = {};
-        
-        $monthId.find('.month').find('td').find('.cell').find('.checkedDay').each(function () {
-            var daynumber = $(this).attr('daynumber');
-            //the key is the index of the day for now, which is stored in the
-            //dayIndex dictionary, which was made when you filled the month div
-            self.monthState.checkedDays[self.monthState.dayIndex[daynumber]] = daynumber;
-        });
-        //}
     };
     
      self.attachClickHandler = function() {
@@ -678,33 +431,43 @@ var Month = function(date) {
         // between the children (daynumber and fa fa-check) of "cell"
         
         //HARDCODED FOR NOW
-        var $div = $('#calendarDiv');
-        var $monthId = $('#' + self.monthState.monthId);
-        $div.find($monthId).find('.cell').click(function (event) {
-            $( this ).children('.element').toggleClass("hidden");
-            if ( $( this ).children('.element').hasClass("hidden") ) {
-                $( this ).children('.daynumber').removeClass('checkedDay');
+        var $div = $('#' + self.monthId);
+        
+        $div.find('.cell').click(function (event) {
+            
+            var boxId = $( this).attr('id');
+            //if the boxId is not checked (as in, the value is not inside of checkedDays
+            //in other words, it's undefined
+            if (self.calendar.calendarState.checkedDays[boxId] === undefined) {
+                //add it to checkedDays
+                self.calendar.calendarState.checkedDays[boxId] = 1;
+                //then add a checkmark
+                $( this ).children('.element').removeClass("hidden");
             }
             else {
-                $( this ).children('.daynumber').addClass("checkedDay");
+                //remove from checkedDays
+                delete self.calendar.calendarState.checkedDays[boxId]
+                //remove the checkmark from the page
+                $( this ).children('.element').addClass("hidden");
             }
             
             //save your progress
-            $('#saveButton').trigger('click');
             
-        });
-    };
+            self.calendar.saveCalendar();
+         })
+     };
+
     
     self.fillMonthDiv = function() {
         //fill the template table with month information (name, number of
         //days, year, checked days if any, etc.
         
-        var $monthId = $('#'+ self.monthState.monthId);
+        var $monthId = $('#'+ self.monthId);
         
         //self.clearMonthDiv();  <-- Do I need this?
         
         $monthId.find(".month-year").empty();
-        $monthId.find(".month-year").append(self.monthState.monthName + " " + self.monthState.monthYear);
+        $monthId.find(".month-year").append(self.monthName + " " + self.monthYear);
         
         //go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
@@ -715,18 +478,18 @@ var Month = function(date) {
             //gives the day of the month
             
             
-            var dayOfMonth = indexOfTableTd - (self.monthState.firstDayIndex - self.monthState.startDay);
+            var dayOfMonth = indexOfTableTd - (self.firstDayIndex - self.startDay);
             
             
             //if the day of the month is >= to the startDay, so for example
             //if you have startDay as 20th of Nov, then the following code
             //won't run until the dayOfMonth is 20 or up AND it is less
             //than the number of days in the month
-            if (dayOfMonth >= self.monthState.startDay && dayOfMonth <= self.monthState.numberOfDays) 
+            if (dayOfMonth >= self.startDay && dayOfMonth <= self.numberOfDays) 
             { 
                 //store the day of months with their indices in dayIndex object (dictionary)
                 //in month state
-                 self.monthState.dayIndex[dayOfMonth] = indexOfTableTd;
+                 self.dayIndex[dayOfMonth] = indexOfTableTd;
                  
                  //this refers to the td
                  $(this).empty();  //ensure it's empty
@@ -744,6 +507,8 @@ var Month = function(date) {
                  //add the daynumber into the div with class .daynumber, which is 
                  //inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                 var boxId = moment({"year":self.monthYear, "month":self.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
+                 $(this).find('.cell').attr('id', boxId);
                  
             }
             
@@ -753,22 +518,22 @@ var Month = function(date) {
         });
     };
     
-    self.generateCheckMarks = function() {
+    self.generateCheckmarks = function() {
         // Toggles the hidden class between the children of the div class="cell" 
         // of the cells whose indices are in the monthState.checkedDays
         // object.
         
-        var $div = $('#calendarDiv');
-        var monthId = '#'+ self.monthState.monthId;
+        //checkedDays is an object that contains a date that points to 1 or 0
+        console.log("generating checkmarks");
+        var monthId = '#'+ self.monthId;
         
-      
-        $div.find(monthId).find('.month').find('td').each( function(index) 
+        $(monthId).find('.cell').each( function() 
         {
-            
-            if (self.monthState.checkedDays[index]) 
+            var boxId = $(this).attr('id');
+            console.log(boxId);
+            if (self.calendar.calendarState.checkedDays[$(this).attr('id')]) 
             {
-                $(this).find('.cell').children('.element').toggleClass("hidden");
-                $(this).find('.cell').children('.daynumber').addClass('checkedDay');
+                $(this).children('.element').removeClass("hidden");
             }
             
          });
@@ -778,9 +543,8 @@ var Month = function(date) {
         //remove empty weeks from the month view
         
         var $div = $('#calendarDiv');
-        var monthId = '#' + self.monthState.monthId;
         
-        $div.find(monthId).find('.month').find('.week').each( function(index) {
+        $div.find('.month').find('.week').each( function(index) {
             var counter = 0;
             $(this).find('td').each(function(td) {
                 if ($(this).hasClass("emptyDay")) 
@@ -821,329 +585,114 @@ var extractCalendarState = function(calendarObj) {
     return calendarObj.calendarState;
 };
 
-var emptyCalendarState = function() {
+var generateUniqueId = function() {
+    var uniqueId = Math.floor((Math.random() + Date.now())*10e4);
+    return uniqueId
+    
+};
+
+var emptyCalendarState = function(startDate, endDate, title) {
     return{
-        //"MM-DD-YYYY" string
-        startDate: undefined,
-        //list of years
-        years: [],
-        //dictionary of monthId: monthState
-        monthStates: [],
+        //"YYYYMMDD" string
+        startDateString: moment(startDate, "YYYY-MM-DD").format("YYYYMMDD"),
+        endDateString: moment(endDate, "YYYY-MM-DD").format("YYYYMMDD"),
         //list name under which it will be saved
-        calendarTitle: '',
-        //self.numberOfYears
-        numberOfYears: 1,
-        //self.numberOfMonths
-        numberOfMonths: 12,
-        //the last day of tracking
-        endDate: undefined,
+        calendarTitle: title,
         //unique ID for calendar
-        uniqueId: null
+        uniqueId: generateUniqueId(),
+        //checkedDays day id: 1
+        checkedDays: {}
     };
 };
 
-var Calendar = function(startDateString, numberOfYears, title) {
+var Calendar = function(state) {
     
     var self = this;
+    self.calendarState = state;
     //startDate is a moment object , the argument startDateString is 
-    //"MM-DD-YYYY" string
-    self.startDate = moment(startDateString, "MM-DD-YYYY");
-    self.calendarState = emptyCalendarState();
-    //numberOfYears is a number given by user, how many years do they want
-    //to track, we will default to 1 right now
-    self.numberOfYears = numberOfYears;
+    //"YYYYMMDD" string
+    self.startDate = moment(state.startDateString, "YYYYMMDD");
+    //endDate is a moment object
+    self.endDate = moment(state.endDateString, "YYYYMMDD");
     //number of months we will need to be able to cover all the years the
     //user wants to track
-    self.numberOfMonths = self.numberOfYears * 12;
-    self.title = title;
-    self.monthObjects = [];
-    //endDate is a moment object
-    self.endDate = undefined;
+    self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
+    self.title = state.calendarTitle;
+    self.monthObjects = self.generateMonthObjects();
     
-    self.updateCalendarAttributes = function(startDateString, numberOfYears, title) {
-        //update the startDate, numberOfYears, and title.
-        //startDate is a string, numberOfyears is an int, and title is
-        //a string
-        
-        self.startDate = moment(startDateString, "MM-DD-YYYY");
-        self.numberOfYears = numberOfYears;
-        self.title = title;
-        self.numberOfMonths = self.numberOfYears * 12;
-        self.endDate = self.getEndDate();
-    };
-    
-    self.resetCalendarState = function() {
-        //reset calendarState to factory settings... as in empty calendarState
-        self.calendarState = emptyCalendarState();
-    };
-    
-    self.initCalendarState = function() {
-        //store all the information needed for a calendarState
-        //you store the strings "MM-DD-YYYY" for startDate and endDate
-        
-        self.calendarState.startDate = self.startDate.format();
-        self.calendarState.years = self.getYears();
-        self.calendarState.monthStates = self.getMonthStates();
-        self.calendarState.calendarTitle = self.title;
-        self.calendarState.numberOfYears = self.numberOfYears;
-        self.calendarState.numberOfMonths = self.numberOfMonths;
-        self.calendarState.endDate = self.endDate.format();
-        self.calendarState.uniqueId = Date.now().toString();
-        
-        console.log("after initialization, the calendar's unique Id is equal to " + self.calendarState.uniqueId);
-    };
-    
-    
-    self.getEndDate = function() {
-        //endDate depends on the startDate and numberOfYears
-        // Someone picks dec 15 2016 as startDate and then wants to 
-        //track 3 years, the last day should be dec 15, 2019
-        
-        var endYear = (self.startDate.year() + self.numberOfYears).toString();
-        var endMonth = oneIndexMonth(self.startDate.month()).toString();
-        var endDate = self.startDate.date().toString();
-        
-        var endDate = moment(endMonth + "-" + endDate + "-" + endYear,
-                             "MM-DD-YYYY");
-        
-        return endDate;
-        
-    };
-    
-    self.getYears = function() {
-        //get all the years user wants to track and store in calendarState
-        var years = [];
-        var startYear = self.startDate.year();
-        var endYear = self.endDate.year();
-        
-        for (i = 0; i <= self.numberOfYears; i++)
-        {
-            years.push(startYear += i);
-        }
-        return years;
-    };
-    
-    
-    
-    
-    self.getMonthStatesDraft = function() {
-        var monthStates = [];
-        //number of years that will be covered
-        var yearsLength = self.calendarState.years.length;
-        var monthState = null;
-        
-        //iterating over the number of Years.
-        for (i = 0; i < yearsLength; i++) {
-            console.log("we are on iteration " + i);
-        }
-        return 0;
-        
-    };
-    
-    
-    
-    
-    self.getMonthStates = function() {
-        
-        //get the required monthStates for the calendar, filled in month
-        //states not blank
-        var monthStates = [];
-        //how many years is the calendar going to cover
-        var yearsLength = self.calendarState.years.length;
-        console.log("this is the yearsLength " + yearsLength);
-        var monthState = null;
-        
-        //iterating over the years
-        for (i = 0; i < yearsLength; i++) 
-        {
-            console.log("this is the i we are on in the i for loop " + i);
-            //in year i, get monthStates for months in it
-            
-            if (self.calendarState.years[i] === self.startDate.year()) 
-            {
-                
-                for (j = self.startDate.month(); j < 12; j ++) 
-                {
-                    
-                    //iterating over months inside startDate Year
-                    if (j === self.startDate.month()) 
-                    {
-                        
-                        //var month = "month" + leadingZero(j) + self.calendarState.years[i].toString();
-                        //console.log("Potential month Ids " + month);
-                        monthState = fillMonthState(self.startDate.format("MM-DD-YYYY"));
-                        monthStates.push(monthState);
-                        
-                    }
-                    else 
-                    {
-                        monthState = fillMonthState(leadingZero(oneIndexMonth(j)) + "01" + 
-                                         self.calendarState.years[i]);
-                        monthStates.push(monthState);
-                    }
-                } // end of for loop
-            
-            } //end of first if statement
-            
-            //if the year is not the same as the startDate year, so the
-            //remaining years in the calendar
-            else
-            {
-                //for loop for the 12 months of each remaining year
-                for (k = 0; k  < 12; k ++)
-                {
-                    
-                    monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
-                                     self.calendarState.years[i]);
-                    
-                    if (i === yearsLength - 1 && k === self.endDate.month()) {
-                        monthState.numberOfDays = self.endDate.date();
-                        monthStates.push(monthState);
-                        return monthStates
-                    }
-                    monthStates.push(monthState);
-                         
-                } // end of k for loop
-            } //end of else conditional
-            
-        } //end of i for loop
-        return monthStates;
-    };
-        
-    
-    self.generateMonthObjects = function() {
-        //instantiate all the required Month objects for the calendar
-        //using the monthStates that we have already generated in 
-        //getMonthStates or loaded monthStates from local storage or 
-        //wherever they are being stored
-        
-        var monthObjects = [];
-        //iterate over the monthStates in calendarState
-        var iterationLength = self.calendarState.monthStates.length;
-        for (i = 0; i< iterationLength; i++) 
-        {
-            var month = makeMonthObj(self.calendarState.monthStates[i]);
-            monthObjects.push(month);
-        }
-        
-        return monthObjects;
-    };
-    
-    self.generateEmptyCalendar = function(monthObjectsArray) {
-        // generates the empty month divs for the calendar
-        
-        
-        
-        var $div = $('#calendarDiv');
-    
-        $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-                  self.calendarState.calendarTitle + '</h1></div>');
-        
-        monthObjectsArray.forEach (function(monthObj) {
-            if (self.startDate.month() === monthObj.date.month() && self.startDate.year() === monthObj.date.year()) 
-            {
-                $div.append('<div class="monthframe" id=' + monthObj.monthState.monthId + '></div>');
-                var yearHeader = "<div class='page-header text-center'>" +
-                "<h2 id='yearHeader'>" + self.startDate.year() + "</h2>" +
-                "</div>";
-            
-                $('#' + monthObj.monthState.monthId).append(yearHeader);
-                $('#' + monthObj.monthState.monthId).append($('#template').html());
-            }
-            else 
-            {
-                monthObj.generateEmptyMonthDiv();
-            }
-        });
-        
-    };
-    
-    self.fillCalendar = function(monthObjectsArray) {
-        //fills an empty calendar with month names, dates, etc
-        
-        monthObjectsArray.forEach (function(monthObj) {
-            monthObj.fillMonthDiv();
-        });
-    };
-    
-    self.attachClickForCalendar = function(monthObjectsArray) {
-        //attach the click handler to the entire calendar.
-        
-        monthObjectsArray.forEach (function(monthObj) {
-            monthObj.attachClickHandler();
-        });
-    };
-    
-    self.removeEmptyWeeksFromCalendar = function(monthObjectsArray) {
-        //remove empty weeks from each month
-        
-        monthObjectsArray.forEach (function(monthObj) {
-            monthObj.removeEmptyWeeks();
-        });
-    };
-    
+}
 
-    self.collectCalendarCheckmarks = function(monthObjectsArray) {
-        //gather all the checkmarks to store inside of the monthStates
-        
-        monthObjectsArray.forEach(function(monthObj) {
-            monthObj.collectCheckedDays();
-        });
-    };
     
-    self.placeCheckmarks = function(monthObjectsArray) {
-        //place checkmarks in the calendar according to what is stored in 
-        //the month's monthState under checkedDays
-        
-        monthObjectsArray.forEach(function(monthObj) {
-            monthObj.generateCheckMarks();
-        });
-    };
+Calendar.prototype.generateMonthObjects = function() {
+    //instantiate all the required Month objects for the calendar
+    //using the startDate moment object and the endDate moment object
+    //return an array of monthObjects
+    var self = this;
+    var monthObjects = [];
     
-    self.updateMonthStates = function(monthObjectsArray) {
-        //get most current version of monthState
-        updatedMonthStates = [];
-        monthObjectsArray.forEach(function(monthObj) 
-        {
-            updatedMonthStates.push(extractMonthState(monthObj));
-        });
-        return updatedMonthStates;
-    };
+    var momentObject = moment(self.startDate);
+    while (momentObject.isBefore(self.endDate)) {
+        
+        var month = new Month(momentObject.format("YYYYMMDD"), self);
+        monthObjects.push(month)
+        momentObject.startOf('month');
+        momentObject.add(1, 'month');
+    }
+    //change the number of days for the last month object to the endDate date.
+    monthObjects[monthObjects.length-1].numberOfDays = self.endDate.date();
+    return monthObjects;
+};
     
-    self.updateCalendarState = function(monthObjectsArray) {
-        //updates calendarState to most current version
-        
-        //update the individual monthState checkedDays object
-        self.collectCalendarCheckmarks(monthObjectsArray);
-        //update calendarStates monthStates object
-        self.calendarState.monthStates = self.updateMonthStates(monthObjectsArray);
-        
-        self.calendarState.startDate = self.startDate.format();
-        self.calendarState.years = self.getYears();
-        self.calendarState.calendarTitle = self.title;
-        self.calendarState.numberOfYears = self.numberOfYears;
-        self.calendarState.numberOfMonths = self.numberOfMonths;
-        self.calendarState.endDate = self.getEndDate();
-        //uniqueId is set when calendar is initialized, and never changes
-    };
+Calendar.prototype.generateEmptyCalendar = function(monthObjectsArray) {
+    // generates the empty month divs for the calendar
     
-    self.storeCalendarState = function() {  // SHOULD THE TITLE BE A PARAMETER IN THE FUNCTION?
-        //Store the calendarState in localStorage with storageKey = listTitle
-        //and the storageItem = calendarState
-        
-        storeInLocalStorage(self.calendarState.calendarTitle, self.calendarState);
-    };
+    console.log("generating empty calendar");
     
-    self.loadCalendarState = function(listTitle) {
-        //Load the calendarState with storageKey = listTitle from localStorage
-        
-        loadFromLocalStorage(listTitle);
-    };
+    var self = this;
+    var $div = $('#calendarDiv');
+
+    $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
+              self.calendarState.calendarTitle + '</h1></div>');
+    
+    monthObjectsArray.forEach (function(monthObj, index) {
+        var isFirst = index === 0;
+        monthObj.generateEmptyMonthDiv(isFirst);
+            
+    });
     
 };
+
+Calendar.prototype.fillCalendar = function(monthObjectsArray) {
+    //fills an empty calendar with month names, dates, etc
+    var self = this;
+    monthObjectsArray.forEach (function(monthObj) {
+        monthObj.fillMonthDiv();
+        monthObj.removeEmptyWeeks();
+        monthObj.attachClickHandler();
+        monthObj.generateCheckmarks();
+    });
+};
+
+    
+Calendar.prototype.saveCalendar = function() {
+        //saves the calendar in localStorage, saves the calendarUniqueId object
+        //adds the calendar to the saved calendars dropdown
+        var self = this;
+        //store the state in localStorage
+        storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
+        //set the current active calendar 
+        storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
+        //put calendar in calendarUniqueIds and store it
+        calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
+        storeInLocalStorage(masterKey, calendarUniqueId);
+        
+    };
 
 //dictionary of savedCalendars, calendar title: unique ID
 
 var calendarUniqueId = {
-    'current_active_calendar' : null
 };
+
+
+
+
