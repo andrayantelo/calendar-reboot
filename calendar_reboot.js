@@ -542,12 +542,12 @@ var clearPage = function() {
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 
-var Month = function(date) {
+var Month = function(dateString) {
     
     var self = this;
     //date will be of the format moment("YYYYMMDD")
-    self.dateString = date;
-    self.date = moment(date, "YYYYMMDD");
+    self.dateString = dateString;
+    self.date = moment(dateString, "YYYYMMDD");
     self.firstDayIndex = self.date.day();
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
@@ -556,7 +556,7 @@ var Month = function(date) {
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + leadingZero(self.monthIndex).toString()
-    
+    self.checkedDays = {};
     
     self.generateEmptyMonthDiv = function(div) {
         //add a div to html code containing the table template for a month 
@@ -693,10 +693,12 @@ var Month = function(date) {
         });
     };
     
-    self.generateCheckMarks = function() {
+    self.generateCheckMarks = function(checkedDays) {
         // Toggles the hidden class between the children of the div class="cell" 
         // of the cells whose indices are in the monthState.checkedDays
         // object.
+        
+        //checkedDays is an object that contains a date that points to 1 or 0
         
         var $div = $('#calendarDiv');
         var monthId = '#'+ selfmonthId;
@@ -760,20 +762,23 @@ var extractCalendarState = function(calendarObj) {
     return calendarObj.calendarState;
 };
 
+ self.getEndDate = function(startDateMoment) {
+    //endDate depends on the startDate and numberOfYears
+    // Someone picks dec 15 2016 as startDate and then wants to 
+    //track 3 years, the last day should be dec 15, 2019
+    
+    var endDate = moment(startDateMoment).add(3, 'years');
+    
+    return endDate;
+    
+};
+
 var emptyCalendarState = function() {
     return{
-        //"MM-DD-YYYY" string
+        //"YYYYMMDD" string
         startDate: undefined,
-        //list of years
-        years: [],
-        //dictionary of monthId: monthState
-        monthStates: [],
         //list name under which it will be saved
         calendarTitle: '',
-        //self.numberOfYears
-        numberOfYears: 1,
-        //self.numberOfMonths
-        numberOfMonths: 12,  //LENGTH OF MONTHSTATES
         //the last day of tracking
         endDate: undefined,
         //unique ID for calendar
@@ -785,31 +790,32 @@ var Calendar = function(startDateString, numberOfYears, title) {
     
     var self = this;
     //startDate is a moment object , the argument startDateString is 
-    //"MM-DD-YYYY" string
-    self.startDate = startDateString
-    self.startDate = moment(startDateString, "MM-DD-YYYY");
-    self.calendarState = emptyCalendarState();
+    //"YYYYMMDD" string
+    self.startDateString = startDateString;
+    self.startDate = moment(startDateString, "YYYYMMDD");
     //numberOfYears is a number given by user, how many years do they want
     //to track, we will default to 1 right now
     self.numberOfYears = numberOfYears;
+    //endDate is a moment object
+    self.endDate = getEndDate(self.startDate, self.numberOfYears);
     //number of months we will need to be able to cover all the years the
     //user wants to track
-    self.numberOfMonths = self.numberOfYears * 12;
+    self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
     self.title = title;
     self.monthObjects = [];
-    //endDate is a moment object
-    self.endDate = undefined;
+    self.calendarState = emptyCalendarState();
     
     self.updateCalendarAttributes = function(startDateString, numberOfYears, title) {
         //update the startDate, numberOfYears, and title.
         //startDate is a string, numberOfyears is an int, and title is
         //a string
         
-        self.startDate = moment(startDateString, "MM-DD-YYYY");
+        self.startDate = moment(startDateString, "YYYYMMDD");
         self.numberOfYears = numberOfYears;
         self.title = title;
-        self.numberOfMonths = self.numberOfYears * 12;
-        self.endDate = self.getEndDate();
+        self.endDate = getEndDate(self.startDate, self.numberOfYears);
+        self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
+        //self.monthObjects
     };
     
     self.resetCalendarState = function() {
@@ -819,36 +825,14 @@ var Calendar = function(startDateString, numberOfYears, title) {
     
     self.initCalendarState = function() {
         //store all the information needed for a calendarState
-        //you store the strings "MM-DD-YYYY" for startDate and endDate
+        //you store the strings "YYYYMMDD" for startDate and endDate
         
         self.calendarState.startDate = self.startDate.format();
-        self.calendarState.years = self.getYears();
-        self.calendarState.monthStates = self.getMonthStates();
         self.calendarState.calendarTitle = self.title;
-        self.calendarState.numberOfYears = self.numberOfYears;
-        self.calendarState.numberOfMonths = self.numberOfMonths;
         self.calendarState.endDate = self.endDate.format();
         self.calendarState.uniqueId = Date.now().toString();
-        
-        console.log("after initialization, the calendar's unique Id is equal to " + self.calendarState.uniqueId);
     };
     
-    
-    self.getEndDate = function() {
-        //endDate depends on the startDate and numberOfYears
-        // Someone picks dec 15 2016 as startDate and then wants to 
-        //track 3 years, the last day should be dec 15, 2019
-        
-        var endYear = (self.startDate.year() + self.numberOfYears).toString();
-        var endMonth = oneIndexMonth(self.startDate.month()).toString();
-        var endDate = self.startDate.date().toString();
-        
-        var endDate = moment(endMonth + "-" + endDate + "-" + endYear,
-                             "MM-DD-YYYY");
-        
-        return endDate;
-        
-    };
     
     self.getYears = function() {
         //get all the years user wants to track and store in calendarState
@@ -862,110 +846,23 @@ var Calendar = function(startDateString, numberOfYears, title) {
         }
         return years;
     };
-    
-    
-    
-    
-    self.getMonthStatesDraft = function() {
-        var monthStates = [];
-        //number of years that will be covered
-        var yearsLength = self.calendarState.years.length;
-        var monthState = null;
-        
-        //iterating over the number of Years.
-        for (i = 0; i < yearsLength; i++) {
-            console.log("we are on iteration " + i);
-        }
-        return 0;
-        
-    };
-    
-    
-    
-    
-    self.getMonthStates = function() {
-        
-        //get the required monthStates for the calendar, filled in month
-        //states not blank
-        var monthStates = [];
-        //how many years is the calendar going to cover
-        var yearsLength = self.calendarState.years.length;
-        console.log("this is the yearsLength " + yearsLength);
-        var monthState = null;
-        
-        //iterating over the years
-        for (i = 0; i < yearsLength; i++) 
-        {
-            console.log("this is the i we are on in the i for loop " + i);
-            //in year i, get monthStates for months in it
-            
-            if (self.calendarState.years[i] === self.startDate.year()) 
-            {
-                
-                for (j = self.startDate.month(); j < 12; j ++) 
-                {
-                    
-                    //iterating over months inside startDate Year
-                    if (j === self.startDate.month()) 
-                    {
-                        
-                        //var month = "month" + leadingZero(j) + self.calendarState.years[i].toString();
-                        //console.log("Potential month Ids " + month);
-                        monthState = fillMonthState(self.startDate.format("MM-DD-YYYY"));
-                        monthStates.push(monthState);
-                        
-                    }
-                    else 
-                    {
-                        monthState = fillMonthState(leadingZero(oneIndexMonth(j)) + "01" + 
-                                         self.calendarState.years[i]);
-                        monthStates.push(monthState);
-                    }
-                } // end of for loop
-            
-            } //end of first if statement
-            
-            //if the year is not the same as the startDate year, so the
-            //remaining years in the calendar
-            else
-            {
-                //for loop for the 12 months of each remaining year
-                for (k = 0; k  < 12; k ++)
-                {
-                    
-                    monthState = fillMonthState(leadingZero(oneIndexMonth(k)) + "-" + "01" + "-" +
-                                     self.calendarState.years[i]);
-                    
-                    if (i === yearsLength - 1 && k === self.endDate.month()) {
-                        monthState.numberOfDays = self.endDate.date();
-                        monthStates.push(monthState);
-                        return monthStates
-                    }
-                    monthStates.push(monthState);
-                         
-                } // end of k for loop
-            } //end of else conditional
-            
-        } //end of i for loop
-        return monthStates;
-    };
         
     
     self.generateMonthObjects = function() {
         //instantiate all the required Month objects for the calendar
-        //using the monthStates that we have already generated in 
-        //getMonthStates or loaded monthStates from local storage or 
-        //wherever they are being stored
+        //using the startDate moment object and the endDate moment object
+        //return an array of monthObjects
         
         var monthObjects = [];
-        //iterate over the monthStates in calendarState
-        var iterationLength = self.calendarState.monthStates.length;
-        for (i = 0; i< iterationLength; i++) 
-        {
-            var month = makeMonthObj(self.calendarState.monthStates[i]);
-            monthObjects.push(month);
-        }
         
+        var momentObject = self.startDate;
+        while (momentObject.isBefore(self.endDate)) {
+            console.log(momentObject.format("YYYYMMDD"));
+            var month = new Month(momentObject.format("YYYYMMDD"));
+            monthObjects.push(month)
+            momentObject.startOf('month');
+            momentObject.add(1, 'month');
+        }
         return monthObjects;
     };
     
