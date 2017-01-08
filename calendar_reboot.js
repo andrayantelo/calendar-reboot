@@ -411,7 +411,7 @@ var Month = function(dateString, calendarObj) {
             "</div>";
         
         //the div ID is the monthID
-        console.log(self.monthId + " this is the monthId");
+        
         $div.append('<div class="monthframe" id=' + self.monthId + '></div>');
         $div.append('<div class="monthframe"></div>');
         if (self.monthIndex === 0 || isFirst) {
@@ -524,13 +524,13 @@ var Month = function(dateString, calendarObj) {
         // object.
         
         //checkedDays is an object that contains a date that points to 1 or 0
-        console.log("generating checkmarks");
+        
         var monthId = '#'+ self.monthId;
         
         $(monthId).find('.cell').each( function() 
         {
             var boxId = $(this).attr('id');
-            console.log(boxId);
+            
             if (self.calendar.calendarState.checkedDays[$(this).attr('id')]) 
             {
                 $(this).children('.element').removeClass("hidden");
@@ -645,8 +645,6 @@ Calendar.prototype.generateMonthObjects = function() {
     
 Calendar.prototype.generateEmptyCalendar = function(monthObjectsArray) {
     // generates the empty month divs for the calendar
-    
-    console.log("generating empty calendar");
     
     var self = this;
     var $div = $('#calendarDiv');
