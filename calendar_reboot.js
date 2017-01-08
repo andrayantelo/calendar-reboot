@@ -631,7 +631,7 @@ Calendar.prototype.generateMonthObjects = function() {
     var monthObjects = [];
     
     var momentObject = moment(self.startDate);
-    while (momentObject.isBefore(self.endDate)) {
+    while (momentObject.isBefore(self.endDate) || momentObject.isSame(self.endDate)) {
         
         var month = new Month(momentObject.format("YYYYMMDD"), self);
         monthObjects.push(month)
