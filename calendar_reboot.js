@@ -29,7 +29,7 @@ $(document).ready(function() {
     //update the current active calendar
 
     
-    var addToCalendarDropdown = function(uniqueId, title) {
+    var addCalendarToDropdown = function(uniqueId, title) {
         //add the calendar with unique Id, uniqueId, and title, title, to
         //the saved calendars dropdown on the navbar.
         
@@ -183,6 +183,9 @@ $(document).ready(function() {
             //make calendar object
             var calendar = new Calendar(calendarState);
             calendar.saveCalendar();
+            
+            //add calendar to dropdown
+            addCalendarToDropdown(calendar.calendarState.uniqueId, calendar.calendarState.calendarTitle);
         
             //build the calendar
            buildCalendar(calendar);
@@ -274,7 +277,7 @@ $(document).ready(function() {
           if (key !== "current_active_calendar") {
             console.log("the uniqueId exists inside the calendarUniqueId dictionary");
             console.log(key + " -> " + calendarUniqueId[key]);
-            addToCalendarDropdown(key, calendarUniqueId[key]);
+            addCalendarToDropdown(key, calendarUniqueId[key]);
           }
       }
     }
