@@ -145,6 +145,7 @@ $(document).ready(function() {
         var state = loadFromLocalStorage(uniqueId);
         var calendar = new Calendar(state);
         
+        clearPage();
         buildCalendar(calendar);
         calendar.saveCalendar();
     };
@@ -207,12 +208,8 @@ $(document).ready(function() {
             console.error('calendar does not exist/has not been saved');
         }
         else {
-            var calendar = new Calendar(loadedCalendarState);
-            clearPage();
-            buildCalendar(calendar);
-            //hide the build calendar form
+            displayCalendar($(this).attr('id'));
             $('#collapseOne').collapse('hide'); 
-            calendar.saveCalendar();
         }
         
         
