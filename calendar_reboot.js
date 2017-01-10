@@ -144,19 +144,7 @@ $(document).ready(function() {
         
         var isValid = validateTitle && validateStartDate && validateEndDate;
         
-        if (isValid) {
-            var validateEndDate = validateDates(startDateString, endDateString);
-            if (validateEndDate) {
-                return true
-            }
-            else {
-                return false
-            }
-        }
-        else {
-            return false
-        }
-        
+        return (isValid && validateDates(startDateString, endDateString);
        
     };
     
