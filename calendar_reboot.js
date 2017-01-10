@@ -147,6 +147,7 @@ $(document).ready(function() {
         
         clearPage();
         buildCalendar(calendar);
+        calendar.setActiveCalendar();
         calendar.saveCalendar();
     };
     
@@ -183,6 +184,7 @@ $(document).ready(function() {
             
             //make calendar object
             var calendar = new Calendar(calendarState);
+            calendar.setActiveCalendar();
             calendar.saveCalendar();
             
             //add calendar to dropdown
@@ -213,6 +215,7 @@ $(document).ready(function() {
         else {
             displayCalendar($(this).attr('id'));
             $('#collapseOne').collapse('hide'); 
+
         }
         
         
@@ -669,6 +672,12 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
+
+Calendar.prototype.setActiveCalendar = function() {
+    
+    //set the current active calendar 
+    storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
+};
     
 Calendar.prototype.saveCalendar = function() {
         //saves the calendar in localStorage, saves the calendarUniqueId object
@@ -676,8 +685,7 @@ Calendar.prototype.saveCalendar = function() {
         var self = this;
         //store the state in localStorage
         storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
-        //set the current active calendar 
-        storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
+        
         //put calendar in calendarUniqueIds and store it
         calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
         storeInLocalStorage(masterKey, calendarUniqueId);
