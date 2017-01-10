@@ -274,9 +274,7 @@ $(document).ready(function() {
     //GOING THROUGH THE KEYS OF THE DICTIONARY calendarUniqueId
     for (var key in calendarUniqueId) {
       if (calendarUniqueId.hasOwnProperty(key)) {
-          if (key !== "current_active_calendar") {
-            console.log("the uniqueId exists inside the calendarUniqueId dictionary");
-            console.log(key + " -> " + calendarUniqueId[key]);
+          if (key !== current_active_calendar) {
             addCalendarToDropdown(key, calendarUniqueId[key]);
           }
       }
