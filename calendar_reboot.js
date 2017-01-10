@@ -248,6 +248,8 @@ $(document).ready(function() {
             var currentCalendarId = loadFromLocalStorage(current_active_calendar);
             removeFromCalendarDropdown(currentCalendarId);
             
+            
+            //below does not work
             calendar.deleteCalendar();
             calendar.removeActiveCalendar();
             
