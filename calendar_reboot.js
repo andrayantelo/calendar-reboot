@@ -87,18 +87,16 @@ $(document).ready(function() {
         removeGlyphicon('#span-titleFormGroup');
     };
     
-    var validateDates = function(startDate, endDate) {
-        console.log("validating the dates");    
+    var validateDates = function(startDateString, endDateString) {
         
-        var startDateMoment = moment(startDate, "YYYY-MM-DD");
-        var endDateMoment = moment(endDate, "YYYY-MM-DD");
+        var startDateMoment = moment(startDateString, "YYYY-MM-DD");
+        var endDateMoment = moment(endDateString, "YYYY-MM-DD");
         
         if (startDateMoment.isBefore(endDateMoment)) {
             removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
             return true;
         }
         else {
-            alert("The end date needs to be after the start date.");
             addFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
             return false;
         }
@@ -106,7 +104,6 @@ $(document).ready(function() {
     };
     
     var validateInput = function(formGroupId) {
-        console.log("validating the input " + formGroupId);
         
         //make a variable for the id string
         var id = formGroupId;
@@ -138,19 +135,29 @@ $(document).ready(function() {
         return true;
     };
     
-    var validateForm = function() {
-        console.log("validating the form");
+    var validateForm = function(startDateString, endDateString) {
+        
         
         var validateTitle = validateInput(calendarTitleId);
         var validateStartDate = validateInput(startDateId);
         var validateEndDate = validateInput(endDateId);
         
-        if (validateTitle && validateStartDate && validateEndDate) {
-            return true;
+        var isValid = validateTitle && validateStartDate && validateEndDate;
+        
+        if (isValid) {
+            var validateEndDate = validateDates(startDateString, endDateString);
+            if (validateEndDate) {
+                return true
+            }
+            else {
+                return false
+            }
         }
         else {
-            return false;
+            return false
         }
+        
+       
     };
     
     
@@ -177,24 +184,23 @@ $(document).ready(function() {
     
     $('#clearButton').click(function() {
         //clear all the entries in the build calendar form
-        console.log("clearing form...");
+        
         removeFormErrors();
         $('#fullForm')[0].reset();
     });
     
     $('#setButton').click(function(){
-        console.log("set Button clicked");
+        
         //take the empty calendar object made when the page is loaded
         // and fill it with the information given in the form
-        //required info are startDate and title. default to tracking 1 
-        //year
+        
         
         var calendarTitle = $("#calendarTitle").val();
         var startDate = $("#startDate").val();
         var endDate = $("#endDate").val();
         
-        if (validateForm() && validateDates(startDate, endDate)) {
-        
+        if (validateForm(startDate, endDate)) {
+            
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
         
