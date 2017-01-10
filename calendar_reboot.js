@@ -1,4 +1,6 @@
 var masterKey = 'masterKey';
+//the current_active_calendar is the key for localStorage that stores
+//the active calendar's Id
 var current_active_calendar = 'current_active_calendar';
 
 $(document).ready(function() {
@@ -184,6 +186,7 @@ $(document).ready(function() {
             
             //make calendar object
             var calendar = new Calendar(calendarState);
+            console.log(calendar);
             calendar.setActiveCalendar();
             calendar.saveCalendar();
             
@@ -243,15 +246,11 @@ $(document).ready(function() {
         if (confirmation === true) {
             
             var currentCalendarId = loadFromLocalStorage(current_active_calendar);
-            console.log(currentCalendarId);
-            delete calendarUniqueId[currentCalendarId];
-            storeInLocalStorage(masterKey, calendarUniqueId);
-            
             removeFromCalendarDropdown(currentCalendarId);
-            //remove the calendarstate from localStorage
-            removeFromLocalStorage(currentCalendarId);
             
-            removeFromLocalStorage(current_active_calendar);
+            calendar.deleteCalendar();
+            calendar.removeActiveCalendar();
+            
             
             console.log("clearing the page");
             //clear the page
@@ -674,14 +673,22 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 
 
 Calendar.prototype.setActiveCalendar = function() {
-    
+    var self = this;
     //set the current active calendar 
     storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
+};
+
+Calendar.prototype.removeActiveCalendar = function() {
+    //removes a calendar from current_active_calendar status. It will no
+    //longer be stored in LocalStorage as the current_active_calendar
+    var self = this;
+    removeFromLocalStorage(current_active_calendar);
+    
 };
     
 Calendar.prototype.saveCalendar = function() {
         //saves the calendar in localStorage, saves the calendarUniqueId object
-        //adds the calendar to the saved calendars dropdown
+        
         var self = this;
         //store the state in localStorage
         storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
@@ -690,7 +697,23 @@ Calendar.prototype.saveCalendar = function() {
         calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
         storeInLocalStorage(masterKey, calendarUniqueId);
         
-    };
+};
+    
+Calendar.prototype.deleteCalendar = function() {
+    //deletes the calendar from localStorage, deletes the calendar from the
+    //calendarUniqueId object
+    
+    var self = this;
+    //delete the calendar from the calendarUniqueId object
+    delete calendarUniqueId[calendar.calendarState.uniqueId];
+    //save that change in localstorage
+    storeInLocalStorage(masterKey, calendarUniqueId);
+    
+    //remove the calendarstate from localStorage
+    removeFromLocalStorage(calendar.calendarState.uniqueId);
+
+}
+    
 
 //dictionary of savedCalendars, calendar title: unique ID
 
