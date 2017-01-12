@@ -182,8 +182,7 @@ $(document).ready(function() {
             
             //make calendar object
             var calendar = new Calendar(calendarState);
-            
-            console.log("calendar");
+          
             calendar.setActiveCalendar();
             calendar.saveCalendar();
             
