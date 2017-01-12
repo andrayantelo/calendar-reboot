@@ -89,10 +89,10 @@ $(document).ready(function() {
     
     var validateDates = function(startDateString, endDateString) {
         
-        var startDateMoment = moment(startDateString, "YYYY-MM-DD");
-        var endDateMoment = moment(endDateString, "YYYY-MM-DD");
+        var startDate = moment(startDateString, "YYYY-MM-DD");
+        var endDate = moment(endDateString, "YYYY-MM-DD");
         
-        if (startDateMoment.isBefore(endDateMoment)) {
+        if (startDate.isBefore(endDate)) {
             removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
             return true;
         }
