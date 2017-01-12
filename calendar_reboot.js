@@ -675,48 +675,6 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
-
-Calendar.prototype.setActiveCalendar = function() {
-    var self = this;
-    //set the current active calendar 
-    storeInLocalStorage(current_active_calendar, self.state.uniqueId);
-};
-
-Calendar.prototype.removeActiveCalendar = function() {
-    //removes a calendar from current_active_calendar status. It will no
-    //longer be stored in LocalStorage as the current_active_calendar
-    var self = this;
-    removeFromLocalStorage(current_active_calendar);
-    
-};
-    
-Calendar.prototype.saveCalendar = function() {
-        //saves the calendar in localStorage, saves the allCalendarIds object
-        
-        var self = this;
-        //store the state in localStorage
-        storeInLocalStorage(self.state.uniqueId, self.state);
-        
-        //put calendar in allCalendarIdss and store it
-        allCalendarIds[self.state.uniqueId] = self.state.title;
-        storeInLocalStorage(allCalendarIdsKey, allCalendarIds);
-        
-};
-    
-Calendar.prototype.deleteCalendar = function() {
-    //deletes the calendar from localStorage, deletes the calendar from the
-    //allCalendarIds object
-    
-    var self = this;
-    //delete the calendar from the allCalendarIds object
-    delete allCalendarIds[self.state.uniqueId];
-    //save that change in localstorage
-    storeInLocalStorage(allCalendarIdsKey, allCalendarIds);
-    
-    //remove the calendarstate from localStorage
-    removeFromLocalStorage(self.state.uniqueId);
-
-}
     
 
 //dictionary of savedCalendars, calendar title: unique ID
