@@ -176,14 +176,14 @@ $(document).ready(function() {
         if (validateTitle && validateStartDate && validateEndDate && validateDates) {
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
-        
-            
+
             //make a calendar State
             var calendarState = emptyCalendarState(startDate, endDate, calendarTitle);
             
-            
             //make calendar object
             var calendar = new Calendar(calendarState);
+            
+            console.log("calendar");
             calendar.setActiveCalendar();
             calendar.saveCalendar();
             
@@ -676,19 +676,20 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 Calendar.prototype.setActiveCalendar = function() {
     
     //set the current active calendar 
+    var self = this;
     storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
 };
     
 Calendar.prototype.saveCalendar = function() {
-        //saves the calendar in localStorage, saves the calendarUniqueId object
-        //adds the calendar to the saved calendars dropdown
-        var self = this;
-        //store the state in localStorage
-        storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
-        
-        //put calendar in calendarUniqueIds and store it
-        calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
-        storeInLocalStorage(masterKey, calendarUniqueId);
+    //saves the calendar in localStorage, saves the calendarUniqueId object
+    //adds the calendar to the saved calendars dropdown
+    var self = this;
+    //store the state in localStorage
+    storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
+    
+    //put calendar in calendarUniqueIds and store it
+    calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
+    storeInLocalStorage(masterKey, calendarUniqueId);
         
     };
 
