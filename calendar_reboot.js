@@ -183,9 +183,9 @@ $(document).ready(function() {
         //take the empty calendar object made when the page is loaded
         // and fill it with the information given in the form
 
-        var calendarTitle = $("#calendarTitle").val();
-        var startDate = $("#startDate").val();
-        var endDate = $("#endDate").val();
+        var title = $("#calendarTitle").val();
+        var start = $("#startDate").val();
+        var end = $("#endDate").val();
         
         if (validateForm(startDate, endDate)) {
             
