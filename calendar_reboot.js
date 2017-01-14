@@ -175,17 +175,17 @@ $(document).ready(function() {
         if (validateTitle && validateStartDate && validateEndDate && validateDates) {
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
-        
-            
+
             //make a calendar State
             var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
             
-            
             //make calendar object
+
             var calendar = new Calendar(state);
             
             store.setActive(calendar);
             store.save(calendar);
+
             
             //add calendar to dropdown
             addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
@@ -658,11 +658,12 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
-    
+  
 
 //dictionary of savedCalendars, calendar title: unique ID
 
 var allCalendarIds = {
+
 };
 
 //Make a storage manager
@@ -670,6 +671,7 @@ var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
     
+
     //params.storeId
     
     var toKey = function(id) {
