@@ -142,7 +142,7 @@ table {
     height: 55px;
 }
 
-  #setButton, #clearButton {
+  #saveButton, #clearButton {
     /*padding: 5px 10px 5px 10px; */
     font-size: 16px; 
     line-height: 1.5; 
