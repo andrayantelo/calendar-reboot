@@ -1,9 +1,11 @@
-var masterKey = 'masterKey';
+var allCalendarIdsKey = 'allCalendarIdsKey';
+//the current_active_calendar is the key for localStorage that stores
+//the active calendar's Id
 var current_active_calendar = 'current_active_calendar';
 
 $(document).ready(function() {
     
-    //will need to use a better key than this for masterKey (if this is
+    //will need to use a better key than this for allCalendarIdsKey (if this is
     //even a good way to do this)
     
     var monthObjects;
@@ -32,7 +34,7 @@ $(document).ready(function() {
         //add the calendar with unique Id, uniqueId, and title, title, to
         //the saved calendars dropdown on the navbar.
         
-        console.log("adding calendar to dropdown");
+        
         $('#calendarDropdown').append('<li id="' + uniqueId
                 + '"><a href=#>' + title + '</a></li>');
     };
@@ -153,23 +155,20 @@ $(document).ready(function() {
     var buildCalendar = function(calendarObject) {
         // builds the front end of a calendar object. creates the html
         //this function assumes the calendarObject already has it's
-        //calendarState updated with the correct information. 
+        //state updated with the correct information. 
         
         calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
         calendarObject.fillCalendar(calendarObject.monthObjects);
         
     };
     
-    var displayCalendar = function(uniqueId) {
-        //load a calendarState and build the calendar on the page
-        
-        var state = loadFromLocalStorage(uniqueId);
-        var calendar = new Calendar(state);
+    var displayCalendar = function(calendarObj) {
+        //load a state and build the calendar on the page
         
         clearPage();
-        buildCalendar(calendar);
-        calendar.setActiveCalendar();
-        calendar.saveCalendar();
+        buildCalendar(calendarObj);
+        store.setActiveById(calendarObj.state.uniqueId);
+        store.save(calendarObj);
     };
     
     $('#clearButton').click(function() {
@@ -183,8 +182,7 @@ $(document).ready(function() {
         
         //take the empty calendar object made when the page is loaded
         // and fill it with the information given in the form
-        
-        
+
         var calendarTitle = $("#calendarTitle").val();
         var startDate = $("#startDate").val();
         var endDate = $("#endDate").val();
@@ -195,19 +193,21 @@ $(document).ready(function() {
             clearPage();
 
             //make a calendar State
-            var calendarState = emptyCalendarState(startDate, endDate, calendarTitle);
+            var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
             
             //make calendar object
-            var calendar = new Calendar(calendarState);
-          
-            calendar.setActiveCalendar();
-            calendar.saveCalendar();
+
+            var calendar = new Calendar(state);
+            
+            store.setActiveById(calendar.state.uniqueId);
+            store.save(calendar);
+
             
             //add calendar to dropdown
-            addCalendarToDropdown(calendar.calendarState.uniqueId, calendar.calendarState.calendarTitle);
+            addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
         
             //build the calendar
-           buildCalendar(calendar);
+            buildCalendar(calendar);
        }
     });
     
@@ -221,19 +221,15 @@ $(document).ready(function() {
         //calendar
         
         //load the saved calendar with the title that was clicked
-    
-        console.log("the storage key you are using " + $(this).attr('id'));
-        var loadedCalendarState = loadFromLocalStorage($(this).attr('id'));
         
-        if (loadedCalendarState === null) {
-            console.error('calendar does not exist/has not been saved');
-        }
-        else {
-            displayCalendar($(this).attr('id'));
-            $('#collapseOne').collapse('hide'); 
-
-        }
+        var dropdownItemId = $(this).attr('id');
         
+        var state = store.loadById(dropdownItemId);
+        
+        var calendar = new Calendar(state);
+        
+        displayCalendar(calendar);
+        $('#collapseOne').collapse('hide'); 
         
     });
 
@@ -242,32 +238,19 @@ $(document).ready(function() {
         //deletes the current calendar on display, removes
         //the name from the saved calendars dropdown
         
-        //when you delete a calendar, it needs to be removed from local Storage
-        //it's unique Id needs to be removed from the calendarUniqueId dictionary
-        //it's name needs to be removed from the saved calendars dropdown
-        //clear the calendar from the page and uncollapse build calendar
-        
-        //need to check if there is a calendar loaded that needs to be deleted.
-        //in other words, are we currently looking at a calendar? (you can't
-        //have a calendar be loaded without it being displayed on the screen)
-        //to check maybe we can check if calendarState's uniqueId exists
-        //in the calendarUniqueId dictionary, because if it isn't then this is
-        //not a saved calendar
-        
         //ask the user if they are sure they want to delete their calendar
         var confirmation = confirm("Are you sure you want to delete your calendar?");
-        if (confirmation === true) {
+        if (confirmation) {
             
             var currentCalendarId = loadFromLocalStorage(current_active_calendar);
-            console.log(currentCalendarId);
-            delete calendarUniqueId[currentCalendarId];
-            storeInLocalStorage(masterKey, calendarUniqueId);
-            
             removeFromCalendarDropdown(currentCalendarId);
-            //remove the calendarstate from localStorage
-            removeFromLocalStorage(currentCalendarId);
             
-            removeFromLocalStorage(current_active_calendar);
+            //load calendarState from local storage and make a calendar object
+            var calendarState = loadFromLocalStorage(currentCalendarId);
+            var calendar = new Calendar(calendarState);
+            
+            //delete the calendar and remove it's active calendar status
+            store.remove(calendar);
             
             console.log("clearing the page");
             //clear the page
@@ -280,27 +263,30 @@ $(document).ready(function() {
     
     
     //WHEN PAGE LOADS
-    //first load the calendarUniqueId from storage.
-    calendarUniqueId = loadFromLocalStorage(masterKey);
-    //if it's not in localstorage make it an empty object
-    if (calendarUniqueId === null) {
-        calendarUniqueId = {};
-    }
-    
-    //GOING THROUGH THE KEYS OF THE DICTIONARY calendarUniqueId
-    for (var key in calendarUniqueId) {
-      if (calendarUniqueId.hasOwnProperty(key)) {
+    //first load the allCalendarIds from storage.
+    allCalendarIds = store.getAllCalendarIds() || {};
+   
+    //GOING THROUGH THE KEYS OF THE DICTIONARY allCalendarIds
+    for (var key in allCalendarIds) {
+      if (allCalendarIds.hasOwnProperty(key)) {
           if (key !== current_active_calendar) {
-            addCalendarToDropdown(key, calendarUniqueId[key]);
+            addCalendarToDropdown(key, allCalendarIds[key]);
           }
       }
     }
     
+    //get the current_active calendar id from storage if any
+    var activeCalendarId = store.getActive();
     
-    var activeCalendar = loadFromLocalStorage(current_active_calendar);
-    
-    if (activeCalendar !== null) {
-        displayCalendar(activeCalendar);
+    if (activeCalendarId !== null) {
+        
+        var activeCalendarState = store.loadById(activeCalendarId);
+        
+        if (activeCalendarState !== null) {
+            var state = activeCalendarState;
+            var calendar = new Calendar(state);
+            displayCalendar(calendar);
+        }
         
     }
     else {
@@ -346,7 +332,7 @@ var loadFromLocalStorage = function(storageItemKey) {
         
     if (storageItem === null) 
     {
-        console.log(storageItemKey + "not found in localstorage");
+        console.log(storageItemKey + " not found in localstorage");
         return storageItem;   
     }
                                                                                                    
@@ -458,22 +444,22 @@ var Month = function(dateString, calendarObj) {
             var boxId = $( this).attr('id');
             //if the boxId is not checked (as in, the value is not inside of checkedDays
             //in other words, it's undefined
-            if (self.calendar.calendarState.checkedDays[boxId] === undefined) {
+            if (self.calendar.state.checkedDays[boxId] === undefined) {
                 //add it to checkedDays
-                self.calendar.calendarState.checkedDays[boxId] = 1;
+                self.calendar.state.checkedDays[boxId] = 1;
                 //then add a checkmark
                 $( this ).children('.element').removeClass("hidden");
             }
             else {
                 //remove from checkedDays
-                delete self.calendar.calendarState.checkedDays[boxId]
+                delete self.calendar.state.checkedDays[boxId]
                 //remove the checkmark from the page
                 $( this ).children('.element').addClass("hidden");
             }
             
             //save your progress
             
-            self.calendar.saveCalendar();
+            store.save(self.calendar);
          })
      };
 
@@ -551,7 +537,7 @@ var Month = function(dateString, calendarObj) {
         {
             var boxId = $(this).attr('id');
             
-            if (self.calendar.calendarState.checkedDays[$(this).attr('id')]) 
+            if (self.calendar.state.checkedDays[$(this).attr('id')]) 
             {
                 $(this).children('.element').removeClass("hidden");
             }
@@ -582,18 +568,6 @@ var Month = function(dateString, calendarObj) {
 
 //generate a year/multiple years
 
-var makeCalendarObj = function(state) {
-    // Returns a calendar object with the given state as it's calendarState.
-    
-    // Parameters:
-    // state: dictionary
-    //     contains calendar information (numberOfYears, startDate, etc)
-    var startDate = state.startDate;
-    var numberOfYears = state.numberOfYears;
-    var calendar = new Calendar(startDate, numberOfYears);
-    calendar.calendarState = state;
-    return calendar;
-};
 
 var extractCalendarState = function(calendarObj) {
     // Takes a calendar object, extracts it's calendarState, and returns it.
@@ -602,7 +576,7 @@ var extractCalendarState = function(calendarObj) {
     // calendarObj: object
     //     An instance of the Calendar class
     
-    return calendarObj.calendarState;
+    return calendarObj.state;
 };
 
 var generateUniqueId = function() {
@@ -611,13 +585,13 @@ var generateUniqueId = function() {
     
 };
 
-var emptyCalendarState = function(startDate, endDate, title) {
+var emptyCalendarState = function(params) {
     return{
         //"YYYYMMDD" string
-        startDateString: moment(startDate, "YYYY-MM-DD").format("YYYYMMDD"),
-        endDateString: moment(endDate, "YYYY-MM-DD").format("YYYYMMDD"),
+        startDateString: moment(params.startDate, "YYYY-MM-DD").format("YYYYMMDD"),
+        endDateString: moment(params.endDate, "YYYY-MM-DD").format("YYYYMMDD"),
         //list name under which it will be saved
-        calendarTitle: title,
+        title: params.calendarTitle,
         //unique ID for calendar
         uniqueId: generateUniqueId(),
         //checkedDays day id: 1
@@ -628,7 +602,7 @@ var emptyCalendarState = function(startDate, endDate, title) {
 var Calendar = function(state) {
     
     var self = this;
-    self.calendarState = state;
+    self.state = state;
     //startDate is a moment object , the argument startDateString is 
     //"YYYYMMDD" string
     self.startDate = moment(state.startDateString, "YYYYMMDD");
@@ -637,7 +611,6 @@ var Calendar = function(state) {
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
-    self.title = state.calendarTitle;
     self.monthObjects = self.generateMonthObjects();
     
 }
@@ -670,7 +643,7 @@ Calendar.prototype.generateEmptyCalendar = function(monthObjectsArray) {
     var $div = $('#calendarDiv');
 
     $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-              self.calendarState.calendarTitle + '</h1></div>');
+              self.state.title + '</h1></div>');
     
     monthObjectsArray.forEach (function(monthObj, index) {
         var isFirst = index === 0;
@@ -691,32 +664,84 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
-
-Calendar.prototype.setActiveCalendar = function() {
-    
-    //set the current active calendar 
-    var self = this;
-    storeInLocalStorage(current_active_calendar, self.calendarState.uniqueId);
-};
-    
-Calendar.prototype.saveCalendar = function() {
-    //saves the calendar in localStorage, saves the calendarUniqueId object
-    //adds the calendar to the saved calendars dropdown
-    var self = this;
-    //store the state in localStorage
-    storeInLocalStorage(self.calendarState.uniqueId, self.calendarState);
-    
-    //put calendar in calendarUniqueIds and store it
-    calendarUniqueId[self.calendarState.uniqueId] = self.calendarState.calendarTitle;
-    storeInLocalStorage(masterKey, calendarUniqueId);
-        
-    };
+  
 
 //dictionary of savedCalendars, calendar title: unique ID
 
-var calendarUniqueId = {
+var allCalendarIds = {
+
 };
 
+//Make a storage manager
+var LocalCalendarStorage = function(params) {
+    var self = this;
+    var prefix = params['storeId'] || "";
+    
 
+    //params.storeId
+    
+    var toKey = function(id) {
+        //make a key out of a uniqueId
+        
+        return prefix + "_" + id;
+        
+    };
+    
+    self.getAllCalendarIds = function() {
+        //gets the allCalendarIds object from storage
+        
+        return loadFromLocalStorage(toKey(allCalendarIdsKey));
+    };
+    
+    self.save = function(calendarObj) {
+        //save an App object (like a calendar object for example) in storage
+        
+        //store the state in localStorage
+        storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+        
+        //put calendar in allCalendarIdss and store it
+        allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
+        storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+    };
+    
+    self.remove = function(calendarObj) {
+        //remove an app object (like a calendar) from storage
+        
+        //delete the calendar from the allCalendarIds object
+        delete allCalendarIds[calendarObj.state.uniqueId];
+        //save that change in localstorage
+        storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+        
+        //remove the object's state from localStorage
+        removeFromLocalStorage(toKey(calendarObj.state.uniqueId));
+        
+        //remove active status from the calendar
+        removeFromLocalStorage(toKey(current_active_calendar));
+    };
+    
+    self.load = function(calendarObj) {
+        //load an App object ( like a calendar object)
+        
+        return loadFromLocalStorage(toKey(calendarObj.uniqueId));
+    };
+    
+    self.loadById = function(calendarObjId) {
+        //load an App object using it's Id
+        return loadFromLocalStorage(toKey(calendarObjId));
+    };
+    
+    self.getActive = function() {
+        //return the active_calendar id
+        return loadFromLocalStorage(toKey(current_active_calendar));
+    };
+    
+    self.setActiveById = function(calendarObjId) {
+        //set the active calendar/object by using it's Id
+        storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
+    };
+    
+    
+};
 
+var store = new LocalCalendarStorage({'storeId': 'Streaker'})
 
