@@ -178,7 +178,7 @@ $(document).ready(function() {
         $('#fullForm')[0].reset();
     });
     
-    $('#setButton').click(function(){
+    $('#saveButton').click(function(){
         
         //take the empty calendar object made when the page is loaded
         // and fill it with the information given in the form
