@@ -208,6 +208,7 @@ $(document).ready(function() {
         
             //build the calendar
             buildCalendar(calendar);
+            $('#collapseOne').collapse('hide'); 
        }
     });
     
