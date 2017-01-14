@@ -146,7 +146,7 @@ $(document).ready(function() {
         
         clearPage();
         buildCalendar(calendarObj);
-        store.setActive(calendarObj);
+        store.setActiveById(calendarObj.state.uniqueId);
         store.save(calendarObj);
     };
     
@@ -183,7 +183,7 @@ $(document).ready(function() {
 
             var calendar = new Calendar(state);
             
-            store.setActive(calendar);
+            store.setActiveById(calendar.state.uniqueId);
             store.save(calendar);
 
             
@@ -222,18 +222,6 @@ $(document).ready(function() {
         //deletes the current calendar on display, removes
         //the name from the saved calendars dropdown
         
-        //when you delete a calendar, it needs to be removed from local Storage
-        //it's unique Id needs to be removed from the allCalendarIds dictionary
-        //it's name needs to be removed from the saved calendars dropdown
-        //clear the calendar from the page and uncollapse build calendar
-        
-        //need to check if there is a calendar loaded that needs to be deleted.
-        //in other words, are we currently looking at a calendar? (you can't
-        //have a calendar be loaded without it being displayed on the screen)
-        //to check maybe we can check if calendarState's uniqueId exists
-        //in the allCalendarIds dictionary, because if it isn't then this is
-        //not a saved calendar
-        
         //ask the user if they are sure they want to delete their calendar
         var confirmation = confirm("Are you sure you want to delete your calendar?");
         if (confirmation) {
@@ -247,7 +235,6 @@ $(document).ready(function() {
             
             //delete the calendar and remove it's active calendar status
             store.remove(calendar);
-            store.removeActiveStatus(calendar);
             
             console.log("clearing the page");
             //clear the page
@@ -708,6 +695,9 @@ var LocalCalendarStorage = function(params) {
         
         //remove the object's state from localStorage
         removeFromLocalStorage(toKey(calendarObj.state.uniqueId));
+        
+        //remove active status from the calendar
+        removeFromLocalStorage(toKey(current_active_calendar));
     };
     
     self.load = function(calendarObj) {
@@ -721,11 +711,6 @@ var LocalCalendarStorage = function(params) {
         return loadFromLocalStorage(toKey(calendarObjId));
     };
     
-    self.setActive = function(calendarObj) {
-        //set an app object (calendar) as the current_active object/calendar
-        storeInLocalStorage(toKey(current_active_calendar), calendarObj.state.uniqueId);
-    };
-    
     self.getActive = function() {
         //return the active_calendar id
         return loadFromLocalStorage(toKey(current_active_calendar));
@@ -736,10 +721,6 @@ var LocalCalendarStorage = function(params) {
         storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
     };
     
-    self.removeActiveStatus = function(calendarObj) {
-        //remove the app object's status as the current_active object
-        removeFromLocalStorage(toKey(current_active_calendar));
-    }
     
 };
 
