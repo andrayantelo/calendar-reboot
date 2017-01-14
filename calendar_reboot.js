@@ -243,17 +243,19 @@ $(document).ready(function() {
         var confirmation = confirm("Are you sure you want to delete your calendar?");
         if (confirmation) {
             
-            var currentCalendarId = loadFromLocalStorage(current_active_calendar);
+            var currentCalendarId = store.getActive();
+            
             removeFromCalendarDropdown(currentCalendarId);
             
             //load calendarState from local storage and make a calendar object
-            var calendarState = loadFromLocalStorage(currentCalendarId);
+            var calendarState = store.loadById(currentCalendarId);
+            
             var calendar = new Calendar(calendarState);
             
             //delete the calendar and remove it's active calendar status
             store.remove(calendar);
             
-            console.log("clearing the page");
+            //console.log("clearing the page");
             //clear the page
             clearPage();
             $('#collapseOne').collapse('show'); 
