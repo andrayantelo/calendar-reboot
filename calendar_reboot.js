@@ -144,7 +144,7 @@ $(document).ready(function() {
         
         var isValid = validateTitle && validateStartDate && validateEndDate;
         
-        return (isValid && validateDates(startDateString, endDateString);
+        return (isValid && validateDates(startDateString, endDateString));
        
     };
     
@@ -302,6 +302,9 @@ $(document).ready(function() {
     if (activeCalendar !== null) {
         displayCalendar(activeCalendar);
         
+    }
+    else {
+        $('#collapseOne').collapse('show');
     }
     
     
