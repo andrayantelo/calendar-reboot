@@ -187,7 +187,7 @@ $(document).ready(function() {
         var start = $("#startDate").val();
         var end = $("#endDate").val();
         
-        if (validateForm(startDate, endDate)) {
+        if (validateForm(start, end)) {
             
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
