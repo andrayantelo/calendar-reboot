@@ -73,15 +73,23 @@
                 <li></li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
-            
-          </ul> <!-- /.nav navbar-nav -->
-            
-            <!-- third item in navbar -->
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-                <button id="deleteButton" type="button" class="btn btn-default navbar-btn">Delete Calendar</button>
-            </li>
-          </ul>
+          
+          <!-- second item in navbar, options dropdown -->
+           <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+              aria-haspopup="true" aria-expanded="false">Options <span class="caret">
+              </span></a>
+              <!-- the list of Options inside of the dropdown -->
+              <ul class="dropdown-menu" id="optionsDropdown">
+                <li>
+                    <a href="#" role="button" id="deleteButton">Delete Calendar</a>
+                    
+                </li>
+              </ul> <!-- /.dropdown-menu -->
+            </li> <!-- /.dropdown -->
+          
+          
+         </ul> <!-- /.nav navbar-nav -->
             
             
         </div> <!-- /#main-navbar -->
@@ -144,8 +152,8 @@
                               <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
                           </span>
                       </div> <!-- /.input-group date -->
-                      
-                      <span id="inputError-dateFormGroup" class="sr-only hidden">(error)</span>
+                      <span id="helpBlock" class="help-block">The end date must be after the start date.</span>
+                      <span id="inputError-dateFormGroup2" class="sr-only hidden">(error)</span>
                   </div> <!--/.form-group -->
         
         
