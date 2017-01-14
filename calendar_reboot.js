@@ -261,12 +261,8 @@ $(document).ready(function() {
     
     //WHEN PAGE LOADS
     //first load the allCalendarIds from storage.
-    allCalendarIds = store.getAllCalendarIds();
-    //if it's not in localstorage make it an empty object
-    if (allCalendarIds === null) {
-        allCalendarIds = {};
-    }
-    
+    allCalendarIds = store.getAllCalendarIds() || {};
+   
     //GOING THROUGH THE KEYS OF THE DICTIONARY allCalendarIds
     for (var key in allCalendarIds) {
       if (allCalendarIds.hasOwnProperty(key)) {
@@ -280,7 +276,7 @@ $(document).ready(function() {
     var activeCalendarId = store.getActive();
     
     if (activeCalendarId !== null) {
-        console.log("the activeCalendarKey was not null");
+        
         var activeCalendarState = store.loadById(activeCalendarId);
         
         if (activeCalendarState !== null) {
@@ -566,18 +562,6 @@ var Month = function(dateString, calendarObj) {
 
 //generate a year/multiple years
 
-var makeCalendarObj = function(state) {
-    // Returns a calendar object with the given state as it's calendarState.
-    
-    // Parameters:
-    // state: dictionary
-    //     contains calendar information (numberOfYears, startDate, etc)
-    var startDate = state.startDate;
-    var numberOfYears = state.numberOfYears;
-    var calendar = new Calendar(startDate, numberOfYears);
-    calendar.state = state;
-    return calendar;
-};
 
 var extractCalendarState = function(calendarObj) {
     // Takes a calendar object, extracts it's calendarState, and returns it.
@@ -621,7 +605,6 @@ var Calendar = function(state) {
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
-    self.title = state.title;
     self.monthObjects = self.generateMonthObjects();
     
 }
@@ -702,43 +685,43 @@ var LocalCalendarStorage = function(params) {
         return loadFromLocalStorage(toKey(allCalendarIdsKey));
     };
     
-    self.save = function(appObj) {
+    self.save = function(calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
-        storeInLocalStorage(toKey(appObj.state.uniqueId), appObj.state);
+        storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
         
         //put calendar in allCalendarIdss and store it
-        allCalendarIds[appObj.state.uniqueId] = appObj.state.title;
+        allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
         storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
     };
     
-    self.remove = function(appObj) {
+    self.remove = function(calendarObj) {
         //remove an app object (like a calendar) from storage
         
         //delete the calendar from the allCalendarIds object
-        delete allCalendarIds[appObj.state.uniqueId];
+        delete allCalendarIds[calendarObj.state.uniqueId];
         //save that change in localstorage
         storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
         
         //remove the object's state from localStorage
-        removeFromLocalStorage(toKey(appObj.state.uniqueId));
+        removeFromLocalStorage(toKey(calendarObj.state.uniqueId));
     };
     
-    self.load = function(appObj) {
+    self.load = function(calendarObj) {
         //load an App object ( like a calendar object)
         
-        return loadFromLocalStorage(toKey(appObj.uniqueId));
+        return loadFromLocalStorage(toKey(calendarObj.uniqueId));
     };
     
-    self.loadById = function(appObjId) {
+    self.loadById = function(calendarObjId) {
         //load an App object using it's Id
-        return loadFromLocalStorage(toKey(appObjId));
+        return loadFromLocalStorage(toKey(calendarObjId));
     };
     
-    self.setActive = function(appObj) {
+    self.setActive = function(calendarObj) {
         //set an app object (calendar) as the current_active object/calendar
-        storeInLocalStorage(toKey(current_active_calendar), appObj.state.uniqueId);
+        storeInLocalStorage(toKey(current_active_calendar), calendarObj.state.uniqueId);
     };
     
     self.getActive = function() {
@@ -746,12 +729,12 @@ var LocalCalendarStorage = function(params) {
         return loadFromLocalStorage(toKey(current_active_calendar));
     };
     
-    self.setActiveById = function(appObjId) {
+    self.setActiveById = function(calendarObjId) {
         //set the active calendar/object by using it's Id
-        storeInLocalStorage(toKey(current_active_calendar), appObjId);
+        storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
     };
     
-    self.removeActiveStatus = function(appObj) {
+    self.removeActiveStatus = function(calendarObj) {
         //remove the app object's status as the current_active object
         removeFromLocalStorage(toKey(current_active_calendar));
     }
