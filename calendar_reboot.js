@@ -6,12 +6,11 @@ $(document).ready(function() {
     //will need to use a better key than this for masterKey (if this is
     //even a good way to do this)
     
+    var monthObjects;
     
     var calendarTitleId = 'titleFormGroup'; //actual div id
     var startDateId = 'dateFormGroup';  //also div id
     var endDateId = 'dateFormGroup2'
-    
-    var monthObjects;
     
     //have the calendar show when you click in the input section of the date
     //timepicker
@@ -56,8 +55,8 @@ $(document).ready(function() {
         //srId is the id for the span tag with the instructions for 
         //screen readers, span has class sr-only
         
-        id.addClass('has-error has-feedback');
-        srId.removeClass('hidden');
+        $(id).addClass('has-error has-feedback');
+        $(srId).removeClass('hidden');
         
     };
     
@@ -66,35 +65,42 @@ $(document).ready(function() {
         //with the class form-group, also adds the hidden class on the span
         //with class sr-only (for screen readers)
         
-        id.removeClass('has-error has-feedback');
-        srId.removeClass('hidden');
+        $(id).removeClass('has-error has-feedback');
+        $(srId).removeClass('hidden');
     };
     
     var addGlyphicon = function(id) {
         //removes the hidden class to the glyphicon tag with id = id
-        id.removeClass('hidden');
+        $(id).removeClass('hidden');
     };
     
     var removeGlyphicon = function(id) {
         //adds the hidden class to the glyphicon tag with id=id
-        id.addClass('hidden');
+        $(id).addClass('hidden');
     };
     
-    validateForm = function(startDate, endDate) {
-        //check that endDate comes after startDate
-        //checks 
-          //if there is no valid startDate, prompt user for a valid startDate
+    var removeFormErrors = function() {
+        //remove the error classes and glyphicons from the form inputs
+        removeFormError('#dateFormGroup', '#inputError-dateFormGroup');
+        removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
+        removeFormError('#titleFormGroup', '#inputError-titleFormGroup');
+        removeGlyphicon('#span-titleFormGroup');
+    };
+    
+    var validateDates = function(startDateString, endDateString) {
         
-        var startDateMoment = moment(startDate, "YYYYMMDD");
-        var endDateMoment = moment(endDate, "YYYYMMDD");
+        var startDate = moment(startDateString, "YYYY-MM-DD");
+        var endDate = moment(endDateString, "YYYY-MM-DD");
         
-        if (startDateMoment.isBefore(endDateMoment)) {
+        if (startDate.isBefore(endDate)) {
+            removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
             return true;
         }
         else {
-            console.log("endDate is before startDate");
+            addFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
             return false;
         }
+        
     };
     
     var validateInput = function(formGroupId) {
@@ -103,7 +109,7 @@ $(document).ready(function() {
         var id = formGroupId;
         //a variable for the id string with the # infront of it
         var $id = $('#' + formGroupId);
-        //a variable for the input tag value
+   //     //a variable for the input tag value
         var inputValue = $id.find('input[type=text]').val();
         
         //if the user hasn't written anything in the input tag
@@ -129,6 +135,21 @@ $(document).ready(function() {
         return true;
     };
     
+    var validateForm = function(startDateString, endDateString) {
+        
+        
+        var validateTitle = validateInput(calendarTitleId);
+        var validateStartDate = validateInput(startDateId);
+        var validateEndDate = validateInput(endDateId);
+        
+        var isValid = validateTitle && validateStartDate && validateEndDate;
+        
+        return (isValid && validateDates(startDateString, endDateString);
+       
+    };
+    
+    
+    
     var buildCalendar = function(calendarObject) {
         // builds the front end of a calendar object. creates the html
         //this function assumes the calendarObject already has it's
@@ -153,27 +174,23 @@ $(document).ready(function() {
     
     $('#clearButton').click(function() {
         //clear all the entries in the build calendar form
-        console.log("clearing form...");
+        
+        removeFormErrors();
         $('#fullForm')[0].reset();
     });
     
     $('#setButton').click(function(){
-        console.log("set Button clicked");
+        
         //take the empty calendar object made when the page is loaded
         // and fill it with the information given in the form
-        //required info are startDate and title. default to tracking 1 
-        //year
+        
+        
         var calendarTitle = $("#calendarTitle").val();
         var startDate = $("#startDate").val();
         var endDate = $("#endDate").val();
+        
+        if (validateForm(startDate, endDate)) {
             
-        
-        var validateTitle = validateInput(calendarTitleId);
-        var validateStartDate = validateInput(startDateId);
-        var validateEndDate = validateInput(endDateId);
-        var validateDates = validateForm(startDate, endDate);
-        
-        if (validateTitle && validateStartDate && validateEndDate && validateDates) {
             //clear the previously displayed calendar <-- or should i reload the page???
             clearPage();
 
