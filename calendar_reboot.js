@@ -16,7 +16,7 @@ function CheckIt() {
     this.$titleErrorSpan = $('#inputError-titleFormGroup');
     this.$titleGlyphiconTag = $('#span-titleFormGroup');
     this.$clearButton = $('#clearButton');
-    this.$fullForm = $('#fulLForm');
+    this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
     this.$deleteButton = $('#deleteButton');
     this.$calendarTitle = $('#calendarTitle');
@@ -131,14 +131,9 @@ CheckIt.prototype.createCalendar = function() {
 };
 
 CheckIt.prototype.loadFromDropdown = function( event ) {
-    //when a calendar is clicked on in the dropdown menu
-    //the calendar that is currently on display (if there is one)
-    //needs to be removed and replaced with the calendar that was clicked on
-    //from the dropdown menu. Its' data will be loaded from localstorage
-    //where it was stored.
+    // Load the data, clear the page, build the saved calendar.
     
     //load the saved calendar with the title that was clicked
-    
     var dropdownItemId = event.currentTarget.id;
     
     var state = this.store.loadById(dropdownItemId);
@@ -155,7 +150,7 @@ CheckIt.prototype.deleteCalendar = function() {
     // active calendar then deletes the current calendar from storage and
     // clears the page.
     
-    //ask the user if they are sure they want to delete their calendar
+    // Guard against accidental clicks of the delete button
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
         
@@ -678,9 +673,6 @@ var LocalCalendarStorage = function(params) {
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
     var current_active_calendar = 'current_active_calendar';
-
-
-    //params.storeId
     
     var toKey = function(id) {
         //make a key out of a uniqueId
