@@ -154,7 +154,7 @@ CheckIt.prototype.deleteCalendar = function() {
     // active calendar then deletes the current calendar from storage and
     // clears the page.
     
-    //ask the user if they are sure they want to delete their calendar
+    // Guard against accidental clicks of the delete button
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
         
@@ -679,9 +679,6 @@ var LocalCalendarStorage = function(params) {
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
     var current_active_calendar = 'current_active_calendar';
-
-
-    //params.storeId
     
     var toKey = function(id) {
         //make a key out of a uniqueId
