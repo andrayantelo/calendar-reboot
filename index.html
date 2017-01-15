@@ -34,8 +34,25 @@
         <!-- include font awesome -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
                 
+        <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+            apiKey: "AIzaSyCVl0IXrl8BiPjPjBJRq-Y5WNlROwOY3C0",
+            authDomain: "check-it-14d35.firebaseapp.com",
+            databaseURL: "https://check-it-14d35.firebaseio.com",
+            storageBucket: "check-it-14d35.appspot.com",
+            messagingSenderId: "186375871683"
+            };
+            firebase.initializeApp(config);
+        </script>
+        
+        <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
+        
         <script type ="text/javascript" src="calendar_reboot.js"></script> 
         <link rel="stylesheet" type="text/css" href="calendar.css">
+
         
         
         
@@ -161,9 +178,9 @@
                     <!-- MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
                 <div class="row">
                     <div class="col-md-12">
-                      <div id="saveButtonContainer" class="btn-group-lg pull-right" role="group">
+                      <div id="createButtonContainer" class="btn-group-lg pull-right" role="group">
                         <button id="clearButton" type="button" class="btn btn-primary">Clear</button>
-                        <button id="saveButton" type="button" class="btn btn-primary">Save</button>
+                        <button id="createButton" type="button" class="btn btn-primary">Save</button>
                       </div>
                     </div> <!--/.col-md-3-->
                   </div>  <!-- /.row -->
@@ -359,3 +376,4 @@
 
 </body>
 </html>
+
