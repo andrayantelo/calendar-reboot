@@ -130,14 +130,9 @@ CheckIt.prototype.createCalendar = function() {
 };
 
 CheckIt.prototype.loadFromDropdown = function( event ) {
-    //when a calendar is clicked on in the dropdown menu
-    //the calendar that is currently on display (if there is one)
-    //needs to be removed and replaced with the calendar that was clicked on
-    //from the dropdown menu. Its' data will be loaded from localstorage
-    //where it was stored.
+    // Load the data, clear the page, build the saved calendar.
     
     //load the saved calendar with the title that was clicked
-    
     var dropdownItemId = event.currentTarget.id;
     
     var state = store.loadById(dropdownItemId);
