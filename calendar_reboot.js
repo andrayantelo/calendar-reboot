@@ -16,7 +16,7 @@ function CheckIt() {
     this.$titleErrorSpan = $('#inputError-titleFormGroup');
     this.$titleGlyphiconTag = $('#span-titleFormGroup');
     this.$clearButton = $('#clearButton');
-    this.$fullForm = $('#fulLForm');
+    this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
     this.$deleteButton = $('#deleteButton');
     this.$calendarTitle = $('#calendarTitle');
