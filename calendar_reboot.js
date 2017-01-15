@@ -1,310 +1,318 @@
-var allCalendarIdsKey = 'allCalendarIdsKey';
-//the current_active_calendar is the key for localStorage that stores
-//the active calendar's Id
-var current_active_calendar = 'current_active_calendar';
 
-$(document).ready(function() {
+// Initializes CheckIt
+function CheckIt() {
+    // Shortcuts to DOM elements.
     
-    //will need to use a better key than this for allCalendarIdsKey (if this is
-    //even a good way to do this)
+    this.$calendarTitleForm = $('#titleFormGroup');
+    this.$startDateForm = $('#dateFormGroup');
+    this.$endDateForm = $('#dateFormGroup2');
+    this.$startDatePicker = $('#datetimepicker1');
+    this.$startDatePickerInput = $('#datetimepicker1 input');
+    this.$endDatePicker = $('#datetimepicker2');
+    this.$endDatePickerInput = $('#datetimepicker2 input');
+    this.$calendarDropdown = $('#calendarDropdown');
+    this.$startDateErrorSpan = $('#inputError-dateFormGroup');
+    this.$endDateErrorSpan = $('#inputError-dateFormGroup2');
+    this.$titleErrorSpan = $('#inputError-titleFormGroup');
+    this.$titleGlyphiconTag = $('#span-titleFormGroup');
+    this.$clearButton = $('#clearButton');
+    this.$fullForm = $('#fullForm');
+    this.$createButton = $('#createButton');
+    this.$deleteButton = $('#deleteButton');
+    this.$calendarTitle = $('#calendarTitle');
+    this.$startDate = $('#startDate');
+    this.$endDate = $('#endDate');
+    this.$buildCalendarForm = $('#collapseOne');
+    this.$calendarDiv = $('#calendarDiv');
+    //this.$calendarTemplate = $('#template');
     
     var monthObjects;
     
-    var calendarTitleId = 'titleFormGroup'; //actual div id
-    var startDateId = 'dateFormGroup';  //also div id
-    var endDateId = 'dateFormGroup2'
+    // Initialize storage.
+    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
     
-    //have the calendar show when you click in the input section of the date
+    this.$clearButton.click(this.clearForm.bind(this));
+    this.$createButton.click(this.createCalendar.bind(this));
+    this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
+    this.$deleteButton.click(this.deleteCalendar.bind(this));
+    
+      //have the calendar show when you click in the input section of the date
     //timepicker
     
-    $('#datetimepicker1').datetimepicker({format: "YYYY-MM-DD"});
-    $('#datetimepicker1 input').click(function(event){
-        $('#datetimepicker1 ').data("DateTimePicker").show();
-    });
+    this.$startDatePicker.datetimepicker({format: "YYYY-MM-DD"});
+    this.$startDatePickerInput.click(function(event){
+       this.$startDatePicker.data("DateTimePicker").show();
+    }.bind(this));
     
-    $('#datetimepicker2').datetimepicker({format: "YYYY-MM-DD"});
-    $('#datetimepicker2 input').click(function(event){
-        $('#datetimepicker2 ').data("DateTimePicker").show();
-    });
-    
-    //update the current active calendar
-
-    
-    var addCalendarToDropdown = function(uniqueId, title) {
-        //add the calendar with unique Id, uniqueId, and title, title, to
-        //the saved calendars dropdown on the navbar.
-        
-        
-        $('#calendarDropdown').append('<li id="' + uniqueId
-                + '"><a href=#>' + title + '</a></li>');
-    };
-    
-    var removeFromCalendarDropdown = function(uniqueId) {
-        //remove the calendar with uniqueId from the saved calendars dropdown
-        //in the navbar
-        
-        $('#calendarDropdown').children('#' + uniqueId).remove();
-    };
-    
-    
-    var addFormError = function(id, srId) {
-        //adds the classes has-error and has-feedback
-        //on the div with the class form-group and it removes the hidden
-        //class on the span with class sr-only (for screen readers to notify
-        //that there has been an error
-        
-        //id is the id of the eleent with the error glyphicon
-        //srId is the id for the span tag with the instructions for 
-        //screen readers, span has class sr-only
-        
-        $(id).addClass('has-error has-feedback');
-        $(srId).removeClass('hidden');
-        
-    };
-    
-    var removeFormError = function(id, srId) {
-        //removes the classes has-error and has-feedback from the div
-        //with the class form-group, also adds the hidden class on the span
-        //with class sr-only (for screen readers)
-        
-        $(id).removeClass('has-error has-feedback');
-        $(srId).removeClass('hidden');
-    };
-    
-    var addGlyphicon = function(id) {
-        //removes the hidden class to the glyphicon tag with id = id
-        $(id).removeClass('hidden');
-    };
-    
-    var removeGlyphicon = function(id) {
-        //adds the hidden class to the glyphicon tag with id=id
-        $(id).addClass('hidden');
-    };
-    
-    var removeFormErrors = function() {
-        //remove the error classes and glyphicons from the form inputs
-        removeFormError('#dateFormGroup', '#inputError-dateFormGroup');
-        removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
-        removeFormError('#titleFormGroup', '#inputError-titleFormGroup');
-        removeGlyphicon('#span-titleFormGroup');
-    };
-    
-    var validateDates = function(startDateString, endDateString) {
-        
-        var startDate = moment(startDateString, "YYYY-MM-DD");
-        var endDate = moment(endDateString, "YYYY-MM-DD");
-        
-        if (startDate.isBefore(endDate)) {
-            removeFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
-            return true;
-        }
-        else {
-            addFormError('#dateFormGroup2', '#inputError-dateFormGroup2');
-            return false;
-        }
-        
-    };
-    
-    var validateInput = function(formGroupId) {
-        
-        //make a variable for the id string
-        var id = formGroupId;
-        //a variable for the id string with the # infront of it
-        var $id = $('#' + formGroupId);
-   //     //a variable for the input tag value
-        var inputValue = $id.find('input[type=text]').val();
-        
-        //if the user hasn't written anything in the input tag
-        // then we need to bring up the error, the glyphicon needs
-        //to appear
-        if (inputValue === "" || inputValue === null) {
-            addFormError($id, $('#inputError-' + id) )
-            
-            //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
-            //check if we are dealing with the title
-            if ($id.find("input").attr("id") === "calendarTitle") {
-                addGlyphicon($('#span-' +  id));
-            }
-            return false;
-        }
-        else {
-            removeFormError($id, $('#inputError-' + id) );
-            //remove glyphicon, only for title input tag
-            if ($id.find("input").attr('id') === "calendarTitle") {
-                removeGlyphicon($('#span-' + id));
-            }
-        }
-        return true;
-    };
-    
-    var validateForm = function(startDateString, endDateString) {
-        
-        
-        var validateTitle = validateInput(calendarTitleId);
-        var validateStartDate = validateInput(startDateId);
-        var validateEndDate = validateInput(endDateId);
-        
-        var isValid = validateTitle && validateStartDate && validateEndDate;
-        
-        return (isValid && validateDates(startDateString, endDateString));
-       
-    };
-    
-    
-    
-    var buildCalendar = function(calendarObject) {
-        // builds the front end of a calendar object. creates the html
-        //this function assumes the calendarObject already has it's
-        //state updated with the correct information. 
-        
-        calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
-        calendarObject.fillCalendar(calendarObject.monthObjects);
-        
-    };
-    
-    var displayCalendar = function(calendarObj) {
-        //load a state and build the calendar on the page
-        
-        clearPage();
-        buildCalendar(calendarObj);
-        store.setActiveById(calendarObj.state.uniqueId);
-        store.save(calendarObj);
-    };
-    
-    $('#clearButton').click(function() {
-        //clear all the entries in the build calendar form
-        
-        removeFormErrors();
-        $('#fullForm')[0].reset();
-    });
-    
-    $('#saveButton').click(function(){
-        
-        //take the empty calendar object made when the page is loaded
-        // and fill it with the information given in the form
-
-        var title = $("#calendarTitle").val();
-        var start = $("#startDate").val();
-        var end = $("#endDate").val();
-        
-        if (validateForm(start, end)) {
-            
-            //clear the previously displayed calendar <-- or should i reload the page???
-            clearPage();
-
-            //make a calendar State
-            var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
-            
-            //make calendar object
-
-            var calendar = new Calendar(state);
-            
-            store.setActiveById(calendar.state.uniqueId);
-            store.save(calendar);
-
-            
-            //add calendar to dropdown
-            addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
-        
-            //build the calendar
-            buildCalendar(calendar);
-            $('#collapseOne').collapse('hide'); 
-       }
-    });
-    
-    
-    $('#calendarDropdown').on('click', 'li', function() {
-        //when a calendar is clicked on in the dropdown menu
-        //the calendar that is currently on display (if there is one)
-        //needs to be removed and replaced with the calendar that was clicked on
-        //from the dropdown menu. Its' data will be loaded from localstorage
-        //where it was stored. load the data, clear the page, build the saved
-        //calendar
-        
-        //load the saved calendar with the title that was clicked
-        
-        var dropdownItemId = $(this).attr('id');
-        
-        var state = store.loadById(dropdownItemId);
-        
-        var calendar = new Calendar(state);
-        
-        displayCalendar(calendar);
-        $('#collapseOne').collapse('hide'); 
-        
-    });
-
-    
-    $('#deleteButton').click(function() {
-        //deletes the current calendar on display, removes
-        //the name from the saved calendars dropdown
-        
-        //ask the user if they are sure they want to delete their calendar
-        var confirmation = confirm("Are you sure you want to delete your calendar?");
-        if (confirmation) {
-            
-            var currentCalendarId = store.getActive();
-            
-            removeFromCalendarDropdown(currentCalendarId);
-            
-            //load calendarState from local storage and make a calendar object
-            var calendarState = store.loadById(currentCalendarId);
-            
-            var calendar = new Calendar(calendarState);
-            
-            //delete the calendar and remove it's active calendar status
-            store.remove(calendar);
-            
-            //console.log("clearing the page");
-            //clear the page
-            clearPage();
-            $('#collapseOne').collapse('show'); 
-        
-        }
-        
-    });
-    
-    
+    this.$endDatePicker.datetimepicker({format: "YYYY-MM-DD"});
+    this.$endDatePickerInput.click(function(event){
+        this.$endDatePicker.data("DateTimePicker").show();
+    }.bind(this));
+   
     //WHEN PAGE LOADS
     //first load the allCalendarIds from storage.
-    allCalendarIds = store.getAllCalendarIds() || {};
+    var allCalendarIds = this.store.getAllCalendarIds() || {};
    
     //GOING THROUGH THE KEYS OF THE DICTIONARY allCalendarIds
     for (var key in allCalendarIds) {
       if (allCalendarIds.hasOwnProperty(key)) {
-          if (key !== current_active_calendar) {
-            addCalendarToDropdown(key, allCalendarIds[key]);
-          }
+        this.addCalendarToDropdown(key, allCalendarIds[key]);
       }
     }
     
     //get the current_active calendar id from storage if any
-    var activeCalendarId = store.getActive();
+    var activeCalendarId = this.store.getActive();
     
     if (activeCalendarId !== null) {
         
-        var activeCalendarState = store.loadById(activeCalendarId);
+        var activeCalendarState = this.store.loadById(activeCalendarId);
         
         if (activeCalendarState !== null) {
             var state = activeCalendarState;
-            var calendar = new Calendar(state);
-            displayCalendar(calendar);
+            var calendar = new Calendar(state, this);
+           
+            this.displayCalendar(calendar);
         }
         
     }
     else {
-        $('#collapseOne').collapse('show');
+        this.showBuildMenu();
     }
     
     
+}
+
+CheckIt.prototype.hideBuildMenu = function() {
+    // Collapse the build calendar form.
+    this.$buildCalendarForm.collapse('hide');
+};
+
+CheckIt.prototype.showBuildMenu = function() {
+    // Show the build calendar form.
+    this.$buildCalendarForm.collapse('show');
+};
+
+CheckIt.prototype.clearForm = function() {
+    // Clears the buildCalendar form.
+    this.removeFormErrors();
+    this.$fullForm[0].reset();
+};
+
+CheckIt.prototype.createCalendar = function() {
+    // Create a new calendar and display it.
+
+    var title = this.$calendarTitle.val();
+    var start = this.$startDate.val();
+    var end = this.$endDate.val();
     
+    if (this.validateForm(start, end)) {
+        
+        //clear the previously displayed calendar
+        this.clearPage();
+
+        //make a calendar State
+        var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
+        
+        //make calendar object
+
+        var calendar = new Calendar(state, this);
+        
+        this.store.setActiveById(calendar.state.uniqueId);
+        this.store.save(calendar);
+
+        //add calendar to dropdown
+        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
+    
+        //build the calendar
+        this.buildCalendar(calendar);
+        this.hideBuildMenu(); 
+   }
+};
+
+CheckIt.prototype.loadFromDropdown = function( event ) {
+    // Load the data, clear the page, build the saved calendar.
+    
+    //load the saved calendar with the title that was clicked
+    var dropdownItemId = event.currentTarget.id;
+    
+    var state = store.loadById(dropdownItemId);
+    
+    var calendar = new Calendar(state, this);
+    
+    this.displayCalendar(calendar);
+    this.hideBuildMenu(); 
+    
+};
+
+CheckIt.prototype.deleteCalendar = function() {
+    // Removes the name from the saved calendars dropdown of the current
+    // active calendar then deletes the current calendar from storage and
+    // clears the page.
+    
+    // Guard against accidental clicks of the delete button
+    var confirmation = confirm("Are you sure you want to delete your calendar?");
+    if (confirmation) {
+        
+        var currentCalendarId = this.store.getActive();
+        
+        this.removeFromCalendarDropdown(currentCalendarId);
+        
+        
+        //delete the calendar and remove its active calendar status
+        this.store.removeById(currentCalendarId);
+        
+        //console.log("clearing the page");
+        //clear the page
+        this.clearPage();
+        this.showBuildMenu(); 
+    
+    }
+};
+
+CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title) {
+    //add the calendar with unique Id, uniqueId, and title, title, to
+    //the saved calendars dropdown on the navbar.
+    
+    this.$calendarDropdown.append('<li id="' + uniqueId
+            + '"><a href=#>' + title + '</a></li>');
+};
+
+CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
+    //remove the calendar with uniqueId from the saved calendars dropdown
+    //in the navbar
+    
+    this.$calendarDropdown.children('#' + uniqueId).remove();
+};
+
+CheckIt.prototype.addFormError = function(id, srId) {
+
+    // Set the appropriate CSS on the form fields to indicate an error state
+    
+    id.addClass('has-error has-feedback');
+    srId.removeClass('hidden');
+    
+};
+
+CheckIt.prototype.removeFormError = function(id, srId) {
+
+    // Removes error state CSS on form fields
+    
+    id.removeClass('has-error has-feedback');
+    srId.removeClass('hidden');
+};
+
+CheckIt.prototype.addGlyphicon = function(id) {
+
+    id.removeClass('hidden');
+};
+
+CheckIt.prototype.removeGlyphicon = function(id) {
+    
+    id.addClass('hidden');
+};
+
+CheckIt.prototype.removeFormErrors = function() {
+    //remove the error classes and glyphicons from the form inputs
+    removeFormError(this.$startDateForm, this.$startDateErrorSpan);
+    removeFormError(this.$endDateForm, this.$endDateErrorSpan);
+    removeFormError(this.$calendarTitleForm, this.$titleErrorSpan);
+    removeGlyphicon(this.$titleGlyphiconTag);
+};
+
+CheckIt.prototype.validateDates = function(startDateString, endDateString) {
+        
+    var startDate = moment(startDateString, "YYYY-MM-DD");
+    var endDate = moment(endDateString, "YYYY-MM-DD");
+    
+    if (startDate.isBefore(endDate)) {
+        this.removeFormError(this.$endDateForm, this.$endDateErrorSpan);
+        return true;
+    }
+    else {
+        this.addFormError(this.$endDateForm, this.$endDateErrorSpan);
+        return false;
+    }
+    
+};
+
+CheckIt.prototype.validateInput = function($formGroup) {
+    //a variable for the input tag value
+    var id = $formGroup.attr('id');
+    var $input = $('#inputError-' + id);
+    var inputId = $formGroup.find("input").attr("id");
+    var $calendarSpan = $('#span-' +  id);
+    var inputValue = $formGroup.find('input[type=text]').val();
+    
+    // If the user hasn't written anything we fail immediately
+    if (inputValue === "" || inputValue === null) {
+        this.addFormError($formGroup, $input )
+        
+        //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
+        //check if we are dealing with the title
+        if (inputId === "calendarTitle") {
+            this.addGlyphicon($calendarSpan);
+        }
+        return false;
+    }
+    else {
+        this.removeFormError($formGroup, $input );
+        //remove glyphicon, only for title input tag
+        if (inputId === "calendarTitle") {
+            this.removeGlyphicon($calendarSpan);
+        }
+    }
+    return true;
+};
+
+CheckIt.prototype.validateForm = function(startDateString, endDateString) {
+        
+        
+    var validateTitle = this.validateInput(this.$calendarTitleForm);
+    var validateStartDate = this.validateInput(this.$startDateForm);
+    var validateEndDate = this.validateInput(this.$endDateForm);
+    
+    var isValid = validateTitle && validateStartDate && validateEndDate;
+    
+    // Make sure input is OK before parsing and validating dates
+    return (isValid && this.validateDates(startDateString, endDateString));
    
+};
+
+CheckIt.prototype.buildCalendar = function(calendarObject) {
+    // builds the front end of a calendar object. creates the html
+    //this function assumes the calendarObject already has it's
+    //state updated with the correct information. 
+    
+    calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
+    calendarObject.fillCalendar(calendarObject.monthObjects);
+    
+};
+
+CheckIt.prototype.displayCalendar = function(calendarObj) {
+    //load a state and build the calendar on the page
+    
+    this.clearPage();
+    this.buildCalendar(calendarObj);
+    this.store.setActiveById(calendarObj.state.uniqueId);
+    this.store.save(calendarObj);
+};
+
+CheckIt.prototype.clearPage = function() {
+    // Remove all divs from page except #template
+    
+    this.$calendarDiv.find('#calendarTitleHeading').remove();
+    this.$calendarDiv.children('.monthframe').remove();
+};
+
+
+
+$(document).ready(function() {
+    
+    var checkit = new CheckIt();
+    
 });
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
-
-var generateUniqueId = function() {
-};
 
 var storeInLocalStorage = function(storageItemKey, storageItem) {
     //store information in database/ might start with localstorage though
@@ -365,25 +373,6 @@ var getMonthName = function(index) {
     return months[index];
 };
 
-var setStartDate = function() {
-    // return the startDate as a moment object
-    
-    var startDate = $('#datetimepicker1').data("DateTimePicker").date();
-    //startDate = startDate.format("YYYY-MM-DD");
-    
-    return startDate;
-};
-        
-
-var clearPage = function() {
-    // Remove all divs from page except #template
-    //Parameters:
-    // yearArray: array
-    var $div = $("#calendarDiv");
-    
-    $div.find('#calendarTitleHeading').remove();
-    $div.children('.monthframe').remove();
-};
 
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
@@ -462,7 +451,8 @@ var Month = function(dateString, calendarObj) {
             
             //save your progress
             
-            store.save(self.calendar);
+            //TODO change the way months build calendar, issue #87
+            self.calendar.checkit.store.save(self.calendar);
          })
      };
 
@@ -602,7 +592,7 @@ var emptyCalendarState = function(params) {
     };
 };
 
-var Calendar = function(state) {
+var Calendar = function(state, checkitObj) {
     
     var self = this;
     self.state = state;
@@ -615,6 +605,7 @@ var Calendar = function(state) {
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
     self.monthObjects = self.generateMonthObjects();
+    self.checkit = checkitObj;
     
 }
 
@@ -679,9 +670,10 @@ var allCalendarIds = {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
-    
-
-    //params.storeId
+    var allCalendarIdsKey = 'allCalendarIdsKey';
+    //the current_active_calendar is the key for localStorage that stores
+    //the active calendar's Id
+    var current_active_calendar = 'current_active_calendar';
     
     var toKey = function(id) {
         //make a key out of a uniqueId
@@ -722,6 +714,21 @@ var LocalCalendarStorage = function(params) {
         removeFromLocalStorage(toKey(current_active_calendar));
     };
     
+    self.removeById = function(uniqueId) {
+        //remove a calendar from storage by using it's Id.
+        
+        //delete the calendar from the allCalendarIds object
+        delete allCallendarIds[uniqueId];
+        //save that change
+        storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+        
+        //remove the calendar from local storage
+        removeFromLocalStorage(toKey(uniqueId));
+        
+        //remove active status from the calendar
+        removeFromLocalStorage(toKey(current_active_calendar));
+    };
+    
     self.load = function(calendarObj) {
         //load an App object ( like a calendar object)
         
@@ -746,5 +753,5 @@ var LocalCalendarStorage = function(params) {
     
 };
 
-var store = new LocalCalendarStorage({'storeId': 'Streaker'})
+
 
