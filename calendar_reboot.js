@@ -76,9 +76,9 @@ function CheckIt() {
         }
         
     }
-    //else {
-    //    this.showBuildMenu();
-    //}
+    else {
+        this.showBuildMenu();
+    }
     
     
 }
@@ -237,12 +237,7 @@ CheckIt.prototype.validateDates = function(startDateString, endDateString) {
     if (startDate.isBefore(endDate)) {
         this.removeFormError(this.$endDateForm, this.$endDateErrorSpan);
         // If there are more than 5 years between the dates return false for invalid
-        if (difference > 5) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return (difference < 5);
     }
     else {
         this.addFormError(this.$endDateForm, this.$endDateErrorSpan);
@@ -709,7 +704,7 @@ var LocalCalendarStorage = function(params) {
         //put calendar in allCalendarIdss and store it
         var allCalendarIds = self.getAllCalendarIds();
         allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-        console.log(allCalendarIds);
+        
         storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
     };
     
