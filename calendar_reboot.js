@@ -314,7 +314,7 @@ CheckIt.prototype.clearPage = function() {
 
 $(document).ready(function() {
     
-    checkit = new CheckIt();
+    var checkit = new CheckIt();
     
 });
 
