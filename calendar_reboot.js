@@ -49,6 +49,7 @@ function CheckIt() {
         this.$endDatePicker.data("DateTimePicker").show();
     }.bind(this));
    
+   
     //WHEN PAGE LOADS
     //first load the allCalendarIds from storage.
     var allCalendarIds = this.store.getAllCalendarIds() || {};
@@ -59,7 +60,7 @@ function CheckIt() {
         this.addCalendarToDropdown(key, allCalendarIds[key]);
       }
     }
-    
+   
     //get the current_active calendar id from storage if any
     var activeCalendarId = this.store.getActive();
     
@@ -75,9 +76,9 @@ function CheckIt() {
         }
         
     }
-    else {
-        this.showBuildMenu();
-    }
+    //else {
+    //    this.showBuildMenu();
+    //}
     
     
 }
@@ -140,7 +141,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     var dropdownItemId = event.currentTarget.id;
     
-    var state = store.loadById(dropdownItemId);
+    var state = this.store.loadById(dropdownItemId);
     
     var calendar = new Calendar(state, this);
     
@@ -225,13 +226,23 @@ CheckIt.prototype.removeFormErrors = function() {
 };
 
 CheckIt.prototype.validateDates = function(startDateString, endDateString) {
+    // Ensure that the end Date comes after the start Date and that there is no
+    // more than 5 years between them.
         
     var startDate = moment(startDateString, "YYYY-MM-DD");
     var endDate = moment(endDateString, "YYYY-MM-DD");
     
+    var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
+    
     if (startDate.isBefore(endDate)) {
         this.removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-        return true;
+        // If there are more than 5 years between the dates return false for invalid
+        if (difference > 5) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
     else {
         this.addFormError(this.$endDateForm, this.$endDateErrorSpan);
@@ -313,7 +324,7 @@ CheckIt.prototype.clearPage = function() {
 
 $(document).ready(function() {
     
-    var checkit = new CheckIt();
+    checkit = new CheckIt();
     
 });
 
@@ -663,13 +674,6 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
-  
-
-//dictionary of savedCalendars, calendar title: unique ID
-
-var allCalendarIds = {
-
-};
 
 //Make a storage manager
 var LocalCalendarStorage = function(params) {
@@ -693,7 +697,7 @@ var LocalCalendarStorage = function(params) {
     self.getAllCalendarIds = function() {
         //gets the allCalendarIds object from storage
         
-        return loadFromLocalStorage(toKey(allCalendarIdsKey));
+        return loadFromLocalStorage(toKey(allCalendarIdsKey)) || {};
     };
     
     self.save = function(calendarObj) {
@@ -703,7 +707,9 @@ var LocalCalendarStorage = function(params) {
         storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
         
         //put calendar in allCalendarIdss and store it
+        var allCalendarIds = self.getAllCalendarIds();
         allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
+        console.log(allCalendarIds);
         storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
     };
     
@@ -744,7 +750,7 @@ var LocalCalendarStorage = function(params) {
     };
     
     self.loadById = function(calendarObjId) {
-        //load an App object using it's Id
+        //load an App object using its Id
         return loadFromLocalStorage(toKey(calendarObjId));
     };
     
@@ -754,7 +760,7 @@ var LocalCalendarStorage = function(params) {
     };
     
     self.setActiveById = function(calendarObjId) {
-        //set the active calendar/object by using it's Id
+        //set the active calendar/object by using its Id
         storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
     };
     
