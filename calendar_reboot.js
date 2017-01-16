@@ -703,6 +703,8 @@ var LocalCalendarStorage = function(params) {
     self.remove = function(calendarObj) {
         //remove an app object (like a calendar) from storage
         
+        //get the allCalenderIds object from storage
+        var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
         //delete the calendar from the allCalendarIds object
         delete allCalendarIds[calendarObj.state.uniqueId];
         //save that change in localstorage
@@ -718,8 +720,10 @@ var LocalCalendarStorage = function(params) {
     self.removeById = function(uniqueId) {
         //remove a calendar from storage by using it's Id.
         
+        //get the allCalendarIds object from storage
+        var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
         //delete the calendar from the allCalendarIds object
-        delete allCallendarIds[uniqueId];
+        delete allCalendarIds[uniqueId];
         //save that change
         storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
         
