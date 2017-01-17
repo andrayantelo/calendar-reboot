@@ -3,6 +3,7 @@ body{
 }
 
 #navbarContainer{
+  position: relative;
   top: 0; 
 }
 
@@ -10,7 +11,7 @@ body{
   position: absolute;
   display: flex;
   flex-direction: row;
-  top: 5px;
+  top: 25px;
   width: 100%;
   right: 0;
   padding-left: 10px;
@@ -44,6 +45,8 @@ body{
 #sign-in {
   padding-top: 0px;
 }
+
+
 
 [hidden] {
   display: none !important;
