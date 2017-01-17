@@ -133,6 +133,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         var profilePicUrl = user.photoURL; 
         var userName = user.displayName;
         console.log(user);
+        console.log(profilePicUrl);
         
         // Set the user's profile pic and name.
         this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');

@@ -33,6 +33,10 @@
         
         <!-- include font awesome -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        
+        <!-- Material Design -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        
                 
         <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
         <script>
@@ -105,12 +109,29 @@
                 </li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
+            </ul> <!-- /.nav navbar-nav -->
            
          <!-- third item in navbar, sign in button -->
+         
+         <ul class="nav">
+             <li>
+              <div id="user-container">
+                <div hidden id="user-pic"></div>
+                <div hidden id="user-name"></div>
+                <button class="btn btn-default" hidden id="sign-out"><!-- mdl-js-button mdl-js-ripple-effect mdl-color-text--white"-->
+                  Sign-out
+                </button>
+                <button class="btn btn-default" hidden id="sign-in"> <!--</button> mdl-js-button mdl-js-ripple-effect mdl-color-text--white"-->
+                  <i class="material-icons">account_circle</i>Sign-in with Google
+                </button>
+            </div>
+            </li>
+        </ul>
+        
+
           
           
-          
-         </ul> <!-- /.nav navbar-nav -->
+         
             
             
         </div> <!-- /#main-navbar -->
@@ -119,16 +140,6 @@
   </nav> <!-- /.navbar navbar-default -->
 </div> <!-- /#navbarContainer -->
 
-<div id="user-container">
-    <div class="inline" hidden id="user-pic"></div>
-    <div class="inline" hidden id="user-name"></div>
-    <button class="inline" hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-      Sign-out
-    </button>
-    <button class="inline" hidden id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-      <i class="material-icons">account_circle</i>Sign-in with Google
-    </button>
-</div>
 
 
 <div id="contentWrapper" class="container-fluid">
