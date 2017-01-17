@@ -35,7 +35,7 @@ function CheckIt() {
     var monthObjects;
     
     // Initialize storage.
-    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    this.store = new firebaseCalendarStorage({'storeId': 'checkit'})
     
     // Attach click handlers to buttons and dropdowns.
     this.$clearButton.click(this.clearForm.bind(this));
@@ -60,8 +60,10 @@ function CheckIt() {
     this.$signOutButton.click(this.signOut.bind(this));
     this.$signInButton.click(this.signIn.bind(this));
    
-   
-    //WHEN PAGE LOADS
+    
+    // We have to connect to Firebase before we can access it.
+    this.initFirebase();
+    
     //first load the allCalendarIds from storage.
     var allCalendarIds = this.store.getAllCalendarIds() || {};
    
@@ -91,15 +93,16 @@ function CheckIt() {
         this.showBuildMenu();
     }
     
-    this.initFirebase();
+    
+    
 };
 
 CheckIt.prototype.initFirebase = function() {
     console.log('initializing firebase');
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
-    this.database = firebase.database();
-    this.storage = firebase.storage();
+    // Logs debugging information to the console.
+    firebase.database.enableLogging(true);
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
@@ -120,8 +123,12 @@ CheckIt.prototype.signOut = function() {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
-    console.log(user);
+    console.log(user); //TODO remove
+    
     if (user) { // User is signed in!
+        
+        // Update the user in the store so that we have access to the correct information.
+        this.store.user = user;
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL; 
         var userName = user.displayName;
@@ -141,6 +148,9 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     
       }
     else { // User is signed out!
+        // Remove the user from the store so that we can't access their information.
+        this.store.user = null;
+        
         // Hide user's profile and sign-out button.
         this.$userName.attr('hidden', 'true');
         this.$userPic.attr('hidden', 'true');
@@ -390,7 +400,7 @@ CheckIt.prototype.clearPage = function() {
 
 $(document).ready(function() {
     
-    var checkit = new CheckIt();
+    checkit = new CheckIt();
     
 });
 
@@ -742,8 +752,12 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 
 
 //Make a storage manager
-var LocalCalendarStorage = function(params) {
+var firebaseCalendarStorage = function(params) {
     var self = this;
+    
+    self.database = firebase.database();
+    self.storage = firebase.storage();
+    self.user = params['user'] || null;
     var prefix = params['storeId'] || "";
     var allCalendarIdsKey = 'allCalendarIds';
     //the currentActiveCalendarKey is the key for localStorage that stores
