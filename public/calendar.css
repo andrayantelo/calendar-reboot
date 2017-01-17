@@ -6,7 +6,16 @@ body{
   top: 0; 
 }
 
+#user-container {
+  position: absolute;
+  top: 200px;
+  padding: 50px;
+}
 
+.inline {
+  float:left;
+  clear: both;
+}
 html {
     font-size:100%;
 }

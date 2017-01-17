@@ -2,6 +2,12 @@
 // Initializes CheckIt
 function CheckIt() {
     // Shortcuts to DOM elements.
+    this.$userPic = $('#user-pic');
+    this.$userName = $('#user-name');
+    this.$signInButton = $('#sign-in');
+    this.$signOutButton = $('#sign-out');
+    this.$signInSnackbar = $('#must-signin-snackbar');
+    
     
     this.$calendarTitleForm = $('#titleFormGroup');
     this.$startDateForm = $('#dateFormGroup');
@@ -31,6 +37,7 @@ function CheckIt() {
     // Initialize storage.
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
     
+    // Attach click handlers to buttons and dropdowns.
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
@@ -48,6 +55,10 @@ function CheckIt() {
     this.$endDatePickerInput.click(function(event){
         this.$endDatePicker.data("DateTimePicker").show();
     }.bind(this));
+    
+    // Attach click handler to sign in and sign out buttons.
+    this.$signOutButton.click(this.signOut.bind(this));
+    this.$signInButton.click(this.signIn.bind(this));
    
    
     //WHEN PAGE LOADS
@@ -80,8 +91,73 @@ function CheckIt() {
         this.showBuildMenu();
     }
     
+    this.initFirebase();
+};
+
+CheckIt.prototype.initFirebase = function() {
+    console.log('initializing firebase');
+    // Shortcuts to Firebase SDK features.
+    this.auth = firebase.auth();
+    this.database = firebase.database();
+    this.storage = firebase.storage();
     
-}
+    // Initiates Firebase auth and listen to auth state changes.
+    this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
+};
+
+// Signs-in Checkit
+CheckIt.prototype.signIn = function() {
+    // Sign in Firebase using popup auth and Google as the identity provider.
+    var provider = new firebase.auth.GoogleAuthProvider();
+    this.auth.signInWithPopup(provider);
+};
+
+// Signs out of Checkit.
+CheckIt.prototype.signOut = function() {
+    // Signs out of Firebase.
+    this.auth.signOut();
+};
+
+// Triggers when the auth state change for instance when the user signs-in or signs-out.
+CheckIt.prototype.onAuthStateChanged = function(user) {
+    console.log(user);
+    if (user) { // User is signed in!
+        // Get profile pic and user's name from the Firebase user object.
+        var profilePicUrl = user.photoURL; 
+        var userName = user.displayName;
+        console.log(user);
+        
+        // Set the user's profile pic and name.
+        this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
+        this.$userName.textContent = userName;
+    
+        // Show user's profile and sign-out button.
+        this.$userName.removeAttr('hidden');
+        this.$userPic.removeAttr('hidden');
+        this.$signOutButton.removeAttr('hidden');
+    
+        // Hide sign-in button.
+        this.$signInButton.attr('hidden', 'true');
+    
+      }
+    else { // User is signed out!
+        // Hide user's profile and sign-out button.
+        this.$userName.attr('hidden', 'true');
+        this.$userPic.attr('hidden', 'true');
+        this.$signOutButton.attr('hidden', 'true');
+    
+        // Show sign-in button.
+        this.$signInButton.removeAttr('hidden');
+    }
+};
+
+// Returns true if user is signed-in. Otherwise false and displays a message.
+CheckIt.prototype.checkSignedInWithMessage = function() {
+    // Return true if the user is signed in Firebase
+    if (this.auth.currentUser) {
+        return true;
+    }
+};
 
 CheckIt.prototype.hideBuildMenu = function() {
     // Collapse the build calendar form.
@@ -669,10 +745,10 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
-    var allCalendarIdsKey = 'allCalendarIdsKey';
-    //the current_active_calendar is the key for localStorage that stores
+    var allCalendarIdsKey = 'allCalendarIds';
+    //the currentActiveCalendarKey is the key for localStorage that stores
     //the active calendar's Id
-    var current_active_calendar = 'current_active_calendar';
+    var currentActiveCalendarKey = 'currentActiveCalendar';
     
     var toKey = function(id) {
         //make a key out of a uniqueId
@@ -720,7 +796,7 @@ var LocalCalendarStorage = function(params) {
         removeFromLocalStorage(toKey(uniqueId));
         
         //remove active status from the calendar
-        removeFromLocalStorage(toKey(current_active_calendar));
+        removeFromLocalStorage(toKey(currentActiveCalendarKey));
     };
     
     self.load = function(calendarObj) {
@@ -736,12 +812,12 @@ var LocalCalendarStorage = function(params) {
     
     self.getActive = function() {
         //return the active_calendar id
-        return loadFromLocalStorage(toKey(current_active_calendar));
+        return loadFromLocalStorage(toKey(currentActiveCalendarKey));
     };
     
     self.setActiveById = function(calendarObjId) {
         //set the active calendar/object by using its Id
-        storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
+        storeInLocalStorage(toKey(currentActiveCalendarKey), calendarObjId);
     };
     
     

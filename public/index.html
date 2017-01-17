@@ -105,6 +105,9 @@
                 </li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
+           
+         <!-- third item in navbar, sign in button -->
+          
           
           
          </ul> <!-- /.nav navbar-nav -->
@@ -116,7 +119,16 @@
   </nav> <!-- /.navbar navbar-default -->
 </div> <!-- /#navbarContainer -->
 
-
+<div id="user-container">
+    <div class="inline" hidden id="user-pic"></div>
+    <div class="inline" hidden id="user-name"></div>
+    <button class="inline" hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+      Sign-out
+    </button>
+    <button class="inline" hidden id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+      <i class="material-icons">account_circle</i>Sign-in with Google
+    </button>
+</div>
 
 
 <div id="contentWrapper" class="container-fluid">
