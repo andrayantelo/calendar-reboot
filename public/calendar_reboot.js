@@ -50,35 +50,51 @@ function CheckIt() {
     }.bind(this));
    
    
-    //WHEN PAGE LOADS
-    //first load the allCalendarIds from storage.
-    var allCalendarIds = this.store.getAllCalendarIds() || {};
-   
-    //GOING THROUGH THE KEYS OF THE DICTIONARY allCalendarIds
-    for (var key in allCalendarIds) {
-      if (allCalendarIds.hasOwnProperty(key)) {
-        this.addCalendarToDropdown(key, allCalendarIds[key]);
-      }
-    }
-   
-    //get the current_active calendar id from storage if any
-    var activeCalendarId = this.store.getActive();
+    // WHEN PAGE LOADS
+    // Load the calendar Ids from storage and fill the dropdown with calendar
+    // titles.
+    this.store.getAllCalendarIds()
+        .then(function (allCalendarIds) {
+            // Add calendar titles to dropdown.
+            
+            for (var key in allCalendarIds) {
+                if (allCalendarIds.hasOwnProperty(key)) {
+                    this.addCalendarToDropdown(key, allCalendarIds[key]);
+                }
+            }
+        }.bind(this))
+        .catch(function (value) {
+            console.log("No calendars in storage.");
+        }.bind(this));
     
-    if (activeCalendarId !== null) {
-        
-        var activeCalendarState = this.store.loadById(activeCalendarId);
-        
-        if (activeCalendarState !== null) {
-            var state = activeCalendarState;
-            var calendar = new Calendar(state, this);
+    
+   
+    
+    // Get the current active calendar from storage and display it.
+    // If there is none, show build calendar menu.
+   this.store.getActive()
+       .then(function (activeCalendarId) {
            
-            this.displayCalendar(calendar);
-        }
-        
-    }
-    else {
-        this.showBuildMenu();
-    }
+           this.store.loadById(activeCalendarId)
+               .then(function (activeCalendarState) {
+                   if (activeCalendarState !==  null) {
+                       var state = activeCalendarState;
+                       var calendar = new Calendar(state, this);
+                       this.displayCalendar(calendar);
+                   }
+               }.bind(this))
+               .catch(function() {
+                   console.error("Calendar does not exist");
+                   this.store.removeActive();
+                   this.showBuildMenu();
+               }.bind(this));
+           
+       }.bind(this))
+       
+       .catch(function () {
+           console.log("There is no current active calendar");
+           this.showBuildMenu();
+       }.bind(this));
     
     
 }
@@ -136,12 +152,15 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     //load the saved calendar with the title that was clicked
     var dropdownItemId = event.currentTarget.id;
     
-    var state = this.store.loadById(dropdownItemId);
-    
-    var calendar = new Calendar(state, this);
-    
-    this.displayCalendar(calendar);
-    this.hideBuildMenu(); 
+    return this.store.loadById(dropdownItemId)
+        .then(function(state) {
+            var calendar = new Calendar(state, this);
+            this.displayCalendar(calendar);
+            this.hideBuildMenu(); 
+        }.bind(this))
+        .catch(function() {
+            console.log("Calendar not in storage");
+        }.bind(this));
     
 };
 
@@ -154,18 +173,19 @@ CheckIt.prototype.deleteCalendar = function() {
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
         
-        var currentCalendarId = this.store.getActive();
-        
-        this.removeFromCalendarDropdown(currentCalendarId);
-        
-        
-        //delete the calendar and remove its active calendar status
-        this.store.removeById(currentCalendarId);
-        
-        //console.log("clearing the page");
-        //clear the page
-        this.clearPage();
-        this.showBuildMenu(); 
+        var currentCalendarId = this.store.getActive()
+            .then(function(currentCalendarId) {
+                this.removeFromCalendarDropdown(currentCalendarId);
+                //delete the calendar and remove its active calendar status
+                this.store.removeById(currentCalendarId);
+                //console.log("clearing the page");
+                //clear the page
+                this.clearPage();
+                this.showBuildMenu(); 
+            }.bind(this))
+            .catch(function() {
+                console.log("Calendar could not be deleted.");
+            }.bind(this));
     
     }
 };
@@ -314,7 +334,7 @@ CheckIt.prototype.clearPage = function() {
 
 $(document).ready(function() {
     
-    var checkit = new CheckIt();
+    checkit = new CheckIt();
     
 });
 
@@ -677,27 +697,49 @@ var LocalCalendarStorage = function(params) {
     var toKey = function(id) {
         //make a key out of a uniqueId
         
-        return prefix + "_" + id;
-        
+        var key = prefix + "_" + id;
+        return key;
     };
     
     self.getAllCalendarIds = function() {
-        //gets the allCalendarIds object from storage
+        // Returns a promise for the allCalendarIds object from storage
         
-        return loadFromLocalStorage(toKey(allCalendarIdsKey)) || {};
+        return new Promise( function(resolve, reject) {
+            var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
+            
+            if (allCalendarIds !== null ) {
+                
+                resolve(allCalendarIds);
+            }
+            else {
+                reject("Not found");
+            }
+        })
     };
     
     self.save = function(calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
-        storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+        var stateP = new Promise(function(resolve, reject) {
+            storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+            resolve();
+        });
         
         //put calendar in allCalendarIdss and store it
-        var allCalendarIds = self.getAllCalendarIds();
-        allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-        
-        storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+        var idsP = self.getAllCalendarIds()
+            .then(function (allCalendarIds) {
+                allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
+                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+            })
+            .catch(function () {
+                console.log("No previous calendars in storage");
+                var allCalendarIds = {};
+                allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
+                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+            })
+            
+        return Promise.all([stateP, idsP]);
     };
     
     self.remove = function(calendarObj) {
@@ -710,38 +752,69 @@ var LocalCalendarStorage = function(params) {
         //remove a calendar from storage by using it's Id.
         
         //get the allCalendarIds object from storage
-        var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
-        //delete the calendar from the allCalendarIds object
-        delete allCalendarIds[uniqueId];
-        //save that change
-        storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+        return self.getAllCalendarIds()
+            .then(function(allCalendarIds) {
+                // Delete the calendar from allCalendarIds.
+                delete allCalendarIds[uniqueId];
+                // Save that change
+                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+                // Remove the calendar from local storage
+                removeFromLocalStorage(toKey(uniqueId));
+                // Remove active status from the calendar
+                removeFromLocalStorage(toKey(current_active_calendar));
+            }.bind(this))
+            .catch(function () {
+                console.log("Unable to remove calendar");
+            }.bind(this));
         
-        //remove the calendar from local storage
-        removeFromLocalStorage(toKey(uniqueId));
-        
-        //remove active status from the calendar
-        removeFromLocalStorage(toKey(current_active_calendar));
-    };
-    
-    self.load = function(calendarObj) {
-        //load an App object ( like a calendar object)
-        
-        return loadFromLocalStorage(toKey(calendarObj.uniqueId));
     };
     
     self.loadById = function(calendarObjId) {
-        //load an App object using its Id
-        return loadFromLocalStorage(toKey(calendarObjId));
+        // Return a promise to a calendar object using its Id
+        return new Promise( function(resolve, reject) {
+            var calendar = loadFromLocalStorage(toKey(calendarObjId));
+            
+            if (calendar !== null) {
+                resolve(calendar);
+            }
+            else reject("Calendar not found");
+        })
+  
     };
     
     self.getActive = function() {
-        //return the active_calendar id
-        return loadFromLocalStorage(toKey(current_active_calendar));
+        // Return a promise to the active_calendar id from storage
+        
+        return new Promise( function(resolve, reject) {
+            var activeCalendarId = loadFromLocalStorage(toKey(current_active_calendar));
+            
+            if (activeCalendarId !== null ) {
+                
+                // Signal that the promise succeeded and make the value ready to go. 
+                resolve(activeCalendarId);
+            }
+            else {
+                reject("Not found");
+            }
+        })
+        
+    };
+    
+    self.removeActive = function() {
+        // Return a promise, remove the active_calendar item from storage.
+        
+        return new Promise( function(resolve, reject) {
+            removeFromLocalStorage(toKey(current_active_calendar));
+            resolve();
+        })
     };
     
     self.setActiveById = function(calendarObjId) {
-        //set the active calendar/object by using its Id
-        storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
+        // Set the active calendar/object by using its Id
+        return new Promise( function(resolve, reject) {
+            storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
+            resolve();
+        })
     };
     
     
