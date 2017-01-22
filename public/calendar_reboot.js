@@ -52,14 +52,25 @@ function CheckIt() {
    
     //WHEN PAGE LOADS
     //first load the allCalendarIds from storage.
-    var allCalendarIds = this.store.getAllCalendarIds() || {};
+    this.store.getAllCalendarIds()
+        .then(function (allCalendarIds) {
+            // Add calendar titles to dropdown.
+            
+            for (var key in allCalendarIds) {
+                if (allCalendarIds.hasOwnProperty(key)) {
+                this.addCalendarToDropdown(key, allCalendarIds[key]);
+                }
+            }
+        })
+        .catch(function (value) {
+            console.log("No calendars in storage.");
+            return;
+            });
+    
+    
    
     //GOING THROUGH THE KEYS OF THE DICTIONARY allCalendarIds
-    for (var key in allCalendarIds) {
-      if (allCalendarIds.hasOwnProperty(key)) {
-        this.addCalendarToDropdown(key, allCalendarIds[key]);
-      }
-    }
+   
    
     //get the current_active calendar id from storage if any
     var activeCalendarId = this.store.getActive();
@@ -682,9 +693,15 @@ var LocalCalendarStorage = function(params) {
     };
     
     self.getAllCalendarIds = function() {
-        //gets the allCalendarIds object from storage
+        // Returns a promise for the allCalendarIds object from storage
         
-        return loadFromLocalStorage(toKey(allCalendarIdsKey)) || {};
+        return new Promise( function(resolve, reject) {
+            var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
+            if (allCalendarIds != null ) {
+                resolve(allCalendarIds);
+            }
+            else reject("Not found");
+        })
     };
     
     self.save = function(calendarObj) {
