@@ -764,7 +764,7 @@ var LocalCalendarStorage = function(params) {
                 removeFromLocalStorage(toKey(current_active_calendar));
             }.bind(this))
             .catch(function () {
-                console.log("Unable to remove calendar);
+                console.log("Unable to remove calendar");
             }.bind(this));
         
     };
