@@ -59,14 +59,12 @@ function CheckIt() {
             
             for (var key in allCalendarIds) {
                 if (allCalendarIds.hasOwnProperty(key)) {
-                this.addCalendarToDropdown(key, allCalendarIds[key]);
+                    this.addCalendarToDropdown(key, allCalendarIds[key]);
                 }
             }
         }.bind(this))
-        
         .catch(function (value) {
             console.log("No calendars in storage.");
-            return;
         }.bind(this));
     
     
@@ -85,8 +83,9 @@ function CheckIt() {
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
-               
                .catch(function() {
+                   console.error("Calendar does not exist");
+                   this.store.removeActive();
                    this.showBuildMenu();
                }.bind(this));
            
@@ -798,6 +797,15 @@ var LocalCalendarStorage = function(params) {
             }
         })
         
+    };
+    
+    self.removeActive = function() {
+        // Return a promise, remove the active_calendar item from storage.
+        
+        return new Promise( function(resolve, reject) {
+            removeFromLocalStorage(toKey(current_active_calendar));
+            resolve();
+        })
     };
     
     self.setActiveById = function(calendarObjId) {
