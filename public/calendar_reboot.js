@@ -153,12 +153,16 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     //load the saved calendar with the title that was clicked
     var dropdownItemId = event.currentTarget.id;
     
-    var state = this.store.loadById(dropdownItemId);
-    
-    var calendar = new Calendar(state, this);
-    
-    this.displayCalendar(calendar);
-    this.hideBuildMenu(); 
+    return this.store.loadById(dropdownItemId)
+        .then(function(state) {
+            var calendar = new Calendar(state, this);
+            this.displayCalendar(calendar);
+            this.hideBuildMenu(); 
+            }.bind(this))
+            
+        .catch(function() {
+            console.log("Calendar not in storage");
+        }.bind(this));
     
 };
 
@@ -171,18 +175,20 @@ CheckIt.prototype.deleteCalendar = function() {
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
         
-        var currentCalendarId = this.store.getActive();
-        
-        this.removeFromCalendarDropdown(currentCalendarId);
-        
-        
-        //delete the calendar and remove its active calendar status
-        this.store.removeById(currentCalendarId);
-        
-        //console.log("clearing the page");
-        //clear the page
-        this.clearPage();
-        this.showBuildMenu(); 
+        var currentCalendarId = this.store.getActive()
+            .then(function(currentCalendarId) {
+                this.removeFromCalendarDropdown(currentCalendarId);
+                //delete the calendar and remove its active calendar status
+                this.store.removeById(currentCalendarId);
+                //console.log("clearing the page");
+                //clear the page
+                this.clearPage();
+                this.showBuildMenu(); 
+                }.bind(this))
+                
+            .catch(function() {
+                console.log("Calendar could not be deleted.");
+                }.bind(this));
     
     }
 };
@@ -733,7 +739,6 @@ var LocalCalendarStorage = function(params) {
                 var allCalendarIds = {};
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-                console.log(allCalendarIds);
             })
     };
     
@@ -800,7 +805,7 @@ var LocalCalendarStorage = function(params) {
         return new Promise( function(resolve, reject) {
             storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
             resolve();
-        }
+        })
     };
     
     
