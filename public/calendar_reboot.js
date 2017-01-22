@@ -157,8 +157,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
             var calendar = new Calendar(state, this);
             this.displayCalendar(calendar);
             this.hideBuildMenu(); 
-            }.bind(this))
-            
+        }.bind(this))
         .catch(function() {
             console.log("Calendar not in storage");
         }.bind(this));
@@ -183,11 +182,10 @@ CheckIt.prototype.deleteCalendar = function() {
                 //clear the page
                 this.clearPage();
                 this.showBuildMenu(); 
-                }.bind(this))
-                
+            }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");
-                }.bind(this));
+            }.bind(this));
     
     }
 };
@@ -700,7 +698,6 @@ var LocalCalendarStorage = function(params) {
         //make a key out of a uniqueId
         
         var key = prefix + "_" + id;
-        console.log("toKey("+id+") -> " + key);
         return key;
     };
     
@@ -715,7 +712,6 @@ var LocalCalendarStorage = function(params) {
                 resolve(allCalendarIds);
             }
             else {
-                console.log(allCalendarIds);
                 reject("Not found");
             }
         })
@@ -725,10 +721,13 @@ var LocalCalendarStorage = function(params) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
-        storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+        var stateP = new Promise(function(resolve, reject) {
+            storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+            resolve();
+        });
         
         //put calendar in allCalendarIdss and store it
-        return self.getAllCalendarIds()
+        var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
@@ -739,6 +738,8 @@ var LocalCalendarStorage = function(params) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
             })
+            
+        return Promise.all([stateP, idsP]);
     };
     
     self.remove = function(calendarObj) {
@@ -763,7 +764,7 @@ var LocalCalendarStorage = function(params) {
                 removeFromLocalStorage(toKey(current_active_calendar));
             }.bind(this))
             .catch(function () {
-                
+                console.log("Unable to remove calendar);
             }.bind(this));
         
     };
