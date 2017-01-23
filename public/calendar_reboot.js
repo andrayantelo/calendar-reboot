@@ -705,7 +705,9 @@ var LocalCalendarStorage = function(params) {
         var runFunc = function () {
             func(arg);
         };
-        setTimeout(runFunc, 1000);
+        
+        var randomNumber = Math.random() * 4000;
+        setTimeout(runFunc, randomNumber);
         
     };
     
