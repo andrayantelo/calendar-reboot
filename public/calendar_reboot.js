@@ -7,7 +7,6 @@ function CheckIt() {
     this.$userName = $('#user-name');
     this.$signInButton = $('#sign-in');
     this.$signOutButton = $('#sign-out');
-    this.$signInSnackbar = $('#must-signin-snackbar');
    
     this.$calendarTitleForm = $('#titleFormGroup');
     this.$startDateForm = $('#dateFormGroup');
