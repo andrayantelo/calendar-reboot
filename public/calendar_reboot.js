@@ -102,7 +102,7 @@ CheckIt.prototype.initFirebase = function() {
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
-    firebase.database.enableLogging(true);
+    firebase.database.enableLogging(false);
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
@@ -112,7 +112,8 @@ CheckIt.prototype.initFirebase = function() {
 CheckIt.prototype.signIn = function() {
     // Sign in Firebase using popup auth and Google as the identity provider.
     var provider = new firebase.auth.GoogleAuthProvider();
-    this.auth.signInWithPopup(provider);
+    
+    this.auth.signInWithRedirect(provider);
 };
 
 // Signs out of Checkit.
@@ -123,7 +124,6 @@ CheckIt.prototype.signOut = function() {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
-    console.log(user); //TODO remove
     
     if (user) { // User is signed in!
         
@@ -132,12 +132,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL; 
         var userName = user.displayName;
-        console.log(user);
-        console.log(profilePicUrl);
-        
+       
         // Set the user's profile pic and name.
         this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
-        this.$userName.textContent = userName;
+        this.$userName.append(userName);
     
         // Show user's profile and sign-out button.
         this.$userName.removeAttr('hidden');
