@@ -8,6 +8,8 @@ function CheckIt() {
     this.$signInButton = $('#sign-in');
     this.$signOutButton = $('#sign-out');
    
+    this.$getStarted = $('#getStarted');
+    this.$buildFormAccordion = $('#buildFormAccordion');
     this.$calendarTitleForm = $('#titleFormGroup');
     this.$startDateForm = $('#dateFormGroup');
     this.$endDateForm = $('#dateFormGroup2');
@@ -103,16 +105,21 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .catch(function() {
                    console.error("Calendar does not exist");
                    this.store.removeActive();
-                   this.showBuildMenu();
+                   this.uncollapseBuildMenu();
                }.bind(this));
            
        }.bind(this))
        
        .catch(function () {
            console.log("There is no current active calendar");
-           this.showBuildMenu();
+           this.uncollapseBuildMenu();
        }.bind(this));
 }
+
+CheckIt.prototype.clearDropdown = function() {
+    // Removes all items from the Saved Items dropdown.
+    this.$calendarDropdown.empty();
+};
 
 CheckIt.prototype.initFirebase = function() {
     console.log('initializing firebase');
@@ -167,6 +174,12 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         
         // Display the user's active calendar.
         this.displayActiveCalendar();
+        
+        //Show the build Calendar form.
+        this.$buildFormAccordion.removeAttr('hidden');
+        
+        //Hide the get started blurb.
+        this.$getStarted.attr('hidden', 'true');
     
       }
     else { // User is signed out!
@@ -181,6 +194,18 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Show sign-in button.
         this.$signInButton.removeAttr('hidden');
         
+        //Clear the saved Calendars dropdown menu.
+        this.clearDropdown();
+        
+        //Clear the page.
+        this.clearPage();
+        
+        // Remove the build Calendar form.
+        this.$buildFormAccordion.attr('hidden', 'true');
+        
+        // Show the get started blurb
+        this.$getStarted.removeAttr('hidden');
+        
     }
 };
 
@@ -192,12 +217,12 @@ CheckIt.prototype.checkSignedInWithMessage = function() {
     }
 };
 
-CheckIt.prototype.hideBuildMenu = function() {
+CheckIt.prototype.collapseBuildMenu = function() {
     // Collapse the build calendar form.
     this.$buildCalendarForm.collapse('hide');
 };
 
-CheckIt.prototype.showBuildMenu = function() {
+CheckIt.prototype.uncollapseBuildMenu = function() {
     // Show the build calendar form.
     this.$buildCalendarForm.collapse('show');
 };
@@ -235,7 +260,7 @@ CheckIt.prototype.createCalendar = function() {
     
         //build the calendar
         this.buildCalendar(calendar);
-        this.hideBuildMenu(); 
+        this.collapseBuildMenu(); 
    }
 };
 
@@ -249,7 +274,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
         .then(function(state) {
             var calendar = new Calendar(state, this);
             this.displayCalendar(calendar);
-            this.hideBuildMenu(); 
+            this.collapseBuildMenu(); 
         }.bind(this))
         .catch(function() {
             console.log("Calendar not in storage");
@@ -274,7 +299,7 @@ CheckIt.prototype.deleteCalendar = function() {
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
-                this.showBuildMenu(); 
+                this.uncollapseBuildMenu(); 
             }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");

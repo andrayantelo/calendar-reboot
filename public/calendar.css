@@ -6,6 +6,13 @@ body{
   top: 0; 
 }
 
+#getStarted {
+  font-size: 20px;
+  padding: 10px;
+  margin: 10px;
+  font-family: 'Dosis', sans-serif;
+}
+
 .btn {
   /*display: inline-block;*/
   padding: 6px 12px;
