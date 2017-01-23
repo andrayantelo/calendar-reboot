@@ -62,10 +62,13 @@ function CheckIt() {
    
     
     // We have to connect to Firebase before we can access it.
+    // WHEN PAGE LOADS
     this.initFirebase();
-    
-   // WHEN PAGE LOADS
-    // Load the calendar Ids from storage and fill the dropdown with calendar
+
+};
+
+CheckIt.prototype.fillDropdown = function() {
+     // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
@@ -80,11 +83,11 @@ function CheckIt() {
         .catch(function (value) {
             console.log("No calendars in storage.");
         }.bind(this));
-    
-    
-   
-    
-    // Get the current active calendar from storage and display it.
+};
+
+CheckIt.prototype.displayActiveCalendar = function() {
+    // Display the active calendar if there is one.
+      // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
    this.store.getActive()
        .then(function (activeCalendarId) {
@@ -108,10 +111,8 @@ function CheckIt() {
        .catch(function () {
            console.log("There is no current active calendar");
            this.showBuildMenu();
-       }.bind(this));   
-    
-    
-};
+       }.bind(this));
+}
 
 CheckIt.prototype.initFirebase = function() {
     console.log('initializing firebase');
@@ -160,6 +161,12 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     
         // Hide sign-in button.
         this.$signInButton.attr('hidden', 'true');
+        
+        // Fill the dropdown with user's saved calendar titles/
+        this.fillDropdown();
+        
+        // Display the user's active calendar.
+        this.displayActiveCalendar();
     
       }
     else { // User is signed out!
@@ -173,6 +180,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     
         // Show sign-in button.
         this.$signInButton.removeAttr('hidden');
+        
     }
 };
 
