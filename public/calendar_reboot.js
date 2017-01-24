@@ -2,7 +2,14 @@
 // Initializes CheckIt
 function CheckIt() {
     // Shortcuts to DOM elements.
-    
+
+    this.$userPic = $('#user-pic');
+    this.$userName = $('#user-name');
+    this.$signInButton = $('#sign-in');
+    this.$signOutButton = $('#sign-out');
+   
+    this.$getStarted = $('#getStarted');
+    this.$buildFormAccordion = $('#buildFormAccordion');
     this.$calendarTitleForm = $('#titleFormGroup');
     this.$startDateForm = $('#dateFormGroup');
     this.$endDateForm = $('#dateFormGroup2');
@@ -29,6 +36,7 @@ function CheckIt() {
     var monthObjects;
     
     // Initialize storage.
+
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
     
     this.$clearButton.click(this.clearForm.bind(this));
@@ -48,10 +56,21 @@ function CheckIt() {
     this.$endDatePickerInput.click(function(event){
         this.$endDatePicker.data("DateTimePicker").show();
     }.bind(this));
+
+    
+    // Attach click handler to sign in and sign out buttons.
+    this.$signOutButton.click(this.signOut.bind(this));
+    this.$signInButton.click(this.signIn.bind(this));
    
-   
+    
+    // We have to connect to Firebase before we can access it.
     // WHEN PAGE LOADS
-    // Load the calendar Ids from storage and fill the dropdown with calendar
+    this.initFirebase();
+
+};
+
+CheckIt.prototype.fillDropdown = function() {
+     // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
@@ -66,11 +85,11 @@ function CheckIt() {
         .catch(function (value) {
             console.log("No calendars in storage.");
         }.bind(this));
-    
-    
-   
-    
-    // Get the current active calendar from storage and display it.
+};
+
+CheckIt.prototype.displayActiveCalendar = function() {
+    // Display the active calendar if there is one.
+      // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
    this.store.getActive()
        .then(function (activeCalendarId) {
@@ -86,25 +105,124 @@ function CheckIt() {
                .catch(function() {
                    console.error("Calendar does not exist");
                    this.store.removeActive();
-                   this.showBuildMenu();
+                   this.uncollapseBuildMenu();
                }.bind(this));
            
        }.bind(this))
        
        .catch(function () {
            console.log("There is no current active calendar");
-           this.showBuildMenu();
+           this.uncollapseBuildMenu();
        }.bind(this));
-    
-    
 }
 
-CheckIt.prototype.hideBuildMenu = function() {
+CheckIt.prototype.clearDropdown = function() {
+    // Removes all items from the Saved Items dropdown.
+    this.$calendarDropdown.empty();
+};
+
+CheckIt.prototype.initFirebase = function() {
+    console.log('initializing firebase');
+    // Shortcuts to Firebase SDK features.
+    this.auth = firebase.auth();
+    // Logs debugging information to the console.
+    firebase.database.enableLogging(false);
+    
+    // Initiates Firebase auth and listen to auth state changes.
+    this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
+};
+
+// Signs-in Checkit
+CheckIt.prototype.signIn = function() {
+    // Sign in Firebase using popup auth and Google as the identity provider.
+    var provider = new firebase.auth.GoogleAuthProvider();
+    
+    this.auth.signInWithRedirect(provider);
+};
+
+// Signs out of Checkit.
+CheckIt.prototype.signOut = function() {
+    // Signs out of Firebase.
+    this.auth.signOut();
+};
+
+// Triggers when the auth state change for instance when the user signs-in or signs-out.
+CheckIt.prototype.onAuthStateChanged = function(user) {
+    
+    if (user) { // User is signed in!
+        
+        // Update the user in the store so that we have access to the correct information.
+        this.store.user = user;
+        // Get profile pic and user's name from the Firebase user object.
+        var profilePicUrl = user.photoURL; 
+        var userName = user.displayName;
+       
+        // Set the user's profile pic and name.
+        this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
+        this.$userName.append(userName);
+    
+        // Show user's profile and sign-out button.
+        this.$userName.removeAttr('hidden');
+        this.$userPic.removeAttr('hidden');
+        this.$signOutButton.removeAttr('hidden');
+    
+        // Hide sign-in button.
+        this.$signInButton.attr('hidden', 'true');
+        
+        // Fill the dropdown with user's saved calendar titles/
+        this.fillDropdown();
+        
+        // Display the user's active calendar.
+        this.displayActiveCalendar();
+        
+        //Show the build Calendar form.
+        this.$buildFormAccordion.removeAttr('hidden');
+        
+        //Hide the get started blurb.
+        this.$getStarted.attr('hidden', 'true');
+    
+      }
+    else { // User is signed out!
+        // Remove the user from the store so that we can't access their information.
+        this.store.user = null;
+        
+        // Hide user's profile and sign-out button.
+        this.$userName.attr('hidden', 'true');
+        this.$userPic.attr('hidden', 'true');
+        this.$signOutButton.attr('hidden', 'true');
+    
+        // Show sign-in button.
+        this.$signInButton.removeAttr('hidden');
+        
+        //Clear the saved Calendars dropdown menu.
+        this.clearDropdown();
+        
+        //Clear the page.
+        this.clearPage();
+        
+        // Remove the build Calendar form.
+        this.$buildFormAccordion.attr('hidden', 'true');
+        
+        // Show the get started blurb
+        this.$getStarted.removeAttr('hidden');
+        
+    }
+};
+
+// Returns true if user is signed-in. Otherwise false and displays a message.
+CheckIt.prototype.checkSignedInWithMessage = function() {
+    // Return true if the user is signed in Firebase
+    if (this.auth.currentUser) {
+        return true;
+    }
+};
+
+CheckIt.prototype.collapseBuildMenu = function() {
     // Collapse the build calendar form.
     this.$buildCalendarForm.collapse('hide');
 };
 
-CheckIt.prototype.showBuildMenu = function() {
+CheckIt.prototype.uncollapseBuildMenu = function() {
     // Show the build calendar form.
     this.$buildCalendarForm.collapse('show');
 };
@@ -142,7 +260,7 @@ CheckIt.prototype.createCalendar = function() {
     
         //build the calendar
         this.buildCalendar(calendar);
-        this.hideBuildMenu(); 
+        this.collapseBuildMenu(); 
    }
 };
 
@@ -156,7 +274,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
         .then(function(state) {
             var calendar = new Calendar(state, this);
             this.displayCalendar(calendar);
-            this.hideBuildMenu(); 
+            this.collapseBuildMenu(); 
         }.bind(this))
         .catch(function() {
             console.log("Calendar not in storage");
@@ -172,7 +290,7 @@ CheckIt.prototype.deleteCalendar = function() {
     // Guard against accidental clicks of the delete button
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
-        
+
         var currentCalendarId = this.store.getActive()
             .then(function(currentCalendarId) {
                 this.removeFromCalendarDropdown(currentCalendarId);
@@ -181,7 +299,7 @@ CheckIt.prototype.deleteCalendar = function() {
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
-                this.showBuildMenu(); 
+                this.uncollapseBuildMenu(); 
             }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");
@@ -686,6 +804,7 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 
 
 //Make a storage manager
+
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
@@ -715,12 +834,14 @@ var LocalCalendarStorage = function(params) {
                 reject("Not found");
             }
         })
+
     };
     
     self.save = function(calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
+
         var stateP = new Promise(function(resolve, reject) {
             storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
             resolve();
@@ -740,6 +861,7 @@ var LocalCalendarStorage = function(params) {
             })
             
         return Promise.all([stateP, idsP]);
+
     };
     
     self.remove = function(calendarObj) {
@@ -752,6 +874,7 @@ var LocalCalendarStorage = function(params) {
         //remove a calendar from storage by using it's Id.
         
         //get the allCalendarIds object from storage
+
         return self.getAllCalendarIds()
             .then(function(allCalendarIds) {
                 // Delete the calendar from allCalendarIds.
@@ -815,6 +938,7 @@ var LocalCalendarStorage = function(params) {
             storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
             resolve();
         })
+
     };
     
     

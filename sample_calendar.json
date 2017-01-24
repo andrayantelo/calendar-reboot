@@ -1,0 +1,44 @@
+{
+    "calendars" : {
+        "checkit_148460826559529600" : {
+            "startDateString":"20170101",
+            "endDateString":"20170202",
+            "title":"hi",
+            "uniqueId":148460826559529600,
+            "checkedDays":{}
+            },
+        "checkit_148461003056534700" : {
+            "startDateString":"20170109",
+            "endDateString":"20170302",
+            "title":"world",
+            "uniqueId":148461003056534700,
+            "checkedDays":{"20170111":1,"20170112":1}
+            },
+        "checkit_148461051598386460" : {
+            "startDateString":"20170103",
+            "endDateString":"20170524",
+            "title":"ass",
+            "uniqueId":148461051598386460,
+            "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
+        }
+        
+    },
+    "users" : {
+        "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : {
+            "email" : "andrayantelo@gmail.com",
+            "checkit_allCalendarIds" : {
+                "148460826559529600":"hi",
+                "148461003056534700":"world"
+                },
+            "checkit_currentActiveCalendar" : "148461003056534700"
+
+        },
+        "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : {
+            "email" : "johntyree@gmail.com",
+            "checkit_allCalendarIds" : {
+              "148461051598386460":"ass"
+            },
+            "checkit_currentActiveCalendar" : "148461051598386460"
+        }
+    }
+}

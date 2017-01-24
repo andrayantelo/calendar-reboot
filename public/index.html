@@ -33,8 +33,32 @@
         
         <!-- include font awesome -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-                
         
+        <!-- Material Design -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        
+        <!-- Loading spinner -->
+        <!-- <script src="https://cdn.jsdelivr.net/spinjs/2.3.2/spin.min.js"></script> -->
+                
+        <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+            apiKey: "AIzaSyCVl0IXrl8BiPjPjBJRq-Y5WNlROwOY3C0",
+            authDomain: "check-it-14d35.firebaseapp.com",
+            databaseURL: "https://check-it-14d35.firebaseio.com",
+            storageBucket: "check-it-14d35.appspot.com",
+            messagingSenderId: "186375871683"
+            };
+            firebase.initializeApp(config);
+        </script>
+        
+        <!-- <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
+        -->
+        
+        <!-- Dosis font -->
+        <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
         
         <script type ="text/javascript" src="calendar_reboot.js"></script> 
         <link rel="stylesheet" type="text/css" href="calendar.css">
@@ -90,27 +114,45 @@
                 </li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
-          
-          
-         </ul> <!-- /.nav navbar-nav -->
-            
-            
+
+           </ul> <!-- /.nav navbar-nav -->  
+         <!-- third item in navbar, sign in button -->
+           <ul>
+            <div id="user-container">
+                <div hidden id="user-pic"></div>
+                <div hidden id="user-name"></div>
+                <button class="btn btn-primary navbar-btn " hidden id="sign-out">
+                  Sign-out
+                </button>
+                <button class="btn btn-primary navbar-btn " hidden id="sign-in"> 
+                  <i class="material-icons">account_circle</i>Sign-in with Google
+                </button>
+            </div>
+            </ul>
+     
+
         </div> <!-- /#main-navbar -->
       </div>  <!-- /.container-fluid -->
       
   </nav> <!-- /.navbar navbar-default -->
+
+    
+    
 </div> <!-- /#navbarContainer -->
 
-
+ 
 
 
 <div id="contentWrapper" class="container-fluid">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-offset-3 col-md-5 col-lg-offset-3 col-lg-5">
           
+          <!-- Blurb that encourages a user to sign in and get started -->
+          <p id="getStarted" hidden class="text-justify"> Sign in and get started!</p>
+          
           <!-- put form inside of accordion -->
          
-          <div id="accordion" class="panel-group" aria-multiselectable="true">
+          <div hidden id="buildFormAccordion" hidden class="panel-group" aria-multiselectable="true">
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
                   <h5 class="panel-title">
