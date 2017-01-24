@@ -72,6 +72,19 @@ function CheckIt() {
 
 };
 
+CheckIt.prototype.displayLoadingWheel = function() {
+    // Displays the loading wheel.
+    var spinner = new Spinner().spin()
+     
+    // Hardcoded for now.
+    this.clearPage();
+    document.getElementById("loadingWheel").appendChild(spinner.el);
+};
+
+CheckIt.prototype.hideLoadingWheel = function() {
+    spinner.stop();
+};
+
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
