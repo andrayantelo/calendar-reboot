@@ -35,7 +35,7 @@ function CheckIt() {
     
     var monthObjects;
     
-    this.backgroundActivityChange = new customEvent('backgroundActivityChange');
+    this.backgroundActivityChange = new CustomEvent('backgroundActivityChange');
     
     // Initialize storage.
 
@@ -811,7 +811,7 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
-    var event = params{'event'};
+    var event = params['event'];
     var allCalendarIdsKey = 'allCalendarIdsKey';
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
