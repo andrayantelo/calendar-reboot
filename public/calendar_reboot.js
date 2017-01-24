@@ -35,9 +35,12 @@ function CheckIt() {
     
     var monthObjects;
     
+    this.backgroundActivityChange = new customEvent('backgroundActivityChange');
+    
     // Initialize storage.
 
-    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    this.store = new LocalCalendarStorage({'storeId': 'checkit', 
+                                           'event' : this.backgroundActivityChange})
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -808,16 +811,29 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
+    var event = params{'event'};
     var allCalendarIdsKey = 'allCalendarIdsKey';
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
     var current_active_calendar = 'current_active_calendar';
+    // This tells you whether the storage is actively working.
+    self.activeCalls = 0;
     
-    var toKey = function(id) {
+     var toKey = function(id) {
         //make a key out of a uniqueId
         
         var key = prefix + "_" + id;
         return key;
+    };
+    
+    self.startWork = function() {
+        // Will increment the counter and possibly fire an event.
+        
+        
+    };
+    
+    self.endWork = function() {
+        // Will decrement the counter and maybe fire an event.
     };
     
     self.getAllCalendarIds = function() {
