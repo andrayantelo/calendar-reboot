@@ -456,6 +456,8 @@ CheckIt.prototype.clearPage = function() {
 $(document).ready(function() {
     
     checkit = new CheckIt();
+    // Event listener for backgroundActivityChange
+   
     
 });
 
@@ -828,28 +830,46 @@ var LocalCalendarStorage = function(params) {
     
     self.startWork = function() {
         // Will increment the counter and possibly fire an event.
+        console.log("Accessing storage");
+        self.activeCalls += 1;
         
-        
+        // Will dispatch the event backgroundActivityChange 
+        console.log("dipatching backgroundActivityChange");
+        window.dispatchEvent('backgroundActivityChange');
     };
     
     self.endWork = function() {
         // Will decrement the counter and maybe fire an event.
+        console.log("Done accessing storage");
+        self.activeCalls -= 1;
+        
+        // Will cancel the backgroundActivityChange event (stopPropagation)?
+      
     };
     
     self.getAllCalendarIds = function() {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
+            self.startWork();
             var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
-                
                 resolve(allCalendarIds);
             }
             else {
                 reject("Not found");
             }
         })
+        .then( function() {
+            
+            self.endWork();
+        }.bind(this))
+        .catch( function() {
+            
+            self.endWork();
+            
+        }.bind(this));
 
     };
     
