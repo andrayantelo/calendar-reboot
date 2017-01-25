@@ -33,6 +33,8 @@ function CheckIt() {
     this.$calendarDiv = $('#calendarDiv');
     //this.$calendarTemplate = $('#template');
     
+    this.spinner = new Spinner().spin()
+    
     var monthObjects;
     
     // Initialize storage.
@@ -71,15 +73,16 @@ function CheckIt() {
 
 CheckIt.prototype.displayLoadingWheel = function() {
     // Displays the loading wheel.
-    var spinner = new Spinner().spin()
-     
+
     // Hardcoded for now.
+    this.$buildFormAccordion.attr('hidden', true);
     this.clearPage();
-    document.getElementById("loadingWheel").appendChild(spinner.el);
+    document.getElementById("loadingWheel").appendChild(this.spinner.el);
 };
 
 CheckIt.prototype.hideLoadingWheel = function() {
-    spinner.stop();
+    this.$buildFormAccordion.removeAttr('hidden');
+    this.spinner.stop();
 };
 
 CheckIt.prototype.fillDropdown = function() {
