@@ -834,7 +834,7 @@ var LocalCalendarStorage = function(params) {
     // This tells you whether the storage is actively working.
     self.activeCalls = 0;
     
-     var toKey = function(id) {
+    var toKey = function(id) {
         //make a key out of a uniqueId
         
         var key = prefix + "_" + id;
@@ -842,24 +842,27 @@ var LocalCalendarStorage = function(params) {
     };
     
 
-    self.startWork = function() {
+    self.startWork = function(processName) {
         // Will increment the counter and possibly fire an event.
-        console.log("Accessing storage");
+        console.log("Accessing storage from " + processName);
         self.activeCalls += 1;
         
         // Will dispatch the event backgroundActivityChange 
-        console.log("dipatching backgroundActivityChange");
-        window.dispatchEvent('backgroundActivityChange');
+        if (self.activeCalls > 0) {
+            console.log("dipatching backgroundActivityChange");
+            window.dispatchEvent('backgroundActivityChange');
+        }
     };
     
-    self.endWork = function() {
+    self.endWork = function(accesor) {
         // Will decrement the counter and maybe fire an event.
-        console.log("Done accessing storage");
+        console.log("Done accessing storage from " + processName);
         self.activeCalls -= 1;
         
         // Will cancel the backgroundActivityChange event (stopPropagation)?
       
     };
+    
     var jitter = function(func, arg) {
         var runFunc = function () {
             func(arg);
@@ -875,7 +878,7 @@ var LocalCalendarStorage = function(params) {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
-            self.startWork();
+            self.startWork('getAllCalendarIds');
             var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
@@ -887,15 +890,14 @@ var LocalCalendarStorage = function(params) {
                 jitter(reject, "Not found");
             }
         })
-        .then( function() {
-            
-            self.endWork();
-        }.bind(this))
+        .then( function(ids) {
+            self.endWork('getAllCalendarIds');
+            return ids;
+        })
         .catch( function() {
+            self.endWork('getAllCalendarIds');
             
-            self.endWork();
-            
-        }.bind(this));
+        });
 
     };
     
