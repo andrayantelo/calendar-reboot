@@ -95,6 +95,17 @@ function CheckIt() {
 
 };
 
+CheckIt.prototype.insertDiv = function(existingDiv, appendingDivId) {
+    // Insert a div somewhere in the DOM.
+    
+    // Parameters: existingDiv (a string of the id of the div where you want
+    // to insert a div.
+    // appendingDivId: a string of the id you want to give to the div you are
+    // adding.
+    
+    $(`#${existingDiv}`).append(`<div id="${appendingDivId}"></div>`);
+};
+
 CheckIt.prototype.displayLoadingWheel = function(elementId) {
     // Displays the loading wheel.
     
