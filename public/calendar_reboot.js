@@ -33,6 +33,7 @@ function CheckIt() {
     this.$calendarDiv = $('#calendarDiv');
     //this.$calendarTemplate = $('#template');
     
+    
     var opts = {
       lines: 13 // The number of lines to draw
     , length: 28 // The length of each line
@@ -56,7 +57,7 @@ function CheckIt() {
     , position: 'absolute' // Element positioning
     }
     
-    this.spinner = new Spinner(ops);
+    this.spinner = new Spinner(opts);
     
     var monthObjects;
     
@@ -96,16 +97,14 @@ function CheckIt() {
 
 CheckIt.prototype.displayLoadingWheel = function() {
     // Displays the loading wheel.
-    var target = document.getElementById("loadingWheel");
-    // Hardcoded for now.
-    this.$buildFormAccordion.attr('hidden', true);
-    this.clearPage();
+    
+    // Needs a plugin to use jQuery.
+    var target = document.getElementById('loadingWheel');
     this.spinner.spin(target);
     
 };
 
 CheckIt.prototype.hideLoadingWheel = function() {
-    this.$buildFormAccordion.removeAttr('hidden');
     this.spinner.stop();
 };
 
