@@ -63,7 +63,8 @@ function CheckIt() {
     
     // Initialize storage.
 
-    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    this.store = new LocalCalendarStorage({'storeId': 'checkit', 
+                                           'activityChange': this.onActivityChanged})
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -872,6 +873,7 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
+    var onActivity = params['activityChange'];
     var allCalendarIdsKey = 'allCalendarIdsKey';
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
