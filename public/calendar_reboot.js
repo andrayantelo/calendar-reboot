@@ -95,11 +95,15 @@ function CheckIt() {
 
 };
 
-CheckIt.prototype.displayLoadingWheel = function() {
+CheckIt.prototype.displayLoadingWheel = function(elementId) {
     // Displays the loading wheel.
     
+    // Parameters: elementId 
+                       // A string pertaining to the id of the element
+                       // where you want to place the loading wheel.
+    
     // Needs a plugin to use jQuery.
-    var target = document.getElementById('loadingWheel');
+    var target = document.getElementById(elementId);
     this.spinner.spin(target);
     
 };
