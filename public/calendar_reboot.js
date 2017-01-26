@@ -200,6 +200,14 @@ CheckIt.prototype.signOut = function() {
     this.auth.signOut();
 };
 
+// Triggers when there is a change in the storage.
+CheckIt.prototype.onActivityChanged = function(storageObj) {
+    // Will Manipulate the DOM to show the loading wheel or to hide it.
+    // Passing storageObj as argument to have access to activity calls, which
+    // will tell us whether or not the loadingWheel should be on display or not.
+    
+};
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
@@ -878,6 +886,11 @@ var LocalCalendarStorage = function(params) {
         return key;
     };
     
+    self.onActivityChanged = function(func) {
+        // Will run checkit's onActivityChanged.
+        func();
+    };
+    
 
     self.startWork = function(processName) {
         // Will increment the counter and possibly fire an event.
@@ -885,9 +898,7 @@ var LocalCalendarStorage = function(params) {
         self.activeCalls += 1;
         
         // Will dispatch the event backgroundActivityChange 
-        if (self.activeCalls > 0) {
-            console.log("dipatching backgroundActivityChange");
-        }
+        
     };
     
     self.endWork = function(accesor) {
