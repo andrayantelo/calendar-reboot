@@ -63,8 +63,9 @@ function CheckIt() {
     
     // Initialize storage.
 
-    this.store = new LocalCalendarStorage({'storeId': 'checkit', 
-                                           'activityChange': this.onActivityChanged})
+    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    // Listen to store state changes.
+    this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -177,7 +178,7 @@ CheckIt.prototype.clearDropdown = function() {
 };
 
 CheckIt.prototype.initFirebase = function() {
-    console.log('initializing firebase');
+    
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
@@ -206,6 +207,8 @@ CheckIt.prototype.onActivityChanged = function(storageObj) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
     // Passing storageObj as argument to have access to activity calls, which
     // will tell us whether or not the loadingWheel should be on display or not.
+    
+    console.log("running checkit's onActivityChanged function");
     
 };
 
@@ -873,7 +876,6 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 var LocalCalendarStorage = function(params) {
     var self = this;
     var prefix = params['storeId'] || "";
-    var onActivity = params['activityChange'];
     var allCalendarIdsKey = 'allCalendarIdsKey';
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
@@ -890,7 +892,8 @@ var LocalCalendarStorage = function(params) {
     
     self.onActivityChanged = function(func) {
         // Will run checkit's onActivityChanged.
-        func();
+        console.log("store's onActivityChanged is running");
+        self.activityChangeFunction = func;
     };
     
 
@@ -900,6 +903,7 @@ var LocalCalendarStorage = function(params) {
         self.activeCalls += 1;
         
         // Will dispatch the event backgroundActivityChange 
+        self.activityChangeFunction();
         
     };
     
@@ -908,7 +912,8 @@ var LocalCalendarStorage = function(params) {
         console.log("Done accessing storage from " + processName);
         self.activeCalls -= 1;
         
-        // Will cancel the backgroundActivityChange event (stopPropagation)?
+        // Dispatch the activityChanged listener
+        self.activityChangedFunction();
       
     };
     
