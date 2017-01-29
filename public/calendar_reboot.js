@@ -201,7 +201,6 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
         this.displayLoadingWheel("loadingWheel");
     }
     else if (activeCalls === 0) {
-        console.log("activity call is equal to zero!");
         this.hideLoadingWheel();
     }
     
@@ -898,7 +897,7 @@ var LocalCalendarStorage = function(params) {
         // Will increment the counter and possibly fire an event.
         
         self.activeCalls += 1;
-        console.log("store's startWork is running, activeCalls = " + self.activeCalls);
+        self.activeCalls += 1;
         
         // Will dispatch the event backgroundActivityChange 
         self.activityChangeFunctions.forEach(function(func) {
@@ -949,7 +948,6 @@ var LocalCalendarStorage = function(params) {
             }
         })
         .then( function(ids) {
-            console.log("getAllCalendarIds then function running");
             return ids;
         })
         .catch( function() {
