@@ -910,7 +910,9 @@ var LocalCalendarStorage = function(params) {
         
         
         self.activeCalls -= 1;
-        if (self.activeCalls < 0) console.error("No work has been started");
+        if (self.activeCalls < 0) {
+            console.error("No work has been started");
+        }
         
         // Dispatch the activityChanged listener
         self.activityChangeFunctions.forEach(function(func) {
