@@ -64,6 +64,7 @@ function CheckIt() {
     // Initialize storage.
 
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    
     // Listen to store state changes.
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
@@ -172,6 +173,10 @@ CheckIt.prototype.initFirebase = function() {
     this.auth = firebase.auth();
     // Logs debugging information to the console.
     firebase.database.enableLogging(false);
+    
+    // Initiates firebase database
+    this.firebaseStore = new firebaseCalendarStorage(this.auth);
+    this.firebaseStore.onActivityChanged(this.onActivityChanged.bind(this));
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
@@ -864,6 +869,95 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
+
+
+// Make a Firebase storage manager.
+var firebaseCalendarStorage = function(user) {
+    var self = this;
+    // Get a reference to the database service
+    self.database = firebase.database();
+    // This tells you whether the storage is actively working.
+    self.activeCalls = 0;
+    self.activityChangeFunctions = [];
+    
+    self.user = user;
+    
+    self.onActivityChanged = function(func) {
+        // Will run checkit's onActivityChanged.
+        
+        //TODO extend this to support multiple callbacks
+        self.activityChangeFunctions.push(func);
+    };
+    
+        self.startWork = function() {
+        // Will increment the counter and possibly fire an event.
+        
+        self.activeCalls += 1;
+        
+        // Will dispatch the event backgroundActivityChange 
+        self.activityChangeFunctions.forEach(function(func) {
+            func(self.activeCalls);
+        });
+        
+    };
+    
+    self.endWork = function() {
+        // Will decrement the counter and maybe fire an event.
+        
+        
+        self.activeCalls -= 1;
+        if (self.activeCalls < 0) {
+            console.error("No work has been started");
+        }
+        
+        // Dispatch the activityChanged listener
+        self.activityChangeFunctions.forEach(function(func) {
+            func(self.activeCalls);
+        });
+      
+    };
+    
+    self.getAllCalendarIds = function() {
+        // Returns a promise for the allCalendarIds object from storage
+        
+        var userId = self.user.currentUser.uid;
+        self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
+        .once('value')  
+        .then(function(allCalendarIds) {
+            console.log(allCalendarIds.val());
+        if (allCalendarIds.val() !== null) {
+            return allCalendarIds;
+        }})
+        .catch(function() {
+            console.log("allCalendarIds not found");
+        })
+        
+    };
+
+        
+        //return new Promise( function(resolve, reject) {
+        //    var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
+            
+        //    if (allCalendarIds !== null ) {
+
+        //        jitter(resolve, allCalendarIds);
+
+        //    }
+        //    else {
+        //        jitter(reject, "Not found");
+        //    }
+        //})
+        //.then( function(ids) {
+        //    return ids;
+        //})
+        //.catch( function() {
+        //    console.log("getAllCalendarIds catch function running.");
+        //});
+
+    //};
+    
+    
+};
 
 //Make a storage manager
 
