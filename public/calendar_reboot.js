@@ -104,9 +104,8 @@ CheckIt.prototype.displayLoadingWheel = function(elementId) {
     // Parameters: elementId 
            // A string pertaining to the id of the element
            // where you want to place the loading wheel.
+    var target = $('#loadingWheel').get()[0];
     
-    // Needs a plugin to use jQuery.
-    var target = document.getElementById(elementId);
     this.spinner.spin(target);
     
 };
@@ -911,8 +910,9 @@ var LocalCalendarStorage = function(params) {
     self.endWork = function() {
         // Will decrement the counter and maybe fire an event.
         
+        
         self.activeCalls -= 1;
-        console.log("store's endWork is running, activeCalls = " + self.activeCalls);
+        if (self.activeCalls < 0) console.error("No work has been started");
         
         // Dispatch the activityChanged listener
         self.activityChangeFunctions.forEach(function(func) {
