@@ -897,7 +897,6 @@ var LocalCalendarStorage = function(params) {
         // Will increment the counter and possibly fire an event.
         
         self.activeCalls += 1;
-        self.activeCalls += 1;
         
         // Will dispatch the event backgroundActivityChange 
         self.activityChangeFunctions.forEach(function(func) {
