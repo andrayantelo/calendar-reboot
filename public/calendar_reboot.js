@@ -33,11 +33,39 @@ function CheckIt() {
     this.$calendarDiv = $('#calendarDiv');
     //this.$calendarTemplate = $('#template');
     
+    
+    var opts = {
+      lines: 13 // The number of lines to draw
+    , length: 28 // The length of each line
+    , width: 14 // The line thickness
+    , radius: 42 // The radius of the inner circle
+    , scale: 1 // Scales overall size of the spinner
+    , corners: 1 // Corner roundness (0..1)
+    , color: '#000' // #rgb or #rrggbb or array of colors
+    , opacity: 0.25 // Opacity of the lines
+    , rotate: 0 // The rotation offset
+    , direction: 1 // 1: clockwise, -1: counterclockwise
+    , speed: 1 // Rounds per second
+    , trail: 60 // Afterglow percentage
+    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+    , zIndex: 2e9 // The z-index (defaults to 2000000000)
+    , className: 'spinner' // The CSS class to assign to the spinner
+    , top: '50%' // Top position relative to parent
+    , left: '50%' // Left position relative to parent
+    , shadow: false // Whether to render a shadow
+    , hwaccel: false // Whether to use hardware acceleration
+    , position: 'absolute' // Element positioning
+    }
+    
+    this.spinner = new Spinner();
+    
     var monthObjects;
     
     // Initialize storage.
 
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
+    // Listen to store state changes.
+    this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -69,6 +97,23 @@ function CheckIt() {
 
 };
 
+
+CheckIt.prototype.displayLoadingWheel = function(elementId) {
+    // Displays the loading wheel.
+    
+    // Parameters: elementId 
+           // A string pertaining to the id of the element
+           // where you want to place the loading wheel.
+    var target = $('#loadingWheel').get()[0];
+    
+    this.spinner.spin(target);
+    
+};
+
+CheckIt.prototype.hideLoadingWheel = function() {
+    this.spinner.stop();
+};
+
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
@@ -83,7 +128,7 @@ CheckIt.prototype.fillDropdown = function() {
             }
         }.bind(this))
         .catch(function (value) {
-            console.log("No calendars in storage.");
+            console.log("No calendars in storage (this is inside checkit's fillDropdown).");
         }.bind(this));
 };
 
@@ -122,7 +167,7 @@ CheckIt.prototype.clearDropdown = function() {
 };
 
 CheckIt.prototype.initFirebase = function() {
-    console.log('initializing firebase');
+    
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
@@ -144,6 +189,21 @@ CheckIt.prototype.signIn = function() {
 CheckIt.prototype.signOut = function() {
     // Signs out of Firebase.
     this.auth.signOut();
+};
+
+// Triggers when there is a change in the storage.
+CheckIt.prototype.onActivityChanged = function(activeCalls) {
+    // Will Manipulate the DOM to show the loading wheel or to hide it.
+    // Passing storageObj as argument to have access to activity calls, which
+    // will tell us whether or not the loadingWheel should be on display or not.
+
+    if (activeCalls > 0) {
+        this.displayLoadingWheel("loadingWheel");
+    }
+    else if (activeCalls === 0) {
+        this.hideLoadingWheel();
+    }
+    
 };
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
@@ -453,6 +513,8 @@ CheckIt.prototype.clearPage = function() {
 $(document).ready(function() {
     
     checkit = new CheckIt();
+    // Event listener for backgroundActivityChange
+   
     
 });
 
@@ -812,6 +874,9 @@ var LocalCalendarStorage = function(params) {
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
     var current_active_calendar = 'current_active_calendar';
+    // This tells you whether the storage is actively working.
+    self.activeCalls = 0;
+    self.activityChangeFunctions = [];
     
     var toKey = function(id) {
         //make a key out of a uniqueId
@@ -820,12 +885,50 @@ var LocalCalendarStorage = function(params) {
         return key;
     };
     
+    self.onActivityChanged = function(func) {
+        // Will run checkit's onActivityChanged.
+        
+        //TODO extend this to support multiple callbacks
+        self.activityChangeFunctions.push(func);
+    };
+    
+
+    self.startWork = function() {
+        // Will increment the counter and possibly fire an event.
+        
+        self.activeCalls += 1;
+        
+        // Will dispatch the event backgroundActivityChange 
+        self.activityChangeFunctions.forEach(function(func) {
+            func(self.activeCalls);
+        });
+        
+    };
+    
+    self.endWork = function() {
+        // Will decrement the counter and maybe fire an event.
+        
+        
+        self.activeCalls -= 1;
+        if (self.activeCalls < 0) {
+            console.error("No work has been started");
+        }
+        
+        // Dispatch the activityChanged listener
+        self.activityChangeFunctions.forEach(function(func) {
+            func(self.activeCalls);
+        });
+      
+    };
+    
     var jitter = function(func, arg) {
         var runFunc = function () {
             func(arg);
+            self.endWork();
         };
         
         var randomNumber = Math.random() * 4000;
+        self.startWork();
         setTimeout(runFunc, randomNumber);
         
     };
@@ -837,12 +940,20 @@ var LocalCalendarStorage = function(params) {
             var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
+
                 jitter(resolve, allCalendarIds);
+
             }
             else {
                 jitter(reject, "Not found");
             }
         })
+        .then( function(ids) {
+            return ids;
+        })
+        .catch( function() {
+            console.log("getAllCalendarIds catch function running.");
+        });
 
     };
     
@@ -856,7 +967,9 @@ var LocalCalendarStorage = function(params) {
             jitter(resolve);
         });
         
+        
         //put calendar in allCalendarIdss and store it
+        
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
@@ -894,10 +1007,11 @@ var LocalCalendarStorage = function(params) {
                 removeFromLocalStorage(toKey(uniqueId));
                 // Remove active status from the calendar
                 removeFromLocalStorage(toKey(current_active_calendar));
-            }.bind(this))
+                
+            })
             .catch(function () {
                 console.log("Unable to remove calendar");
-            }.bind(this));
+            });
         
     };
     

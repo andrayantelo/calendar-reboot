@@ -38,7 +38,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         
         <!-- Loading spinner -->
-        <!-- <script src="https://cdn.jsdelivr.net/spinjs/2.3.2/spin.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/spinjs/2.3.2/spin.min.js"></script>
                 
         <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
         <script>
@@ -87,7 +87,7 @@
         
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="main-navbar">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav" id="navbar-list">
             
             <!-- first item in navbar, list item containing dropdown menu -->
             
@@ -114,9 +114,14 @@
                 </li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
+            
+            <!-- third item in navbar, loading wheel div -->
+            <div id="loadingWheel"></div>
 
            </ul> <!-- /.nav navbar-nav -->  
-         <!-- third item in navbar, sign in button -->
+        
+        
+         <!-- fourth item in navbar, sign in button -->
            <ul>
             <div id="user-container">
                 <div hidden id="user-pic"></div>
@@ -144,6 +149,7 @@
 
 
 <div id="contentWrapper" class="container-fluid">
+    
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-offset-3 col-md-5 col-lg-offset-3 col-lg-5">
           
