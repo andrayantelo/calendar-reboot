@@ -57,7 +57,7 @@ function CheckIt() {
     , position: 'absolute' // Element positioning
     }
     
-    this.spinner = new Spinner(opts);
+    this.spinner = new Spinner();
     
     var monthObjects;
     
@@ -97,16 +97,6 @@ function CheckIt() {
 
 };
 
-CheckIt.prototype.insertDiv = function(existingDiv, appendingDivId) {
-    // Insert a div somewhere in the DOM.
-    
-    // Parameters: existingDiv (a string of the id of the div where you want
-    // to insert a div.
-    // appendingDivId: a string of the id you want to give to the div you are
-    // adding.
-    
-    $(`#${existingDiv}`).append(`<div id="${appendingDivId}"></div>`);
-};
 
 CheckIt.prototype.displayLoadingWheel = function(elementId) {
     // Displays the loading wheel.
@@ -209,7 +199,6 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
     // will tell us whether or not the loadingWheel should be on display or not.
 
     if (activeCalls > 0) {
-        this.insertDiv("contentWrapper", "loadingWheel");
         this.displayLoadingWheel("loadingWheel");
     }
     else if (activeCalls === 0) {
@@ -889,6 +878,7 @@ var LocalCalendarStorage = function(params) {
     var current_active_calendar = 'current_active_calendar';
     // This tells you whether the storage is actively working.
     self.activeCalls = 0;
+    self.activityChangeFunctions = [];
     
     var toKey = function(id) {
         //make a key out of a uniqueId
@@ -901,7 +891,7 @@ var LocalCalendarStorage = function(params) {
         // Will run checkit's onActivityChanged.
         
         //TODO extend this to support multiple callbacks
-        self.activityChangeFunction.push(func);
+        self.activityChangeFunctions.push(func);
     };
     
 
@@ -912,7 +902,7 @@ var LocalCalendarStorage = function(params) {
         console.log("store's startWork is running, activeCalls = " + self.activeCalls);
         
         // Will dispatch the event backgroundActivityChange 
-        self.activityChangeFunction.forEach(function(func) {
+        self.activityChangeFunctions.forEach(function(func) {
             func(self.activeCalls);
         });
         
@@ -925,7 +915,7 @@ var LocalCalendarStorage = function(params) {
         console.log("store's endWork is running, activeCalls = " + self.activeCalls);
         
         // Dispatch the activityChanged listener
-        self.activityChangeFunction.forEach(function(func) {
+        self.activityChangeFunctions.forEach(function(func) {
             func(self.activeCalls);
         });
       
