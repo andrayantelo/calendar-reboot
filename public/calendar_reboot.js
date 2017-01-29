@@ -203,16 +203,16 @@ CheckIt.prototype.signOut = function() {
 };
 
 // Triggers when there is a change in the storage.
-CheckIt.prototype.onActivityChanged = function(storageObj) {
+CheckIt.prototype.onActivityChanged = function(activeCalls) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
     // Passing storageObj as argument to have access to activity calls, which
     // will tell us whether or not the loadingWheel should be on display or not.
 
-    if (storageObj > 0) {
+    if (activeCalls > 0) {
         this.insertDiv("contentWrapper", "loadingWheel");
         this.displayLoadingWheel("loadingWheel");
     }
-    else if (storageObj === 0) {
+    else if (activeCalls === 0) {
         console.log("activity call is equal to zero!");
         this.hideLoadingWheel();
     }
@@ -899,7 +899,9 @@ var LocalCalendarStorage = function(params) {
     
     self.onActivityChanged = function(func) {
         // Will run checkit's onActivityChanged.
-        self.activityChangeFunction = func;
+        
+        //TODO extend this to support multiple callbacks
+        self.activityChangeFunction.push(func);
     };
     
 
@@ -910,7 +912,9 @@ var LocalCalendarStorage = function(params) {
         console.log("store's startWork is running, activeCalls = " + self.activeCalls);
         
         // Will dispatch the event backgroundActivityChange 
-        self.activityChangeFunction(self.activeCalls);
+        self.activityChangeFunction.forEach(function(func) {
+            func(self.activeCalls);
+        });
         
     };
     
@@ -921,26 +925,28 @@ var LocalCalendarStorage = function(params) {
         console.log("store's endWork is running, activeCalls = " + self.activeCalls);
         
         // Dispatch the activityChanged listener
-        self.activityChangedFunction(self.activeCalls);
+        self.activityChangeFunction.forEach(function(func) {
+            func(self.activeCalls);
+        });
       
     };
     
     var jitter = function(func, arg) {
         var runFunc = function () {
             func(arg);
+            self.endWork();
         };
         
         var randomNumber = Math.random() * 4000;
+        self.startWork();
         setTimeout(runFunc, randomNumber);
         
-
     };
     
     self.getAllCalendarIds = function() {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
-            self.startWork();
             var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
@@ -954,13 +960,10 @@ var LocalCalendarStorage = function(params) {
         })
         .then( function(ids) {
             console.log("getAllCalendarIds then function running");
-            self.endWork(); // should I actually be ending work here?
             return ids;
         })
         .catch( function() {
             console.log("getAllCalendarIds catch function running.");
-            self.endWork();
-            
         });
 
     };
@@ -971,28 +974,23 @@ var LocalCalendarStorage = function(params) {
         //store the state in localStorage
 
         var stateP = new Promise(function(resolve, reject) {
-            //self.startWork();
             storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
             jitter(resolve);
         });
-        // When do I "endWork" here? in the stateP promise?
+        
         
         //put calendar in allCalendarIdss and store it
         
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
-                // start work here?
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-                // end work here?
             })
             .catch(function () {
                 console.log("No previous calendars in storage");
-                // start work?
                 var allCalendarIds = {};
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-                // end work?
             })
             
         return Promise.all([stateP, idsP]);
@@ -1012,8 +1010,6 @@ var LocalCalendarStorage = function(params) {
 
         return self.getAllCalendarIds()
             .then(function(allCalendarIds) {
-                // startwork?
-                
                 // Delete the calendar from allCalendarIds.
                 delete allCalendarIds[uniqueId];
                 // Save that change
@@ -1023,27 +1019,22 @@ var LocalCalendarStorage = function(params) {
                 // Remove active status from the calendar
                 removeFromLocalStorage(toKey(current_active_calendar));
                 
-                // end work?
-            }.bind(this))
+            })
             .catch(function () {
                 console.log("Unable to remove calendar");
-                // end work?
-            }.bind(this));
+            });
         
     };
     
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
         return new Promise( function(resolve, reject) {
-            //self.startWork(); // ?
             var calendar = loadFromLocalStorage(toKey(calendarObjId));
             
             if (calendar !== null) {
                 jitter(resolve, calendar);
-                //self.endWork(); // ?
             }
             else jitter(reject, "Calendar not found");
-            //self.endWork(); //?
         })
   
     };
@@ -1052,18 +1043,15 @@ var LocalCalendarStorage = function(params) {
         // Return a promise to the active_calendar id from storage
         
         return new Promise( function(resolve, reject) {
-            //self.startWork() //?
             var activeCalendarId = loadFromLocalStorage(toKey(current_active_calendar));
             
             if (activeCalendarId !== null ) {
                 
                 // Signal that the promise succeeded and make the value ready to go. 
                 jitter(resolve, activeCalendarId);
-                //self.endWork() //?
             }
             else {
                 jitter(reject, "Not found");
-                //self.endwork() //?
             }
         })
         
