@@ -923,16 +923,57 @@ var firebaseCalendarStorage = function(user) {
         
         var userId = self.user.currentUser.uid;
         self.startWork();
-        return self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
-        .once('value')  
-        .then(function(allCalendarIds) {
-            self.endWork();
-            return allCalendarIds.val();
+        return new Promise(function(resolve, reject) {
+            self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
+            .once('value')  
+            .then(function(allCalendarIds) {
+                self.endWork();
+                if (allCalendarIds.val() === null) {
+                    reject("allCalendarIds not found");
+                }
+                else {
+                    return resolve(allCalendarIds.val());
+                }
+            })
+            .catch(function(err) {
+                self.endWork();
+                console.error(err);
+                return err;
+            })
         })
-        .catch(function() {
-            console.log("allCalendarIds not found");
-            self.endWork();
-        })
+    };
+    
+    self.save = function(calendarObj) {
+        //save an App object (like a calendar object for example) in storage
+        
+        // Store the calendar state in the firebase database.
+        
+        
+        var userId = self.user.currentUser.uid;
+        var calUniqueId = calendarObj.state.uniqueId;
+        var calTitle = calendarObj.state.title;
+        
+        
+        // Store the user's allCalendarIds.
+        var updates = {};
+        updates['users/' + userId + '/checkit_allCalendarIds/' + calUniqueId] = calTitle;
+        
+        self.startWork();
+        return new Promise(function(resolve, reject) {
+        
+            self.getAllCalendarIds()
+                .then(function (allCalendarIds) {
+                    console.log("setting new value in database");
+                    firebase.database().ref().update(updates);
+                    console.log("DATA SET");
+                    self.endWork();
+                    resolve();  // At what point do I reject?
+                })
+                .catch(function () {
+                    console.log("No previous calendars in storage");
+                    self.endWork();
+                })
+            })
     };
 
     
