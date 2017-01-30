@@ -118,7 +118,7 @@ CheckIt.prototype.hideLoadingWheel = function() {
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
-    this.store.getAllCalendarIds()
+    this.firebaseStore.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
             
@@ -893,7 +893,7 @@ var firebaseCalendarStorage = function(user) {
         // Will increment the counter and possibly fire an event.
         
         self.activeCalls += 1;
-        
+        console.log("starting work, number of active calls: " + self.activeCalls);
         // Will dispatch the event backgroundActivityChange 
         self.activityChangeFunctions.forEach(function(func) {
             func(self.activeCalls);
@@ -906,6 +906,7 @@ var firebaseCalendarStorage = function(user) {
         
         
         self.activeCalls -= 1;
+        console.log("ending work, number of active calls: " + self.activeCalls);
         if (self.activeCalls < 0) {
             console.error("No work has been started");
         }
@@ -921,40 +922,19 @@ var firebaseCalendarStorage = function(user) {
         // Returns a promise for the allCalendarIds object from storage
         
         var userId = self.user.currentUser.uid;
-        self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
+        self.startWork();
+        return self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
         .once('value')  
         .then(function(allCalendarIds) {
-            console.log(allCalendarIds.val());
-        if (allCalendarIds.val() !== null) {
-            return allCalendarIds;
-        }})
+            self.endWork();
+            return allCalendarIds.val();
+        })
         .catch(function() {
             console.log("allCalendarIds not found");
+            self.endWork();
         })
-        
     };
 
-        
-        //return new Promise( function(resolve, reject) {
-        //    var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
-            
-        //    if (allCalendarIds !== null ) {
-
-        //        jitter(resolve, allCalendarIds);
-
-        //    }
-        //    else {
-        //        jitter(reject, "Not found");
-        //    }
-        //})
-        //.then( function(ids) {
-        //    return ids;
-        //})
-        //.catch( function() {
-        //    console.log("getAllCalendarIds catch function running.");
-        //});
-
-    //};
     
     
 };
