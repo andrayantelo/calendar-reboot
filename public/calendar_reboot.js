@@ -947,7 +947,7 @@ var firebaseCalendarStorage = function(user) {
         //save an App object (like a calendar object for example) in storage
         
         // Store the calendar state in the firebase database.
-        
+        // TO DO save the actual calendar state.
         
         var userId = self.user.currentUser.uid;
         var calUniqueId = calendarObj.state.uniqueId;
@@ -963,7 +963,7 @@ var firebaseCalendarStorage = function(user) {
         
             self.getAllCalendarIds()
                 .then(function (allCalendarIds) {
-                    console.log("setting new value in database");
+                    console.log("storing " + calTitle + " in user's allCalendarIds");
                     firebase.database().ref().update(updates);
                     console.log("DATA SET");
                     self.endWork();
@@ -974,6 +974,38 @@ var firebaseCalendarStorage = function(user) {
                     self.endWork();
                 })
             })
+    };
+    
+    self.remove = function(calendarObj) {
+        // Remove an app object (like a calendar) from storage
+        // To do: Determine if this method is necessary
+        var uniqueId = calendarObj.state.uniqueId;
+        self.removeById(uniqueId);
+    };
+    
+    self.removeById = function(uniqueId) {
+        // Remove a calendar from storage by using it's Id.
+        // First deleting it from /user/uid/checkit_allCalendarIds
+        // Second removing it from calendars/
+        // Third removing it from user/uid/checkit_currentActiveCalendar
+        
+        
+        //get the allCalendarIds object from storage
+        
+    };
+    
+    self.loadById = function(calendarObjId) {
+    // Return a promise of a calendar object using its Id
+    
+    return new Promise( function(resolve, reject) {
+        var calendar = loadFromLocalStorage(toKey(calendarObjId));
+        
+        if (calendar !== null) {
+            jitter(resolve, calendar);
+        }
+        else jitter(reject, "Calendar not found");
+    })
+  
     };
 
     
