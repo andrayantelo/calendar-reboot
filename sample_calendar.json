@@ -1,6 +1,7 @@
 {
     "calendars" : {
-        "checkit_148460826559529600" { :
+        "checkit_148460826559529600" : {
+            "calendarState" : 
             {
             "startDateString":"20170101",
             "endDateString":"20170202",
@@ -13,6 +14,7 @@
          },
         
         "checkit_148461003056534700" : {
+            "calendarState" :
             {
             "startDateString":"20170109",
             "endDateString":"20170302",
@@ -22,8 +24,9 @@
             },
             "permissionRead": "JULxYGaHuFYlSkXqTC2Fx9KIofp2",
             "permissionWrite": "JULxYGaHuFYlSkXqTC2Fx9KIofp2"
-        }
+        },
         "checkit_148461051598386460" : {
+            "calendarState" :
             {
             "startDateString":"20170103",
             "endDateString":"20170524",
