@@ -9,7 +9,7 @@
     "calendars": {
       "$calendar_id": {
       ".read": "auth !=null && data.child('permissionRead').hasChild(root.child('users/'+auth.uid).val())",
-      ".write": "auth !=null && data.child('permissionWrite').hasChild(root.child('users/'+auth.uid).val())"
+      ".write": "auth !=null && data.child('permissionWrite/' + auth.uid.val()).exists()"
       }
     }
   } 
