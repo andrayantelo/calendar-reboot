@@ -659,6 +659,7 @@ var Month = function(dateString, calendarObj) {
             if (self.calendar.state.checkedDays === undefined) {
                 self.calendar.state.checkedDays = {};
             }
+           
             if (self.calendar.state.checkedDays[boxId] === undefined) {
                 //add it to checkedDays
                 self.calendar.state.checkedDays[boxId] = 1;
@@ -675,7 +676,7 @@ var Month = function(dateString, calendarObj) {
             //save your progress
             
             //TODO change the way months build calendar, issue #87
-            self.calendar.checkit.store.save(self.calendar);
+            self.calendar.checkit.firebaseStore.save(self.calendar);
          })
      };
 
@@ -987,7 +988,7 @@ var firebaseCalendarStorage = function(params) {
         // TO DO save the actual calendar state.
         
         var userId = self.user.uid;
-        var calUniqueId = toKey(calendarObj.state.uniqueId);
+        var calUniqueId = calendarObj.state.uniqueId;
         var calTitle = calendarObj.state.title;
         var calState = calendarObj.state;
         
@@ -995,9 +996,9 @@ var firebaseCalendarStorage = function(params) {
         // active calendar has it's own method.
         var updates = {};
         updates['users/' + userId + '/checkit_allCalendarIds/' + calUniqueId] = calTitle;
-        updates['calendars/' + calUniqueId + '/calendarState/'] = calState;
-        updates['calendars/' + calUniqueId + '/permissionRead/'] = userId;
-        updates['calendars/' + calUniqueId + '/permissionWrite/'] = userId;
+        updates['calendars/' + toKey(calUniqueId) + '/calendarState/'] = calState;
+        updates['calendars/' + toKey(calUniqueId) + '/permissionRead/'] = userId;
+        updates['calendars/' + toKey(calUniqueId) + '/permissionWrite/'] = userId;
         
         self.startWork();
         return new Promise(function(resolve, reject) {
