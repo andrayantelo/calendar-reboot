@@ -65,10 +65,6 @@ function CheckIt() {
 
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
     
-        // Initiates firebase database
-    this.firebaseStore = new firebaseCalendarStorage({'storeId': 'checkit'});
-    
-    this.firebaseStore.onActivityChanged(this.onActivityChanged.bind(this));
     
     // Listen to store state changes.
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
@@ -148,7 +144,9 @@ CheckIt.prototype.displayActiveCalendar = function() {
            this.firebaseStore.loadById(activeCalendarId)
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
+                       console.log("Found the active calendar and going to display it");
                        var state = activeCalendarState;
+                       console.log(state);
                        var calendar = new Calendar(state, this);
                        this.displayCalendar(calendar);
                    }
@@ -178,6 +176,11 @@ CheckIt.prototype.initFirebase = function() {
     this.auth = firebase.auth();
     // Logs debugging information to the console.
     firebase.database.enableLogging(false);
+    
+    // Initiates firebase database
+    this.firebaseStore = new firebaseCalendarStorage({'storeId': 'checkit'});
+    
+    this.firebaseStore.onActivityChanged(this.onActivityChanged.bind(this));
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
@@ -216,12 +219,11 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
-        
+        console.log("User is signed in");
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         this.firebaseStore.user = user;
-        console.log("About to print user");
-        console.log(user.currentUser);
+        
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL; 
         var userName = user.displayName;
@@ -239,10 +241,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.$signInButton.attr('hidden', 'true');
         
         // Fill the dropdown with user's saved calendar titles/
-        //this.fillDropdown();
+        this.fillDropdown();
         
         // Display the user's active calendar.
-        //this.displayActiveCalendar();
+        this.displayActiveCalendar();
         
         //Show the build Calendar form.
         this.$buildFormAccordion.removeAttr('hidden');
@@ -253,6 +255,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
       }
     else { // User is signed out!
         // Remove the user from the store so that we can't access their information.
+        console.log("User is signed out");
         this.store.user = null;
         this.firebaseStore.user = null;
         
@@ -946,7 +949,7 @@ var firebaseCalendarStorage = function(params) {
     self.getAllCalendarIds = function() {
         // Returns a promise for the allCalendarIds object from storage
         
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         self.startWork();
         return new Promise(function(resolve, reject) {
             self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
@@ -974,7 +977,7 @@ var firebaseCalendarStorage = function(params) {
         // Store the calendar state in the firebase database.
         // TO DO save the actual calendar state.
         
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         var calUniqueId = toKey(calendarObj.state.uniqueId);
         var calTitle = calendarObj.state.title;
         var calState = calendarObj.state;
@@ -998,7 +1001,7 @@ var firebaseCalendarStorage = function(params) {
     self.setActiveById = function(calendarObjId) {
         // Set the active calendar/object by using its Id
         
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         var updates = {};
         updates['users/' + userId + '/checkit_currentActiveCalendar/'] = calendarObjId;
         
@@ -1025,7 +1028,7 @@ var firebaseCalendarStorage = function(params) {
         // Second remove permissions
         // third removing it from calendars/
         // removing currentActive status has it's own method
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         
         self.startWork();
         return new Promise(function(resolve, reject) {
@@ -1039,7 +1042,7 @@ var firebaseCalendarStorage = function(params) {
     
     self.removeActive = function() {
         // Return a promise, remove the active_calendar item from storage.
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         
         self.startWork();
         return new Promise( function(resolve, reject) {
@@ -1052,7 +1055,7 @@ var firebaseCalendarStorage = function(params) {
     self.getActive = function() {
         // Return a promise to the active_calendar id from storage
         
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         
         self.startWork();
         return new Promise(function(resolve, reject) {
@@ -1078,15 +1081,16 @@ var firebaseCalendarStorage = function(params) {
     self.loadById = function(calendarObjId) {
     // Return a promise of a calendar state using its Id
     
-        var userId = self.user.currentUser.uid;
+        var userId = self.user.uid;
         
+        self.startWork();
         return new Promise( function(resolve, reject) {
             self.database.ref('calendars/' + toKey(calendarObjId) + '/calendarState')
             .once('value')
             .then(function(calState) {
-                if (calState !== null) {
-                    
-                    resolve(calState);
+                self.endWork();
+                if (calState.val() !== null) {
+                    resolve(calState.val());
                 }
                 else {
                     reject("calendar not found");
