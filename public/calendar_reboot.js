@@ -61,6 +61,7 @@ function CheckIt() {
     
     var monthObjects;
     
+    /*
     // Initialize storage.
 
     this.store = new LocalCalendarStorage({'storeId': 'checkit'})
@@ -68,6 +69,8 @@ function CheckIt() {
     
     // Listen to store state changes.
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
+    * 
+    */
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -221,7 +224,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     if (user) { // User is signed in!
         console.log("User is signed in");
         // Update the user in the store so that we have access to the correct information.
-        this.store.user = user;
+        //this.store.user = user;
         this.firebaseStore.user = user;
         
         // Get profile pic and user's name from the Firebase user object.
@@ -1118,6 +1121,8 @@ var firebaseCalendarStorage = function(params) {
     
 };
 
+
+/*
 //Make a storage manager
 
 var LocalCalendarStorage = function(params) {
@@ -1320,5 +1325,5 @@ var LocalCalendarStorage = function(params) {
     
 };
 
-
+*/
 
