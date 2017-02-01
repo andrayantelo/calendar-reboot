@@ -1090,7 +1090,7 @@ var firebaseCalendarStorage = function(params) {
             .then(function(calState) {
                 self.endWork();
                 if (calState.val() !== null) {
-                    resolve(calState.val());
+                    return resolve(calState.val());
                 }
                 else {
                     reject("calendar not found");
