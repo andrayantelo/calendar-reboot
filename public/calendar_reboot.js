@@ -151,8 +151,8 @@ CheckIt.prototype.displayActiveCalendar = function() {
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
-               .catch(function() {
-                   console.error("Calendar does not exist");
+               .catch(function(err) {
+                   console.error("Calendar does not exist " + err);
                    this.firebaseStore.removeActive();
                    this.uncollapseBuildMenu();
                }.bind(this));
@@ -655,6 +655,10 @@ var Month = function(dateString, calendarObj) {
             var boxId = $( this).attr('id');
             //if the boxId is not checked (as in, the value is not inside of checkedDays
             //in other words, it's undefined
+            
+            if (self.calendar.state.checkedDays === undefined) {
+                self.calendar.state.checkedDays = {};
+            }
             if (self.calendar.state.checkedDays[boxId] === undefined) {
                 //add it to checkedDays
                 self.calendar.state.checkedDays[boxId] = 1;
@@ -742,6 +746,11 @@ var Month = function(dateString, calendarObj) {
         // object.
         
         //checkedDays is an object that contains a date that points to 1 or 0
+        
+        if (self.calendar.state.checkedDays === undefined) {
+            console.log("No days are checked");
+            return;
+        }
         
         var monthId = '#'+ self.monthId;
         
