@@ -175,7 +175,7 @@ CheckIt.prototype.initFirebase = function() {
     firebase.database.enableLogging(false);
     
     // Initiates firebase database
-    this.firebaseStore = new firebaseCalendarStorage(this.auth);
+    this.firebaseStore = new firebaseCalendarStorage({'storeId': 'checkit', 'user': this.auth});
     this.firebaseStore.onActivityChanged(this.onActivityChanged.bind(this));
     
     // Initiates Firebase auth and listen to auth state changes.
@@ -872,15 +872,23 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 
 
 // Make a Firebase storage manager.
-var firebaseCalendarStorage = function(user) {
+var firebaseCalendarStorage = function(params) {
     var self = this;
+    var prefix = params['storeId'] || "";
     // Get a reference to the database service
     self.database = firebase.database();
     // This tells you whether the storage is actively working.
     self.activeCalls = 0;
     self.activityChangeFunctions = [];
     
-    self.user = user;
+    self.user = params['user'];
+    
+    var toKey = function(id) {
+        //make a key out of a uniqueId
+        
+        var key = prefix + "_" + id;
+        return key;
+    };
     
     self.onActivityChanged = function(func) {
         // Will run checkit's onActivityChanged.
@@ -950,30 +958,24 @@ var firebaseCalendarStorage = function(user) {
         // TO DO save the actual calendar state.
         
         var userId = self.user.currentUser.uid;
-        var calUniqueId = calendarObj.state.uniqueId;
+        var calUniqueId = toKey(calendarObj.state.uniqueId);
         var calTitle = calendarObj.state.title;
+        var calState = calendarObj.state;
         
-        
-        // Store the user's allCalendarIds.
+        // Store the user's allCalendarIds and their calendarState .. setting the
+        // active calendar has it's own method.
         var updates = {};
         updates['users/' + userId + '/checkit_allCalendarIds/' + calUniqueId] = calTitle;
+        updates['calendars/' + calUniqueId + '/calendarState/'] = calState;
+        updates['calendars/' + calUniqueId + '/permissionRead/'] = userId;
+        updates['calendars/' + calUniqueId + '/permissionWrite/'] = userId;
         
         self.startWork();
         return new Promise(function(resolve, reject) {
-        
-            self.getAllCalendarIds()
-                .then(function (allCalendarIds) {
-                    console.log("storing " + calTitle + " in user's allCalendarIds");
-                    firebase.database().ref().update(updates);
-                    console.log("DATA SET");
-                    self.endWork();
-                    resolve();  // At what point do I reject?
-                })
-                .catch(function () {
-                    console.log("No previous calendars in storage");
-                    self.endWork();
-                })
-            })
+            self.database.ref().update(updates);
+            self.endWork();
+            resolve();  // Still unsure whether I will need to use reject in here or not.
+        })
     };
     
     self.remove = function(calendarObj) {
