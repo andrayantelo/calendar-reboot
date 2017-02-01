@@ -890,6 +890,18 @@ var firebaseCalendarStorage = function(params) {
         return key;
     };
     
+    var jitter = function(func, arg) {
+        var runFunc = function () {
+            func(arg);
+            self.endWork();
+        };
+        
+        var randomNumber = Math.random() * 4000;
+        self.startWork();
+        setTimeout(runFunc, randomNumber);
+            
+    };
+    
     self.onActivityChanged = function(func) {
         // Will run checkit's onActivityChanged.
         
@@ -978,9 +990,26 @@ var firebaseCalendarStorage = function(params) {
         })
     };
     
+    self.setActiveById = function(calendarObjId) {
+        // Set the active calendar/object by using its Id
+        
+        var userId = self.user.currentUser.uid;
+        var updates = {};
+        updates['users/' + userId + '/checkit_currentActiveCalendar/'] = calendarObjId;
+        
+        self.startWork();
+        return new Promise( function(resolve, reject) {
+            self.database.ref().update(updates);
+            self.endWork();
+            resolve();  // Reject somewhere?
+        })
+
+    };
+    
     self.remove = function(calendarObj) {
         // Remove an app object (like a calendar) from storage
         // To do: Determine if this method is necessary
+        
         var uniqueId = calendarObj.state.uniqueId;
         self.removeById(uniqueId);
     };
@@ -988,11 +1017,48 @@ var firebaseCalendarStorage = function(params) {
     self.removeById = function(uniqueId) {
         // Remove a calendar from storage by using it's Id.
         // First deleting it from /user/uid/checkit_allCalendarIds
-        // Second removing it from calendars/
-        // Third removing it from user/uid/checkit_currentActiveCalendar
+        // Second remove permissions
+        // third removing it from calendars/
+        // removing currentActive status has it's own method
+        var userId = self.user.currentUser.uid;
         
+        self.startWork();
+        return new Promise(function(resolve, reject) {
+            self.database.ref('users/' + userId + '/checkit_allCalendarIds/' + uniqueId).remove();
+            // Removes the whole calendar: calState plus permissions
+            self.database.ref('calendars/' + toKey(uniqueId)).remove();
+            self.endWork();
+            resolve(); // Reject?
+        }
+    };
+    
+    self.removeActive = function() {
+        // Return a promise, remove the active_calendar item from storage.
+        var userId = self.user.currentUser.uid;
         
-        //get the allCalendarIds object from storage
+        self.startWork();
+        return new Promise( function(resolve, reject) {
+            self.database.ref('users/' + userId + '/checkit_currentActiveCalendar/').remove();
+            self.endWork();
+            resolve(); // Reject?
+        })
+    };
+    
+    self.getActive = function() {
+        // Return a promise to the active_calendar id from storage
+        
+        return new Promise( function(resolve, reject) {
+            var activeCalendarId = loadFromLocalStorage(toKey(current_active_calendar));
+            
+            if (activeCalendarId !== null ) {
+                
+                // Signal that the promise succeeded and make the value ready to go. 
+                jitter(resolve, activeCalendarId);
+            }
+            else {
+                jitter(reject, "Not found");
+            }
+        })
         
     };
     
