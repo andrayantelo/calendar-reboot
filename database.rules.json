@@ -2,14 +2,16 @@
   "rules": {
     "users": {
       "$uid": {
-        ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null && auth.uid == $uid"
+        ".read" : "auth!== null && auth.uid === $uid",
+        ".write" : "auth !== null && auth.uid === $uid"
       }
     },
-    "calendars": {
-      "$calendar_id": {
-      ".read": "auth !=null && data.child('permissionRead').hasChild(root.child('users/'+auth.uid).val())",
-      ".write": "auth !=null && data.child('permissionWrite/' + auth.uid.val()).exists()"
+    "calendars":{
+      "$calendarId": {
+        "calendarState": {
+          ".read" : "auth!== null && data.parent().child('read').hasChild(auth.uid) && data.parent().child('read').child(auth.uid).val() === true",
+          ".write" : "auth !== null && data.parent().child('write').hasChild(auth.uid) && data.parent().child('write').child(auth.uid).val() === true"
+        } 
       }
     }
   } 

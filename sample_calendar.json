@@ -1,6 +1,6 @@
 {
     "calendars" : {
-        "checkit_148460826559529600" : {
+        "148460826559529600" : {
             "calendarState" : 
             {
             "startDateString":"20170101",
@@ -9,11 +9,15 @@
             "uniqueId":148460826559529600,
             "checkedDays":{}
             },
-            "permissionRead": "JULxYGaHuFYlSkXqTC2Fx9KIofp2",
-            "permissionWrite": "JULxYGaHuFYlSkXqTC2Fx9KIofp2"
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "write" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
          },
         
-        "checkit_148461003056534700" : {
+        "148461003056534700" : {
             "calendarState" :
             {
             "startDateString":"20170109",
@@ -22,10 +26,14 @@
             "uniqueId":148461003056534700,
             "checkedDays":{"20170111":1,"20170112":1}
             },
-            "permissionRead": "JULxYGaHuFYlSkXqTC2Fx9KIofp2",
-            "permissionWrite": "JULxYGaHuFYlSkXqTC2Fx9KIofp2"
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "write" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
         },
-        "checkit_148461051598386460" : {
+        "148461051598386460" : {
             "calendarState" :
             {
             "startDateString":"20170103",
@@ -34,27 +42,31 @@
             "uniqueId":148461051598386460,
             "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
             },
-            "permissionRead" : "HoQHGYBMwaXAtIKDP5wD1EkjcuX2",
-            "permissionWrite" : "HoQHGYBMwaXAtIKDP5wD1EkjcuX2"
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true,
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             },
+             "write" : {
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             }        
         }
-        
     },
     "users" : {
         "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : {
             "email" : "andrayantelo@gmail.com",
-            "checkit_allCalendarIds" : {
+            "allCalendarIds" : {
                 "148460826559529600":"hi",
                 "148461003056534700":"world"
                 },
-            "checkit_currentActiveCalendar" : "148461003056534700"
+            "currentActiveCalendar" : "148461003056534700"
 
         },
         "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : {
             "email" : "johntyree@gmail.com",
-            "checkit_allCalendarIds" : {
+            "allCalendarIds" : {
               "148461051598386460":"ass"
             },
-            "checkit_currentActiveCalendar" : "148461051598386460"
+            "currentActiveCalendar" : "148461051598386460"
         }
     }
 }
