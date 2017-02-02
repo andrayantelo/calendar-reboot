@@ -143,7 +143,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                }.bind(this))
                .catch(function(err) {
                    console.error("Calendar does not exist " + err);
-                   this.firebaseStore.removeActive();
+                   this.firebaseStore.removeActive();  // Should I be doing this here?
                    this.uncollapseBuildMenu();
                }.bind(this));
            
@@ -887,13 +887,6 @@ var firebaseCalendarStorage = function(params) {
     
     self.user = params['user'];
     
-    var toKey = function(id) {
-        //make a key out of a uniqueId
-        
-        var key = prefix + "_" + id;
-        return key;
-    };
-    
     var jitter = function(func, arg) {
         var runFunc = function () {
             func(arg);
@@ -946,7 +939,7 @@ var firebaseCalendarStorage = function(params) {
         var userId = self.user.uid;
         self.startWork();
         return new Promise(function(resolve, reject) {
-            self.database.ref('/users/' + userId + '/checkit_allCalendarIds')
+            self.database.ref('/users/' + userId + '/allCalendarIds')
             .once('value')  
             .then(function(allCalendarIds) {
                 self.endWork();
@@ -979,10 +972,10 @@ var firebaseCalendarStorage = function(params) {
         // Store the user's allCalendarIds and their calendarState .. setting the
         // active calendar has it's own method.
         var updates = {};
-        updates['users/' + userId + '/checkit_allCalendarIds/' + calUniqueId] = calTitle;
-        updates['calendars/' + toKey(calUniqueId) + '/calendarState/'] = calState;
-        updates['calendars/' + toKey(calUniqueId) + '/permissionRead/'] = userId;
-        updates['calendars/' + toKey(calUniqueId) + '/permissionWrite/'] = userId;
+        updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
+        updates['calendars/' + calUniqueId + '/calendarState/'] = calState;
+        updates['calendars/' + calUniqueId + '/permissionRead/'] = userId;
+        updates['calendars/' + calUniqueId + '/permissionWrite/'] = userId;
         
         self.startWork();
         return new Promise(function(resolve, reject) {
@@ -997,7 +990,7 @@ var firebaseCalendarStorage = function(params) {
         
         var userId = self.user.uid;
         var updates = {};
-        updates['users/' + userId + '/checkit_currentActiveCalendar/'] = calendarObjId;
+        updates['users/' + userId + '/currentActiveCalendar/'] = calendarObjId;
         
         self.startWork();
         return new Promise( function(resolve, reject) {
@@ -1018,7 +1011,7 @@ var firebaseCalendarStorage = function(params) {
     
     self.removeById = function(uniqueId) {
         // Remove a calendar from storage by using it's Id.
-        // First deleting it from /user/uid/checkit_allCalendarIds
+        // First deleting it from /user/uid/allCalendarIds
         // Second remove permissions
         // third removing it from calendars/
         // removing currentActive status has it's own method
@@ -1026,9 +1019,9 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return new Promise(function(resolve, reject) {
-            self.database.ref('users/' + userId + '/checkit_allCalendarIds/' + uniqueId).remove();
+            self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove();
             // Removes the whole calendar: calState plus permissions
-            self.database.ref('calendars/' + toKey(uniqueId)).remove();
+            self.database.ref('calendars/' + uniqueId).remove();
             self.endWork();
             resolve(); // Reject?
         })
@@ -1040,7 +1033,7 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return new Promise( function(resolve, reject) {
-            self.database.ref('users/' + userId + '/checkit_currentActiveCalendar/').remove();
+            self.database.ref('users/' + userId + '/currentActiveCalendar/').remove();
             self.endWork();
             resolve(); // Reject?
         })
@@ -1053,7 +1046,7 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return new Promise(function(resolve, reject) {
-            self.database.ref('users/' + userId + '/checkit_currentActiveCalendar')
+            self.database.ref('users/' + userId + '/currentActiveCalendar')
             .once('value')  
             .then(function(currentActiveCalendar) {
                 self.endWork();
@@ -1079,7 +1072,7 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return new Promise( function(resolve, reject) {
-            self.database.ref('calendars/' + toKey(calendarObjId) + '/calendarState')
+            self.database.ref('calendars/' + calendarObjId + '/calendarState')
             .once('value')
             .then(function(calState) {
                 self.endWork();
