@@ -11,7 +11,15 @@
         "calendarState": {
           ".read" : "auth!== null && data.parent().child('read').hasChild(auth.uid) && data.parent().child('read').child(auth.uid).val() === true",
           ".write" : "auth !== null && data.parent().child('write').hasChild(auth.uid) && data.parent().child('write').child(auth.uid).val() === true"
-        } 
+        },
+        "write" : {
+          ".read" :,
+          ".write" :
+        }
+        "read" : {
+          ".read" :,
+          ".write" :
+        }
       }
     }
   } 
