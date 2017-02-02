@@ -61,17 +61,6 @@ function CheckIt() {
     
     var monthObjects;
     
-    /*
-    // Initialize storage.
-
-    this.store = new LocalCalendarStorage({'storeId': 'checkit'})
-    
-    
-    // Listen to store state changes.
-    this.store.onActivityChanged(this.onActivityChanged.bind(this));
-    * 
-    */
-    
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
@@ -147,9 +136,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
            this.firebaseStore.loadById(activeCalendarId)
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
-                       console.log("Found the active calendar and going to display it");
                        var state = activeCalendarState;
-                       console.log(state);
                        var calendar = new Calendar(state, this);
                        this.displayCalendar(calendar);
                    }
@@ -222,9 +209,7 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
-        console.log("User is signed in");
         // Update the user in the store so that we have access to the correct information.
-        //this.store.user = user;
         this.firebaseStore.user = user;
         
         // Get profile pic and user's name from the Firebase user object.
@@ -258,8 +243,6 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
       }
     else { // User is signed out!
         // Remove the user from the store so that we can't access their information.
-        console.log("User is signed out");
-        this.store.user = null;
         this.firebaseStore.user = null;
         
         // Hide user's profile and sign-out button.
@@ -934,7 +917,6 @@ var firebaseCalendarStorage = function(params) {
         // Will increment the counter and possibly fire an event.
         
         self.activeCalls += 1;
-        console.log("starting work, number of active calls: " + self.activeCalls);
         // Will dispatch the event backgroundActivityChange 
         self.activityChangeFunctions.forEach(function(func) {
             func(self.activeCalls);
@@ -947,7 +929,6 @@ var firebaseCalendarStorage = function(params) {
         
         
         self.activeCalls -= 1;
-        console.log("ending work, number of active calls: " + self.activeCalls);
         if (self.activeCalls < 0) {
             console.error("No work has been started");
         }
@@ -1122,208 +1103,5 @@ var firebaseCalendarStorage = function(params) {
 };
 
 
-/*
-//Make a storage manager
 
-var LocalCalendarStorage = function(params) {
-    var self = this;
-    var prefix = params['storeId'] || "";
-    var allCalendarIdsKey = 'allCalendarIdsKey';
-    //the current_active_calendar is the key for localStorage that stores
-    //the active calendar's Id
-    var current_active_calendar = 'current_active_calendar';
-    // This tells you whether the storage is actively working.
-    self.activeCalls = 0;
-    self.activityChangeFunctions = [];
-    
-    var toKey = function(id) {
-        //make a key out of a uniqueId
-        
-        var key = prefix + "_" + id;
-        return key;
-    };
-    
-    self.onActivityChanged = function(func) {
-        // Will run checkit's onActivityChanged.
-        
-        //TODO extend this to support multiple callbacks
-        self.activityChangeFunctions.push(func);
-    };
-    
-
-    self.startWork = function() {
-        // Will increment the counter and possibly fire an event.
-        
-        self.activeCalls += 1;
-        
-        // Will dispatch the event backgroundActivityChange 
-        self.activityChangeFunctions.forEach(function(func) {
-            func(self.activeCalls);
-        });
-        
-    };
-    
-    self.endWork = function() {
-        // Will decrement the counter and maybe fire an event.
-        
-        
-        self.activeCalls -= 1;
-        if (self.activeCalls < 0) {
-            console.error("No work has been started");
-        }
-        
-        // Dispatch the activityChanged listener
-        self.activityChangeFunctions.forEach(function(func) {
-            func(self.activeCalls);
-        });
-      
-    };
-    
-    var jitter = function(func, arg) {
-        var runFunc = function () {
-            func(arg);
-            self.endWork();
-        };
-        
-        var randomNumber = Math.random() * 4000;
-        self.startWork();
-        setTimeout(runFunc, randomNumber);
-        
-    };
-    
-    self.getAllCalendarIds = function() {
-        // Returns a promise for the allCalendarIds object from storage
-        
-        return new Promise( function(resolve, reject) {
-            var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
-            
-            if (allCalendarIds !== null ) {
-
-                jitter(resolve, allCalendarIds);
-
-            }
-            else {
-                jitter(reject, "Not found");
-            }
-        })
-        .then( function(ids) {
-            return ids;
-        })
-        .catch( function() {
-            console.log("getAllCalendarIds catch function running.");
-        });
-
-    };
-    
-    self.save = function(calendarObj) {
-        //save an App object (like a calendar object for example) in storage
-        
-        //store the state in localStorage
-
-        var stateP = new Promise(function(resolve, reject) {
-            storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
-            jitter(resolve);
-        });
-        
-        
-        //put calendar in allCalendarIdss and store it
-        
-        var idsP = self.getAllCalendarIds()
-            .then(function (allCalendarIds) {
-                allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-            })
-            .catch(function () {
-                console.log("No previous calendars in storage");
-                var allCalendarIds = {};
-                allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-            })
-            
-        return Promise.all([stateP, idsP]);
-
-    };
-    
-    self.remove = function(calendarObj) {
-        //remove an app object (like a calendar) from storage
-        var uniqueId = calendarObj.state.uniqueId;
-        self.removeById(uniqueId);
-    };
-    
-    self.removeById = function(uniqueId) {
-        //remove a calendar from storage by using it's Id.
-        
-        //get the allCalendarIds object from storage
-
-        return self.getAllCalendarIds()
-            .then(function(allCalendarIds) {
-                // Delete the calendar from allCalendarIds.
-                delete allCalendarIds[uniqueId];
-                // Save that change
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
-                // Remove the calendar from local storage
-                removeFromLocalStorage(toKey(uniqueId));
-                // Remove active status from the calendar
-                removeFromLocalStorage(toKey(current_active_calendar));
-                
-            })
-            .catch(function () {
-                console.log("Unable to remove calendar");
-            });
-        
-    };
-    
-    self.loadById = function(calendarObjId) {
-        // Return a promise to a calendar object using its Id
-        return new Promise( function(resolve, reject) {
-            var calendar = loadFromLocalStorage(toKey(calendarObjId));
-            
-            if (calendar !== null) {
-                jitter(resolve, calendar);
-            }
-            else jitter(reject, "Calendar not found");
-        })
-  
-    };
-    
-    self.getActive = function() {
-        // Return a promise to the active_calendar id from storage
-        
-        return new Promise( function(resolve, reject) {
-            var activeCalendarId = loadFromLocalStorage(toKey(current_active_calendar));
-            
-            if (activeCalendarId !== null ) {
-                
-                // Signal that the promise succeeded and make the value ready to go. 
-                jitter(resolve, activeCalendarId);
-            }
-            else {
-                jitter(reject, "Not found");
-            }
-        })
-        
-    };
-    
-    self.removeActive = function() {
-        // Return a promise, remove the active_calendar item from storage.
-        
-        return new Promise( function(resolve, reject) {
-            removeFromLocalStorage(toKey(current_active_calendar));
-            jitter(resolve);
-        })
-    };
-    
-    self.setActiveById = function(calendarObjId) {
-        // Set the active calendar/object by using its Id
-        return new Promise( function(resolve, reject) {
-            storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
-            jitter(resolve);
-        })
-
-    };
-    
-    
-};
-
-*/
 
