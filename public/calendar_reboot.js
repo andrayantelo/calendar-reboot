@@ -143,7 +143,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                }.bind(this))
                .catch(function(err) {
                    console.error("Calendar does not exist " + err);
-                   this.firebaseStore.removeActive();  // Should I be doing this here?
+                   this.firebaseStore.removeActive(); 
                    this.uncollapseBuildMenu();
                }.bind(this));
            
