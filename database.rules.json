@@ -9,8 +9,8 @@
     "calendars":{
       "$calendarId": {
         "calendarState": {
-          ".read" : "auth!== null && data.parent().child('read').hasChild(auth.uid) && data.parent().child('read').child(auth.uid).val() === true",
-          ".write" : "auth !== null && data.parent().child('write').hasChild(auth.uid) && data.parent().child('write').child(auth.uid).val() === true"
+          ".read" : "auth!== null && data.parent().child('read/' + auth.uid).exists()",
+          ".write" : "auth !== null && data.parent().child('write/' + auth.uid).exists()"
         },
         "write" : {
           ".read" :,
