@@ -142,7 +142,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                    }
                }.bind(this))
                .catch(function(err) {
-                   console.error("Calendar does not exist " + err);
+                   console.error("Could not load calendar " + err);
                    this.firebaseStore.removeActive(); 
                    this.uncollapseBuildMenu();
                }.bind(this));
@@ -893,7 +893,7 @@ var firebaseCalendarStorage = function(params) {
             self.endWork();
         };
         
-        var randomNumber = Math.random() * 4000;
+        var randomNumber = Math.random() * 500;
         self.startWork();
         setTimeout(runFunc, randomNumber);
             
@@ -962,7 +962,6 @@ var firebaseCalendarStorage = function(params) {
         //save an App object (like a calendar object for example) in storage
         
         // Store the calendar state in the firebase database.
-        // TO DO save the actual calendar state.
         
         var userId = self.user.uid;
         var calUniqueId = calendarObj.state.uniqueId;
@@ -970,7 +969,7 @@ var firebaseCalendarStorage = function(params) {
         var calState = calendarObj.state;
         
         // Store the user's allCalendarIds and their calendarState .. setting the
-        // active calendar has it's own method.
+        // active calendar has its own method.
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
@@ -1009,7 +1008,7 @@ var firebaseCalendarStorage = function(params) {
     
     self.remove = function(calendarObj) {
         // Remove an app object (like a calendar) from storage
-        // To do: Determine if this method is necessary
+        // TODO: Determine if this method is necessary
         
         var uniqueId = calendarObj.state.uniqueId;
         self.removeById(uniqueId);
@@ -1018,8 +1017,7 @@ var firebaseCalendarStorage = function(params) {
     self.removeById = function(uniqueId) {
         // Remove a calendar from storage by using its Id.
         // First deleting it from /user/uid/allCalendarIds
-        // Second remove permissions
-        // third removing it from calendars/
+        // Second removing it from calendars/
         // removing currentActive status has its own method
         var userId = self.user.uid;
         

@@ -9,16 +9,16 @@
     "calendars":{
       "$calendarId": {
         "calendarState": {
-          ".read" : "auth !== null && data.parent().child('read/' + auth.uid).exists()",
-          ".write" : "auth !== null && data.parent().child('write/' + auth.uid).exists()"
+          ".read" : "auth !== null && data.parent().child('readers/' + auth.uid).exists()",
+          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()"
         },
-        "write" : {
+        "writers" : {
           ".read" : "auth !== null && data.child(auth.uid).exists()",
           ".write" : "auth !== null && data.child(auth.uid).exists()"
         },
-        "read" : {
+        "readers" : {
           ".read" : "auth !== null && data.child(auth.uid).exists()",
-          ".write" : "auth !== null && data.parent().child('write/' + auth.uid).exists()"
+          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()"
         }
       }
     }
