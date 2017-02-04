@@ -218,6 +218,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
        
         // Set the user's profile pic and name.
         this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
+        this.$userName.empty();
         this.$userName.append(userName);
     
         // Show user's profile and sign-out button.
