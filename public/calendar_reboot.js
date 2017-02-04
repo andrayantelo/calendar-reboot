@@ -143,7 +143,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                }.bind(this))
                .catch(function(err) {
                    console.error("Could not load calendar " + err);
-                   this.firebaseStore.removeActive(); 
+                   this.firebaseStore.removeActive();
                    this.uncollapseBuildMenu();
                }.bind(this));
            
