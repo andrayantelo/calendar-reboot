@@ -9,8 +9,14 @@
             "uniqueId":148460826559529600,
             "checkedDays":{}
             },
-            "permissionRead": "JULxYGaHuFYlSkXqTC2Fx9KIofp2",
-            "permissionWrite": "JULxYGaHuFYlSkXqTC2Fx9KIofp2"
+
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "write" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
+
          },
         
         "148461003056534700" : {
@@ -22,8 +28,14 @@
             "uniqueId":148461003056534700,
             "checkedDays":{"20170111":1,"20170112":1}
             },
-            "permissionRead": "JULxYGaHuFYlSkXqTC2Fx9KIofp2",
-            "permissionWrite": "JULxYGaHuFYlSkXqTC2Fx9KIofp2"
+
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "write" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
+
         },
         "148461051598386460" : {
             "calendarState" :
@@ -34,10 +46,16 @@
             "uniqueId":148461051598386460,
             "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
             },
-            "permissionRead" : "HoQHGYBMwaXAtIKDP5wD1EkjcuX2",
-            "permissionWrite" : "HoQHGYBMwaXAtIKDP5wD1EkjcuX2"
+
+             "read" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true,
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             },
+             "write" : {
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             }        
+
         }
-        
     },
     "users" : {
         "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : {
