@@ -973,15 +973,19 @@ var firebaseCalendarStorage = function(params) {
         // active calendar has it's own method.
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
-        updates['calendars/' + calUniqueId + '/calendarState/'] = calState;
-        updates['calendars/' + calUniqueId + '/permissionRead/'] = userId;
-        updates['calendars/' + calUniqueId + '/permissionWrite/'] = userId;
+        updates['calendars/' + calUniqueId + '/calendarState'] = calState;
+        updates['calendars/' + calUniqueId + '/read/' + userId] = true;
+        updates['calendars/' + calUniqueId + '/write/' + userId] = true;
         
         self.startWork();
-        return new Promise(function(resolve, reject) {
-            self.database.ref().update(updates);
+        return self.database.ref().update(updates)
+        .then(function() {
             self.endWork();
-            resolve();  // Still unsure whether I will need to use reject in here or not.
+        })
+        .catch(function(err) {
+            console.error("Error in save function : " + err);
+            self.endWork();
+            return err;
         })
     };
     
@@ -990,15 +994,17 @@ var firebaseCalendarStorage = function(params) {
         
         var userId = self.user.uid;
         var updates = {};
-        updates['users/' + userId + '/currentActiveCalendar/'] = calendarObjId;
+        updates['users/' + userId + '/currentActiveCalendar'] = calendarObjId;
         
         self.startWork();
-        return new Promise( function(resolve, reject) {
-            self.database.ref().update(updates);
+        return self.database.ref().update(updates)
+        .then(function() {
             self.endWork();
-            resolve();  // Reject somewhere?
         })
-
+        .catch(function(err) {
+            console.error("Unable to set active Id: " + err);
+            return err;
+        })
     };
     
     self.remove = function(calendarObj) {
@@ -1010,20 +1016,29 @@ var firebaseCalendarStorage = function(params) {
     };
     
     self.removeById = function(uniqueId) {
-        // Remove a calendar from storage by using it's Id.
+        // Remove a calendar from storage by using its Id.
         // First deleting it from /user/uid/allCalendarIds
         // Second remove permissions
         // third removing it from calendars/
-        // removing currentActive status has it's own method
+        // removing currentActive status has its own method
         var userId = self.user.uid;
         
         self.startWork();
-        return new Promise(function(resolve, reject) {
-            self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove();
-            // Removes the whole calendar: calState plus permissions
-            self.database.ref('calendars/' + uniqueId).remove();
+        return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
+        .then(function() {
+            self.database.ref('calendars/' + uniqueId).remove()
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error('Unable to remove calendar: ' + err);
+                self.endWork();
+            })
+        })
+        .catch(function(err) {
+            console.error('Unable to remove calendar from user\'s allCalendarIds: ' + err);
             self.endWork();
-            resolve(); // Reject?
+            return err;
         })
     };
     
@@ -1032,10 +1047,14 @@ var firebaseCalendarStorage = function(params) {
         var userId = self.user.uid;
         
         self.startWork();
-        return new Promise( function(resolve, reject) {
-            self.database.ref('users/' + userId + '/currentActiveCalendar/').remove();
+        return self.database.ref('users/' + userId + '/currentActiveCalendar').remove()
+        .then(function() {
             self.endWork();
-            resolve(); // Reject?
+        })
+        .catch(function(err) {
+            console.error("Unable to remove user's currentActiveCalendar: " + err);
+            self.endWork();
+            return err;
         })
     };
     
