@@ -12,3 +12,23 @@ QUnit.test( "a basic test example", function( assert ) {
   assert.equal( value, "hello", "We expect value to be hello" );
 });
 
+
+
+// Tests for checkit.js
+// Testing utility functions
+
+QUnit.module("Storage Utility Functions");
+var myCar = {
+    type: "toyota",
+    color: "white",
+    year: 1988
+}
+var carKey = "carKey";
+QUnit.test("storeInLocalStorage test", function(assert) {
+    storeInLocalStorage(carKey, myCar);
+    var retrievedCar = JSON.parse(localStorage.getItem(carKey));
+    assert.deepEqual(myCar, retrievedCar);
+    assert.notEqual(retrievedCar, null);
+    assert.notEqual(retrievedCar, undefined);
+});
+
