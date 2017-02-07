@@ -369,20 +369,22 @@ var LocalCalendarStorage = function(params) {
         //remove a calendar from storage by using it's Id.
         
         //get the allCalendarIds object from storage
+        self.startWork();
         return self.getAllCalendarIds()
             .then(function(allCalendarIds) {
                 // Delete the calendar from allCalendarIds.
                 delete allCalendarIds[uniqueId];
                 // Save that change
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+                localStorage.setItem(toKey(allCalendarIdsKey), JSON.stringify(allCalendarIds));
                 // Remove the calendar from local storage
-                removeFromLocalStorage(toKey(uniqueId));
+                localStorage.removeItem(toKey(uniqueId));
                 // Remove active status from the calendar
-                removeFromLocalStorage(toKey(current_active_calendar));
-                
+                localStorage.removeItem(toKey(current_active_calendar));
+                self.endWork();
             })
             .catch(function () {
                 console.log("Unable to remove calendar");
+                self.endWork();
             });
         
     };
