@@ -259,6 +259,14 @@ var LocalCalendarStorage = function(params) {
     self.setInStorage = function(key, val) {
         localstorage.setItem(toKey(key), JSON.stringify(val));
     };
+    
+    self.getFromLocalStorage = function(key) {
+        var storageItem = localStorage.getItem(toKey(key))
+        if (storageItem !== null) {
+            storageItem = JSON.parse(storagItem);
+        }
+        return storageItem;
+    };
 
     
     self.onActivityChanged = function(func) {
@@ -312,10 +320,9 @@ var LocalCalendarStorage = function(params) {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
-            var allCalendarIds = localStorage.getItem(toKey(allCalendarIdsKey));
+            var allCalendarIds = getFromLocalStorage(allCalendarIdsKey);
             
             if (allCalendarIds !== null ) {
-                allCalendarIds = JSON.parse(allCalendarIds);
                 jitter(resolve, allCalendarIds);
             }
             else {
@@ -386,10 +393,9 @@ var LocalCalendarStorage = function(params) {
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
         return new Promise( function(resolve, reject) {
-            var calendar = localStorage.getItem(toKey(calendarObjId));
+            var calendar = getFromLocalStorage(calendarObjId);
             
             if (calendar !== null) {
-                calendar = JSON.parse(calendar);
                 jitter(resolve, calendar);
             }
             else {
@@ -403,10 +409,9 @@ var LocalCalendarStorage = function(params) {
         // Return a promise to the active_calendar id from storage
         
         return new Promise( function(resolve, reject) {
-            var activeCalendarId = localStorage.getItem(toKey(current_active_calendar));
+            var activeCalendarId = getFromLocalStorage(current_active_calendar);
             
             if (activeCalendarId !== null ) {
-                activeCalendarId = JSON.parse(activeCalendarId);
                 // Signal that the promise succeeded and make the value ready to go. 
                 jitter(resolve, activeCalendarId);
             }

@@ -520,52 +520,6 @@ $(document).ready(function() {
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
 
-var storeInLocalStorage = function(storageItemKey, storageItem) {
-    //store information in database/ might start with localstorage though
-    // Convert a javascript value (storageItem) to a JSON string and
-    // accesses the current domain's local Storage object and adds a data item
-    //  (storageString) to it.
-    
-    //  Parameters:
-    //  storageItemKey: string
-    //      The localstorage key to be used to store the data item.
-    //  storageItem: string
-    //      The item to be stored in localstorage
-    
-    localStorage.setItem(storageItemKey, JSON.stringify(storageItem));
-};
-
-var loadFromLocalStorage = function(storageItemKey) {
-    //  Loads an item from localstorage with key storageItemKey and returns the item
-    //  if the item is not in localStorage, then it returns null
-        
-    //  Parameters:
-    //  storageItemKey: "string"
-    //      The key used to store the item and to be used to retrieve it from
-    //      localstorage.
-    
-    var storageItem = localStorage.getItem(storageItemKey);
-        
-        
-    if (storageItem === null) 
-    {
-        console.log(storageItemKey + " not found in localstorage");
-        return storageItem;   
-    }
-                                                                                                   
-    else 
-    {
-        storageItem = JSON.parse(storageItem);  
-        return storageItem;
-    }     
-};
-
-var removeFromLocalStorage = function(storageItemKey) {
-    // removes item with key storageItemKey from localStorage
-    
-    localStorage.removeItem(storageItemKey);
-};
-
 var getMonthName = function(index) {
     //  Returns the name of the month of the given index. If no index is given,
     
