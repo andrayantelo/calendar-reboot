@@ -566,23 +566,6 @@ var removeFromLocalStorage = function(storageItemKey) {
     localStorage.removeItem(storageItemKey);
 };
 
-var getMonthName = function(index) {
-    //  Returns the name of the month of the given index. If no index is given,
-    
-    //  Parameters: 
-    //  index: int
-    //      0 index 0-11, 0 being January
-    if (index < 0 || index > 11) {
-        return null;
-    }
-    var months = {
-        0:"January", 1:"February", 2:"March", 3:"April", 4:"May", 5:"June",
-        6:"July", 7:"August", 8:"September", 9:"October", 10:"November",
-        11:"December"};
-    return months[index];
-};
-
-
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 
@@ -596,7 +579,7 @@ var Month = function(dateString, calendarObj) {
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
-    self.monthName = getMonthName(self.monthIndex);
+    self.monthName = self.date.format("MMMM");
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
