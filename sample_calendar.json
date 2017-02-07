@@ -10,10 +10,10 @@
             "checkedDays":{}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              },
-             "write" : {
+             "writers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              }
 
@@ -29,10 +29,10 @@
             "checkedDays":{"20170111":1,"20170112":1}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              },
-             "write" : {
+             "writers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              }
 
@@ -47,11 +47,11 @@
             "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true,
                  "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
              },
-             "write" : {
+             "writers" : {
                  "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
              }        
 
