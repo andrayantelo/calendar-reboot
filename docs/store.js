@@ -311,7 +311,7 @@ var LocalCalendarStorage = function(params) {
             var allCalendarIds = localStorage.getItem(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
-                JSON.parse(allCalendarIds);
+                allCalendarIds = JSON.parse(allCalendarIds);
                 jitter(resolve, allCalendarIds);
             }
             else {
@@ -391,13 +391,19 @@ var LocalCalendarStorage = function(params) {
     
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
+        self.startWork();
         return new Promise( function(resolve, reject) {
-            var calendar = loadFromLocalStorage(toKey(calendarObjId));
+            var calendar = localStorage.getItem(toKey(calendarObjId));
             
             if (calendar !== null) {
+                calendar = JSON.parse(calendar);
+                self.endWork();
                 jitter(resolve, calendar);
             }
-            else jitter(reject, "Calendar not found");
+            else {
+                self.endWork();
+                jitter(reject, "Calendar not found");
+            }
         })
   
     };
