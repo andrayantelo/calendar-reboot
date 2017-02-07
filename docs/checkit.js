@@ -168,7 +168,7 @@ CheckIt.prototype.initFirebase = function() {
     firebase.database.enableLogging(false);
     
     // Initiates database
-    this.store = new localCalendarStorage({'storeId': 'checkit'});
+    this.store = new LocalCalendarStorage({'storeId': 'checkit'});
     
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
