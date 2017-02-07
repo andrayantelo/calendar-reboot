@@ -10,7 +10,16 @@
       "$calendarId": {
         "calendarState": {
           ".read" : "auth !== null && data.parent().child('readers/' + auth.uid).exists()",
-          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()"
+          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()",
+          "endDateString" : {
+            ".validate": "newData.isString()"
+          },
+          "startDateString" : {
+            ".validate": "newData.isString()"
+          },
+          "title" : {
+            ".validate" : "newData.isString()"
+          }
         },
         "writers" : {
           ".read" : "auth !== null && data.child(auth.uid).exists()",
