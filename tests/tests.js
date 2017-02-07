@@ -12,8 +12,6 @@ QUnit.test( "a basic test example", function( assert ) {
   assert.equal( value, "hello", "We expect value to be hello" );
 });
 
-
-
 // Tests for checkit.js
 // Testing Month Object
 
