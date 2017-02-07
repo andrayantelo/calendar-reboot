@@ -416,7 +416,7 @@ var LocalCalendarStorage = function(params) {
         // Return a promise, remove the active_calendar item from storage.
         
         return new Promise( function(resolve, reject) {
-            removeFromLocalStorage(toKey(current_active_calendar));
+            localStorage.removeItem(toKey(current_active_calendar));
             jitter(resolve);
         })
     };
@@ -424,7 +424,7 @@ var LocalCalendarStorage = function(params) {
     self.setActiveById = function(calendarObjId) {
         // Set the active calendar/object by using its Id
         return new Promise( function(resolve, reject) {
-            storeInLocalStorage(toKey(current_active_calendar), calendarObjId);
+            localStorage.setItem(toKey(current_active_calendar), JSON.stringify(calendarObjId));
             jitter(resolve);
         })
     };
