@@ -332,24 +332,28 @@ var LocalCalendarStorage = function(params) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
+        self.startWork();
         var stateP = new Promise(function(resolve, reject) {
-            storeInLocalStorage(toKey(calendarObj.state.uniqueId), calendarObj.state);
+            localStorage.setItem(toKey(calendarObj.state.uniqueId), JSON.stringify(calendarObj.state));
+            self.endWork();
             jitter(resolve);
         });
         
         
         //put calendar in allCalendarIdss and store it
-        
+        self.startWork();
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+                localStorage.setItem(toKey(allCalendarIdsKey), JSON.stringify(allCalendarIds));
+                self.endWork();
             })
             .catch(function () {
                 console.log("No previous calendars in storage");
                 var allCalendarIds = {};
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                storeInLocalStorage(toKey(allCalendarIdsKey), allCalendarIds);
+                localStorage.setItem(toKey(allCalendarIdsKey), JSON.stringify(allCalendarIds));
+                self.endWork();
             })
             
         return Promise.all([stateP, idsP]);
