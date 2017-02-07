@@ -260,12 +260,16 @@ var LocalCalendarStorage = function(params) {
         localstorage.setItem(toKey(key), JSON.stringify(val));
     };
     
-    self.getFromLocalStorage = function(key) {
+    self.getFromStorage = function(key) {
         var storageItem = localStorage.getItem(toKey(key))
         if (storageItem !== null) {
             storageItem = JSON.parse(storagItem);
         }
         return storageItem;
+    };
+    
+    self.removeFromStorage = function(key) {
+        localStorage.removeItem(toKey(key));
     };
 
     
@@ -320,7 +324,7 @@ var LocalCalendarStorage = function(params) {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
-            var allCalendarIds = getFromLocalStorage(allCalendarIdsKey);
+            var allCalendarIds = getFromStorage(allCalendarIdsKey);
             
             if (allCalendarIds !== null ) {
                 jitter(resolve, allCalendarIds);
@@ -380,9 +384,9 @@ var LocalCalendarStorage = function(params) {
                 // Save that change
                 self.setInStorage(allCalendarIdsKey, allCalendarIds);
                 // Remove the calendar from local storage
-                localStorage.removeItem(toKey(uniqueId));
+                self.removeFromStorage(uniqueId);
                 // Remove active status from the calendar
-                localStorage.removeItem(toKey(current_active_calendar));
+                self.removeFromStorage(current_active_calendar);
             })
             .catch(function () {
                 console.log("Unable to remove calendar");
@@ -393,7 +397,7 @@ var LocalCalendarStorage = function(params) {
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
         return new Promise( function(resolve, reject) {
-            var calendar = getFromLocalStorage(calendarObjId);
+            var calendar = getFromStorage(calendarObjId);
             
             if (calendar !== null) {
                 jitter(resolve, calendar);
@@ -409,7 +413,7 @@ var LocalCalendarStorage = function(params) {
         // Return a promise to the active_calendar id from storage
         
         return new Promise( function(resolve, reject) {
-            var activeCalendarId = getFromLocalStorage(current_active_calendar);
+            var activeCalendarId = getFromStorage(current_active_calendar);
             
             if (activeCalendarId !== null ) {
                 // Signal that the promise succeeded and make the value ready to go. 
@@ -426,7 +430,7 @@ var LocalCalendarStorage = function(params) {
         // Return a promise, remove the active_calendar item from storage.
         
         return new Promise( function(resolve, reject) {
-            localStorage.removeItem(toKey(current_active_calendar));
+            self.removeFromStorage(current_active_calendar);
             jitter(resolve);
         })
     };
