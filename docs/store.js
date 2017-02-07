@@ -306,10 +306,12 @@ var LocalCalendarStorage = function(params) {
     self.getAllCalendarIds = function() {
         // Returns a promise for the allCalendarIds object from storage
         
+        self.startWork();
         return new Promise( function(resolve, reject) {
-            var allCalendarIds = loadFromLocalStorage(toKey(allCalendarIdsKey));
+            var allCalendarIds = localStorage.getItem(toKey(allCalendarIdsKey));
             
             if (allCalendarIds !== null ) {
+                JSON.parse(allCalendarIds);
                 jitter(resolve, allCalendarIds);
             }
             else {
@@ -317,10 +319,12 @@ var LocalCalendarStorage = function(params) {
             }
         })
         .then( function(ids) {
+            self.endWork();
             return ids;
         })
         .catch( function() {
             console.log("getAllCalendarIds catch function running.");
+            self.endWork();
         });
     };
     
