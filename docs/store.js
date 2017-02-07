@@ -306,7 +306,6 @@ var LocalCalendarStorage = function(params) {
     self.getAllCalendarIds = function() {
         // Returns a promise for the allCalendarIds object from storage
         
-        self.startWork();
         return new Promise( function(resolve, reject) {
             var allCalendarIds = localStorage.getItem(toKey(allCalendarIdsKey));
             
@@ -319,12 +318,10 @@ var LocalCalendarStorage = function(params) {
             }
         })
         .then( function(ids) {
-            self.endWork();
             return ids;
         })
         .catch( function() {
             console.log("getAllCalendarIds catch function running.");
-            self.endWork();
         });
     };
     
@@ -332,28 +329,23 @@ var LocalCalendarStorage = function(params) {
         //save an App object (like a calendar object for example) in storage
         
         //store the state in localStorage
-        self.startWork();
         var stateP = new Promise(function(resolve, reject) {
             localStorage.setItem(toKey(calendarObj.state.uniqueId), JSON.stringify(calendarObj.state));
-            self.endWork();
             jitter(resolve);
         });
         
         
         //put calendar in allCalendarIdss and store it
-        self.startWork();
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 localStorage.setItem(toKey(allCalendarIdsKey), JSON.stringify(allCalendarIds));
-                self.endWork();
             })
             .catch(function () {
                 console.log("No previous calendars in storage");
                 var allCalendarIds = {};
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 localStorage.setItem(toKey(allCalendarIdsKey), JSON.stringify(allCalendarIds));
-                self.endWork();
             })
             
         return Promise.all([stateP, idsP]);
@@ -369,7 +361,6 @@ var LocalCalendarStorage = function(params) {
         //remove a calendar from storage by using it's Id.
         
         //get the allCalendarIds object from storage
-        self.startWork();
         return self.getAllCalendarIds()
             .then(function(allCalendarIds) {
                 // Delete the calendar from allCalendarIds.
@@ -380,28 +371,23 @@ var LocalCalendarStorage = function(params) {
                 localStorage.removeItem(toKey(uniqueId));
                 // Remove active status from the calendar
                 localStorage.removeItem(toKey(current_active_calendar));
-                self.endWork();
             })
             .catch(function () {
                 console.log("Unable to remove calendar");
-                self.endWork();
             });
         
     };
     
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
-        self.startWork();
         return new Promise( function(resolve, reject) {
             var calendar = localStorage.getItem(toKey(calendarObjId));
             
             if (calendar !== null) {
                 calendar = JSON.parse(calendar);
-                self.endWork();
                 jitter(resolve, calendar);
             }
             else {
-                self.endWork();
                 jitter(reject, "Calendar not found");
             }
         })
@@ -412,10 +398,10 @@ var LocalCalendarStorage = function(params) {
         // Return a promise to the active_calendar id from storage
         
         return new Promise( function(resolve, reject) {
-            var activeCalendarId = loadFromLocalStorage(toKey(current_active_calendar));
+            var activeCalendarId = localStorage.getItem(toKey(current_active_calendar));
             
             if (activeCalendarId !== null ) {
-                
+                activeCalendarId = JSON.parse(activeCalendarId);
                 // Signal that the promise succeeded and make the value ready to go. 
                 jitter(resolve, activeCalendarId);
             }
