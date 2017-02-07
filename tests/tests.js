@@ -29,6 +29,29 @@ QUnit.test("storeInLocalStorage test", function(assert) {
     var retrievedCar = JSON.parse(localStorage.getItem(carKey));
     assert.deepEqual(myCar, retrievedCar);
     assert.notEqual(retrievedCar, null);
-    assert.notEqual(retrievedCar, undefined);
+    assert.expect(2);
+});
+QUnit.test("loadFromLocalStorage test", function(assert) {
+    var retrievedCar = loadFromLocalStorage(myCar);
+    assert.equal(retrievedCar, null);
+    localStorage.setItem(carKey, JSON.stringify(myCar));
+    var retrievedCar = loadFromLocalStorage(carKey);
+    assert.deepEqual(retrievedCar, myCar);
+    assert.expect(2);
+});
+
+QUnit.test("removeFromLocalStorage test", function(assert) {
+    localStorage.setItem(carKey, JSON.stringify(myCar));
+    removeFromLocalStorage(carKey);
+    assert.equal(localStorage.getItem(carKey), null);
+    assert.expect(1);
+});
+
+QUnit.test("getMonthName test", function(assert) {
+    var jan = getMonthName(0);
+    var none = getMonthName(-1);
+    assert.equal(jan, "January");
+    assert.equal(none, null);
+    assert.expect(2);
 });
 
