@@ -111,7 +111,7 @@ CheckIt.prototype.hideLoadingWheel = function() {
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
-    this.firebaseStore.getAllCalendarIds()
+    this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
             
@@ -130,10 +130,10 @@ CheckIt.prototype.displayActiveCalendar = function() {
     // Display the active calendar if there is one.
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
-   this.firebaseStore.getActive()
+   this.store.getActive()
        .then(function (activeCalendarId) {
            
-           this.firebaseStore.loadById(activeCalendarId)
+           this.store.loadById(activeCalendarId)
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
@@ -143,7 +143,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                }.bind(this))
                .catch(function(err) {
                    console.error("Could not load calendar " + err);
-                   this.firebaseStore.removeActive();
+                   this.store.removeActive();
                    this.uncollapseBuildMenu();
                }.bind(this));
            
@@ -167,10 +167,10 @@ CheckIt.prototype.initFirebase = function() {
     // Logs debugging information to the console.
     firebase.database.enableLogging(false);
     
-    // Initiates firebase database
-    this.firebaseStore = new firebaseCalendarStorage({'storeId': 'checkit'});
+    // Initiates database
+    this.store = new localCalendarStorage({'storeId': 'checkit'});
     
-    this.firebaseStore.onActivityChanged(this.onActivityChanged.bind(this));
+    this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
@@ -210,7 +210,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
         // Update the user in the store so that we have access to the correct information.
-        this.firebaseStore.user = user;
+        this.store.user = user;
         
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL; 
@@ -244,7 +244,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
       }
     else { // User is signed out!
         // Remove the user from the store so that we can't access their information.
-        this.firebaseStore.user = null;
+        this.store.user = null;
         
         // Hide user's profile and sign-out button.
         this.$userName.attr('hidden', 'true');
@@ -312,8 +312,8 @@ CheckIt.prototype.createCalendar = function() {
 
         var calendar = new Calendar(state, this);
         
-        this.firebaseStore.setActiveById(calendar.state.uniqueId);
-        this.firebaseStore.save(calendar);
+        this.store.setActiveById(calendar.state.uniqueId);
+        this.store.save(calendar);
 
         //add calendar to dropdown
         this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
@@ -330,7 +330,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     //load the saved calendar with the title that was clicked
     var dropdownItemId = event.currentTarget.id;
     
-    return this.firebaseStore.loadById(dropdownItemId)
+    return this.store.loadById(dropdownItemId)
         .then(function(state) {
             var calendar = new Calendar(state, this);
             this.displayCalendar(calendar);
@@ -351,11 +351,11 @@ CheckIt.prototype.deleteCalendar = function() {
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
 
-        var currentCalendarId = this.firebaseStore.getActive()
+        var currentCalendarId = this.store.getActive()
             .then(function(currentCalendarId) {
                 this.removeFromCalendarDropdown(currentCalendarId);
                 //delete the calendar and remove its active calendar status
-                this.firebaseStore.removeById(currentCalendarId);
+                this.store.removeById(currentCalendarId);
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
@@ -497,8 +497,8 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
     
     this.clearPage();
     this.buildCalendar(calendarObj);
-    this.firebaseStore.setActiveById(calendarObj.state.uniqueId);
-    this.firebaseStore.save(calendarObj);
+    this.store.setActiveById(calendarObj.state.uniqueId);
+    this.store.save(calendarObj);
 };
 
 CheckIt.prototype.clearPage = function() {
@@ -518,67 +518,6 @@ $(document).ready(function() {
     
 });
 
-//UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
-
-var storeInLocalStorage = function(storageItemKey, storageItem) {
-    //store information in database/ might start with localstorage though
-    // Convert a javascript value (storageItem) to a JSON string and
-    // accesses the current domain's local Storage object and adds a data item
-    //  (storageString) to it.
-    
-    //  Parameters:
-    //  storageItemKey: string
-    //      The localstorage key to be used to store the data item.
-    //  storageItem: string
-    //      The item to be stored in localstorage
-    
-    localStorage.setItem(storageItemKey, JSON.stringify(storageItem));
-};
-
-var loadFromLocalStorage = function(storageItemKey) {
-    //  Loads an item from localstorage with key storageItemKey and returns the item
-    //  if the item is not in localStorage, then it returns null
-        
-    //  Parameters:
-    //  storageItemKey: "string"
-    //      The key used to store the item and to be used to retrieve it from
-    //      localstorage.
-    
-    var storageItem = localStorage.getItem(storageItemKey);
-        
-        
-    if (storageItem === null) 
-    {
-        console.log(storageItemKey + " not found in localstorage");
-        return storageItem;   
-    }
-                                                                                                   
-    else 
-    {
-        storageItem = JSON.parse(storageItem);  
-        return storageItem;
-    }     
-};
-
-var removeFromLocalStorage = function(storageItemKey) {
-    // removes item with key storageItemKey from localStorage
-    
-    localStorage.removeItem(storageItemKey);
-};
-
-var getMonthName = function(index) {
-    //  Returns the name of the month of the given index. If no index is given,
-    
-    //  Parameters: 
-    //  index: int
-    //      0 index 0-11, 0 being January
-    var months = {
-        0:"January", 1:"February", 2:"March", 3:"April", 4:"May", 5:"June",
-        6:"July", 7:"August", 8:"September", 9:"October", 10:"November",
-        11:"December"};
-    return months[index];
-};
-
 
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
@@ -593,7 +532,7 @@ var Month = function(dateString, calendarObj) {
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
-    self.monthName = getMonthName(self.monthIndex);
+    self.monthName = self.date.format("MMMM");
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
@@ -663,7 +602,7 @@ var Month = function(dateString, calendarObj) {
             //save your progress
             
             //TODO change the way months build calendar, issue #87
-            self.calendar.checkit.firebaseStore.save(self.calendar);
+            self.calendar.checkit.store.save(self.calendar);
          })
      };
 

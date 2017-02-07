@@ -1,0 +1,61 @@
+<!-- qunit html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit basic example</title>
+  
+  <!-- include jquery -->
+  <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        
+  <!-- bootstrap, moment, datetimepicker, bootstrap css, datetimepicker css -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
+  integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- include font awesome -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <!-- Material Design -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- Loading spinner -->
+  <script src="https://cdn.jsdelivr.net/spinjs/2.3.2/spin.min.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/3.6.5/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+    apiKey: "AIzaSyCVl0IXrl8BiPjPjBJRq-Y5WNlROwOY3C0",
+    authDomain: "check-it-14d35.firebaseapp.com",
+    databaseURL: "https://check-it-14d35.firebaseio.com",
+    storageBucket: "check-it-14d35.appspot.com",
+    messagingSenderId: "186375871683"
+    };
+    firebase.initializeApp(config);
+  </script>
+  
+  <!-- Qunit test framework and its css -->
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.1.1.css">
+  <script src="https://code.jquery.com/qunit/qunit-2.1.1.js"></script>
+
+  <script type ="text/javascript" src="../docs/store.js"></script>
+  <script type ="text/javascript" src="../docs/checkit.js"></script> 
+  <link rel="stylesheet" type="text/css" href="../docs/calendar.css">
+
+  <!-- My tests -->
+  <script type ="text/javascript" src="tests.js"></script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+</body>
+</html>
