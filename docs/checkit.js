@@ -520,17 +520,52 @@ $(document).ready(function() {
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
 
-var getMonthName = function(index) {
-    //  Returns the name of the month of the given index. If no index is given,
+
+var storeInLocalStorage = function(storageItemKey, storageItem) {
+    //store information in database/ might start with localstorage though
+    // Convert a javascript value (storageItem) to a JSON string and
+    // accesses the current domain's local Storage object and adds a data item
+    //  (storageString) to it.
     
-    //  Parameters: 
-    //  index: int
-    //      0 index 0-11, 0 being January
-    var months = {
-        0:"January", 1:"February", 2:"March", 3:"April", 4:"May", 5:"June",
-        6:"July", 7:"August", 8:"September", 9:"October", 10:"November",
-        11:"December"};
-    return months[index];
+    //  Parameters:
+    //  storageItemKey: string
+    //      The localstorage key to be used to store the data item.
+    //  storageItem: string
+    //      The item to be stored in localstorage
+    
+    localStorage.setItem(storageItemKey, JSON.stringify(storageItem));
+};
+
+var loadFromLocalStorage = function(storageItemKey) {
+    //  Loads an item from localstorage with key storageItemKey and returns the item
+    //  if the item is not in localStorage, then it returns null
+        
+    //  Parameters:
+    //  storageItemKey: "string"
+    //      The key used to store the item and to be used to retrieve it from
+    //      localstorage.
+    
+    var storageItem = localStorage.getItem(storageItemKey);
+        
+        
+    if (storageItem === null) 
+    {
+        console.log(storageItemKey + " not found in localstorage");
+        return storageItem;   
+    }
+                                                                                                   
+    else 
+    {
+        storageItem = JSON.parse(storageItem);  
+        return storageItem;
+    }     
+};
+
+var removeFromLocalStorage = function(storageItemKey) {
+    // removes item with key storageItemKey from localStorage
+    
+    localStorage.removeItem(storageItemKey);
+
 };
 
 
@@ -547,7 +582,7 @@ var Month = function(dateString, calendarObj) {
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
-    self.monthName = getMonthName(self.monthIndex);
+    self.monthName = self.date.format("MMMM");
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
