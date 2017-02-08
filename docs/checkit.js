@@ -520,6 +520,7 @@ $(document).ready(function() {
 
 //UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
 
+
 var storeInLocalStorage = function(storageItemKey, storageItem) {
     //store information in database/ might start with localstorage though
     // Convert a javascript value (storageItem) to a JSON string and
@@ -564,6 +565,7 @@ var removeFromLocalStorage = function(storageItemKey) {
     // removes item with key storageItemKey from localStorage
     
     localStorage.removeItem(storageItemKey);
+
 };
 
 
