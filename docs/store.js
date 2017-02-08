@@ -92,6 +92,8 @@ var firebaseCalendarStorage = function(params) {
         var calState = calendarObj.state;
         
         // Store the calendar into allCalendarIds, store calState
+        // TODO work on save method, how to save readers, writers, permissions, 
+        // states, etc.
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
