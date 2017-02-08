@@ -91,10 +91,11 @@ var firebaseCalendarStorage = function(params) {
         var calTitle = calendarObj.state.title;
         var calState = calendarObj.state;
         
-        // Store the calendar into allCalendarIds first so that the user
-        // has permission to write into calendars/calUniqueId
+        // Store the calendar into allCalendarIds, store calState
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
+        updates['calendars/' + calUniqueId + '/calendarState'] = calState;
+        updates['calendars/' + calUniqueId + '/writers/' + userId] = true;
         self.startWork();
         return self.database.ref().update(updates)
         .then(function() {
@@ -106,24 +107,6 @@ var firebaseCalendarStorage = function(params) {
             return err
         })
         
-        
-        // store calendarState, and update permissions .. setting the active calendar has its own method.
-        var updates = {};
-        
-        updates['calendars/' + calUniqueId + '/writers/' + userId] = true;
-        updates['calendars/' + calUniqueId + '/readers/' + userId] = true;
-        updates['calendars/' + calUniqueId + '/calendarState'] = calState;
-        
-        self.startWork();
-        return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Error in save function : " + err);
-            self.endWork();
-            return err;
-        })
     };
     
     self.setActiveById = function(calendarObjId) {
