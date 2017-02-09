@@ -111,6 +111,9 @@ CheckIt.prototype.hideLoadingWheel = function() {
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
+    // Clear the dropdown before filling it 
+    this.$calendarDropdown.empty();
+    
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
@@ -228,10 +231,6 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     
         // Hide sign-in button.
         this.$signInButton.attr('hidden', 'true');
-        
-        // Clear the dropdown before filling it (in case this method gets fired while
-        // you are already logged in
-        this.$calendarDropdown.empty();
         
         // Fill the dropdown with user's saved calendar titles/
         this.fillDropdown();
