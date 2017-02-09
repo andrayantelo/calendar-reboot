@@ -9,27 +9,14 @@
     "calendars":{
       "$calendarId": {
         "calendarState": {
-          ".read" : "auth !== null && data.parent().child('readers/' + auth.uid).exists()",
-          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()",
-          "startDateString": {
-            ".validate" : "newData.isString() && newData.val().length > 0"
-          },
-          "endDateString": {
-            ".validate" : "newData.isString() && newData.val().length > 0"
-          },
-          "title":{
-            ".validate": "newData.isString() && newData.val().length > 0"
-          }
-        },
-        "readers" : {
-          ".read" : "auth !== null && data.child(auth.uid).exists()",
-          ".write" : "auth !== null && data.parent().child('writers/' + auth.uid).exists()"
-        },
+          ".read" : "auth !== null",
+          ".write" : "auth !== null && (!data.exists() || root.child('calendars/' +$calendarId + '/writers/' + auth.uid).exists())"
+       },
         "writers" : {
-          ".read" : "auth !== null && data.child(auth.uid).exists()",
-          ".write" : "auth !== null && root.child('users/' + auth.uid + '/allCalendarIds/' + $calendarId).exists()"
+          ".write" : "auth !== null && !data.exists()",
+          ".read": "auth !== null"
         }
       }
     }
-  } 
+  }
 }

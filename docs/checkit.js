@@ -229,6 +229,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Hide sign-in button.
         this.$signInButton.attr('hidden', 'true');
         
+        // Clear the dropdown before filling it (in case this method gets fired while
+        // you are already logged in
+        this.$calendarDropdown.empty();
+        
         // Fill the dropdown with user's saved calendar titles/
         this.fillDropdown();
         
