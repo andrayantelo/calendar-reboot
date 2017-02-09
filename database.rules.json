@@ -16,6 +16,10 @@
           ".write" : "auth !== null && !data.exists()",
           ".read": "auth !== null"
         }
+        "readers" : {
+          ".write" : "auth !== null", 
+          ".read" : "auth !== null"
+        }
       }
     }
   }
