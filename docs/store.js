@@ -81,14 +81,11 @@ var firebaseCalendarStorage = function(params) {
         })
     };
     
-    self.addToWriters = function(user) {
+    self.addWriter = function(user, calObj) {
         // Add a user to the writers directory in the database.
-        // pass in a user if you want to add a user that isn't you
-        
-        var userId = self.user.uid;
         
         var updates = {};
-        updates['calendars/' + calUniqueId + '/writers/' + userId] = true;
+        updates['calendars/' + calObj.state.uniqueId + '/writers/' + user.uid] = true;
         
         self.startWork();
         return self.database.ref().update(updates)
@@ -101,6 +98,19 @@ var firebaseCalendarStorage = function(params) {
             return err
         })
         
+    };
+    
+    self.removeWriter = function(user, calObj) {
+        // Remove a user form the writers directory in the database
+        
+        self.database.ref('calendars/' + calObj.state.uniqueId + '/writers/' + user.uid).remove()
+        .then(function() {
+            self.endWork();
+        })
+        .catch(function(err) {
+            console.error('Unable to remove user: ' + err);
+            self.endWork();
+        })
     };
     
     self.save = function(calendarObj) {

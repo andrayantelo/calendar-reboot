@@ -313,7 +313,9 @@ CheckIt.prototype.createCalendar = function() {
         var calendar = new Calendar(state, this);
         
         this.store.setActiveById(calendar.state.uniqueId);
-        this.store.addToWriters();
+        
+        // add user as a writer
+        this.store.addWriter(this.store.user, calendar);
         this.store.save(calendar);
 
         //add calendar to dropdown
