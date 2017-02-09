@@ -764,18 +764,7 @@ var Month = function(dateString, calendarObj) {
 };
 
 
-//generate a year/multiple years
-
-
-var extractCalendarState = function(calendarObj) {
-    // Takes a calendar object, extracts it's calendarState, and returns it.
-    
-    // Parameters:
-    // calendarObj: object
-    //     An instance of the Calendar class
-    
-    return calendarObj.state;
-};
+// Calendar Helper functions
 
 var generateUniqueId = function() {
     var uniqueId = Math.floor((Math.random() + Date.now())*10e4);
