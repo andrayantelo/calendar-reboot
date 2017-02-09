@@ -322,6 +322,7 @@ CheckIt.prototype.createCalendar = function() {
         
         // add user as a writer
         this.store.addWriter(this.store.user, calendar);
+        this.store.addReader(this.store.user, calendar);
         this.store.save(calendar);
 
         //add calendar to dropdown

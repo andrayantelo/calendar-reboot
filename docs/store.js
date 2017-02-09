@@ -113,6 +113,37 @@ var firebaseCalendarStorage = function(params) {
         })
     };
     
+    self.addReader = function(user, calObj) {
+        // Add a user to the readers directory in the database
+        var updates = {};
+        updates['calendars/' + calObj.state.uniqueId + '/readers/' + user.uid] = true;
+        
+        self.startWork();
+        return self.database.ref().update(updates)
+        .then(function() {
+            self.endWork();
+        })
+        .catch(function(err) {
+            console.error("error in save function : " + err);
+            self.endWork();
+            return err
+        })
+        
+    };
+    
+    self.removeReader = function(user, calObj) {
+        // Remove a user from the readers directory in the database
+        
+        self.database.ref('calendars/' + calObj.state.uniqueId + '/readers/' + user.uid).remove()
+        .then(function() {
+            self.endWork();
+        })
+        .catch(function(err) {
+            console.error('Unable to remove user: ' + err);
+            self.endWork();
+        })
+    };
+    
     self.save = function(calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
