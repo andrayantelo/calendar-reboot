@@ -9,18 +9,19 @@
     "calendars":{
       "$calendarId": {
         "calendarState": {
-          ".read" : "auth !== null",
+          ".read" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/readers/' + auth.uid).exists())",
           ".write" : "auth !== null && (!data.exists() || root.child('calendars/' +$calendarId + '/writers/' + auth.uid).exists())"
        },
         "writers" : {
-          ".write" : "auth !== null && !data.exists()",
-          ".read": "auth !== null"
-        }
+          ".write" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
+          ".read": "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists()) "
+        },
         "readers" : {
-          ".write" : "auth !== null", 
-          ".read" : "auth !== null"
+          ".write" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
+          ".read" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())"
         }
       }
     }
   }
 }
+
