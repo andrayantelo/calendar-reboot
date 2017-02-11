@@ -799,8 +799,8 @@ var extractCalendarState = function(calendarObj) {
 };
 
 var generateUniqueId = function() {
-    var uniqueId = Math.floor((Math.random() + Date.now())*10e4);
-    return uniqueId
+    var uniqueId = (Math.floor((Math.random() + Date.now())*10e4)).toString();
+    return uniqueId;
     
 };
 
