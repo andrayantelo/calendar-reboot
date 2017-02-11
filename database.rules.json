@@ -12,13 +12,24 @@
           ".read" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/readers/' + auth.uid).exists())",
           ".write" : "auth !== null && (!data.exists() || root.child('calendars/' +$calendarId + '/writers/' + auth.uid).exists())",
           "startDateString": {
-            ".validate" : "newData.isString() && newData.val().length > 0"
+            ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{8}/)"
           },
           "endDateString": {
-            ".validate" : "newData.isString() && newData.val().length > 0"
+            ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{8}/)"
           },
           "title":{
-            ".validate": "newData.isString() && newData.val().length > 0"
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 256"
+          },
+          "uniqueId" : {
+            ".validate" : "newData.isString() && newData.val().length > 0"
+          },
+          "checkedDays" : {
+            "$dateString" : {
+              ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{8}/)",
+              "$dateStringVal" : {
+                ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{1}/)"
+              }
+            }
           }
        },
         "writers" : {
@@ -33,4 +44,3 @@
     }
   }
 }
-
