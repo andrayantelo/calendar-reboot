@@ -188,6 +188,7 @@ var firebaseCalendarStorage = function(params) {
         })
         .catch(function(err) {
             console.error("Unable to set active Id: " + err);
+            self.endWork();
             return err;
         })
     };

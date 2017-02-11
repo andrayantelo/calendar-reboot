@@ -4,12 +4,10 @@
       "$uid": {
         ".read" : "auth !== null && auth.uid === $uid",
         "allCalendarIds" : {
+          //".write" : "true",
           "$calendarId" : {
             ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + $uid).exists())",
-            ".validate" : "newData.isString() && newData.val().length > 0 ",
-              "$calendarTitle" : {
-                ".validate" : "newData.isString() && newData.val().length > 0"
-              }
+            ".validate" : "newData.isString() && newData.val().length > 0"
           }
         },
         "currentActiveCalendar" : {
@@ -37,10 +35,7 @@
           },
           "checkedDays" : {
             "$dateString" : {
-              ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{8}/)",
-              "$dateStringVal" : {
-                ".validate" : "newData.isString() && newData.val().length > 0 && newData.val().matches(/\\d{1}/)"
-              }
+              ".validate" : "$dateString.matches(/\\d{8}/) && (newData.val() === 1 || newData.val() === 0)"
             }
           }
        },
