@@ -2,10 +2,10 @@
   "rules": {
     "users": {
       "$uid": {
+        ".read" : "auth !== null && auth.uid === $uid",
         "allCalendarIds" : {
           "$calendarId" : {
-            ".read" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/readers/' + auth.uid).exists())",
-            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
+            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + $uid).exists())",
             ".validate" : "newData.isString() && newData.val().length > 0 ",
               "$calendarTitle" : {
                 ".validate" : "newData.isString() && newData.val().length > 0"
@@ -13,11 +13,8 @@
           }
         },
         "currentActiveCalendar" : {
-          "$calendarId" : {
-            ".read" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/readers/' + auth.uid).exists())",
-            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",  
+            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + newData.val() + '/writers/' + auth.uid).exists())",  
             ".validate" : "newData.isString() && newData.val().length > 0"
-          }
         }
       }
     },
