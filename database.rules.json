@@ -48,14 +48,14 @@
           ".write" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
           ".read": "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists()) ",
           "$uid" : {
-            ".validate": "newData.isString() && newData.val().length > 0"
+            ".validate": "newData.val() === true || newData.val() === false"
           }
         },
         "readers" : {
           ".write" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
           ".read" : "auth !== null && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + auth.uid).exists())",
           "$uid" : {
-            ".validate" : "newData.isString() && newData.val().length > 0"
+            ".validate" : "newData.val() === true || newData.val() === false"
           }
         }
       }
