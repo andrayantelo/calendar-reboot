@@ -154,8 +154,6 @@ var firebaseCalendarStorage = function(params) {
         var calState = calendarObj.state;
         
         // Store the calendar into allCalendarIds, store calState
-        // TODO work on save method, how to save readers, writers, permissions, 
-        // states, etc.
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
@@ -302,10 +300,18 @@ var firebaseCalendarStorage = function(params) {
         self.startWork();
         var addWriterP = self.addWriter(self.user, calendarObj)
             .then(function() {
-                self.addReader(self.user, calendarObj);
-                self.setActiveById(calendarObj.state.uniqueId);
-                self.save(calendarObj);
-                self.endWork();
+                var addReaderP = self.addReader(self.user, calendarObj);
+                var setActiveP = self.setActiveById(calendarObj.state.uniqueId);
+                var saveP = self.save(calendarObj);
+                Promise.all([addReaderP, setActiveP, saveP])
+                .then(function() {
+                    self.endWork();
+                })
+                .catch(function(err) {
+                    console.error("Error initializing calendar " + err);
+                    self.endWork();
+                })
+                
             })
             .catch(function(err) {
                 console.error("Problems initializing calendar " + err);
