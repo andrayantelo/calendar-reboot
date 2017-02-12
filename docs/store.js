@@ -294,6 +294,26 @@ var firebaseCalendarStorage = function(params) {
             })
         })
     };
+    
+    self.initializeCalendar = function(calendarObj) {
+        // Initializes a calendar in the database. Adds the calendar creator
+        // as a writer and a reader, sets the calendar as the currentActiveCalendar
+        // and then runs the save method (store cal state and allCalendarIds
+        
+        self.startWork();
+        var addWriterP = self.addWriter(self.user, calendarObj)
+        .then(function() {
+            self.addReader(self.user, calendarObj);
+            self.setActiveById(calendar.state.uniqueId);
+            self.store.save(calendar);
+            self.endWork();
+        })
+        .catch(function(err) {
+            console.error("Problems initializing calendar " + err);
+            self.endWork();
+        });
+        
+    };
 
     
     
