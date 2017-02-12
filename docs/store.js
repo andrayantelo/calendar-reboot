@@ -304,8 +304,8 @@ var firebaseCalendarStorage = function(params) {
         var addWriterP = self.addWriter(self.user, calendarObj)
         .then(function() {
             self.addReader(self.user, calendarObj);
-            self.setActiveById(calendar.state.uniqueId);
-            self.store.save(calendar);
+            self.setActiveById(calendarObj.state.uniqueId);
+            self.save(calendarObj);
             self.endWork();
         })
         .catch(function(err) {
