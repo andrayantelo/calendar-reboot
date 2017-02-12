@@ -89,28 +89,27 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("error in save function : " + err);
-            self.endWork();
-            return err
-        })
-        
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+             })
     };
     
     self.removeWriter = function(user, calObj) {
         // Remove a user form the writers directory in the database
         
         self.database.ref('calendars/' + calObj.state.uniqueId + '/writers/' + user.uid).remove()
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error('Unable to remove user: ' + err);
-            self.endWork();
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error('Unable to remove user: ' + err);
+                self.endWork();
+            })
     };
     
     self.addReader = function(user, calObj) {
@@ -120,14 +119,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("error in save function : " + err);
-            self.endWork();
-            return err
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+            })
         
     };
     
@@ -135,13 +134,13 @@ var firebaseCalendarStorage = function(params) {
         // Remove a user from the readers directory in the database
         
         self.database.ref('calendars/' + calObj.state.uniqueId + '/readers/' + user.uid).remove()
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error('Unable to remove user: ' + err);
-            self.endWork();
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error('Unable to remove user: ' + err);
+                self.endWork();
+            })
     };
     
     self.save = function(calendarObj) {
@@ -163,14 +162,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("error in save function : " + err);
-            self.endWork();
-            return err
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+            })
         
     };
     
@@ -183,14 +182,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Unable to set active Id: " + err);
-            self.endWork();
-            return err;
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Unable to set active Id: " + err);
+                self.endWork();
+                return err;
+            })
     };
     
     self.remove = function(calendarObj) {
@@ -210,21 +209,21 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
-        .then(function() {
-            self.database.ref('calendars/' + uniqueId).remove()
             .then(function() {
-                self.endWork();
+                self.database.ref('calendars/' + uniqueId).remove()
+                .then(function() {
+                    self.endWork();
+                })
+                .catch(function(err) {
+                    console.error('Unable to remove calendar: ' + err);
+                    self.endWork();
+                })
             })
             .catch(function(err) {
-                console.error('Unable to remove calendar: ' + err);
+                console.error('Unable to remove calendar from user\'s allCalendarIds: ' + err);
                 self.endWork();
+                return err;
             })
-        })
-        .catch(function(err) {
-            console.error('Unable to remove calendar from user\'s allCalendarIds: ' + err);
-            self.endWork();
-            return err;
-        })
     };
     
     self.removeActive = function() {
@@ -233,14 +232,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref('users/' + userId + '/currentActiveCalendar').remove()
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Unable to remove user's currentActiveCalendar: " + err);
-            self.endWork();
-            return err;
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Unable to remove user's currentActiveCalendar: " + err);
+                self.endWork();
+                return err;
+            })
     };
     
     self.getActive = function() {
@@ -302,16 +301,16 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         var addWriterP = self.addWriter(self.user, calendarObj)
-        .then(function() {
-            self.addReader(self.user, calendarObj);
-            self.setActiveById(calendarObj.state.uniqueId);
-            self.save(calendarObj);
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Problems initializing calendar " + err);
-            self.endWork();
-        });
+            .then(function() {
+                self.addReader(self.user, calendarObj);
+                self.setActiveById(calendarObj.state.uniqueId);
+                self.save(calendarObj);
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Problems initializing calendar " + err);
+                self.endWork();
+            });
         
     };
 
@@ -398,14 +397,13 @@ var LocalCalendarStorage = function(params) {
             }
             else {
                 jitter(reject, "Not found");
-            }
-        })
-        .then( function(ids) {
-            return ids;
-        })
-        .catch( function() {
-            console.log("getAllCalendarIds catch function running.");
-        });
+            }})
+            .then( function(ids) {
+                return ids;
+            })
+            .catch( function() {
+                console.log("getAllCalendarIds catch function running.");
+            });
     };
     
     self.save = function(calendarObj) {
