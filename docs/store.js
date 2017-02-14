@@ -215,12 +215,12 @@ var firebaseCalendarStorage = function(params) {
                     self.endWork();
                 })
                 .catch(function(err) {
-                    console.error('Unable to remove calendar: ' + err);
+                    console.error(`Unable to remove calendar from calendars/ : ` + err);
                     self.endWork();
                 })
             })
             .catch(function(err) {
-                console.error(`Unable to remove calendar from user's allCalendarIds:  err`);
+                console.error(`Unable to remove calendar from user's allCalendarIds :` + err);
                 self.endWork();
                 return err;
             })
