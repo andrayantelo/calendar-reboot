@@ -519,9 +519,7 @@ CheckIt.prototype.clearPage = function() {
 $(document).ready(function() {
     
     checkit = new CheckIt();
-    // Event listener for backgroundActivityChange
-   
-    
+
 });
 
 
@@ -534,6 +532,7 @@ var Month = function(dateString, calendarObj) {
     //date will be of the format moment("YYYYMMDD")
     self.dateString = dateString;
     self.date = moment(dateString, "YYYYMMDD");
+    // Day of the week of the first day
     self.firstDayIndex = self.date.day();
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
