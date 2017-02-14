@@ -28,4 +28,12 @@ QUnit.test("init month object test", function( assert ) {
     assert.ok(moment.isMoment(testmonth.date));
     assert.equal(testmonth.firstDayIndex, 2);
     assert.equal(testmonth.numberOfDays, 28);
+    assert.equal(testmonth.monthYear, 2017);
+    
+    assert.equal(testmonth.monthIndex, 1);
+    assert.equal(testmonth.monthName, "February");
+    assert.equal(testmonth.startDay, 14);
+    assert.deepEqual(testmonth.dayIndex, {});
+    assert.equal(testmonth.monthId, "20171");
+    assert.equal(typeof calObj, "object");
 });
