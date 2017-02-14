@@ -205,6 +205,8 @@ var firebaseCalendarStorage = function(params) {
         // removing currentActive status has its own method
         var userId = self.user.uid;
         
+        
+        // TODO modify remove, currently do not have permission
         self.startWork();
         return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
             .then(function() {
