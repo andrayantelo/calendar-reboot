@@ -218,7 +218,7 @@ var firebaseCalendarStorage = function(params) {
                 })
             })
             .catch(function(err) {
-                console.error('Unable to remove calendar from user\'s allCalendarIds: ' + err);
+                console.error(`Unable to remove calendar from user's allCalendarIds:  err`);
                 self.endWork();
                 return err;
             })
@@ -304,13 +304,13 @@ var firebaseCalendarStorage = function(params) {
                 var setActiveP = self.setActiveById(calendarObj.state.uniqueId);
                 var saveP = self.save(calendarObj);
                 Promise.all([addReaderP, setActiveP, saveP])
-                .then(function() {
-                    self.endWork();
-                })
-                .catch(function(err) {
-                    console.error("Error initializing calendar " + err);
-                    self.endWork();
-                })
+                    .then(function() {
+                        self.endWork();
+                    })
+                    .catch(function(err) {
+                        console.error("Error initializing calendar " + err);
+                        self.endWork();
+                    })
                 
             })
             .catch(function(err) {
