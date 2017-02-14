@@ -81,6 +81,68 @@ var firebaseCalendarStorage = function(params) {
         })
     };
     
+    self.addWriter = function(user, calObj) {
+        // Add a user to the writers directory in the database.
+        
+        var updates = {};
+        updates['calendars/' + calObj.state.uniqueId + '/writers/' + user.uid] = true;
+        
+        self.startWork();
+        return self.database.ref().update(updates)
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+             })
+    };
+    
+    self.removeWriter = function(user, calObj) {
+        // Remove a user form the writers directory in the database
+        
+        self.database.ref('calendars/' + calObj.state.uniqueId + '/writers/' + user.uid).remove()
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error('Unable to remove user: ' + err);
+                self.endWork();
+            })
+    };
+    
+    self.addReader = function(user, calObj) {
+        // Add a user to the readers directory in the database
+        var updates = {};
+        updates['calendars/' + calObj.state.uniqueId + '/readers/' + user.uid] = true;
+        
+        self.startWork();
+        return self.database.ref().update(updates)
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+            })
+        
+    };
+    
+    self.removeReader = function(user, calObj) {
+        // Remove a user from the readers directory in the database
+        
+        self.database.ref('calendars/' + calObj.state.uniqueId + '/readers/' + user.uid).remove()
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error('Unable to remove user: ' + err);
+                self.endWork();
+            })
+    };
+    
     self.save = function(calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
@@ -91,24 +153,22 @@ var firebaseCalendarStorage = function(params) {
         var calTitle = calendarObj.state.title;
         var calState = calendarObj.state;
         
-        // Store the user's allCalendarIds and their calendarState .. setting the
-        // active calendar has its own method.
+        // Store the calendar into allCalendarIds, store calState
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
-        updates['calendars/' + calUniqueId + '/read/' + userId] = true;
-        updates['calendars/' + calUniqueId + '/write/' + userId] = true;
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Error in save function : " + err);
-            self.endWork();
-            return err;
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("error in save function : " + err);
+                self.endWork();
+                return err
+            })
+        
     };
     
     self.setActiveById = function(calendarObjId) {
@@ -120,13 +180,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Unable to set active Id: " + err);
-            return err;
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Unable to set active Id: " + err);
+                self.endWork();
+                return err;
+            })
     };
     
     self.remove = function(calendarObj) {
@@ -146,21 +207,21 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
-        .then(function() {
-            self.database.ref('calendars/' + uniqueId).remove()
             .then(function() {
-                self.endWork();
+                self.database.ref('calendars/' + uniqueId).remove()
+                .then(function() {
+                    self.endWork();
+                })
+                .catch(function(err) {
+                    console.error('Unable to remove calendar: ' + err);
+                    self.endWork();
+                })
             })
             .catch(function(err) {
-                console.error('Unable to remove calendar: ' + err);
+                console.error(`Unable to remove calendar from user's allCalendarIds:  err`);
                 self.endWork();
+                return err;
             })
-        })
-        .catch(function(err) {
-            console.error('Unable to remove calendar from user\'s allCalendarIds: ' + err);
-            self.endWork();
-            return err;
-        })
     };
     
     self.removeActive = function() {
@@ -169,14 +230,14 @@ var firebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref('users/' + userId + '/currentActiveCalendar').remove()
-        .then(function() {
-            self.endWork();
-        })
-        .catch(function(err) {
-            console.error("Unable to remove user's currentActiveCalendar: " + err);
-            self.endWork();
-            return err;
-        })
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Unable to remove user's currentActiveCalendar: " + err);
+                self.endWork();
+                return err;
+            })
     };
     
     self.getActive = function() {
@@ -229,6 +290,34 @@ var firebaseCalendarStorage = function(params) {
                 return err;
             })
         })
+    };
+    
+    self.initializeCalendar = function(calendarObj) {
+        // Initializes a calendar in the database. Adds the calendar creator
+        // as a writer and a reader, sets the calendar as the currentActiveCalendar
+        // and then runs the save method (store cal state and allCalendarIds
+        
+        self.startWork();
+        var addWriterP = self.addWriter(self.user, calendarObj)
+            .then(function() {
+                var addReaderP = self.addReader(self.user, calendarObj);
+                var setActiveP = self.setActiveById(calendarObj.state.uniqueId);
+                var saveP = self.save(calendarObj);
+                Promise.all([addReaderP, setActiveP, saveP])
+                    .then(function() {
+                        self.endWork();
+                    })
+                    .catch(function(err) {
+                        console.error("Error initializing calendar " + err);
+                        self.endWork();
+                    })
+                
+            })
+            .catch(function(err) {
+                console.error("Problems initializing calendar " + err);
+                self.endWork();
+            });
+        
     };
 
     
@@ -331,14 +420,13 @@ var LocalCalendarStorage = function(params) {
             }
             else {
                 jitter(reject, "Not found");
-            }
-        })
-        .then( function(ids) {
-            return ids;
-        })
-        .catch( function() {
-            console.log("getAllCalendarIds catch function running.");
-        });
+            }})
+            .then( function(ids) {
+                return ids;
+            })
+            .catch( function() {
+                console.log("getAllCalendarIds catch function running.");
+            });
     };
     
     self.save = function(calendarObj) {
