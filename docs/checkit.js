@@ -552,7 +552,6 @@ var Month = function(dateString, calendarObj) {
         //    the id of the div where you want to place your month div, this
         //    will probably end up being hardcoded in
         
-        //HARDCODED FOR NOW
         var $div = $('#calendarDiv');
         var yearHeader = "<div class='page-header text-center'>" +
             "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
