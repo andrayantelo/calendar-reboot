@@ -22,7 +22,7 @@ var valentine = moment("2017-02-14", "YYYY-MM-DD");
 var dateString = valentine.format("YYYYMMDD");
 var calObj = new Calendar({}, "");
 
-QUnit.test("init month object test", function( assert ) {
+QUnit.test("init month object test", function(assert) {
     var testmonth = new Month(dateString, calObj);
     assert.equal(testmonth.dateString, dateString);
     assert.ok(moment.isMoment(testmonth.date));
@@ -36,4 +36,8 @@ QUnit.test("init month object test", function( assert ) {
     assert.deepEqual(testmonth.dayIndex, {});
     assert.equal(testmonth.monthId, "20171");
     assert.equal(typeof calObj, "object");
+});
+
+QUnit.test("generateEmptyMonthDiv test", function (assert) {
+    
 });
