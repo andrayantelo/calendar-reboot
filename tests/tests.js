@@ -12,20 +12,32 @@ var value = "hello";
 assert.equal( value, "hello", "We expect value to be hello" );
 });
 
+
 // Tests for checkit.js
 
-// Testing Month Object
-QUnit.module( "Month Tests" );
-// Hardcoded a day because javascript's Date object does not have a way
-// to get the number of days in the month.
 var valentine = moment("2017-02-14", "YYYY-MM-DD");
 var dateString = valentine.format("YYYYMMDD");
 var calObj = new Calendar({}, "");
+var testmonth = new Month(dateString, calObj);
+
+// Testing Month Object
+QUnit.module( "Month Tests", {
+// Hardcoded a date for moment object because javascript's Date object
+// does not have a way to get the number of days in the month.
+
+
+setup: function() {
+    // Prepare something once for all tests
+
+}
+
+});
 
 QUnit.test("init month object test", function(assert) {
-    var testmonth = new Month(dateString, calObj);
-    assert.equal(testmonth.dateString, dateString);
-    assert.ok(moment.isMoment(testmonth.date));
+    
+    assert.expect(11);
+    assert.equal(testmonth.dateString, dateString, "dateString property");
+    assert.ok(moment.isMoment(testmonth.date), "testmonth.date is a moment obj");
     assert.equal(testmonth.firstDayIndex, 2);
     assert.equal(testmonth.numberOfDays, 28);
     assert.equal(testmonth.monthYear, 2017);
@@ -39,5 +51,5 @@ QUnit.test("init month object test", function(assert) {
 });
 
 QUnit.test("generateEmptyMonthDiv test", function (assert) {
-    
+    assert.expect(0);
 });

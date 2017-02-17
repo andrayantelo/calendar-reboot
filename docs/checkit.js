@@ -544,7 +544,7 @@ var Month = function(dateString, calendarObj) {
     self.calendar = calendarObj;
     
     self.generateEmptyMonthDiv = function(isFirst) {
-        //add a div to html code containing the table template for a month 
+        // Add a div to html code containing the template for a month 
         
         //Parameters: 
         //    div: string
