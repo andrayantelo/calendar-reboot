@@ -543,28 +543,31 @@ var Month = function(dateString, calendarObj) {
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
     self.calendar = calendarObj;
     
-    self.generateEmptyMonthDiv = function(isFirst) {
+    self.generateEmptyMonthDiv = function(isFirst, div) {
         // Add a div to html code containing the template for a month 
         
         //Parameters: 
+        //    isFirst: boolean
         //    div: string
         
-        //    the id of the div where you want to place your month div, this
-        //    will probably end up being hardcoded in
+        //  If isFirst is false, then the month is not the first month of the 
+        //  calendar that the user is creating.
+        //  div specifies the id of the div where you want to place your month
         
-        var $div = $('#calendarDiv');
+        
+        var $div = $(`#${div}`);
         var yearHeader = "<div class='page-header text-center'>" +
             "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
             "</div>";
         
         //the div ID is the monthID
         
-        $div.append('<div class="monthframe" id=' + self.monthId + '></div>');
-        $div.append('<div class="monthframe"></div>');
+        $div.append(`<div class="monthframe" id="${self.monthId}"></div>`);
+        
         if (self.monthIndex === 0 || isFirst) {
-            $('#' + self.monthId).append(yearHeader);
+            $(`#${self.monthId}`).append(yearHeader);
         }
-        $('#' + self.monthId).append($('#template').html());
+        $(`#${self.monthId}`).append($('#template').html());
         
         
     };
@@ -789,7 +792,7 @@ Calendar.prototype.generateEmptyCalendar = function(monthObjectsArray) {
     
     monthObjectsArray.forEach (function(monthObj, index) {
         var isFirst = index === 0;
-        monthObj.generateEmptyMonthDiv(isFirst);
+        monthObj.generateEmptyMonthDiv(isFirst, "calendarDiv");
             
     });
     

@@ -29,7 +29,12 @@ beforeEach: function() {
     this.dateString = this.valentine.format("YYYYMMDD");
     this.calObj = new Calendar({}, "");
     this.testmonth = new Month(this.dateString, this.calObj);
+    this.fixture = $("#qunit-fixture");
+},
 
+afterEach: function() {
+    // Clean up after each test
+    this.fixture.empty();
 }
 
 });
@@ -39,18 +44,25 @@ QUnit.test("init month object test", function(assert) {
     assert.expect(11);
     assert.equal(this.testmonth.dateString, this.dateString, "dateString property");
     assert.ok(moment.isMoment(this.testmonth.date), "testmonth.date is a moment obj");
-    assert.equal(this.testmonth.firstDayIndex, 2);
-    assert.equal(this.testmonth.numberOfDays, 28);
-    assert.equal(this.testmonth.monthYear, 2017);
+    assert.equal(this.testmonth.firstDayIndex, 2, "Initialized first day index");
+    assert.equal(this.testmonth.numberOfDays, 28, "Initialized number of days");
+    assert.equal(this.testmonth.monthYear, 2017, "Initialized the year");
     
-    assert.equal(this.testmonth.monthIndex, 1);
-    assert.equal(this.testmonth.monthName, "February");
-    assert.equal(this.testmonth.startDay, 14);
-    assert.deepEqual(this.testmonth.dayIndex, {});
-    assert.equal(this.testmonth.monthId, "20171");
-    assert.equal(typeof this.calObj, "object");
+    assert.equal(this.testmonth.monthIndex, 1, "Initialized the index of the month");
+    assert.equal(this.testmonth.monthName, "February", "Initialized the month's name");
+    assert.equal(this.testmonth.startDay, 14, "Initialized the start day");
+    assert.deepEqual(this.testmonth.dayIndex, {}, "Initialized the day Index object");
+    assert.equal(this.testmonth.monthId, "20171", "Initialized the month Id");
+    assert.equal(typeof this.calObj, "object", "Verify calendar object is an object");
 });
 
 QUnit.test("generateEmptyMonthDiv test", function (assert) {
     assert.expect(0);
+    // Test if setting this month as the first in calendar generates the yearHeader
+    this.testmonth.generateEmptyMonthDiv(true, 'calendarDiv');
+    var $yearHeader = this.fixture.find(this.monthId);
+    console.log(this.fixture.children().children().length);
+    //assert.equal($yearHeader.text(), this.testmonth.monthYear);
+    
+    
 });
