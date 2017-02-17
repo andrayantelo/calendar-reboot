@@ -15,10 +15,7 @@ assert.equal( value, "hello", "We expect value to be hello" );
 
 // Tests for checkit.js
 
-var valentine = moment("2017-02-14", "YYYY-MM-DD");
-var dateString = valentine.format("YYYYMMDD");
-var calObj = new Calendar({}, "");
-var testmonth = new Month(dateString, calObj);
+
 
 // Testing Month Object
 QUnit.module( "Month Tests", {
@@ -26,8 +23,12 @@ QUnit.module( "Month Tests", {
 // does not have a way to get the number of days in the month.
 
 
-setup: function() {
+beforeEach: function() {
     // Prepare something once for all tests
+    this.valentine = moment("2017-02-14", "YYYY-MM-DD");
+    this.dateString = this.valentine.format("YYYYMMDD");
+    this.calObj = new Calendar({}, "");
+    this.testmonth = new Month(this.dateString, this.calObj);
 
 }
 
@@ -36,18 +37,18 @@ setup: function() {
 QUnit.test("init month object test", function(assert) {
     
     assert.expect(11);
-    assert.equal(testmonth.dateString, dateString, "dateString property");
-    assert.ok(moment.isMoment(testmonth.date), "testmonth.date is a moment obj");
-    assert.equal(testmonth.firstDayIndex, 2);
-    assert.equal(testmonth.numberOfDays, 28);
-    assert.equal(testmonth.monthYear, 2017);
+    assert.equal(this.testmonth.dateString, this.dateString, "dateString property");
+    assert.ok(moment.isMoment(this.testmonth.date), "testmonth.date is a moment obj");
+    assert.equal(this.testmonth.firstDayIndex, 2);
+    assert.equal(this.testmonth.numberOfDays, 28);
+    assert.equal(this.testmonth.monthYear, 2017);
     
-    assert.equal(testmonth.monthIndex, 1);
-    assert.equal(testmonth.monthName, "February");
-    assert.equal(testmonth.startDay, 14);
-    assert.deepEqual(testmonth.dayIndex, {});
-    assert.equal(testmonth.monthId, "20171");
-    assert.equal(typeof calObj, "object");
+    assert.equal(this.testmonth.monthIndex, 1);
+    assert.equal(this.testmonth.monthName, "February");
+    assert.equal(this.testmonth.startDay, 14);
+    assert.deepEqual(this.testmonth.dayIndex, {});
+    assert.equal(this.testmonth.monthId, "20171");
+    assert.equal(typeof this.calObj, "object");
 });
 
 QUnit.test("generateEmptyMonthDiv test", function (assert) {
