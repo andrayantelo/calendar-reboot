@@ -56,13 +56,14 @@ QUnit.test("init month object test", function(assert) {
     assert.equal(typeof this.calObj, "object", "Verify calendar object is an object");
 });
 
-QUnit.test("generateEmptyMonthDiv test", function (assert) {
-    assert.expect(0);
-    // Test if setting this month as the first in calendar generates the yearHeader
-    this.testmonth.generateEmptyMonthDiv(true, 'calendarDiv');
-    var $yearHeader = this.fixture.find(this.monthId);
-    console.log(this.fixture.children().children().length);
-    //assert.equal($yearHeader.text(), this.testmonth.monthYear);
-    
-    
-});
+function yearHeaderTest(name, isFirst, numOfChildren, div) {
+    QUnit.test(name, function( assert ) {
+        assert.expect(1);
+        this.testmonth.generateEmptyMonthDiv(isFirst, div);
+        var childrenLen = this.fixture.find("*").length;
+        
+        assert.equal(childrenLen, numOfChildren);
+    });
+}
+yearHeaderTest("generateEmptyMonthDiv with Header", true, 4, 'calendarDiv');
+yearHeaderTest("generateEmptyMonthDiv without Header", false, 2, 'calendarDiv');
