@@ -67,3 +67,17 @@ function yearHeaderTest(name, isFirst, numOfChildren, div) {
 }
 yearHeaderTest("generateEmptyMonthDiv with Header", true, 4, 'calendarDiv');
 yearHeaderTest("generateEmptyMonthDiv without Header", false, 2, 'calendarDiv');
+
+QUnit.test("generateEmptyMonthDiv monthframe test", function( assert ) {
+    // Test that the monthframe div has the correct number of children
+    // And that it has the correct id
+    assert.expect(2);
+    // Add a div with id template to fixture
+    this.fixture.append('<div id="template"><div id="onlyChild"></div></div>');
+    
+    this.testmonth.generateEmptyMonthDiv(false, 'calendarDiv', 'template');
+    var monthframeChild = this.fixture.find(".monthframe").children()[0].id;
+    assert.equal(monthframeChild, "onlyChild");
+    var monthframeId = this.fixture.find(".monthframe").attr('id');
+    assert.equal(monthframeId, this.testmonth.monthId);
+});
