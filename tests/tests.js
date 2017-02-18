@@ -87,9 +87,10 @@ QUnit.test("fillMonthDiv test", function ( assert ) {
     var done = assert.async();
     this.fixture.find('#calendarDiv').load('template.html', function() {
         var fixture = $("#qunit-fixture");
+        // TODO Have to perform assertions in here
         console.log("Load was performed.");
         console.log(this);
-        console.log(fixture.find(this.id).children());
+        console.log(fixture.html());
       done();
     })
     // TODO when you print out this on line 90, you see that template html
@@ -97,6 +98,7 @@ QUnit.test("fillMonthDiv test", function ( assert ) {
     // when it should be at least 1 since template is a child of calendarDiv
     // This is happening asynchronously and I have not figured out how to manage this yet.
     console.log(this.fixture.find('#calendarDiv').children().length);
+    // fixture appears to get reset out here.
     console.log(this.fixture.html());
   
 });
