@@ -81,3 +81,22 @@ QUnit.test("generateEmptyMonthDiv monthframe test", function( assert ) {
     var monthframeId = this.fixture.find(".monthframe").attr('id');
     assert.equal(monthframeId, this.testmonth.monthId);
 });
+
+QUnit.test("fillMonthDiv test", function ( assert ) {
+    assert.expect(0);
+    var done = assert.async();
+    this.fixture.find('#calendarDiv').load('template.html', function() {
+        var fixture = $("#qunit-fixture");
+        console.log("Load was performed.");
+        console.log(this);
+        console.log(fixture.find(this.id).children());
+      done();
+    })
+    // TODO when you print out this on line 90, you see that template html
+    // was successfully added, however, the next line still prints out 0
+    // when it should be at least 1 since template is a child of calendarDiv
+    // This is happening asynchronously and I have not figured out how to manage this yet.
+    console.log(this.fixture.find('#calendarDiv').children().length);
+    console.log(this.fixture.html());
+  
+});

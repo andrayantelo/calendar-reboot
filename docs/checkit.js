@@ -620,7 +620,7 @@ var Month = function(dateString, calendarObj) {
         //fill the template table with month information (name, number of
         //days, year, checked days if any, etc.
         
-        var $monthId = $('#'+ self.monthId);
+        var $monthId = $(`#${self.monthId}`);
         
         //self.clearMonthDiv();  <-- Do I need this?
         
