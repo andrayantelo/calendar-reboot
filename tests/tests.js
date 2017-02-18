@@ -91,6 +91,8 @@ QUnit.test("fillMonthDiv test", function ( assert ) {
         console.log("Load was performed.");
         console.log(this);
         console.log(fixture.html());
+        // Test correct divs were added
+        // Test correct number of nill and actualDays
       done();
     })
     // TODO when you print out this on line 90, you see that template html
