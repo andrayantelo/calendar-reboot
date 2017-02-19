@@ -205,22 +205,18 @@ var firebaseCalendarStorage = function(params) {
         // removing currentActive status has its own method
         var userId = self.user.uid;
         
-        
         // TODO modify remove, currently do not have permission
+        var updates = {};
+        updates['users/' + userId + '/allCalendarIds'] = null;
+        updates['calendars/' + uniqueId] = null;
+        
         self.startWork();
-        return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
+        return self.database.ref().update(updates)
             .then(function() {
-                self.database.ref('calendars/' + uniqueId).remove()
-                .then(function() {
                     self.endWork();
-                })
-                .catch(function(err) {
-                    console.error(`Unable to remove calendar from calendars/ : ` + err);
-                    self.endWork();
-                })
             })
             .catch(function(err) {
-                console.error(`Unable to remove calendar from user's allCalendarIds :` + err);
+                console.error(`Problem removing calendar from database :` + err);
                 self.endWork();
                 return err;
             })
