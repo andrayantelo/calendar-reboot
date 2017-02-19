@@ -210,12 +210,18 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
 
 CheckIt.prototype.updateUserDescription = function(user) {
     // Updates the user's picture and name
-    
+    var profilePicUrl = user.photoURL; 
+    var userName = user.displayName;
+  
     this.$userName.empty();
     this.$userName.append(user.displayName);
     
-    this.$userPic.css('background-image', 'url("/public/profile_placeholder.png")');
-    this.$userPic.css('background-image',  'url(' + user.photoURL + ')');
+    if (profilePicUrl !== null) {
+        this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
+    }
+    else {
+        this.$userPic.css('background-image', 'url("/public/profile_placeholder.png")');
+    }
 };
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
@@ -225,8 +231,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
+
+        // Set the user's profile pic and name.
         this.updateUserDescription(user);
-        
+
         // Show user's profile and sign-out button.
         this.$userName.removeAttr('hidden');
         this.$userPic.removeAttr('hidden');
