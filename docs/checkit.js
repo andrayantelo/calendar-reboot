@@ -111,6 +111,9 @@ CheckIt.prototype.hideLoadingWheel = function() {
 CheckIt.prototype.fillDropdown = function() {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
+    // Clear the dropdown before filling it 
+    this.$calendarDropdown.empty();
+    
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
@@ -205,6 +208,22 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
     
 };
 
+CheckIt.prototype.updateUserDescription = function(user) {
+    // Updates the user's picture and name
+    var profilePicUrl = user.photoURL; 
+    var userName = user.displayName;
+  
+    this.$userName.empty();
+    this.$userName.append(user.displayName);
+    
+    if (profilePicUrl !== null) {
+        this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
+    }
+    else {
+        this.$userPic.css('background-image', 'url("/public/profile_placeholder.png")');
+    }
+};
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
@@ -212,18 +231,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
-        // Get profile pic and user's name from the Firebase user object.
-        var profilePicUrl = user.photoURL; 
-        var userName = user.displayName;
-       
+
         // Set the user's profile pic and name.
-        if (profilePicUrl !== null) {
-            this.$userPic.css('background-image',  'url(' + profilePicUrl + ')');
-        }
-        
-        this.$userName.empty();
-        this.$userName.append(userName);
-    
+        this.updateUserDescription(user);
+
         // Show user's profile and sign-out button.
         this.$userName.removeAttr('hidden');
         this.$userPic.removeAttr('hidden');
@@ -315,8 +326,8 @@ CheckIt.prototype.createCalendar = function() {
 
         var calendar = new Calendar(state, this);
         
-        this.store.setActiveById(calendar.state.uniqueId);
-        this.store.save(calendar);
+        // Initialize calendar in the storage
+        this.store.initializeCalendar(calendar);
 
         //add calendar to dropdown
         this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
@@ -351,6 +362,7 @@ CheckIt.prototype.deleteCalendar = function() {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
+    
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
 
@@ -359,6 +371,9 @@ CheckIt.prototype.deleteCalendar = function() {
                 this.removeFromCalendarDropdown(currentCalendarId);
                 //delete the calendar and remove its active calendar status
                 this.store.removeById(currentCalendarId);
+                // To delete a calendar you have to be looking at it and if you
+                // are looking at it that means it is the currentActiveCalendar
+                this.store.removeActive();
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
@@ -770,8 +785,8 @@ var Month = function(dateString, calendarObj) {
 // Calendar Helper functions
 
 var generateUniqueId = function() {
-    var uniqueId = Math.floor((Math.random() + Date.now())*10e4);
-    return uniqueId
+    var uniqueId = (Math.floor((Math.random() + Date.now())*10e4)).toString();
+    return uniqueId;
     
 };
 

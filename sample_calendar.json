@@ -6,14 +6,14 @@
             "startDateString":"20170101",
             "endDateString":"20170202",
             "title":"hi",
-            "uniqueId":148460826559529600,
+            "uniqueId":"148460826559529600",
             "checkedDays":{}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              },
-             "write" : {
+             "writers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              }
 
@@ -29,10 +29,10 @@
             "checkedDays":{"20170111":1,"20170112":1}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              },
-             "write" : {
+             "writers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
              }
 
@@ -42,16 +42,16 @@
             {
             "startDateString":"20170103",
             "endDateString":"20170524",
-            "title":"ass",
+            "title":"No Oreos",
             "uniqueId":148461051598386460,
             "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
             },
 
-             "read" : {
+             "readers" : {
                  "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true,
                  "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
              },
-             "write" : {
+             "writers" : {
                  "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
              }        
 
@@ -70,7 +70,7 @@
         "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : {
             "email" : "johntyree@gmail.com",
             "allCalendarIds" : {
-              "148461051598386460":"ass"
+              "148461051598386460":"No Oreos"
             },
             "currentActiveCalendar" : "148461051598386460"
         }
