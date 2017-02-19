@@ -1,81 +1,78 @@
 {
-	"writers": {
-		"148460826559529600": {
-			"JULxYGaHuFYlSkXqTC2Fx9KIofp2": true
-		},
-		"148461003056534700": {
-			"JULxYGaHuFYlSkXqTC2Fx9KIofp2": true
-		},
-		"148461051598386460": {
-			"HoQHGYBMwaXAtIKDP5wD1EkjcuX2": true
-		}
+    "calendars" : {
+        "148460826559529600" : {
+            "calendarState" : 
+            {
+            "startDateString":"20170101",
+            "endDateString":"20170202",
+            "title":"hi",
+            "uniqueId":"148460826559529600",
+            "checkedDays":{}
+            },
 
-	},
-	"readers": {
-		"148460826559529600": {
-			"JULxYGaHuFYlSkXqTC2Fx9KIofp2": true
-		},
-		"148461003056534700": {
-			"JULxYGaHuFYlSkXqTC2Fx9KIofp2": true
-		},
-		"148461051598386460": {
-			"HoQHGYBMwaXAtIKDP5wD1EkjcuX2": true
-		}
-	},
-	"calendars": {
-		"148460826559529600": {
-			"calendarState": {
-				"startDateString": "20170101",
-				"endDateString": "20170202",
-				"title": "hi",
-				"uniqueId": "148460826559529600",
-				"checkedDays": {}
-			}
-		},
+             "readers" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "writers" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
 
-		"148461003056534700": {
-			"calendarState": {
-				"startDateString": "20170109",
-				"endDateString": "20170302",
-				"title": "world",
-				"uniqueId": 148461003056534700,
-				"checkedDays": {
-					"20170111": 1,
-					"20170112": 1
-				}
-			}
+         },
+        
+        "148461003056534700" : {
+            "calendarState" :
+            {
+            "startDateString":"20170109",
+            "endDateString":"20170302",
+            "title":"world",
+            "uniqueId":148461003056534700,
+            "checkedDays":{"20170111":1,"20170112":1}
+            },
 
-		},
-		"148461051598386460": {
-			"calendarState": {
-				"startDateString": "20170103",
-				"endDateString": "20170524",
-				"title": "ass",
-				"uniqueId": 148461051598386460,
-				"checkedDays": {
-					"20170105": 1,
-					"20170106": 1,
-					"20170107": 1
-				}
-			}
-		}
-	},
-	"users": {
-		"JULxYGaHuFYlSkXqTC2Fx9KIofp2": {
-			"email": "andrayantelo@gmail.com",
-			"allCalendarIds": {
-				"148460826559529600": "hi",
-				"148461003056534700": "world"
-			},
-			"currentActiveCalendar": "148461003056534700"
+             "readers" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             },
+             "writers" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true
+             }
 
-		},
-		"HoQHGYBMwaXAtIKDP5wD1EkjcuX2": {
-			"email": "johntyree@gmail.com",
-			"allCalendarIds": {
-				"148461051598386460": "ass"
-			},
-			"currentActiveCalendar": "148461051598386460"
-		}
-	}
+        },
+        "148461051598386460" : {
+            "calendarState" :
+            {
+            "startDateString":"20170103",
+            "endDateString":"20170524",
+            "title":"ass",
+            "uniqueId":148461051598386460,
+            "checkedDays":{"20170105":1,"20170106":1,"20170107":1}
+            },
+
+             "readers" : {
+                 "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : true,
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             },
+             "writers" : {
+                 "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : true
+             }        
+
+        }
+    },
+    "users" : {
+        "JULxYGaHuFYlSkXqTC2Fx9KIofp2" : {
+            "email" : "andrayantelo@gmail.com",
+            "allCalendarIds" : {
+                "148460826559529600":"hi",
+                "148461003056534700":"world"
+                },
+            "currentActiveCalendar" : "148461003056534700"
+
+        },
+        "HoQHGYBMwaXAtIKDP5wD1EkjcuX2" : {
+            "email" : "johntyree@gmail.com",
+            "allCalendarIds" : {
+              "148461051598386460":"ass"
+            },
+            "currentActiveCalendar" : "148461051598386460"
+        }
+    }
 }

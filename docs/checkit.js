@@ -354,6 +354,8 @@ CheckIt.prototype.deleteCalendar = function() {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
+    
+    // TODO - also removeCurrentActiveCalendar in here
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
 
