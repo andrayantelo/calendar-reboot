@@ -3,15 +3,14 @@
     "users": {
       "$uid": {
         ".read" : "auth !== null && auth.uid === $uid",
-        "allCalendarIds" : {
+        ".write" : "auth !== null && auth.uid === $uid",
+        "allCalendarIds" : { 
           "$calendarId" : {
-            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + $calendarId + '/writers/' + $uid).exists())",
-            ".validate" : "newData.isString() && newData.val().length > 0"
+            ".validate" : "newData.val() === newData.parent().parent().parent().parent().child('calendars/' + $calendarId + '/calendarState/title').val()"
           }
         },
         "currentActiveCalendar" : {
-            ".write" : "auth !== null && auth.uid === $uid && (!data.exists() || root.child('calendars/' + newData.val() + '/readers/' + auth.uid).exists())",  
-            ".validate" : "newData.isString() && newData.val().length > 0"
+            ".validate" : "newData.val().matches(/[A-Za-z0-9]+/)"
         }
       }
     },
@@ -30,7 +29,7 @@
             ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 256"
           },
           "uniqueId" : {
-            ".validate" : "newData.val().matches(/([A-Za-z0-9]+/)"
+            ".validate" : "newData.val().matches(/[A-Za-z0-9]+/)"
           },
           "checkedDays" : {
             "$dateString" : {

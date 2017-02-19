@@ -155,6 +155,7 @@ var firebaseCalendarStorage = function(params) {
         
         // Store the calendar into allCalendarIds, store calState
         var updates = {};
+       
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
         
@@ -205,20 +206,19 @@ var firebaseCalendarStorage = function(params) {
         // removing currentActive status has its own method
         var userId = self.user.uid;
         
+        var updates = {};
+        updates['users/' + userId + '/allCalendarIds/' + uniqueId] = null;
+        updates['calendars/' + uniqueId + '/calendarState'] = null;
+        updates['calendars/' + uniqueId + '/readers'] = null;
+        updates['calendars/' + uniqueId + '/writers'] = null;
+        
         self.startWork();
-        return self.database.ref('users/' + userId + '/allCalendarIds/' + uniqueId).remove()
+        return self.database.ref().update(updates)
             .then(function() {
-                self.database.ref('calendars/' + uniqueId).remove()
-                .then(function() {
                     self.endWork();
-                })
-                .catch(function(err) {
-                    console.error('Unable to remove calendar: ' + err);
-                    self.endWork();
-                })
             })
             .catch(function(err) {
-                console.error(`Unable to remove calendar from user's allCalendarIds:  err`);
+                console.error(`Problem removing calendar from database :` + err);
                 self.endWork();
                 return err;
             })
@@ -227,9 +227,11 @@ var firebaseCalendarStorage = function(params) {
     self.removeActive = function() {
         // Return a promise, remove the active_calendar item from storage.
         var userId = self.user.uid;
+        var updates = {};
+        updates['users/' + userId + '/currentActiveCalendar'] = null;
         
         self.startWork();
-        return self.database.ref('users/' + userId + '/currentActiveCalendar').remove()
+        return self.database.ref().update(updates)
             .then(function() {
                 self.endWork();
             })
