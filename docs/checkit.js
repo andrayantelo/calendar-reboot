@@ -354,6 +354,7 @@ CheckIt.prototype.deleteCalendar = function() {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
+    
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
 
@@ -362,6 +363,9 @@ CheckIt.prototype.deleteCalendar = function() {
                 this.removeFromCalendarDropdown(currentCalendarId);
                 //delete the calendar and remove its active calendar status
                 this.store.removeById(currentCalendarId);
+                // To delete a calendar you have to be looking at it and if you
+                // are looking at it that means it is the currentActiveCalendar
+                this.store.removeActive();
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
