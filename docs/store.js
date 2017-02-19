@@ -207,13 +207,12 @@ var firebaseCalendarStorage = function(params) {
         // removing currentActive status has its own method
         var userId = self.user.uid;
         
-        // TODO modify remove, currently do not have permission
         var updates = {};
         updates['users/' + userId + '/allCalendarIds/' + uniqueId] = null;
         updates['calendars/' + uniqueId + '/calendarState'] = null;
         updates['calendars/' + uniqueId + '/readers'] = null;
         updates['calendars/' + uniqueId + '/writers'] = null;
-        console.log(updates);
+        
         self.startWork();
         return self.database.ref().update(updates)
             .then(function() {
@@ -229,9 +228,11 @@ var firebaseCalendarStorage = function(params) {
     self.removeActive = function() {
         // Return a promise, remove the active_calendar item from storage.
         var userId = self.user.uid;
+        var updates = {};
+        updates['users/' + userId + '/currentActiveCalendar'] = null;
         
         self.startWork();
-        return self.database.ref('users/' + userId + '/currentActiveCalendar').remove()
+        return self.database.ref().update(updates)
             .then(function() {
                 self.endWork();
             })
