@@ -155,8 +155,7 @@ var firebaseCalendarStorage = function(params) {
         
         // Store the calendar into allCalendarIds, store calState
         var updates = {};
-        // Should I be updating the allCalendarIds every time I save? saving
-        // occurs after every single checkmark is placed.
+       
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
         
