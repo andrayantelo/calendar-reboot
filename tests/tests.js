@@ -82,12 +82,14 @@ QUnit.test("generateEmptyMonthDiv monthframe test", function( assert ) {
     assert.equal(monthframeId, this.testmonth.monthId);
 });
 
+
 QUnit.test("fillMonthDiv test", function ( assert ) {
     assert.expect(56);
     var done = assert.async();
     
     // Define fixture out here because 'this' changes inside of the load 
     // function's 'complete' callback
+    
     var fixture = this.fixture;
     var testmonth = this.testmonth;
     
@@ -131,4 +133,47 @@ QUnit.test("fillMonthDiv test", function ( assert ) {
         done();
     })
    
+});
+
+QUnit.test("removeEmptyWeeks test", function( assert ) {
+    // This test will need to be modified if an entire month is included 
+    // with grayed out days for inactive days
+    assert.expect(2);
+    
+    var done = assert.async();
+    var fixture = this.fixture;
+    var testmonth = this.testmonth;
+    
+    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
+    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
+        testmonth.fillMonthDiv();
+        assert.equal($(this).find('.week').length, 6, "Check number of weeks generated");
+        testmonth.removeEmptyWeeks('calendarDiv');
+        assert.equal($(this).find('.week').length, 3);
+        
+        done();
+    })
+});
+
+QUnit.test("attachClickHandler test", function( assert ) {
+    assert.expect(0);
+    var done = assert.async();
+    var fixture = this.fixture;
+    var testmonth = this.testmonth;
+    var checkit = new CheckIt();
+    var testcal = new Calendar({startDate: "20170214", endDate: "20170228", title: "hello"}, checkit);
+    testmonth.calendar = testcal;
+    
+    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
+    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
+        testmonth.fillMonthDiv();
+        testmonth.removeEmptyWeeks('calendarDiv');
+        testmonth.attachClickHandler();
+        console.log(this);
+        //assert.equal($(this).find('.hidden').length, 15);
+        //$(this).find('#20170214').trigger('click');
+        
+        console.log(testmonth.calendar);
+    })
+    
 });

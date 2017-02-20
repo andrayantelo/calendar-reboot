@@ -714,10 +714,13 @@ var Month = function(dateString, calendarObj) {
          });
     };
     
-    self.removeEmptyWeeks = function() {
-        //remove empty weeks from the month view
+    self.removeEmptyWeeks = function(div) {
+        // Remove empty weeks from the month view
+        // Parameters: 
+        //   div: string
+        //     The id of the div where you want to look for the .week tr elements
         
-        var $div = $('#calendarDiv');
+        var $div = $('#' + div);
         
         $div.find('.month').find('.week').each( function(index) {
             var counter = 0;
@@ -817,7 +820,7 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     var self = this;
     monthObjectsArray.forEach (function(monthObj) {
         monthObj.fillMonthDiv();
-        monthObj.removeEmptyWeeks();
+        monthObj.removeEmptyWeeks('#calendarDiv');
         monthObj.attachClickHandler();
         monthObj.generateCheckmarks();
     });
