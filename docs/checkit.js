@@ -88,11 +88,41 @@ function CheckIt() {
 
 };
 
-CheckIt.prototype.attachCellClickHandler = function(handler) {
-        
+CheckIt.prototype.attachCellClickHandler = function(calObj) {
+    
+    var checkitObj = this;
     this.$calendarDiv.find('.cell').click(function(event) {
-        handler();
-    }.bind(this));
+     
+        
+        //HARDCODED FOR NOW
+        
+        var $monthDiv = $(`#${self.monthId}`);
+        var boxId = $(this).attr('id');
+        //if the boxId is not checked (as in, the value is not inside of checkedDays
+        //in other words, it's undefined
+        
+        if (calObj.state.checkedDays === undefined) {
+            calObj.state.checkedDays = {};
+        }
+        
+        if (calObj.state.checkedDays[boxId] === undefined) {
+            //add it to checkedDays
+            calObj.state.checkedDays[boxId] = 1;
+            //then add a checkmark
+            $(this).find('.element').removeClass("hidden");
+        }
+        else {
+            //remove from checkedDays
+            delete calObj.state.checkedDays[boxId]
+            //remove the checkmark from the page
+            $(this).find('.element').addClass("hidden");
+        }
+        
+        // save progress
+        checkitObj.store.save(calObj);
+        console.log(calObj.state.checkedDays);
+       
+    })
    
 };
 
@@ -512,7 +542,10 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
-    this.attachCellClickHandler();
+    this.attachCellClickHandler(calendarObject);
+    calendarObject.monthObjects.forEach(monthObj => {
+        monthObj.generateCheckmarks();
+    });
     
     
 };
@@ -597,7 +630,7 @@ var removeFromLocalStorage = function(storageItemKey) {
 //CODE FOR MONTH OBJECTS, CLASSES, ETC
 
 
-var Month = function(dateString, calendarObj) {
+var Month = function(dateString) {
     
     var self = this;
     //date will be of the format moment("YYYYMMDD")
@@ -611,10 +644,6 @@ var Month = function(dateString, calendarObj) {
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
-    // Adding checkedDays object to month
-    self.checkedDays = {};
-    
-    self.calendar = calendarObj;
     
     self.generateEmptyMonthDiv = function(isFirst) {
         //add a div to html code containing the table template for a month 
@@ -643,45 +672,6 @@ var Month = function(dateString, calendarObj) {
         
     };
     
-     self.clickHandlerFunction = function() {
-         // Maybe instead of attaching the click handler here we can just
-         // have the functionality here, and then in the checkitObject you 
-         // make a function for attaching the click handler...
-         
-         
-        //add functionality to the day tds, allowing it to be checked
-        //with a checkmark when clicked
-        
-        // Attaches a function to the divs with class "cell" to be triggered
-        // when "cell" is clicked. The function toggles the hidden class
-        // between the children (daynumber and fa fa-check) of "cell"
-        
-        //HARDCODED FOR NOW
-        var $monthDiv = $(`#${self.monthId}`);
-        var boxId = $monthDiv.find('.cell').attr('id');
-        //if the boxId is not checked (as in, the value is not inside of checkedDays
-        //in other words, it's undefined
-        
-        if (self.checkedDays === undefined) {
-            self.checkedDays = {};
-        }
-       
-        if (self.checkedDays[boxId] === undefined) {
-            //add it to checkedDays
-            self.checkedDays[boxId] = 1;
-            //then add a checkmark
-            $monthDiv.find(`#self.monthId`).find('.element').removeClass("hidden");
-        }
-        else {
-            //remove from checkedDays
-            delete self.checkedDays[boxId]
-            //remove the checkmark from the page
-            $monthDiv.find(`#self.monthId`).find('.element').addClass("hidden");
-        }
-            
-           
-     };
-
     
     self.fillMonthDiv = function() {
         //fill the template table with month information (name, number of
