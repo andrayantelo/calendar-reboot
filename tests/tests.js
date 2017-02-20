@@ -83,24 +83,21 @@ QUnit.test("generateEmptyMonthDiv monthframe test", function( assert ) {
 });
 
 QUnit.test("fillMonthDiv test", function ( assert ) {
-    assert.expect(0);
+    assert.expect(2);
     var done = assert.async();
-    this.fixture.find('#calendarDiv').load('template.html', function() {
-        var fixture = $("#qunit-fixture");
-        // TODO Have to perform assertions in here
+    
+    // Define fixture out here because 'this' changes inside of the load 
+    // function's 'complete' callback
+    var fixture = this.fixture;
+    fixture.find('#calendarDiv').load('template.html', function() {
+       
+        // Test that template was added as a child
         console.log("Load was performed.");
-        console.log(this);
-        console.log(fixture.html());
-        // Test correct divs were added
-        // Test correct number of nill and actualDays
-      done();
+        assert.equal($(this).children().length, 1);
+        assert.equal($(this).children().attr('id'), 'template');
+        
+        
+        done();
     })
-    // TODO when you print out this on line 90, you see that template html
-    // was successfully added, however, the next line still prints out 0
-    // when it should be at least 1 since template is a child of calendarDiv
-    // This is happening asynchronously and I have not figured out how to manage this yet.
-    console.log(this.fixture.find('#calendarDiv').children().length);
-    // fixture appears to get reset out here.
-    console.log(this.fixture.html());
-  
+   
 });
