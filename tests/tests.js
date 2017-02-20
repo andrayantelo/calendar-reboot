@@ -83,19 +83,50 @@ QUnit.test("generateEmptyMonthDiv monthframe test", function( assert ) {
 });
 
 QUnit.test("fillMonthDiv test", function ( assert ) {
-    assert.expect(2);
+    assert.expect(56);
     var done = assert.async();
     
     // Define fixture out here because 'this' changes inside of the load 
     // function's 'complete' callback
     var fixture = this.fixture;
-    fixture.find('#calendarDiv').load('template.html', function() {
-       
-        // Test that template was added as a child
-        console.log("Load was performed.");
-        assert.equal($(this).children().length, 1);
-        assert.equal($(this).children().attr('id'), 'template');
+    var testmonth = this.testmonth;
+    
+    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
+    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
         
+        // Test that template was added as a child
+        assert.equal($(this).children().attr('id'), 'template');
+        assert.equal($(this).children().length, 1, "Number of children of monthframe div");
+        
+        testmonth.fillMonthDiv();
+        // May need to modify the below when I switch to using fully filled months. but possibly not depending on
+        // if I still use the class actualDay
+        assert.equal($(this).find(".actualDay").first().children('.cell').attr('id'), 20170214, "Check start day of the month");
+        
+        $(this).find('.cell').each( function(index) {
+            assert.equal($(this).attr('id'), '201702' + (index + 14), "Checking id's of .cell divs");
+        });
+        
+        assert.equal($(this).find(".month-year").text(), "February 2017");
+        assert.notOk(jQuery.isEmptyObject(testmonth.dayIndex), "dayIndex object is not empty");
+        assert.equal(Object.keys(testmonth.dayIndex).length, 15, "Asserting number of keys in dayIndex object");
+        
+        assert.equal($(this).find('.actualDay').length, 15, "Checking the number of .actualDay td elements");
+        
+        assert.equal($(this).find('.cell').length, 15, "Correct number of .cell div elements");
+        
+        assert.equal($(this).find('.nill').length, 27, "Correct number of .nill div elements");
+        
+        assert.equal($(this).find('.cell').children().length, 30, "Total number of children of each .cell div");
+        assert.ok($(this).find('.daynumber').text(), ".daynumber divs have text in them");
+        
+        $(this).find('.daynumber').each( function(index) {
+            assert.equal($(this).html(), index + 14, "Correct daynumbers");
+            });
+            
+        $(this).find('.cell').each(function (index) {
+            assert.ok($(this).find('.element').hasClass("hidden"), "Check that .element divs have a hidden class");
+        });
         
         done();
     })
