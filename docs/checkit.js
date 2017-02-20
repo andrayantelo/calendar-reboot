@@ -31,7 +31,6 @@ function CheckIt() {
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
-    //this.$calendarTemplate = $('#template');
     
     
     var opts = {
@@ -58,8 +57,6 @@ function CheckIt() {
     }
     
     this.spinner = new Spinner();
-    
-    var monthObjects;
     
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
@@ -89,6 +86,14 @@ function CheckIt() {
     // WHEN PAGE LOADS
     this.initFirebase();
 
+};
+
+CheckIt.prototype.attachCellClickHandler = function(handler) {
+        
+    this.$calendarDiv.find('.cell').click(function(event) {
+        handler();
+    }.bind(this));
+   
 };
 
 
@@ -507,6 +512,8 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
+    this.attachCellClickHandler();
+    
     
 };
 
@@ -604,6 +611,9 @@ var Month = function(dateString, calendarObj) {
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
+    // Adding checkedDays object to month
+    self.checkedDays = {};
+    
     self.calendar = calendarObj;
     
     self.generateEmptyMonthDiv = function(isFirst) {
@@ -633,7 +643,12 @@ var Month = function(dateString, calendarObj) {
         
     };
     
-     self.attachClickHandler = function() {
+     self.clickHandlerFunction = function() {
+         // Maybe instead of attaching the click handler here we can just
+         // have the functionality here, and then in the checkitObject you 
+         // make a function for attaching the click handler...
+         
+         
         //add functionality to the day tds, allowing it to be checked
         //with a checkmark when clicked
         
@@ -642,36 +657,29 @@ var Month = function(dateString, calendarObj) {
         // between the children (daynumber and fa fa-check) of "cell"
         
         //HARDCODED FOR NOW
-        var $div = $('#' + self.monthId);
+        var $monthDiv = $(`#${self.monthId}`);
+        var boxId = $monthDiv.find('.cell').attr('id');
+        //if the boxId is not checked (as in, the value is not inside of checkedDays
+        //in other words, it's undefined
         
-        $div.find('.cell').click(function (event) {
+        if (self.checkedDays === undefined) {
+            self.checkedDays = {};
+        }
+       
+        if (self.checkedDays[boxId] === undefined) {
+            //add it to checkedDays
+            self.checkedDays[boxId] = 1;
+            //then add a checkmark
+            $monthDiv.find(`#self.monthId`).find('.element').removeClass("hidden");
+        }
+        else {
+            //remove from checkedDays
+            delete self.checkedDays[boxId]
+            //remove the checkmark from the page
+            $monthDiv.find(`#self.monthId`).find('.element').addClass("hidden");
+        }
             
-            var boxId = $( this).attr('id');
-            //if the boxId is not checked (as in, the value is not inside of checkedDays
-            //in other words, it's undefined
-            
-            if (self.calendar.state.checkedDays === undefined) {
-                self.calendar.state.checkedDays = {};
-            }
            
-            if (self.calendar.state.checkedDays[boxId] === undefined) {
-                //add it to checkedDays
-                self.calendar.state.checkedDays[boxId] = 1;
-                //then add a checkmark
-                $( this ).children('.element').removeClass("hidden");
-            }
-            else {
-                //remove from checkedDays
-                delete self.calendar.state.checkedDays[boxId]
-                //remove the checkmark from the page
-                $( this ).children('.element').addClass("hidden");
-            }
-            
-            //save your progress
-            
-            //TODO change the way months build calendar, issue #87
-            self.calendar.checkit.store.save(self.calendar);
-         })
      };
 
     
@@ -865,8 +873,8 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     monthObjectsArray.forEach (function(monthObj) {
         monthObj.fillMonthDiv();
         monthObj.removeEmptyWeeks();
-        monthObj.attachClickHandler();
-        monthObj.generateCheckmarks();
+        //monthObj.attachClickHandler();
+        //monthObj.generateCheckmarks();
     });
 };
 
