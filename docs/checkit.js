@@ -99,6 +99,10 @@ CheckIt.prototype.addMonth = function() {
     
     //create the month object
     // Need a dateString, possible end Date from cal
+    // Maybe grab the last month in the page, and that's how you can get
+    // the month and year for the new month, end it on whatever endDate
+    // user picked for the previous month (then previous month would need to be
+    // filled all the way too. 
     //newMonth = new Month(
     
     
