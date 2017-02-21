@@ -105,6 +105,7 @@ CheckIt.prototype.addMonth = function() {
                        // Add a month to this calendar, function has the same name
                        // as the one we are currently in. Bad practice?
                        calendar.addMonth();
+                       this.attachCellClickHandler(calendar, [calendar.lastMonth]);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -121,10 +122,10 @@ CheckIt.prototype.addMonth = function() {
        }.bind(this));
     
     
-    //this.attachCellClickHandler([newMonth]);
+    
 };
 
-CheckIt.prototype.attachCellClickHandler = function(monthObjArray) {
+CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
     
@@ -135,26 +136,26 @@ CheckIt.prototype.attachCellClickHandler = function(monthObjArray) {
             var boxId = $(this).attr('id');
             
             
-            if (checkitObj.calendar.state.checkedDays === undefined) {
-                checkitObj.calendar.state.checkedDays = {};
+            if (calObj.state.checkedDays === undefined) {
+                calObj.state.checkedDays = {};
             }
             //if the boxId is not checked (as in, the value is not inside of checkedDays
             //in other words, it's undefined
-            if (checkitObj.calendar.state.checkedDays[boxId] === undefined) {
+            if (calObj.state.checkedDays[boxId] === undefined) {
                 //add it to checkedDays
-                checkitObj.calendar.state.checkedDays[boxId] = 1;
+                calObj.state.checkedDays[boxId] = 1;
                 //then add a checkmark
                 $(this).find('.checkmark').removeClass("hidden");
             }
             else {
                 //remove from checkedDays
-                delete checkitObj.calendar.checkedDays[boxId]
+                delete calObj.checkedDays[boxId]
                 //remove the checkmark from the page
                 $(this).find('.checkmark').addClass("hidden");
             }
             
             // save progress
-            checkitObj.store.save(checkitObj.calendar);
+            checkitObj.store.save(calObj);
             
         })
     })
@@ -577,7 +578,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
-    this.attachCellClickHandler(calendarObject.monthObjects);
+    this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
     calendarObject.generateCheckmarks();
     
 };
