@@ -90,14 +90,6 @@ function CheckIt() {
 
 CheckIt.prototype.addMonth = function() {
     // Add a single month to the calendar
-    // TODO
-    //create the month object
-    // Need a dateString, possible end Date from cal
-    // Maybe grab the last month in the page, and that's how you can get
-    // the month and year for the new month, end it on whatever endDate
-    // user picked for the previous month (then previous month would need to be
-    // filled all the way too. 
-    //var newMonth = new Month(
     
     // Get the active Calendar information because you need to know what the 
     // last month is as well as the endDate.
@@ -108,6 +100,11 @@ CheckIt.prototype.addMonth = function() {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
                        console.log(state);
+                       // Create a calendar so that you can manipulate this calendar State
+                       var calendar = new Calendar(state);
+                       // Add a month to this calendar, function has the same name
+                       // as the one we are currently in. Bad practice?
+                       calendar.addMonth();
                    }
                }.bind(this))
                .catch(function(err) {
@@ -772,6 +769,9 @@ var Calendar = function(state) {
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
     self.monthObjects = self.generateMonthObjects();
+    // Last month to be added, this is so that when you need to attach the
+    // click handler to this month, you don't do it to the entire calendar.
+    self.lastMonth = null;
 
 }
 
@@ -781,6 +781,8 @@ Calendar.prototype.addMonth = function() {
     
     // Update self.endDate so that it occurs one month later.
     self.endDate = self.endDate.add(1, 'months');
+    // Update the self.lastMonth property
+    self.lastMonth = new Month(self.endDate.format("YYYYMMDD"));
     // Update the endDateString in the calendarState
     self.state.endDateString = self.endDate.format("YYYYMMDD");
     // Update the self.monthObjects so that it includes the new month
