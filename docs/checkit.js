@@ -92,7 +92,9 @@ CheckIt.prototype.attachCellClickHandler = function(calObj) {
     
     var checkitObj = this;
     this.$calendarDiv.find('.cell').click(function(event) {
-     
+    console.log("printing type of cal unique id");
+    console.log(calObj.state.uniqueId);
+    console.log(typeof(calObj.state.uniqueId));
         
         //HARDCODED FOR NOW
         
@@ -543,10 +545,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
     this.attachCellClickHandler(calendarObject);
-    calendarObject.monthObjects.forEach(monthObj => {
-        monthObj.generateCheckmarks();
-    });
-    
+    calendarObject.generateCheckmarks();
     
 };
 
@@ -732,32 +731,7 @@ var Month = function(dateString) {
             }
         });
     };
-    
-    self.generateCheckmarks = function() {
-        // Toggles the hidden class between the children of the div class="cell" 
-        // of the cells whose indices are in the monthState.checkedDays
-        // object.
-        
-        //checkedDays is an object that contains a date that points to 1 or 0
-        
-        if (self.calendar.state.checkedDays === undefined) {
-            console.log("No days are checked");
-            return;
-        }
-        
-        var monthId = '#'+ self.monthId;
-        
-        $(monthId).find('.cell').each( function() 
-        {
-            var boxId = $(this).attr('id');
-            
-            if (self.calendar.state.checkedDays[$(this).attr('id')]) 
-            {
-                $(this).children('.element').removeClass("hidden");
-            }
-            
-         });
-    };
+
     
     self.removeEmptyWeeks = function() {
         //remove empty weeks from the month view
@@ -868,5 +842,30 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     });
 };
 
+
+Calendar.prototype.generateCheckmarks = function() {
+    // Toggles the hidden class between the children of the div class="cell" 
+    // of the cells whose indices are in the monthState.checkedDays
+    // object.
+    
+    //checkedDays is an object that contains a date that points to 1 or 0
+    var self = this;
+    if (self.state.checkedDays === undefined) {
+        console.log("No days are checked");
+        return;
+    }
+    
+    $('#calendarDiv').find('.cell').each( function() 
+    {
+        var boxId = $(this).attr('id');
+        
+        if (self.state.checkedDays[$(this).attr('id')]) 
+        {
+            $(this).children('.element').removeClass("hidden");
+        }
+        
+     })
+
+};
 
 
