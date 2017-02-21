@@ -575,9 +575,7 @@ $(document).ready(function() {
     
 });
 
-//CODE FOR MONTH OBJECTS, CLASSES, ETC
-
-
+//CODE FOR MONTH AND CALENDAR OBJECTS
 var Month = function(dateString) {
     
     var self = this;
