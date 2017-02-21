@@ -32,9 +32,6 @@ function CheckIt() {
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
     
-    // The active calendar so that you can use it inside of checkIt.
-    this.calendar;
-    
     var opts = {
       lines: 13 // The number of lines to draw
     , length: 28 // The length of each line
@@ -191,8 +188,8 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
-                       this.calendar = new Calendar(state);
-                       this.displayCalendar(this.calendar);
+                       calendar = new Calendar(state);
+                       this.displayCalendar(calendar);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -375,16 +372,16 @@ CheckIt.prototype.createCalendar = function() {
         
         //make calendar object
 
-        this.calendar = new Calendar(state);
+        calendar = new Calendar(state);
         
         // Initialize calendar in the storage
-        this.store.initializeCalendar(this.calendar);
+        this.store.initializeCalendar(calendar);
 
         //add calendar to dropdown
-        this.addCalendarToDropdown(this.calendar.state.uniqueId, this.calendar.state.title);
+        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
     
         //build the calendar
-        this.buildCalendar(this.calendar);
+        this.buildCalendar(calendar);
         this.collapseBuildMenu(); 
    }
 };
@@ -397,8 +394,8 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
-            this.calendar = new Calendar(state);
-            this.displayCalendar(this.calendar);
+            calendar = new Calendar(state);
+            this.displayCalendar(calendar);
             this.collapseBuildMenu(); 
         }.bind(this))
         .catch(function() {
