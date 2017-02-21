@@ -57,6 +57,7 @@ function CheckIt() {
     
     this.spinner = new Spinner();
     
+    // Click handlers for the DOM
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
@@ -96,7 +97,31 @@ CheckIt.prototype.addMonth = function() {
     // the month and year for the new month, end it on whatever endDate
     // user picked for the previous month (then previous month would need to be
     // filled all the way too. 
-    //newMonth = new Month(
+    //var newMonth = new Month(
+    
+    // Get the active Calendar information because you need to know what the 
+    // last month is as well as the endDate.
+    this.store.getActive()
+        .then(function (activeCalendarId) {
+            this.store.loadById(activeCalendarId)
+                .then(function (activeCalendarState) {
+                   if (activeCalendarState !==  null) {
+                       var state = activeCalendarState;
+                       console.log(state);
+                   }
+               }.bind(this))
+               .catch(function(err) {
+                   console.error("Could not load calendar " + err);
+                   this.store.removeActive();
+                   this.uncollapseBuildMenu();
+               }.bind(this));
+           
+       }.bind(this))
+       
+       .catch(function () {
+           console.log("Could not load current active calendar");
+           this.uncollapseBuildMenu();
+       }.bind(this));
     
     
     //this.attachCellClickHandler([newMonth]);
@@ -749,6 +774,18 @@ var Calendar = function(state) {
     self.monthObjects = self.generateMonthObjects();
 
 }
+
+Calendar.prototype.addMonth = function() {
+    // Add a month to the calendar.
+    var self = this;
+    
+    // Update self.endDate so that it occurs one month later.
+    self.endDate = self.endDate.add(1, 'months');
+    // Update the endDateString in the calendarState
+    self.state.endDateString = self.endDate.format("YYYYMMDD");
+    // Update the self.monthObjects so that it includes the new month
+    self.monthObjects = self.generateMonthObjects();
+};
 
     
 Calendar.prototype.generateMonthObjects = function() {
