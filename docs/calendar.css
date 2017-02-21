@@ -136,7 +136,7 @@ table {
     position: relative;
     width: 60%
 }
-  .element {
+  .checkmark {
     font-size: 40px;
     /*--adjust as necessary--*/
     color: #000;
@@ -164,7 +164,7 @@ table {
     position: relative;
     width: 100%
 }
-  .element {
+  .checkmark {
     font-size: 36px;
     /*--adjust as necessary--*/
     color: #000;
@@ -193,7 +193,7 @@ table {
     position: relative;
     width: 100%
 }
-  .element {
+  .checkmark {
     font-size: 14px;
     /*--adjust as necessary--*/
     color: #000;
@@ -267,14 +267,14 @@ table {
     position: relative;
 } 
 
-.element {
+.checkmark {
     position: absolute;
 }
  
 /*replace the content value with the
 corresponding value from the list below*/
  
-.element:before {
+.checkmark:before {
     content: "\f00c";
     font-family: FontAwesome;
     font-style: normal;

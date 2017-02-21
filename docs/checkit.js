@@ -32,6 +32,12 @@ function CheckIt() {
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
     
+    // Checkit month array to keep track of the months in the calendar
+    // contains month objects.
+    this.months = [];
+    // The active calendar so that you can use it inside of checkIt.
+    this.calendar;
+    
     
     var opts = {
       lines: 13 // The number of lines to draw
@@ -88,39 +94,51 @@ function CheckIt() {
 
 };
 
-CheckIt.prototype.attachCellClickHandler = function(calObj) {
+CheckIt.prototype.addMonth = function() {
+    // Add a single month to the calendar
     
+    //create the month object
+    // Need a dateString, possible end Date from cal
+    //newMonth = new Month(
+    
+    
+    //this.attachCellClickHandler([newMonth]);
+};
+
+CheckIt.prototype.attachCellClickHandler = function(monthObjArray) {
+    // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
-    this.$calendarDiv.find('.cell').click(function(event) {
-        
-        //HARDCODED FOR NOW
-        
-        var $monthDiv = $(`#${self.monthId}`);
-        var boxId = $(this).attr('id');
-        //if the boxId is not checked (as in, the value is not inside of checkedDays
-        //in other words, it's undefined
-        
-        if (calObj.state.checkedDays === undefined) {
-            calObj.state.checkedDays = {};
-        }
-        
-        if (calObj.state.checkedDays[boxId] === undefined) {
-            //add it to checkedDays
-            calObj.state.checkedDays[boxId] = 1;
-            //then add a checkmark
-            $(this).find('.element').removeClass("hidden");
-        }
-        else {
-            //remove from checkedDays
-            delete calObj.state.checkedDays[boxId]
-            //remove the checkmark from the page
-            $(this).find('.element').addClass("hidden");
-        }
-        
-        // save progress
-        checkitObj.store.save(calObj);
-        
-    })
+    
+    monthObjArray.forEach( function(monthObj) {
+        var $monthDiv = $(`#${monthObj.monthId}`);
+        $monthDiv.find('.cell').click(function(event) {
+            
+            var boxId = $(this).attr('id');
+            
+            
+            if (checkitObj.calendar.state.checkedDays === undefined) {
+                checkitObj.calendar.state.checkedDays = {};
+            }
+            //if the boxId is not checked (as in, the value is not inside of checkedDays
+            //in other words, it's undefined
+            if (checkitObj.calendar.state.checkedDays[boxId] === undefined) {
+                //add it to checkedDays
+                checkitObj.calendar.state.checkedDays[boxId] = 1;
+                //then add a checkmark
+                $(this).find('.checkmark').removeClass("hidden");
+            }
+            else {
+                //remove from checkedDays
+                delete checkitObj.calendar.checkedDays[boxId]
+                //remove the checkmark from the page
+                $(this).find('.checkmark').addClass("hidden");
+            }
+            
+            // save progress
+            checkitObj.store.save(checkitObj.calendar);
+            
+        })
+    }
    
 };
 
@@ -173,7 +191,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
-                       var calendar = new Calendar(state, this);
+                       this.calendar = new Calendar(state, this);
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
@@ -357,7 +375,9 @@ CheckIt.prototype.createCalendar = function() {
         
         //make calendar object
 
-        var calendar = new Calendar(state, this);
+        this.calendar = new Calendar(state);
+        //add months to checkit's months array
+        this.months = calendar.monthObjects;
         
         // Initialize calendar in the storage
         this.store.initializeCalendar(calendar);
@@ -379,7 +399,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
-            var calendar = new Calendar(state, this);
+            this.calendar = new Calendar(state, this);
             this.displayCalendar(calendar);
             this.collapseBuildMenu(); 
         }.bind(this))
@@ -540,7 +560,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
-    this.attachCellClickHandler(calendarObject);
+    this.attachCellClickHandler(calendarObject.monthObjects);
     calendarObject.generateCheckmarks();
     
 };
@@ -653,7 +673,7 @@ var Month = function(dateString) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><div class="element hidden"></div></div>';
+                 dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
                  
                  //add html inside td element
                  $(this).append(toAdd);
@@ -779,8 +799,6 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     monthObjectsArray.forEach (function(monthObj) {
         monthObj.fillMonthDiv();
         monthObj.removeEmptyWeeks();
-        //monthObj.attachClickHandler();
-        //monthObj.generateCheckmarks();
     });
 };
 
@@ -797,13 +815,12 @@ Calendar.prototype.generateCheckmarks = function() {
         return;
     }
     
-    $('#calendarDiv').find('.cell').each( function() 
-    {
+    $('#calendarDiv').find('.cell').each( function() {
+        
         var boxId = $(this).attr('id');
         
-        if (self.state.checkedDays[$(this).attr('id')]) 
-        {
-            $(this).children('.element').removeClass("hidden");
+        if (self.state.checkedDays[boxId]) {
+            $(this).children('.checkmark').removeClass("hidden");
         }
         
      })
