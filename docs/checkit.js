@@ -92,9 +92,6 @@ CheckIt.prototype.attachCellClickHandler = function(calObj) {
     
     var checkitObj = this;
     this.$calendarDiv.find('.cell').click(function(event) {
-    console.log("printing type of cal unique id");
-    console.log(calObj.state.uniqueId);
-    console.log(typeof(calObj.state.uniqueId));
         
         //HARDCODED FOR NOW
         
