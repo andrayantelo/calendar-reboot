@@ -96,7 +96,7 @@ function CheckIt() {
 
 CheckIt.prototype.addMonth = function() {
     // Add a single month to the calendar
-    
+    // TODO
     //create the month object
     // Need a dateString, possible end Date from cal
     // Maybe grab the last month in the page, and that's how you can get
@@ -142,7 +142,7 @@ CheckIt.prototype.attachCellClickHandler = function(monthObjArray) {
             checkitObj.store.save(checkitObj.calendar);
             
         })
-    }
+    })
    
 };
 
@@ -195,8 +195,8 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
-                       this.calendar = new Calendar(state, this);
-                       this.displayCalendar(calendar);
+                       this.calendar = new Calendar(state);
+                       this.displayCalendar(this.calendar);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -381,16 +381,16 @@ CheckIt.prototype.createCalendar = function() {
 
         this.calendar = new Calendar(state);
         //add months to checkit's months array
-        this.months = calendar.monthObjects;
+        this.months = this.calendar.monthObjects;
         
         // Initialize calendar in the storage
-        this.store.initializeCalendar(calendar);
+        this.store.initializeCalendar(this.calendar);
 
         //add calendar to dropdown
-        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
+        this.addCalendarToDropdown(this.calendar.state.uniqueId, this.calendar.state.title);
     
         //build the calendar
-        this.buildCalendar(calendar);
+        this.buildCalendar(this.calendar);
         this.collapseBuildMenu(); 
    }
 };
@@ -403,8 +403,8 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
-            this.calendar = new Calendar(state, this);
-            this.displayCalendar(calendar);
+            this.calendar = new Calendar(state);
+            this.displayCalendar(this.calendar);
             this.collapseBuildMenu(); 
         }.bind(this))
         .catch(function() {
