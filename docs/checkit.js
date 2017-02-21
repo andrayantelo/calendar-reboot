@@ -119,8 +119,7 @@ CheckIt.prototype.attachCellClickHandler = function(calObj) {
         
         // save progress
         checkitObj.store.save(calObj);
-        console.log(calObj.state.checkedDays);
-       
+        
     })
    
 };
@@ -720,7 +719,7 @@ var emptyCalendarState = function(params) {
     };
 };
 
-var Calendar = function(state, checkitObj) {
+var Calendar = function(state) {
     
     var self = this;
     self.state = state;
@@ -733,8 +732,7 @@ var Calendar = function(state, checkitObj) {
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
     self.monthObjects = self.generateMonthObjects();
-    self.checkit = checkitObj;
-    
+
 }
 
     
