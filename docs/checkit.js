@@ -32,12 +32,8 @@ function CheckIt() {
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
     
-    // Checkit month array to keep track of the months in the calendar
-    // contains month objects.
-    this.months = [];
     // The active calendar so that you can use it inside of checkIt.
     this.calendar;
-    
     
     var opts = {
       lines: 13 // The number of lines to draw
@@ -114,7 +110,7 @@ CheckIt.prototype.attachCellClickHandler = function(monthObjArray) {
     var checkitObj = this;
     
     monthObjArray.forEach( function(monthObj) {
-        var $monthDiv = $(`#${monthObj.monthId}`);
+        var $monthDiv = $('#' + monthObj.monthId);
         $monthDiv.find('.cell').click(function(event) {
             
             var boxId = $(this).attr('id');
@@ -380,8 +376,6 @@ CheckIt.prototype.createCalendar = function() {
         //make calendar object
 
         this.calendar = new Calendar(state);
-        //add months to checkit's months array
-        this.months = this.calendar.monthObjects;
         
         // Initialize calendar in the storage
         this.store.initializeCalendar(this.calendar);
@@ -808,7 +802,7 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
 
 
 Calendar.prototype.generateCheckmarks = function() {
-    // Toggles the hidden class between the children of the div class="cell" 
+    // Removes the hidden class between the children of the div class="cell" 
     // of the cells whose indices are in the monthState.checkedDays
     // object.
     
