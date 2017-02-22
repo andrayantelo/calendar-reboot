@@ -354,6 +354,98 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
+CheckIt.prototype.generateEmptyCalendar = function(calObj) {
+    // Generate the html for an empty calendar of the calendar you want to 
+    // display.
+    
+    var calendarDiv = this.$calendarDiv;
+    
+    console.log("Running checkit's generateEmptyCalendar");
+    // Add the title of the calendar
+    calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
+                        calObj.state.title + '</h1></div>');
+                        
+
+    calObj.monthObjects.forEach (function(monthObj, index) {
+
+        var yearHeader = "<div class='page-header text-center'>" +
+                         "<h2 id='yearHeader'>" + monthObj.monthYear + "</h2>" +
+                         "</div>";
+        
+        //the div ID is the monthID
+            
+        calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
+        
+        if (self.monthIndex === 0) {
+            $('#' + monthObj.monthId).append(yearHeader);
+        }
+        $('#' + monthObj.monthId).append($('#template').html());
+            
+    });
+    
+};
+
+CheckIt.prototype.fillCalendar = function(calObj) {
+    // Fill an empty calendar with appropriate calendar data.
+    console.log("Running checkit's fillCalendar method");
+    calObj.monthObjects.forEach (function(monthObj) {
+
+        var $monthId = $('#'+ monthObj.monthId);
+        
+        //self.clearMonthDiv();  <-- Do I need this?
+        
+        $monthId.find(".month-year").empty();
+        $monthId.find(".month-year").append(monthObj.monthName + " " + monthObj.monthYear);
+        
+        //go through each td and fill in correct day number
+        $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
+            //the indexOfTableSquare is where we are currently on the month table
+            //which td are we in, from 0 to 42, because there are 6 rows
+            // or 7 columns 
+            
+            // gives the day of the month, the 1 indicates the first day of
+            // the month
+            var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.startDay);
+            
+            
+            //if the day of the month is >= to the startDay, so for example
+            //if you have startDay as 20th of Nov, then the following code
+            //won't run until the dayOfMonth is 20 or up AND it is less
+            //than the number of days in the month
+            if (dayOfMonth >= monthObj.startDay && dayOfMonth <= monthObj.numberOfDays) 
+            { 
+                //store the day of months with their indices in dayIndex object (dictionary)
+                //in month state
+                 monthObj.dayIndex[dayOfMonth] = indexOfTableTd;
+                 
+                 //this refers to the td
+                 $(this).empty();  //ensure it's empty
+                 
+                 //inside each td there will be the following html 
+                 var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
+                 dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
+                 
+                 //add html inside td element
+                 $(this).append(toAdd);
+                 
+                 //this ensures that the css changes for an actual day in the month
+                 $(this).addClass('actualDay');
+                 
+                 //add the daynumber into the div with class .daynumber, which is 
+                 //inside of the td
+                 $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                 var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
+                 $(this).find('.cell').attr('id', boxId);
+                 
+            }
+            
+            else {
+                $(this).addClass('emptyDay');
+            }
+        })
+    })
+};
+
 // Returns true if user is signed-in. Otherwise false and displays a message.
 CheckIt.prototype.checkSignedInWithMessage = function() {
     // Return true if the user is signed in Firebase
@@ -576,10 +668,11 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     
-    calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
-    calendarObject.fillCalendar(calendarObject.monthObjects);
-    this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
-    calendarObject.generateCheckmarks();
+    this.generateEmptyCalendar(calendarObject);
+    this.fillCalendar(calendarObject);
+    //calendarObject.fillCalendar(calendarObject.monthObjects);
+    //this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
+    //calendarObject.generateCheckmarks();
     
 };
 
@@ -616,12 +709,18 @@ var Month = function(dateString) {
     //date will be of the format moment("YYYYMMDD")
     self.dateString = dateString;
     self.date = moment(dateString, "YYYYMMDD");
-    self.firstDayIndex = self.date.day();
+    self.firstActiveDayIndex = self.date.day();
+    
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
+    
+    
     self.monthName = self.date.format("MMMM");
+    // Start day is the first active day
     self.startDay = self.date.date();
+    // Index of the first of the month
+    self.firstDayIndex = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days').day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
     
@@ -765,6 +864,7 @@ var Calendar = function(state) {
     //"YYYYMMDD" string
     self.startDate = moment(state.startDateString, "YYYYMMDD");
     //endDate is a moment object
+    // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");
     //number of months we will need to be able to cover all the years the
     //user wants to track
