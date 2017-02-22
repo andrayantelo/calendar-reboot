@@ -105,7 +105,7 @@ CheckIt.prototype.addMonth = function() {
                        // Add a month to this calendar, function has the same name
                        // as the one we are currently in. Bad practice?
                        calendar.addMonth();
-                       this.attachCellClickHandler(calendar, [calendar.lastMonth]);
+                       this.attachCheckmarkClickHandler(calendar, [calendar.lastMonth]);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -125,16 +125,16 @@ CheckIt.prototype.addMonth = function() {
     
 };
 
-CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
+CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
     
     monthObjArray.forEach( function(monthObj) {
         var $monthDiv = $('#' + monthObj.monthId);
-        $monthDiv.find('.cell').click(function(event) {
+        $monthDiv.find('.activeDay').click(function(event) {
             
-            var boxId = $(this).attr('id');
-            
+            var boxId = $(this).find('.cell').attr('id');
+            console.log(boxId);
             
             if (calObj.state.checkedDays === undefined) {
                 calObj.state.checkedDays = {};
@@ -149,7 +149,7 @@ CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
             }
             else {
                 //remove from checkedDays
-                delete calObj.checkedDays[boxId]
+                delete calObj.state.checkedDays[boxId]
                 //remove the checkmark from the page
                 $(this).find('.checkmark').addClass("hidden");
             }
@@ -414,15 +414,19 @@ CheckIt.prototype.fillCalendar = function(calObj) {
                  // Ensure the td is empty
                  $(this).empty(); 
                  
+                 var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
                  // Add inactive class to inactive days, and do not include a 
-                 // checkmark div in the cell divs of inactive days.
+                 // checkmark div in the cell divs of inactive days. Also give
+                 // the td a unique Id.
                  if (dayOfMonth < monthObj.startDay || dayOfMonth > monthObj.lastActiveDay) {
                      $(this).addClass('inactiveDay');
+                     
                       var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
                          dayOfMonth.toString() + '">';
                  }
                  else {
                      $(this).addClass('activeDay');
+                     
                      var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
                          dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
                  }
@@ -432,10 +436,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
                  // Add the daynumber into the div with class .daynumber, which is 
                  // inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
-                 // Give each cell a unique Id
-                 var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
-                 $(this).find('.cell').attr('id', boxId);
-                 
+                $(this).find('.cell').attr('id', boxId);
             }
         })
     })
@@ -658,7 +659,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
     //calendarObject.fillCalendar(calendarObject.monthObjects);
-    //this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
+    this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     //calendarObject.generateCheckmarks();
     
 };
