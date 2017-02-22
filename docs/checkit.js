@@ -388,8 +388,9 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
     console.log("Running checkit's fillCalendar method");
+    
     calObj.monthObjects.forEach (function(monthObj) {
-
+        
         var $monthId = $('#'+ monthObj.monthId);
         
         //self.clearMonthDiv();  <-- Do I need this?
@@ -399,21 +400,26 @@ CheckIt.prototype.fillCalendar = function(calObj) {
         
         //go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
+            
             //the indexOfTableSquare is where we are currently on the month table
             //which td are we in, from 0 to 42, because there are 6 rows
             // or 7 columns 
             
-            // gives the day of the month, the 1 indicates the first day of
-            // the month
-            var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.startDay);
-            
-            
+            // gives the day of the month
+            var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.firstDay);
+            //console.log("At index: " + indexOfTableTd + " dayOfMonth is equal to " +  dayOfMonth);
             //if the day of the month is >= to the startDay, so for example
             //if you have startDay as 20th of Nov, then the following code
             //won't run until the dayOfMonth is 20 or up AND it is less
             //than the number of days in the month
-            if (dayOfMonth >= monthObj.startDay && dayOfMonth <= monthObj.numberOfDays) 
-            { 
+            
+            // If the the day is an inactive day, make sure it gets the class 'inactive'
+           
+            //console.log("firstdayindex: " + monthObj.firstDayIndex);
+            //console.log("firstactivedayindex: " + monthObj.firstActiveDayIndex);
+            
+            if (dayOfMonth >= monthObj.firstDay && dayOfMonth <= monthObj.numberOfDays) { 
+                console.log(dayOfMonth);
                 //store the day of months with their indices in dayIndex object (dictionary)
                 //in month state
                  monthObj.dayIndex[dayOfMonth] = indexOfTableTd;
@@ -428,8 +434,13 @@ CheckIt.prototype.fillCalendar = function(calObj) {
                  //add html inside td element
                  $(this).append(toAdd);
                  
-                 //this ensures that the css changes for an actual day in the month
-                 $(this).addClass('actualDay');
+                 if (dayOfMonth < monthObj.startDay) {
+                     $(this).addClass('inactiveDay');
+                 }
+                 else {
+                     //this ensures that the css changes for an actual day in the month
+                     $(this).addClass('activeDay');
+                 }
                  
                  //add the daynumber into the div with class .daynumber, which is 
                  //inside of the td
@@ -437,10 +448,6 @@ CheckIt.prototype.fillCalendar = function(calObj) {
                  var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
                  $(this).find('.cell').attr('id', boxId);
                  
-            }
-            
-            else {
-                $(this).addClass('emptyDay');
             }
         })
     })
@@ -714,13 +721,14 @@ var Month = function(dateString) {
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
-    
-    
+
     self.monthName = self.date.format("MMMM");
     // Start day is the first active day
     self.startDay = self.date.date();
     // Index of the first of the month
-    self.firstDayIndex = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days').day();
+    self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
+    self.firstDay = self.firstDayDate.date();
+    self.firstDayIndex = self.firstDayDate.day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
     
