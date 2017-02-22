@@ -360,7 +360,6 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
     
     var calendarDiv = this.$calendarDiv;
     
-    console.log("Running checkit's generateEmptyCalendar");
     // Add the title of the calendar
     calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
                         calObj.state.title + '</h1></div>');
@@ -387,78 +386,59 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
 
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
-    console.log("Running checkit's fillCalendar method");
-    
+
     calObj.monthObjects.forEach (function(monthObj) {
         
         var $monthId = $('#'+ monthObj.monthId);
         
-        //self.clearMonthDiv();  <-- Do I need this?
-        
         $monthId.find(".month-year").empty();
         $monthId.find(".month-year").append(monthObj.monthName + " " + monthObj.monthYear);
         
-        //go through each td and fill in correct day number
+        // Go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
             
-            //the indexOfTableSquare is where we are currently on the month table
-            //which td are we in, from 0 to 42, because there are 6 rows
+            // The indexOfTableTd is where we are currently on the month table
+            // which td are we in, from 0 to 41, because there are 6 rows
             // or 7 columns 
             
-            // gives the day of the month
+            // dayOfMonth is equal to 1 once the indexOfTableTd is equal to 
+            // the index of the first day of the month.
             var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.firstDay);
-            //console.log("At index: " + indexOfTableTd + " dayOfMonth is equal to " +  dayOfMonth);
-            //if the day of the month is >= to the startDay, so for example
-            //if you have startDay as 20th of Nov, then the following code
-            //won't run until the dayOfMonth is 20 or up AND it is less
-            //than the number of days in the month
-            
-            // If the the day is an inactive day, make sure it gets the class 'inactive'
-           
-            //console.log("firstdayindex: " + monthObj.firstDayIndex);
-            //console.log("firstactivedayindex: " + monthObj.firstActiveDayIndex);
             
             if (dayOfMonth >= monthObj.firstDay && dayOfMonth <= monthObj.numberOfDays) { 
-                console.log(dayOfMonth);
-                //store the day of months with their indices in dayIndex object (dictionary)
-                //in month state
+                
+                // Store the day of months with their indices in dayIndex object (dictionary)
+                // in month state
                  monthObj.dayIndex[dayOfMonth] = indexOfTableTd;
                  
-                 //this refers to the td
-                 $(this).empty();  //ensure it's empty
+                 // Ensure the td is empty
+                 $(this).empty(); 
                  
-                 //inside each td there will be the following html 
-                 var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
-                 
-                 //add html inside td element
-                 $(this).append(toAdd);
-                 
-                 if (dayOfMonth < monthObj.startDay) {
+                 // Add inactive class to inactive days, and do not include a 
+                 // checkmark div in the cell divs of inactive days.
+                 if (dayOfMonth < monthObj.startDay || dayOfMonth > monthObj.lastActiveDay) {
                      $(this).addClass('inactiveDay');
+                      var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
+                         dayOfMonth.toString() + '">';
                  }
                  else {
-                     //this ensures that the css changes for an actual day in the month
                      $(this).addClass('activeDay');
+                     var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
+                         dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
                  }
+                 // Add html inside td element
+                 $(this).append(toAdd);
                  
-                 //add the daynumber into the div with class .daynumber, which is 
-                 //inside of the td
+                 // Add the daynumber into the div with class .daynumber, which is 
+                 // inside of the td
                  $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                 // Give each cell a unique Id
                  var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
                  $(this).find('.cell').attr('id', boxId);
                  
             }
         })
     })
-};
-
-// Returns true if user is signed-in. Otherwise false and displays a message.
-CheckIt.prototype.checkSignedInWithMessage = function() {
-    // Return true if the user is signed in Firebase
-    if (this.auth.currentUser) {
-        return true;
-    }
 };
 
 CheckIt.prototype.collapseBuildMenu = function() {
@@ -915,7 +895,7 @@ Calendar.prototype.generateMonthObjects = function() {
         momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-    monthObjects[monthObjects.length-1].numberOfDays = self.endDate.date();
+    monthObjects[monthObjects.length-1].lastActiveDay = self.endDate.date();
     return monthObjects;
 };
     
