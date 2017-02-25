@@ -102,10 +102,8 @@ CheckIt.prototype.addMonth = function() {
                        console.log(state);
                        // Create a calendar so that you can manipulate this calendar State
                        var calendar = new Calendar(state);
-                       // Add a month to this calendar, function has the same name
-                       // as the one we are currently in. Bad practice?
-                       calendar.addMonth();
-                       this.attachCellClickHandler(calendar, [calendar.lastMonth]);
+                       // Add a month to this calendar
+                       this.attachCellClickHandler(calendar, [calendar.addMonth()]);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -769,11 +767,7 @@ var Calendar = function(state) {
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
-    self.monthObjects = self.generateMonthObjects();
-    // Last month to be added, this is so that when you need to attach the
-    // click handler to this month, you don't do it to the entire calendar.
-    self.lastMonth = null;
-
+    self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
 }
 
 Calendar.prototype.addMonth = function() {
@@ -782,32 +776,33 @@ Calendar.prototype.addMonth = function() {
     
     // Update self.endDate so that it occurs one month later.
     self.endDate = self.endDate.add(1, 'months');
-    // Update the self.lastMonth property
-    self.lastMonth = new Month(self.endDate.format("YYYYMMDD"));
     // Update the endDateString in the calendarState
     self.state.endDateString = self.endDate.format("YYYYMMDD");
     // Update the self.monthObjects so that it includes the new month
-    self.monthObjects = self.generateMonthObjects();
+    self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
+    var newMonth = self.monthObjects[self.monthObjects.length-1];
+    // return the new month
+    return newMonth;
 };
 
     
-Calendar.prototype.generateMonthObjects = function() {
+Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects
     var self = this;
     var monthObjects = [];
     
-    var momentObject = moment(self.startDate);
-    while (momentObject.isBefore(self.endDate) || momentObject.isSame(self.endDate)) {
+    var momentObject = moment(startDate);
+    while (momentObject.isBefore(endDate) || momentObject.isSame(endDate)) {
         
-        var month = new Month(momentObject.format("YYYYMMDD"), self);
+        var month = new Month(momentObject.format("YYYYMMDD"));
         monthObjects.push(month)
         momentObject.startOf('month');
         momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-    monthObjects[monthObjects.length-1].numberOfDays = self.endDate.date();
+    monthObjects[monthObjects.length-1].numberOfDays = endDate.date();
     return monthObjects;
 };
     
