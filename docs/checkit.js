@@ -440,6 +440,27 @@ CheckIt.prototype.fillCalendar = function(calObj) {
     })
 };
 
+CheckIt.prototype.generateCheckmarks = function(calObj, div) {
+    // Display saved checkmarks on calendar
+    // div is which div do you want to look through for checkmarks
+    
+    var $div = div;
+    if (calObj.state.checkedDays === undefined) {
+        console.log("No days are checked");
+        return;
+    }
+    
+    $div.find('.cell').each( function() {
+        
+        var boxId = $(this).attr('id');
+        
+        if (calObj.state.checkedDays[boxId]) {
+            $(this).children('.checkmark').removeClass("hidden");
+        }
+        
+     })
+};
+
 CheckIt.prototype.collapseBuildMenu = function() {
     // Collapse the build calendar form.
     this.$buildCalendarForm.collapse('hide');
@@ -657,7 +678,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
-    calendarObject.generateCheckmarks();
+    this.generateCheckmarks(calendarObject, this.$calendarDiv);
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -807,28 +828,3 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     return monthObjects;
 };
     
-Calendar.prototype.generateCheckmarks = function() {
-    // Removes the hidden class between the children of the div class="cell" 
-    // of the cells whose indices are in the monthState.checkedDays
-    // object.
-    
-    //checkedDays is an object that contains a date that points to 1 or 0
-    var self = this;
-    if (self.state.checkedDays === undefined) {
-        console.log("No days are checked");
-        return;
-    }
-    
-    $('#calendarDiv').find('.cell').each( function() {
-        
-        var boxId = $(this).attr('id');
-        
-        if (self.state.checkedDays[boxId]) {
-            $(this).children('.checkmark').removeClass("hidden");
-        }
-        
-     })
-
-};
-
-
