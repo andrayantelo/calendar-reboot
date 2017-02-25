@@ -136,8 +136,7 @@ CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) 
         $monthDiv.find('.activeDay').click(function(event) {
             
             var boxId = $(this).find('.cell').attr('id');
-            console.log(boxId);
-            
+          
             if (calObj.state.checkedDays === undefined) {
                 calObj.state.checkedDays = {};
             }
@@ -658,6 +657,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
+    calendarObject.generateCheckmarks();
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
