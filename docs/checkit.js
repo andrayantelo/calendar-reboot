@@ -102,8 +102,10 @@ CheckIt.prototype.addMonth = function() {
                        console.log(state);
                        // Create a calendar so that you can manipulate this calendar State
                        var calendar = new Calendar(state);
+
                        // Add a month to this calendar
                        this.attachCellClickHandler(calendar, [calendar.addMonth()]);
+
                    }
                }.bind(this))
                .catch(function(err) {
@@ -125,17 +127,16 @@ CheckIt.prototype.addMonth = function() {
     
 };
 
-CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
+CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
     
     monthObjArray.forEach( function(monthObj) {
         var $monthDiv = $('#' + monthObj.monthId);
-        $monthDiv.find('.cell').click(function(event) {
+        $monthDiv.find('.activeDay').click(function(event) {
             
-            var boxId = $(this).attr('id');
-            
-            
+            var boxId = $(this).find('.cell').attr('id');
+          
             if (calObj.state.checkedDays === undefined) {
                 calObj.state.checkedDays = {};
             }
@@ -149,7 +150,7 @@ CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
             }
             else {
                 //remove from checkedDays
-                delete calObj.checkedDays[boxId]
+                delete calObj.state.checkedDays[boxId]
                 //remove the checkmark from the page
                 $(this).find('.checkmark').addClass("hidden");
             }
@@ -354,12 +355,89 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
-// Returns true if user is signed-in. Otherwise false and displays a message.
-CheckIt.prototype.checkSignedInWithMessage = function() {
-    // Return true if the user is signed in Firebase
-    if (this.auth.currentUser) {
-        return true;
-    }
+CheckIt.prototype.generateEmptyCalendar = function(calObj) {
+    // Generate the html for an empty calendar of the calendar you want to 
+    // display.
+    
+    var $calendarDiv = this.$calendarDiv;
+    
+    // Add the title of the calendar
+    $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
+                        calObj.state.title + '</h1></div>');
+                        
+
+    calObj.monthObjects.forEach (function(monthObj, index) {
+        
+        //the div ID is the monthID
+        $calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
+        
+        if (self.monthIndex === 0) {
+            var yearHeader = "<div class='page-header text-center'>" +
+                "<h2>" + monthObj.monthYear + "</h2>" +
+                "</div>";
+            $('#' + monthObj.monthId).append(yearHeader);
+        }
+        $('#' + monthObj.monthId).append($('#template').html());
+            
+    });
+    
+};
+
+CheckIt.prototype.fillCalendar = function(calObj) {
+    // Fill an empty calendar with appropriate calendar data.
+
+    calObj.monthObjects.forEach (function(monthObj) {
+        
+        var $monthId = $('#'+ monthObj.monthId);
+        
+        $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
+        
+        // Go through each td and fill in correct day number
+        $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
+            
+            // The indexOfTableTd is where we are currently on the month table
+            // which td are we in, from 0 to 41, because there are 6 rows
+            // or 7 columns 
+            
+            // dayOfMonth is equal to 1 once the indexOfTableTd is equal to 
+            // the index of the first day of the month.
+            var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.firstDay);
+            
+            if (dayOfMonth >= monthObj.firstDay && dayOfMonth <= monthObj.numberOfDays) { 
+                
+                // Store the day of months with their indices in dayIndex object (dictionary)
+                // in month state
+                 monthObj.dayIndex[dayOfMonth] = indexOfTableTd;
+                 
+                 // Ensure the td is empty
+                 $(this).empty(); 
+                 
+                 var boxId = moment({"year":monthObj.monthYear, "month":monthObj.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
+                 // Add inactive class to inactive days, and do not include a 
+                 // checkmark div in the cell divs of inactive days. Also give
+                 // the td a unique Id.
+                 if (dayOfMonth < monthObj.startDay || dayOfMonth > monthObj.lastActiveDay) {
+                     $(this).addClass('inactiveDay');
+                     
+                      var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
+                         dayOfMonth.toString() + '">';
+                 }
+                 else {
+                     $(this).addClass('activeDay');
+                     
+                     var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
+                         dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
+                 }
+                 // Add html inside td element
+                 $(this).append(toAdd);
+                 
+                 // Add the daynumber into the div with class .daynumber, which is 
+                 // inside of the td
+                 $(this).find('.cell').children('.daynumber').append(dayOfMonth);
+                $(this).find('.cell').attr('id', boxId);
+            }
+        })
+    })
 };
 
 CheckIt.prototype.collapseBuildMenu = function() {
@@ -576,11 +654,10 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     
-    calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
-    calendarObject.fillCalendar(calendarObject.monthObjects);
-    this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
+    this.generateEmptyCalendar(calendarObject);
+    this.fillCalendar(calendarObject);
+    this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     calendarObject.generateCheckmarks();
-    
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -616,103 +693,22 @@ var Month = function(dateString) {
     //date will be of the format moment("YYYYMMDD")
     self.dateString = dateString;
     self.date = moment(dateString, "YYYYMMDD");
-    self.firstDayIndex = self.date.day();
+    self.firstActiveDayIndex = self.date.day();
+    
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
+
     self.monthName = self.date.format("MMMM");
+    // Start day is the first active day
     self.startDay = self.date.date();
+    // Index of the first of the month
+    self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
+    self.firstDay = self.firstDayDate.date();
+    self.firstDayIndex = self.firstDayDate.day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
     
-    self.generateEmptyMonthDiv = function(isFirst) {
-        //add a div to html code containing the table template for a month 
-        
-        //Parameters: 
-        //    div: string
-        
-        //    the id of the div where you want to place your month div, this
-        //    will probably end up being hardcoded in
-        
-        //HARDCODED FOR NOW
-        var $div = $('#calendarDiv');
-        var yearHeader = "<div class='page-header text-center'>" +
-            "<h2 id='yearHeader'>" + self.monthYear + "</h2>" +
-            "</div>";
-        
-        //the div ID is the monthID
-        
-        $div.append('<div class="monthframe" id=' + self.monthId + '></div>');
-        $div.append('<div class="monthframe"></div>');
-        if (self.monthIndex === 0 || isFirst) {
-            $('#' + self.monthId).append(yearHeader);
-        }
-        $('#' + self.monthId).append($('#template').html());
-        
-        
-    };
-    
-    
-    self.fillMonthDiv = function() {
-        //fill the template table with month information (name, number of
-        //days, year, checked days if any, etc.
-        
-        var $monthId = $('#'+ self.monthId);
-        
-        //self.clearMonthDiv();  <-- Do I need this?
-        
-        $monthId.find(".month-year").empty();
-        $monthId.find(".month-year").append(self.monthName + " " + self.monthYear);
-        
-        //go through each td and fill in correct day number
-        $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
-            //the indexOfTableSquare is where we are currently on the month table
-            //which td are we in, from 0 to 42, because there are 6 rows
-            // or 7 columns 
-            
-            //gives the day of the month
-            
-            
-            var dayOfMonth = indexOfTableTd - (self.firstDayIndex - self.startDay);
-            
-            
-            //if the day of the month is >= to the startDay, so for example
-            //if you have startDay as 20th of Nov, then the following code
-            //won't run until the dayOfMonth is 20 or up AND it is less
-            //than the number of days in the month
-            if (dayOfMonth >= self.startDay && dayOfMonth <= self.numberOfDays) 
-            { 
-                //store the day of months with their indices in dayIndex object (dictionary)
-                //in month state
-                 self.dayIndex[dayOfMonth] = indexOfTableTd;
-                 
-                 //this refers to the td
-                 $(this).empty();  //ensure it's empty
-                 
-                 //inside each td there will be the following html 
-                 var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
-                 
-                 //add html inside td element
-                 $(this).append(toAdd);
-                 
-                 //this ensures that the css changes for an actual day in the month
-                 $(this).addClass('actualDay');
-                 
-                 //add the daynumber into the div with class .daynumber, which is 
-                 //inside of the td
-                 $(this).find('.cell').children('.daynumber').append(dayOfMonth);
-                 var boxId = moment({"year":self.monthYear, "month":self.monthIndex, "day": dayOfMonth}).format("YYYYMMDD");
-                 $(this).find('.cell').attr('id', boxId);
-                 
-            }
-            
-            else {
-                $(this).addClass('emptyDay');
-            }
-        });
-    };
-
     
     self.removeEmptyWeeks = function() {
         //remove empty weeks from the month view
@@ -765,6 +761,7 @@ var Calendar = function(state) {
     //"YYYYMMDD" string
     self.startDate = moment(state.startDateString, "YYYYMMDD");
     //endDate is a moment object
+    // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");
     //number of months we will need to be able to cover all the years the
     //user wants to track
@@ -804,37 +801,12 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
         momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-    monthObjects[monthObjects.length-1].numberOfDays = endDate.date();
+
+    monthObjects[monthObjects.length-1].lastActiveDay = endDate.date();
+
     return monthObjects;
 };
     
-Calendar.prototype.generateEmptyCalendar = function(monthObjectsArray) {
-    // generates the empty month divs for the calendar
-    
-    var self = this;
-    var $div = $('#calendarDiv');
-
-    $div.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-              self.state.title + '</h1></div>');
-    
-    monthObjectsArray.forEach (function(monthObj, index) {
-        var isFirst = index === 0;
-        monthObj.generateEmptyMonthDiv(isFirst);
-            
-    });
-    
-};
-
-Calendar.prototype.fillCalendar = function(monthObjectsArray) {
-    //fills an empty calendar with month names, dates, etc
-    var self = this;
-    monthObjectsArray.forEach (function(monthObj) {
-        monthObj.fillMonthDiv();
-        monthObj.removeEmptyWeeks();
-    });
-};
-
-
 Calendar.prototype.generateCheckmarks = function() {
     // Removes the hidden class between the children of the div class="cell" 
     // of the cells whose indices are in the monthState.checkedDays

@@ -293,8 +293,12 @@ corresponding value from the list below*/
     background: #f3f3f3;
 }
 
-.cell, .actualDay {
+.activeDay {
     background: white;
+}
+
+.inactiveDay {
+    background: #f9f9f9;
 }
 
 label {
