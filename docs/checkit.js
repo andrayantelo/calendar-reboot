@@ -355,11 +355,9 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
-CheckIt.prototype.generateEmptyCalendar = function(calObj, $calDiv) {
+CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    
-    var $calendarDiv = $calDiv;
     
     // Add the title of the calendar
     $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
