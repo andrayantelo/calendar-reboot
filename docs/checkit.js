@@ -355,11 +355,11 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
-CheckIt.prototype.generateEmptyCalendar = function(calObj) {
+CheckIt.prototype.generateEmptyCalendar = function(calObj, $calDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
     
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = $calDiv;
     
     // Add the title of the calendar
     $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
@@ -440,7 +440,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
     })
 };
 
-CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
+CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
     // Display saved checkmarks on calendar
     // div is which div do you want to look through for checkmarks
     
@@ -449,7 +449,7 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
         return;
     }
     
-    $div.find('.cell').each( function() {
+    $calendarDiv.find('.cell').each( function() {
         
         var boxId = $(this).attr('id');
         
@@ -460,13 +460,13 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
      })
 };
 
-CheckIt.prototype.removeEmptyWeeks = function(calObj, $div) {
+CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
         
-    $div.find('.month').find('.week').each( function(index) {
+    $calendarDiv.find('.month').find('.week').each( function(index) {
         var counter = 0;
         $(this).find('td').each(function(td) {
-            if ($(this).children().hasClass("nill")) 
+            if ($(this).children().hasClass("nil")) 
             counter +=1;
         })
         if (counter === 7) 
@@ -690,7 +690,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     
-    this.generateEmptyCalendar(calendarObject);
+    this.generateEmptyCalendar(calendarObject, this.$calendarDiv);
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
