@@ -440,11 +440,10 @@ CheckIt.prototype.fillCalendar = function(calObj) {
     })
 };
 
-CheckIt.prototype.generateCheckmarks = function(calObj, div) {
+CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
     // Display saved checkmarks on calendar
     // div is which div do you want to look through for checkmarks
     
-    var $div = div;
     if (calObj.state.checkedDays === undefined) {
         console.log("No days are checked");
         return;
