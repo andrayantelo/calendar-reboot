@@ -746,25 +746,6 @@ var Month = function(dateString) {
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
     
-    
-    self.removeEmptyWeeks = function() {
-        //remove empty weeks from the month view
-        
-        var $div = $('#calendarDiv');
-        
-        $div.find('.month').find('.week').each( function(index) {
-            var counter = 0;
-            $(this).find('td').each(function(td) {
-                if ($(this).hasClass("emptyDay")) 
-                counter +=1;
-            })
-            if (counter === 7) 
-            {
-                $(this).remove();
-            }
-        })
-    };
-    
 };
 
 
