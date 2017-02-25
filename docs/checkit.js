@@ -391,8 +391,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
         
         var $monthId = $('#'+ monthObj.monthId);
         
-        $monthId.find(".month-year").empty();
-        $monthId.find(".month-year").append(monthObj.monthName + " " + monthObj.monthYear);
+        $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
         
         // Go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
@@ -658,10 +657,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
-    //calendarObject.fillCalendar(calendarObject.monthObjects);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
-    //calendarObject.generateCheckmarks();
-    
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
