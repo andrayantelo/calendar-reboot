@@ -460,6 +460,22 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
      })
 };
 
+CheckIt.prototype.removeEmptyWeeks = function(calObj, $div) {
+    // Remove empty weeks from the calendar
+        
+    $div.find('.month').find('.week').each( function(index) {
+        var counter = 0;
+        $(this).find('td').each(function(td) {
+            if ($(this).children().hasClass("nill")) 
+            counter +=1;
+        })
+        if (counter === 7) 
+        {
+            $(this).remove();
+        }
+    })
+};
+
 CheckIt.prototype.collapseBuildMenu = function() {
     // Collapse the build calendar form.
     this.$buildCalendarForm.collapse('hide');
@@ -678,6 +694,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
+    this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -745,7 +762,7 @@ var Month = function(dateString) {
             {
                 $(this).remove();
             }
-        });
+        })
     };
     
 };
