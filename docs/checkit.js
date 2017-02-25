@@ -31,8 +31,6 @@ function CheckIt() {
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
-    //this.$calendarTemplate = $('#template');
-    
     
     var opts = {
       lines: 13 // The number of lines to draw
@@ -59,8 +57,7 @@ function CheckIt() {
     
     this.spinner = new Spinner();
     
-    var monthObjects;
-    
+    // Click handlers for the DOM
     this.$clearButton.click(this.clearForm.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
@@ -89,6 +86,80 @@ function CheckIt() {
     // WHEN PAGE LOADS
     this.initFirebase();
 
+};
+
+CheckIt.prototype.addMonth = function() {
+    // Add a single month to the calendar
+    
+    // Get the active Calendar information because you need to know what the 
+    // last month is as well as the endDate.
+    this.store.getActive()
+        .then(function (activeCalendarId) {
+            this.store.loadById(activeCalendarId)
+                .then(function (activeCalendarState) {
+                   if (activeCalendarState !==  null) {
+                       var state = activeCalendarState;
+                       console.log(state);
+                       // Create a calendar so that you can manipulate this calendar State
+                       var calendar = new Calendar(state);
+                       // Add a month to this calendar
+                       this.attachCellClickHandler(calendar, [calendar.addMonth()]);
+                   }
+               }.bind(this))
+               .catch(function(err) {
+                   console.error("Could not load calendar " + err);
+                   // Remove active status from the id we just tried to load
+                   // because we were not able to load it.
+                   this.store.removeActive();
+                   this.uncollapseBuildMenu();
+               }.bind(this));
+           
+       }.bind(this))
+       
+       .catch(function () {
+           console.log("Could not load current active calendar");
+           this.uncollapseBuildMenu();
+       }.bind(this));
+    
+    
+    
+};
+
+CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
+    // Takes an array of month objects (the array can be of length 1)
+    var checkitObj = this;
+    
+    monthObjArray.forEach( function(monthObj) {
+        var $monthDiv = $('#' + monthObj.monthId);
+        $monthDiv.find('.cell').click(function(event) {
+            
+            var boxId = $(this).attr('id');
+            
+            
+            if (calObj.state.checkedDays === undefined) {
+                calObj.state.checkedDays = {};
+            }
+            //Only store data for days with checkmarks.
+            //unchecked days are undefined
+            if (calObj.state.checkedDays[boxId] === undefined) {
+                //add it to checkedDays
+                calObj.state.checkedDays[boxId] = 1;
+                //then add a checkmark
+                $(this).find('.checkmark').removeClass("hidden");
+            }
+            else {
+                //remove from checkedDays
+                delete calObj.checkedDays[boxId]
+                //remove the checkmark from the page
+                $(this).find('.checkmark').addClass("hidden");
+            }
+            
+            // save progress
+            checkitObj.store.save(calObj);
+            
+        })
+    })
+   
 };
 
 
@@ -140,7 +211,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
-                       var calendar = new Calendar(state, this);
+                       var calendar = new Calendar(state);
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
@@ -324,7 +395,7 @@ CheckIt.prototype.createCalendar = function() {
         
         //make calendar object
 
-        var calendar = new Calendar(state, this);
+        var calendar = new Calendar(state);
         
         // Initialize calendar in the storage
         this.store.initializeCalendar(calendar);
@@ -346,7 +417,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
-            var calendar = new Calendar(state, this);
+            var calendar = new Calendar(state);
             this.displayCalendar(calendar);
             this.collapseBuildMenu(); 
         }.bind(this))
@@ -507,6 +578,8 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     
     calendarObject.generateEmptyCalendar(calendarObject.monthObjects);
     calendarObject.fillCalendar(calendarObject.monthObjects);
+    this.attachCellClickHandler(calendarObject, calendarObject.monthObjects);
+    calendarObject.generateCheckmarks();
     
 };
 
@@ -536,61 +609,8 @@ $(document).ready(function() {
     
 });
 
-//UTILITY FUNCTIONS FOR THE MONTH, YEAR, ETC OBJECTS
-
-
-var storeInLocalStorage = function(storageItemKey, storageItem) {
-    //store information in database/ might start with localstorage though
-    // Convert a javascript value (storageItem) to a JSON string and
-    // accesses the current domain's local Storage object and adds a data item
-    //  (storageString) to it.
-    
-    //  Parameters:
-    //  storageItemKey: string
-    //      The localstorage key to be used to store the data item.
-    //  storageItem: string
-    //      The item to be stored in localstorage
-    
-    localStorage.setItem(storageItemKey, JSON.stringify(storageItem));
-};
-
-var loadFromLocalStorage = function(storageItemKey) {
-    //  Loads an item from localstorage with key storageItemKey and returns the item
-    //  if the item is not in localStorage, then it returns null
-        
-    //  Parameters:
-    //  storageItemKey: "string"
-    //      The key used to store the item and to be used to retrieve it from
-    //      localstorage.
-    
-    var storageItem = localStorage.getItem(storageItemKey);
-        
-        
-    if (storageItem === null) 
-    {
-        console.log(storageItemKey + " not found in localstorage");
-        return storageItem;   
-    }
-                                                                                                   
-    else 
-    {
-        storageItem = JSON.parse(storageItem);  
-        return storageItem;
-    }     
-};
-
-var removeFromLocalStorage = function(storageItemKey) {
-    // removes item with key storageItemKey from localStorage
-    
-    localStorage.removeItem(storageItemKey);
-
-};
-
-
-//CODE FOR MONTH OBJECTS, CLASSES, ETC
-
-
-var Month = function(dateString, calendarObj) {
+//CODE FOR MONTH AND CALENDAR OBJECTS
+var Month = function(dateString) {
     
     var self = this;
     //date will be of the format moment("YYYYMMDD")
@@ -604,7 +624,6 @@ var Month = function(dateString, calendarObj) {
     self.startDay = self.date.date();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
-    self.calendar = calendarObj;
     
     self.generateEmptyMonthDiv = function(isFirst) {
         //add a div to html code containing the table template for a month 
@@ -633,47 +652,6 @@ var Month = function(dateString, calendarObj) {
         
     };
     
-     self.attachClickHandler = function() {
-        //add functionality to the day tds, allowing it to be checked
-        //with a checkmark when clicked
-        
-        // Attaches a function to the divs with class "cell" to be triggered
-        // when "cell" is clicked. The function toggles the hidden class
-        // between the children (daynumber and fa fa-check) of "cell"
-        
-        //HARDCODED FOR NOW
-        var $div = $('#' + self.monthId);
-        
-        $div.find('.cell').click(function (event) {
-            
-            var boxId = $( this).attr('id');
-            //if the boxId is not checked (as in, the value is not inside of checkedDays
-            //in other words, it's undefined
-            
-            if (self.calendar.state.checkedDays === undefined) {
-                self.calendar.state.checkedDays = {};
-            }
-           
-            if (self.calendar.state.checkedDays[boxId] === undefined) {
-                //add it to checkedDays
-                self.calendar.state.checkedDays[boxId] = 1;
-                //then add a checkmark
-                $( this ).children('.element').removeClass("hidden");
-            }
-            else {
-                //remove from checkedDays
-                delete self.calendar.state.checkedDays[boxId]
-                //remove the checkmark from the page
-                $( this ).children('.element').addClass("hidden");
-            }
-            
-            //save your progress
-            
-            //TODO change the way months build calendar, issue #87
-            self.calendar.checkit.store.save(self.calendar);
-         })
-     };
-
     
     self.fillMonthDiv = function() {
         //fill the template table with month information (name, number of
@@ -713,7 +691,7 @@ var Month = function(dateString, calendarObj) {
                  
                  //inside each td there will be the following html 
                  var toAdd = '<div class="cell"><div class="daynumber"' + ' daynumber="' + 
-                 dayOfMonth.toString() + '"></div><div class="element hidden"></div></div>';
+                 dayOfMonth.toString() + '"></div><div class="checkmark hidden"></div></div>';
                  
                  //add html inside td element
                  $(this).append(toAdd);
@@ -734,32 +712,7 @@ var Month = function(dateString, calendarObj) {
             }
         });
     };
-    
-    self.generateCheckmarks = function() {
-        // Toggles the hidden class between the children of the div class="cell" 
-        // of the cells whose indices are in the monthState.checkedDays
-        // object.
-        
-        //checkedDays is an object that contains a date that points to 1 or 0
-        
-        if (self.calendar.state.checkedDays === undefined) {
-            console.log("No days are checked");
-            return;
-        }
-        
-        var monthId = '#'+ self.monthId;
-        
-        $(monthId).find('.cell').each( function() 
-        {
-            var boxId = $(this).attr('id');
-            
-            if (self.calendar.state.checkedDays[$(this).attr('id')]) 
-            {
-                $(this).children('.element').removeClass("hidden");
-            }
-            
-         });
-    };
+
     
     self.removeEmptyWeeks = function() {
         //remove empty weeks from the month view
@@ -804,7 +757,7 @@ var emptyCalendarState = function(params) {
     };
 };
 
-var Calendar = function(state, checkitObj) {
+var Calendar = function(state) {
     
     var self = this;
     self.state = state;
@@ -816,29 +769,42 @@ var Calendar = function(state, checkitObj) {
     //number of months we will need to be able to cover all the years the
     //user wants to track
     self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
-    self.monthObjects = self.generateMonthObjects();
-    self.checkit = checkitObj;
-    
+    self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
 }
 
+Calendar.prototype.addMonth = function() {
+    // Add a month to the calendar.
+    var self = this;
     
-Calendar.prototype.generateMonthObjects = function() {
+    // Update self.endDate so that it occurs one month later.
+    self.endDate = self.endDate.add(1, 'months');
+    // Update the endDateString in the calendarState
+    self.state.endDateString = self.endDate.format("YYYYMMDD");
+    // Update the self.monthObjects so that it includes the new month
+    self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
+    var newMonth = self.monthObjects[self.monthObjects.length-1];
+    // return the new month
+    return newMonth;
+};
+
+    
+Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects
     var self = this;
     var monthObjects = [];
     
-    var momentObject = moment(self.startDate);
-    while (momentObject.isBefore(self.endDate) || momentObject.isSame(self.endDate)) {
+    var momentObject = moment(startDate);
+    while (momentObject.isBefore(endDate) || momentObject.isSame(endDate)) {
         
-        var month = new Month(momentObject.format("YYYYMMDD"), self);
+        var month = new Month(momentObject.format("YYYYMMDD"));
         monthObjects.push(month)
         momentObject.startOf('month');
         momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-    monthObjects[monthObjects.length-1].numberOfDays = self.endDate.date();
+    monthObjects[monthObjects.length-1].numberOfDays = endDate.date();
     return monthObjects;
 };
     
@@ -865,10 +831,32 @@ Calendar.prototype.fillCalendar = function(monthObjectsArray) {
     monthObjectsArray.forEach (function(monthObj) {
         monthObj.fillMonthDiv();
         monthObj.removeEmptyWeeks();
-        monthObj.attachClickHandler();
-        monthObj.generateCheckmarks();
     });
 };
 
+
+Calendar.prototype.generateCheckmarks = function() {
+    // Removes the hidden class between the children of the div class="cell" 
+    // of the cells whose indices are in the monthState.checkedDays
+    // object.
+    
+    //checkedDays is an object that contains a date that points to 1 or 0
+    var self = this;
+    if (self.state.checkedDays === undefined) {
+        console.log("No days are checked");
+        return;
+    }
+    
+    $('#calendarDiv').find('.cell').each( function() {
+        
+        var boxId = $(this).attr('id');
+        
+        if (self.state.checkedDays[boxId]) {
+            $(this).children('.checkmark').removeClass("hidden");
+        }
+        
+     })
+
+};
 
 
