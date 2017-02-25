@@ -462,13 +462,7 @@ CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
         
     $calendarDiv.find('.month').find('.week').each( function(index) {
-        var counter = 0;
-        $(this).find('td').each(function(td) {
-            if ($(this).children().hasClass("nil")) 
-            counter +=1;
-        })
-        if (counter === 7) 
-        {
+        if ($(this).find('td').children('.nil').length === 7) {
             $(this).remove();
         }
     })
