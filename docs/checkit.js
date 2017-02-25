@@ -108,6 +108,8 @@ CheckIt.prototype.addMonth = function() {
                }.bind(this))
                .catch(function(err) {
                    console.error("Could not load calendar " + err);
+                   // Remove active status from the id we just tried to load
+                   // because we were not able to load it.
                    this.store.removeActive();
                    this.uncollapseBuildMenu();
                }.bind(this));
@@ -137,8 +139,8 @@ CheckIt.prototype.attachCellClickHandler = function(calObj, monthObjArray) {
             if (calObj.state.checkedDays === undefined) {
                 calObj.state.checkedDays = {};
             }
-            //if the boxId is not checked (as in, the value is not inside of checkedDays
-            //in other words, it's undefined
+            //Only store data for days with checkmarks.
+            //unchecked days are undefined
             if (calObj.state.checkedDays[boxId] === undefined) {
                 //add it to checkedDays
                 calObj.state.checkedDays[boxId] = 1;
@@ -209,7 +211,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
-                       calendar = new Calendar(state);
+                       var calendar = new Calendar(state);
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
@@ -393,7 +395,7 @@ CheckIt.prototype.createCalendar = function() {
         
         //make calendar object
 
-        calendar = new Calendar(state);
+        var calendar = new Calendar(state);
         
         // Initialize calendar in the storage
         this.store.initializeCalendar(calendar);
@@ -415,7 +417,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
-            calendar = new Calendar(state);
+            var calendar = new Calendar(state);
             this.displayCalendar(calendar);
             this.collapseBuildMenu(); 
         }.bind(this))
