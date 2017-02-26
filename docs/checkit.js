@@ -355,11 +355,9 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
-CheckIt.prototype.generateEmptyCalendar = function(calObj) {
+CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    
-    var $calendarDiv = this.$calendarDiv;
     
     // Add the title of the calendar
     $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
@@ -440,7 +438,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
     })
 };
 
-CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
+CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
     // Display saved checkmarks on calendar
     // div is which div do you want to look through for checkmarks
     
@@ -449,7 +447,7 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
         return;
     }
     
-    $div.find('.cell').each( function() {
+    $calendarDiv.find('.cell').each( function() {
         
         var boxId = $(this).attr('id');
         
@@ -458,6 +456,16 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $div) {
         }
         
      })
+};
+
+CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
+    // Remove empty weeks from the calendar
+        
+    $calendarDiv.find('.month > .week').each( function(index) {
+        if ($(this).find('td > .nil').length === 7) {
+            $(this).remove();
+        }
+    })
 };
 
 CheckIt.prototype.collapseBuildMenu = function() {
@@ -674,10 +682,11 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     
-    this.generateEmptyCalendar(calendarObject);
+    this.generateEmptyCalendar(calendarObject, this.$calendarDiv);
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
+    this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -728,25 +737,6 @@ var Month = function(dateString) {
     self.firstDayIndex = self.firstDayDate.day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
-    
-    
-    self.removeEmptyWeeks = function() {
-        //remove empty weeks from the month view
-        
-        var $div = $('#calendarDiv');
-        
-        $div.find('.month').find('.week').each( function(index) {
-            var counter = 0;
-            $(this).find('td').each(function(td) {
-                if ($(this).hasClass("emptyDay")) 
-                counter +=1;
-            })
-            if (counter === 7) 
-            {
-                $(this).remove();
-            }
-        });
-    };
     
 };
 
