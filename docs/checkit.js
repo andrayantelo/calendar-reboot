@@ -687,6 +687,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
     this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
+    this.findCurrentDay();
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
