@@ -305,7 +305,9 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
-
+        // Update user email
+        this.store.updateUserEmail();
+        
         // Set the user's profile pic and name.
         this.updateUserDescription(user);
 
