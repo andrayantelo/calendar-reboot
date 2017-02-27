@@ -296,10 +296,12 @@ CheckIt.prototype.updateUserDescription = function(user) {
     }
 };
 
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
+        
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
