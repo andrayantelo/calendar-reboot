@@ -69,9 +69,6 @@
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
         -->
         
-        <!-- Dosis font -->
-        <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
-        
         <script type ="text/javascript" src="store.js"></script>
         <script type ="text/javascript" src="checkit.js"></script> 
         <link rel="stylesheet" type="text/css" href="calendar.css">
@@ -167,10 +164,10 @@
     <div class="row" hidden id="getStarted">
         <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
             <div >
-              <p class="text-center page-header"> How to Get Started</p>
+              <h1 class="text-center page-header"> How to Get Started</h1>
               <p>
                   <ol id="guideList" class="list-group">
-                      <li class="list-group-item">Click top right link to sign in with Google.</li>
+                      <li class="list-group-item">Click the top right button to sign in with Google.</li>
                       <li class="list-group-item">
                       <div>
                           <p>Fill out the Build Calendar form to create your calendar. The start date
@@ -180,10 +177,26 @@
                           </p>
                       </div>
                       </li>
-                      <li class="list-group-item">testing</li>
-                      <li class="list-group-item">here</li>
+                      <li class="list-group-item">
+                          <p>After your calendar has been built, click on a day to place or remove a checkmark. 
+                          Changes are saved automatically. A calendar can be deleted by selecting it and choosing
+                          'Delete Calendar' from the Options menu.
+                          </p>
+                      </li>
+                      <li class="list-group-item">Use your calendar to keep track of whatever you like. For example:
+                        <ul>
+                         <li>Track how many days a week you have gone to the gym.</li>
+                         <li>Track how long you have gone without smoking.</li>
+                         <li>Use a calendar to mark down the days to an event.</li>
+                         <li>Or use a calendar to help you start a new habit.</li>
+                        </ul> 
+                      </li>
                   </ol>
               </p>
+              <h1 class="page-header">Sample Calendars</h1>
+              <div id="calendarSampleContainer">
+                  <img class="img-responsive" src="samplecalendar.png"/>
+              </div>
             </div>
         </div>
     </div>
