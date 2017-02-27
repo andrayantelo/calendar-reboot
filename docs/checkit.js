@@ -26,6 +26,8 @@ function CheckIt() {
     this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
     this.$deleteButton = $('#deleteButton');
+    this.$editCalendarButton = $('#editCalendarButton');
+    this.$newCalendarButton = $('#newCalendarButton');
     this.$calendarTitle = $('#calendarTitle');
     this.$startDate = $('#startDate');
     this.$endDate = $('#endDate');
@@ -63,6 +65,7 @@ function CheckIt() {
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
     
+    
       //have the calendar show when you click in the input section of the date
     //timepicker
     
@@ -86,6 +89,17 @@ function CheckIt() {
     // WHEN PAGE LOADS
     this.initFirebase();
 
+};
+
+CheckIt.prototype.showBuildForm = function() {
+    // Show the build calendar form.
+
+    this.$buildFormAccordion.removeAttr('hidden');
+};
+
+CheckIt.prototype.hideBuildForm = function() {
+    // Hide the build calendar form.
+    this.$buildFormAccordion.attr('hidden', 'true');
 };
 
 CheckIt.prototype.addMonth = function() {
@@ -321,9 +335,6 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         // Display the user's active calendar.
         this.displayActiveCalendar();
         
-        //Show the build Calendar form.
-        this.$buildFormAccordion.removeAttr('hidden');
-        
         //Hide the get started blurb.
         this.$getStarted.attr('hidden', 'true');
     
@@ -345,9 +356,6 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         
         //Clear the page.
         this.clearPage();
-        
-        // Remove the build Calendar form.
-        this.$buildFormAccordion.attr('hidden', 'true');
         
         // Show the get started blurb
         this.$getStarted.removeAttr('hidden');
@@ -816,4 +824,15 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
 
     return monthObjects;
 };
-    
+
+Calendar.prototype.editStartDate = function() {
+    // Edit the start Date of an already built calendar
+};
+
+Calendar.prototype.editEndDate = function() {
+    // Edit the end Date of an already built calendar
+};
+
+Calendar.prototype.editTitle = function() {
+    // Edit the title of an already built calendar
+};
