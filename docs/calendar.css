@@ -244,18 +244,13 @@ table {
 
 /*.dayhighlight {
     background: red
-}
+}*/
 
-.today {
-    background:#e1e1e1; 
-    color:#8c8c8c; 
-    height: 
-    box-shadow:1px 1px 0px #fff inset; 
-    -moz-box-shadow:1px 1px 0px #fff inset; 
-    -webkit-box-shadow:1px 1px 0px #fff inset; 
-    height: 29px;
+.today > daynumber{
     
-} */
+    font-weight: bold;
+    font-size: 18px;
+} 
 
 .cell {
     position: relative;     

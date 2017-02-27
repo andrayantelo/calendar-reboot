@@ -705,6 +705,14 @@ CheckIt.prototype.clearPage = function() {
     this.$calendarDiv.children('.monthframe').remove();
 };
 
+CheckIt.prototype.findCurrentDay = function() {
+    // Finds current day to apply CSS to it.
+    var today = moment();
+    var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
+    
+    this.$calendarDiv.find('#' + todayId).addClass("today");
+};
+
 
 
 $(document).ready(function() {
