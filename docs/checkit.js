@@ -791,7 +791,7 @@ Calendar.prototype.addMonth = function() {
     // Update the endDateString in the calendarState
     self.state.endDateString = self.endDate.format("YYYYMMDD");
     // Update the self.monthObjects so that it includes the new month
-    self.monthObjects = self.generateMonthObjects(self.startDate.format("YYYYMMDD"), self.endDate.format("YYYYMMDD");
+    self.monthObjects = self.generateMonthObjects(self.startDate.format("YYYY-MM-DD"), self.endDate.format("YYYY-MM-DD"));
     var newMonth = self.monthObjects[self.monthObjects.length-1];
     // return the new month
     return newMonth;
@@ -799,9 +799,10 @@ Calendar.prototype.addMonth = function() {
 
     
 Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
+    //TODO modify so that parameters are moment objects
     // Parameters:
-    //     startDate: "YYYYMMDD"
-    //     endDate: "YYYYMMDD"
+    //     startDate: "YYYY-MM-DD"
+    //     endDate: "YYYY-MM-DD"
     
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
@@ -818,8 +819,7 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
         momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-
-
+    
     monthObjects[monthObjects.length-1].lastActiveDay = self.endDate.date();
 
     return monthObjects;

@@ -120,6 +120,7 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
     var monthObjects = this.calendar.generateMonthObjects("20170101", "20170214");
     assert.of(monthObjects.isArray());
+    console.log(monthObjects);
     
 });
 
