@@ -96,6 +96,9 @@ QUnit.test("Init calendar object test", function(assert) {
     assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj"));
     assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
     assert.equal(this.calendar.startDate.format("YYYYMMDD"), "20170214");
+    assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170220");
+    
+    assert.equal(this.calendar.numberOfMonths, 1);
 });
 
 /*

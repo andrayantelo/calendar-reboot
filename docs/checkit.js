@@ -778,9 +778,7 @@ var Calendar = function(state) {
     //endDate is a moment object
     // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");
-    //number of months we will need to be able to cover all the years the
-    //user wants to track
-    self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
+
     self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
 }
 
