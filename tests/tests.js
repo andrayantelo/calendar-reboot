@@ -25,7 +25,7 @@ beforeEach: function() {
     // Prepare something once for all tests
     this.valentine = moment("2017-02-14", "YYYY-MM-DD");
     this.dateString = this.valentine.format("YYYYMMDD");
-    this.calObj = new Calendar({}, "");
+    this.calObj = new Calendar({});
     this.testmonth = new Month(this.dateString, this.calObj);
 }
 
@@ -33,7 +33,7 @@ beforeEach: function() {
 
 QUnit.test("init month object test", function(assert) {
     
-    assert.expect(11);
+    assert.expect(14);
     assert.equal(this.testmonth.dateString, this.dateString, "dateString property");
     assert.ok(moment.isMoment(this.testmonth.date), "testmonth.date is a moment obj");
     assert.equal(this.testmonth.firstActiveDayIndex, 2, "Initialized first active day index");
@@ -53,17 +53,49 @@ QUnit.test("init month object test", function(assert) {
     assert.equal(typeof this.calObj, "object", "Verify calendar object is an object");
 });
 
+
+// Testing Calendar Helper functions
+QUnit.module( "Calendar helper functions tests", {
+});
+
+QUnit.test("generateUniqueId test", function(assert) {
+    assert.expect(1);
+    var uniqueId = generateUniqueId();
+    var uniqueId2 = generateUniqueId();
+    
+    assert.notEqual(uniqueId, uniqueId2);
+});
+
+QUnit.test("emptyCalendarState test", function(assert) {
+    assert.expect(4);
+    var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: ""};
+    var state = emptyCalendarState(params);
+    
+    assert.equal(state.title, "", "Checking state title");
+    assert.equal(state.startDateString, "20170214", "Checking startDateString");
+    assert.equal(state.endDateString, "20170220", "Checking endDateString");
+    // What kind of assertion for uniqueId?
+    assert.deepEqual(state.checkedDays, {});
+});
+
 // Testing calendar object 
 QUnit.module( "Calendar Tests", {
 
 beforeEach: function() {
     // Prepare something once for all tests
-    this.valentine = moment("2017-02-14", "YYYY-MM-DD");
-    this.dateString = this.valentine.format("YYYYMMDD");
-    this.calObj = new Calendar({}, "");
-    this.testmonth = new Month(this.dateString, this.calObj);
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    
 }
 
+});
+
+QUnit.test("Init calendar object test", function(assert) {
+    assert.deepEqual(this.calendar.state, this.state, "Check state is correct");
+    assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj"));
+    assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
+    assert.equal(this.calendar.startDate.format("YYYYMMDD"), "20170214");
 });
 
 /*
