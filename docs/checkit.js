@@ -774,7 +774,9 @@ var Calendar = function(state) {
     self.state = state;
     //startDate is a moment object , the argument startDateString is 
     //"YYYYMMDD" string
+    console.log(self.state.startDateString);
     self.startDate = moment(state.startDateString, "YYYYMMDD");
+    console.log(self.startDate);
     //endDate is a moment object
     // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");
@@ -809,17 +811,16 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     var self = this;
     var monthObjects = [];
 
-    var endDateString = endDate.format("YYYY-MM-DD");
-    
-    while (startDate.isBefore(endDateString) || startDate.isSame(endDateString)) {
+    var momentObject = moment(startDate);
+    while (momentObject.isBefore(endDate) || momentObject.isSame(endDate)) {
         
-        var month = new Month(startDate.format("YYYYMMDD"));
+        var month = new Month(momentObject.format("YYYYMMDD"));
         monthObjects.push(month)
-        startDate.startOf('month');
-        startDate.add(1, 'month');
+        momentObject.startOf('month');
+        momentObject.add(1, 'month');
     }
     //change the number of days for the last month object to the endDate date.
-    
+
     monthObjects[monthObjects.length-1].lastActiveDay = endDate.date();
 
     return monthObjects;
