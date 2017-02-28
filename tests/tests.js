@@ -105,7 +105,7 @@ QUnit.test("Init calendar object test", function(assert) {
     assert.equal(typeof(this.calendar.monthObjects[0]), "object", "Month object is object");
 });
 
-/*
+
 
 QUnit.test("addMonth calendar method test", function(assert) {
     assert.expect(4);
@@ -119,16 +119,21 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    assert.expect(1);
+    assert.expect(5);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
-    assert.of(monthObjects.isArray());
+
+    assert.ok(Array.isArray(monthObjects));
+    assert.equal(monthObjects[0].dateString, "20170101");
+    assert.equal(monthObjects[1].dateString, "20170201");
+    assert.equal(monthObjects[1].lastActiveDay, 14);
+    assert.equal(monthObjects.length, 2);
   
     
 });
 
 
-
+/*
 function yearHeaderTest(name, isFirst, numOfChildren, div) {
     QUnit.test(name, function( assert ) {
         assert.expect(1);
