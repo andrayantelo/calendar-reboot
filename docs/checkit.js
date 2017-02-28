@@ -733,9 +733,12 @@ var Month = function(dateString) {
     self.monthName = self.date.format("MMMM");
     // Start day is the first active day
     self.startDay = self.date.date();
-    // Index of the first of the month
+    
+    // Moment object for the first of the month
     self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
+    // the first of the month date (always 1)
     self.firstDay = self.firstDayDate.date();
+    // Index of the first of the month
     self.firstDayIndex = self.firstDayDate.day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()

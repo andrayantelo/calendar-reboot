@@ -15,8 +15,6 @@ assert.equal( value, "hello", "We expect value to be hello" );
 
 // Tests for checkit.js
 
-
-
 // Testing Month Object
 QUnit.module( "Month Tests", {
 // Hardcoded a date for moment object because javascript's Date object
@@ -29,12 +27,6 @@ beforeEach: function() {
     this.dateString = this.valentine.format("YYYYMMDD");
     this.calObj = new Calendar({}, "");
     this.testmonth = new Month(this.dateString, this.calObj);
-    this.fixture = $("#qunit-fixture");
-},
-
-afterEach: function() {
-    // Clean up after each test
-    this.fixture.empty();
 }
 
 });
@@ -44,17 +36,37 @@ QUnit.test("init month object test", function(assert) {
     assert.expect(11);
     assert.equal(this.testmonth.dateString, this.dateString, "dateString property");
     assert.ok(moment.isMoment(this.testmonth.date), "testmonth.date is a moment obj");
-    assert.equal(this.testmonth.firstDayIndex, 2, "Initialized first day index");
+    assert.equal(this.testmonth.firstActiveDayIndex, 2, "Initialized first active day index");
     assert.equal(this.testmonth.numberOfDays, 28, "Initialized number of days");
     assert.equal(this.testmonth.monthYear, 2017, "Initialized the year");
     
     assert.equal(this.testmonth.monthIndex, 1, "Initialized the index of the month");
     assert.equal(this.testmonth.monthName, "February", "Initialized the month's name");
     assert.equal(this.testmonth.startDay, 14, "Initialized the start day");
+    
+    assert.ok(moment.isMoment(this.testmonth.firstDayDate), "testmonth.firstDayDate is a moment obj");
+    assert.equal(this.testmonth.firstDay, 1, "Checking first of the month date");
+    assert.equal(this.testmonth.firstDayIndex, 3, "Checking index of the first of the month");
+    
     assert.deepEqual(this.testmonth.dayIndex, {}, "Initialized the day Index object");
     assert.equal(this.testmonth.monthId, "20171", "Initialized the month Id");
     assert.equal(typeof this.calObj, "object", "Verify calendar object is an object");
 });
+
+// Testing calendar object 
+QUnit.module( "Calendar Tests", {
+
+beforeEach: function() {
+    // Prepare something once for all tests
+    this.valentine = moment("2017-02-14", "YYYY-MM-DD");
+    this.dateString = this.valentine.format("YYYYMMDD");
+    this.calObj = new Calendar({}, "");
+    this.testmonth = new Month(this.dateString, this.calObj);
+}
+
+});
+
+/*
 
 function yearHeaderTest(name, isFirst, numOfChildren, div) {
     QUnit.test(name, function( assert ) {
@@ -177,3 +189,5 @@ QUnit.test("attachClickHandler test", function( assert ) {
     })
     
 });
+
+*/
