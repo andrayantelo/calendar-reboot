@@ -799,6 +799,10 @@ Calendar.prototype.addMonth = function() {
 
     
 Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
+    // Parameters:
+    //     startDate: "YYYYMMDD"
+    //     endDate: "YYYYMMDD"
+    
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects

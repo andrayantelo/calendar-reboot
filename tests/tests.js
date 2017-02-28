@@ -64,6 +64,7 @@ QUnit.test("generateUniqueId test", function(assert) {
     var uniqueId2 = generateUniqueId();
     
     assert.notEqual(uniqueId, uniqueId2);
+    // Anything else I should be testing in here?
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
@@ -92,6 +93,7 @@ beforeEach: function() {
 });
 
 QUnit.test("Init calendar object test", function(assert) {
+    assert.expect(7);
     assert.deepEqual(this.calendar.state, this.state, "Check state is correct");
     assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj"));
     assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
@@ -100,6 +102,27 @@ QUnit.test("Init calendar object test", function(assert) {
     
     assert.equal(this.calendar.monthObjects.length, 1);
     assert.equal(typeof(this.calendar.monthObjects[0]), "object", "Month object is object");
+});
+
+QUnit.test("addMonth calendar method test", function(assert) {
+    assert.expect(4);
+    this.calendar.addMonth();
+    
+    assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170320", "Check one month was added to endDate object");
+    assert.equal(this.calendar.state.endDateString, "20170320", "Check calendar endDateString added a month");
+    assert.equal(this.calendar.monthObjects.length, 2, "Check month was added to monthObjects array");
+    assert.equal(typeof(this.calendar.addMonth()), "object", "addMonth returns an object");
+});
+
+QUnit.test("generateMonthObjects calendar method test", function(assert) {
+    
+    // generateMonthObjects doesn't really rely on any calendar properties
+    // it just takes a startDate
+    assert.expect(0);
+    
+    var monthObjects = this.calendar.generateMonthObjects("20170101", "20170214");
+    assert.equal(typeof(monthObjects
+    
 });
 
 /*
