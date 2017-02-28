@@ -64,6 +64,7 @@ function CheckIt() {
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
+    this.$newCalendarButton.click(this.showBuildForm.bind(this));
     
     
       //have the calendar show when you click in the input section of the date
@@ -95,6 +96,7 @@ CheckIt.prototype.showBuildForm = function() {
     // Show the build calendar form.
 
     this.$buildFormAccordion.removeAttr('hidden');
+    this.uncollapseBuildMenu;
 };
 
 CheckIt.prototype.hideBuildForm = function() {
@@ -519,7 +521,8 @@ CheckIt.prototype.createCalendar = function() {
     
         //build the calendar
         this.buildCalendar(calendar);
-        this.collapseBuildMenu(); 
+        this.hideBuildForm(); 
+        
    }
 };
 
