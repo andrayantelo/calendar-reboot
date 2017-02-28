@@ -774,9 +774,7 @@ var Calendar = function(state) {
     self.state = state;
     //startDate is a moment object , the argument startDateString is 
     //"YYYYMMDD" string
-    console.log(self.state.startDateString);
     self.startDate = moment(state.startDateString, "YYYYMMDD");
-    console.log(self.startDate);
     //endDate is a moment object
     // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");

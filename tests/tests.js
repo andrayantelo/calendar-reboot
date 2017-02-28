@@ -85,30 +85,24 @@ beforeEach: function() {
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     //console.log(this.params);
     this.state = emptyCalendarState(this.params);
-    console.log(this.state);
+    
     this.calendar = new Calendar(this.state);
-    console.log(this.calendar);
+    
     
 }
 
 });
 
 QUnit.test("Init calendar object test", function(assert) {
-    assert.expect(2);
-    //console.log(this.calendar.state);
-    //console.log(this.calendar);
-    //assert.deepEqual(this.calendar.state, this.state, "Check state is correct");
-    assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj")); // MARCH 1 FOR SOME REASON
-    console.log(this.calendar.startDate.isValid());
-    //console.log(this.calendar.startDate);
-    //assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
-    
-    // FOR SOME REASON START DATE IS NOW MARCH 1
-    assert.equal(this.calendar.startDate.format("YYYY-MM-DD"), "20170214", "Checking startDate object's date");
-    //assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170220", "Checking endDate object's date");
-    
-    //assert.equal(this.calendar.monthObjects.length, 1);
-    //assert.equal(typeof(this.calendar.monthObjects[0]), "object", "Month object is object");
+    assert.expect(7);
+  
+    assert.deepEqual(this.calendar.state, this.state, "Check state is correct");
+    assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj")); 
+    assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
+    assert.equal(this.calendar.startDate.format("YYYYMMDD"), "20170214", "Checking startDate object's date");
+    assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170220", "Checking endDate object's date");
+    assert.equal(this.calendar.monthObjects.length, 1);
+    assert.equal(typeof(this.calendar.monthObjects[0]), "object", "Month object is object");
 });
 
 /*
