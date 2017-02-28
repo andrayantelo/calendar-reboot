@@ -116,12 +116,10 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    // generateMonthObjects doesn't really rely on any calendar properties
-    // it just takes a startDate
-    assert.expect(0);
+    assert.expect(1);
     
     var monthObjects = this.calendar.generateMonthObjects("20170101", "20170214");
-    assert.equal(typeof(monthObjects
+    assert.of(monthObjects.isArray());
     
 });
 
