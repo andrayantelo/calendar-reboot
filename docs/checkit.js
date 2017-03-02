@@ -708,10 +708,16 @@ CheckIt.prototype.clearPage = function() {
 
 CheckIt.prototype.findCurrentDay = function() {
     // Finds current day to apply CSS to it.
+    
+    // Clear the page of any days in the calendar that may have the class
+    // 'today' on them
+    this.$calendarDiv.find('.today').removeClass("today");
+    
     var today = moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
     
     this.$calendarDiv.find('#' + todayId).addClass("today");
+    
 };
 
 
