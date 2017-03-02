@@ -52,7 +52,7 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(4);
+    assert.expect(5);
     var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: ""};
     var state = emptyCalendarState(params);
     
@@ -61,6 +61,11 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.equal(state.endDateString, "20170220", "Checking endDateString");
     // What kind of assertion for uniqueId?
     assert.deepEqual(state.checkedDays, {});
+    
+    //assert that an exception is thrown with invalid dates.
+    var params = {startDate: "2017-02-14", endDate: "2017-01-01", calendarTitle: "hello"};
+    // I don't understand the qunit api for assert.raises (or assert.throws)
+    assert.raises(emptyCalendarState);
 });
 
 // Testing calendar object 
