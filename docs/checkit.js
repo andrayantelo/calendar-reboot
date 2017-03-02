@@ -711,13 +711,17 @@ CheckIt.prototype.findCurrentDay = function() {
     
     // Clear the page of any days in the calendar that may have the class
     // 'today' on them
+    if (this.$calendarDiv === undefined) {
+        return;
+    }
+    
     this.$calendarDiv.find('.today').removeClass("today");
     
     var today = moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
     
     this.$calendarDiv.find('#' + todayId).addClass("today");
-    
+
 };
 
 
@@ -725,8 +729,8 @@ CheckIt.prototype.findCurrentDay = function() {
 $(document).ready(function() {
     
     checkit = new CheckIt();
-    // Event listener for backgroundActivityChange
-   
+    // Run findCurrentDay every 10 minutes
+    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
     
 });
 
