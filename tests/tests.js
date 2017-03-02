@@ -49,7 +49,6 @@ QUnit.test("generateUniqueId test", function(assert) {
     var uniqueId2 = generateUniqueId();
     
     assert.notEqual(uniqueId, uniqueId2);
-    // Anything else I should be testing in here?
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
@@ -74,7 +73,6 @@ beforeEach: function() {
     this.state = emptyCalendarState(this.params);
     
     this.calendar = new Calendar(this.state);
-    
     
 }
 

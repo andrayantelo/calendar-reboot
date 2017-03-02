@@ -755,10 +755,17 @@ var generateUniqueId = function() {
 };
 
 var emptyCalendarState = function(params) {
+    var startDate = moment(params.startDate, "YYYY-MM-DD");
+    var endDate = moment(params.endDate, "YYYY-MM-DD");
+    if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
+        console.error("End date must be a date after start date.");
+        return;
+    }
+    
     return{
         //"YYYYMMDD" string
-        startDateString: moment(params.startDate, "YYYY-MM-DD").format("YYYYMMDD"),
-        endDateString: moment(params.endDate, "YYYY-MM-DD").format("YYYYMMDD"),
+        startDateString: startDate.format("YYYYMMDD"),
+        endDateString: endDate.format("YYYYMMDD"),
         //list name under which it will be saved
         title: params.calendarTitle,
         //unique ID for calendar
