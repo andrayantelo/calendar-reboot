@@ -814,9 +814,7 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
-        console.error("End date must be a date after start date");
-        // Should i return an empty array here?
-        return;
+        throw new Error("End date must be a date after start date");
     }
     
     var self = this;
