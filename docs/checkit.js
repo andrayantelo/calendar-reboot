@@ -759,9 +759,7 @@ var emptyCalendarState = function(params) {
     var endDate = moment(params.endDate, "YYYY-MM-DD");
     
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
-        console.error("End date must be a date after start date.");
-        // Should I return an empty object here?
-        return;
+        throw new Error("End date must be a date after start date.");
     }
     
     return{
