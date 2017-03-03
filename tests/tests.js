@@ -52,7 +52,7 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(5);
+    assert.expect(6);
     var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: ""};
     var state = emptyCalendarState(params);
     
@@ -68,6 +68,9 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.raises(function() {
         emptyCalendarState(params);
         }, Error, "testing invalid dates");
+    assert.raises(function() {
+        emptyCalendarState(params);
+    }, /End date must be a date after start date./, "Testing error message");
 });
 
 // Testing calendar object 
@@ -111,7 +114,7 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    assert.expect(6);
+    assert.expect(7);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
 
@@ -124,7 +127,9 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
     assert.raises(function() {
         this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
         }, Error, "Testing invalid dates");
-    
+    assert.raises(function() {
+        this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
+    }, /End date must be a date after start date/, "testing error message");
 });
 
 
