@@ -7,10 +7,10 @@ body{
 }
 
 #getStarted {
-  font-size: 20px;
+  font-size: 18px;
   padding: 10px;
   margin: 10px;
-  font-family: 'Dosis', sans-serif;
+  font-family: sans-serif;
 }
 
 .btn {
@@ -151,8 +151,7 @@ table {
     height: 90px;
     width: 90px;
   }
-  
-  
+   
 
 }
 
@@ -179,9 +178,7 @@ table {
     height: 103px;
     width: 103px;
 }
-  /*body {
-    background-color: red;
-  }*/
+
   
 }
 
@@ -216,6 +213,8 @@ table {
     border-top-left-radius: 0px;
     border-bottom-right-radius: 0px;
   } 
+  
+
 }
 
 @media screen and (max-width: 320px) {
@@ -304,4 +303,9 @@ corresponding value from the list below*/
 label {
     font-weight: normal;
 }
+
+.list-group-item {
+    display: list-item;
+}
+
 
