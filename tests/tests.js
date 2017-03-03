@@ -65,7 +65,9 @@ QUnit.test("emptyCalendarState test", function(assert) {
     //assert that an exception is thrown with invalid dates.
     var params = {startDate: "2017-02-14", endDate: "2017-01-01", calendarTitle: "hello"};
     // I don't understand the qunit api for assert.raises (or assert.throws)
-    assert.raises(emptyCalendarState);
+    assert.raises(function() {
+        emptyCalendarState(params);
+        }, Error, "testing invalid dates");
 });
 
 // Testing calendar object 
@@ -109,7 +111,7 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    assert.expect(5);
+    assert.expect(6);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
 
@@ -118,7 +120,10 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
     assert.equal(monthObjects[1].dateString, "20170201");
     assert.equal(monthObjects[1].lastActiveDay, 14);
     assert.equal(monthObjects.length, 2);
-  
+    // Don't understand why this assertion passes
+    assert.raises(function() {
+        this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
+        }, Error, "Testing invalid dates");
     
 });
 
