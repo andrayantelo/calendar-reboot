@@ -42,10 +42,12 @@
   <script type ="text/javascript" src="tests.js"></script>
   
   <script>
-    checkit = new CheckIt('localStorage');
+    $(document).ready( function() {
+        checkit = new CheckIt('localStorage');
 
-    // Run findCurrentDay every 10 minutes
-    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+        // Run findCurrentDay every 10 minutes
+        setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+    };
   </script>
 </head>
 <body>
