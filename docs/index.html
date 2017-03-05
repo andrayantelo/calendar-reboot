@@ -72,7 +72,15 @@
         <script type ="text/javascript" src="store.js"></script>
         <script type ="text/javascript" src="checkit.js"></script> 
         <link rel="stylesheet" type="text/css" href="calendar.css">
-
+ 
+        <script>
+            $(document).ready( function() {
+                checkit = new CheckIt('firebase');
+      
+                // Run findCurrentDay every 10 minutes
+                setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+            });
+        </script>
         
         
         
@@ -285,171 +293,6 @@
         <div class="row">
              <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10" id="calendarDiv"> 
                 
-                <!-- MONTH TEMPLATE -->
-                <div id="template" class="hidden">
-                    
-                    <div class="header">
-                        <span class="month-year"> </span>
-                    </div> <!-- /.header -->
-           
-                <div id="dayNames">
-                    <table id="days">
-                        <td>S</td>
-                        <td>M</td>
-                        <td>T</td>
-                        <td>W</td>
-                        <td>T</td>
-                        <td>F</td>
-                        <td>S</td>
-                    </table>
-                </div> <!-- /#dayNames -->
-    
-        
-                <div class="monthContainer">    
-                    <table class="month">
-                        <tbody>
-                            <tr class="week">
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                            </tr>
-                            <tr class="week">
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                            </tr>
-                            <tr class="week">
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                            </tr>
-                            <tr class="week">
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                            </tr>
-                            <tr class="week">
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                            </tr>
-                            <tr class="week">
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                    <div class="nil"></div>
-                                </td>
-                                <td>
-                                     <div class="nil"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div><!-- end of class="monthcontainer" div -->
-            </div> <!-- end of id="template" div -->
             
             </div> <!-- /.col -->
         </div> <!-- /.row -->

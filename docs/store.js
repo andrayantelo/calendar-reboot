@@ -341,7 +341,6 @@ var firebaseCalendarStorage = function(params) {
             });
         
     };
-
     
     
 };
@@ -368,7 +367,7 @@ var LocalCalendarStorage = function(params) {
     };
     
     setInStorage = function(key, val) {
-        localstorage.setItem(toKey(key), JSON.stringify(val));
+        localStorage.setItem(toKey(key), JSON.stringify(val));
     };
     
     getFromStorage = function(key) {
@@ -551,6 +550,20 @@ var LocalCalendarStorage = function(params) {
             setInStorage(current_active_calendar, calendarObjId);
             jitter(resolve);
         })
+    };
+    
+    self.initializeCalendar = function(calendarObj) {
+        // Initializes a calendar in the database. Adds the calendar creator
+        // as a writer and a reader, sets the calendar as the currentActiveCalendar
+        // and then runs the save method (store cal state and allCalendarIds
+        
+        return new Promise( function(resolve, reject) {
+            self.setActiveById(calendarObj.state.uniqueId);
+            self.save(calendarObj);
+            jitter(resolve);
+        });
+                
+        
     };
     
     

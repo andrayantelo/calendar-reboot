@@ -1,8 +1,9 @@
 
 // Initializes CheckIt
-function CheckIt() {
+function CheckIt(mode) {
     // Shortcuts to DOM elements.
-
+    this.mode = mode;
+    
     this.$userPic = $('#user-pic');
     this.$userName = $('#user-name');
     this.$signInButton = $('#sign-in');
@@ -82,9 +83,12 @@ function CheckIt() {
     this.$signInButton.click(this.signIn.bind(this));
    
     
-    // We have to connect to Firebase before we can access it.
-    // WHEN PAGE LOADS
-    this.initFirebase();
+    // Initialize storage
+    switch (this.mode) {
+      case 'firebase': this.initFirebase(); break;
+      case 'localStorage': this.initLocalStorage(); break;
+      default: throw new Error("Unknown storage mode: '" + this.mode + "'");
+    }
 
 };
 
@@ -235,6 +239,19 @@ CheckIt.prototype.clearDropdown = function() {
     this.$calendarDropdown.empty();
 };
 
+
+CheckIt.prototype.initLocalStorage = function() {
+    this.store = new LocalCalendarStorage('');
+    // Fill the dropdown with user's saved calendar titles/
+    this.fillDropdown();
+    
+    // Display the user's active calendar.
+    this.displayActiveCalendar();
+    
+    //Show the build Calendar form.
+    this.$buildFormAccordion.removeAttr('hidden');
+};
+
 CheckIt.prototype.initFirebase = function() {
     
     // Shortcuts to Firebase SDK features.
@@ -249,6 +266,7 @@ CheckIt.prototype.initFirebase = function() {
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
+
 };
 
 // Signs-in Checkit
@@ -359,10 +377,11 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
+
 CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    
+    var app = this;
     // Add the title of the calendar
     $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
                         calObj.state.title + '</h1></div>');
@@ -379,7 +398,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).append($('#template').html());
+        $('#' + monthObj.monthId).append(app.getTemplate());
             
     });
     
@@ -387,7 +406,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
-
+    
     calObj.monthObjects.forEach (function(monthObj) {
         
         var $monthId = $('#'+ monthObj.monthId);
@@ -484,6 +503,8 @@ CheckIt.prototype.uncollapseBuildMenu = function() {
 
 CheckIt.prototype.clearForm = function() {
     // Clears the buildCalendar form.
+    
+    // TODO only removeFormErrors if there are any errors on display
     this.removeFormErrors();
     this.$fullForm[0].reset();
 };
@@ -685,13 +706,15 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     // builds the front end of a calendar object. creates the html
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
-    
+
     this.generateEmptyCalendar(calendarObject, this.$calendarDiv);
-    this.fillCalendar(calendarObject);
+    this.fillCalendar(calendarObject)
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
     this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
     this.findCurrentDay();
+
+
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -729,15 +752,6 @@ CheckIt.prototype.findCurrentDay = function() {
 };
 
 
-
-$(document).ready(function() {
-    
-    checkit = new CheckIt();
-    // Run findCurrentDay every 10 minutes
-    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
-    
-});
-
 //CODE FOR MONTH AND CALENDAR OBJECTS
 var Month = function(dateString) {
     
@@ -745,8 +759,9 @@ var Month = function(dateString) {
     //date will be of the format moment("YYYYMMDD")
     self.dateString = dateString;
     self.date = moment(dateString, "YYYYMMDD");
+
     self.firstActiveDayIndex = self.date.day();
-    
+
     self.numberOfDays = self.date.daysInMonth();
     self.monthYear = self.date.year();
     self.monthIndex = self.date.month();
@@ -754,9 +769,12 @@ var Month = function(dateString) {
     self.monthName = self.date.format("MMMM");
     // Start day is the first active day
     self.startDay = self.date.date();
-    // Index of the first of the month
+    
+    // Moment object for the first of the month
     self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
+    // the first of the month date (always 1)
     self.firstDay = self.firstDayDate.date();
+    // Index of the first of the month
     self.firstDayIndex = self.firstDayDate.day();
     self.dayIndex = {};
     self.monthId = self.monthYear.toString() + self.monthIndex.toString()
@@ -773,10 +791,19 @@ var generateUniqueId = function() {
 };
 
 var emptyCalendarState = function(params) {
+    var startDate = moment(params.startDate, "YYYY-MM-DD");
+    var endDate = moment(params.endDate, "YYYY-MM-DD");
+    
+    if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
+        throw new Error("End date must be a date after start date.");
+    }
+    if (params.calendarTitle === "") {
+        throw new Error("Must provide a calendar title.");
+    }
     return{
         //"YYYYMMDD" string
-        startDateString: moment(params.startDate, "YYYY-MM-DD").format("YYYYMMDD"),
-        endDateString: moment(params.endDate, "YYYY-MM-DD").format("YYYYMMDD"),
+        startDateString: startDate.format("YYYYMMDD"),
+        endDateString: endDate.format("YYYYMMDD"),
         //list name under which it will be saved
         title: params.calendarTitle,
         //unique ID for calendar
@@ -796,9 +823,7 @@ var Calendar = function(state) {
     //endDate is a moment object
     // End date is the last active day
     self.endDate = moment(state.endDateString, "YYYYMMDD");
-    //number of months we will need to be able to cover all the years the
-    //user wants to track
-    self.numberOfMonths = self.endDate.diff(self.startDate, 'months', true);
+
     self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
 }
 
@@ -819,12 +844,20 @@ Calendar.prototype.addMonth = function() {
 
     
 Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
+    // Parameters:
+    //     startDate: moment object
+    //     endDate: moment object
+    
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects
+    if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
+        throw new Error("End date must be a date after start date");
+    }
+    
     var self = this;
     var monthObjects = [];
-    
+
     var momentObject = moment(startDate);
     while (momentObject.isBefore(endDate) || momentObject.isSame(endDate)) {
         
@@ -838,5 +871,174 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     monthObjects[monthObjects.length-1].lastActiveDay = endDate.date();
 
     return monthObjects;
+
 };
     
+CheckIt.prototype.getTemplate = function() {
+    
+    return $.parseHTML(
+            '<div class="header">\
+          <span class="month-year"> </span>\
+        </div> <!-- /.header -->\
+        \
+        <div id="dayNames">\
+          <table id="days">\
+            <td>S</td>\
+            <td>M</td>\
+            <td>T</td>\
+            <td>W</td>\
+            <td>T</td>\
+            <td>F</td>\
+            <td>S</td>\
+          </table>\
+        </div> <!-- /#dayNames -->\
+        \
+        \
+        <div class="monthContainer">    \
+          <table class="month">\
+            <tbody>\
+              <tr class="week">\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+          </tbody>\
+        </table>\
+        </div><!-- end of class="monthcontainer" div -->\
+        '
+        );
+    
+};
