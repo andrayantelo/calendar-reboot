@@ -1,8 +1,8 @@
 
 // Initializes CheckIt
-function CheckIt() {
+function CheckIt(mode) {
     // Shortcuts to DOM elements.
-
+    this.mode = mode;
     this.$userPic = $('#user-pic');
     this.$userName = $('#user-name');
     this.$signInButton = $('#sign-in');
@@ -84,7 +84,12 @@ function CheckIt() {
     
     // We have to connect to Firebase before we can access it.
     // WHEN PAGE LOADS
-    this.initFirebase();
+    if (this.mode === 'firebase') {
+        this.initFirebase();
+    }
+    else {
+        this.initLocalStorage();
+    }
 
 };
 
@@ -235,6 +240,10 @@ CheckIt.prototype.clearDropdown = function() {
     this.$calendarDropdown.empty();
 };
 
+CheckIt.prototype.initLocalStorage = function() {
+    this.store = new LocalCalendarStorage('');
+};
+
 CheckIt.prototype.initFirebase = function() {
     
     // Shortcuts to Firebase SDK features.
@@ -249,6 +258,7 @@ CheckIt.prototype.initFirebase = function() {
     
     // Initiates Firebase auth and listen to auth state changes.
     this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
+
 };
 
 // Signs-in Checkit
@@ -709,7 +719,7 @@ CheckIt.prototype.clearPage = function() {
 
 $(document).ready(function() {
     
-    checkit = new CheckIt();
+    checkit = new CheckIt(localStorage);
 
     // Event listener for backgroundActivityChange
    
