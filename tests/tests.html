@@ -40,6 +40,13 @@
 
   <!-- My tests -->
   <script type ="text/javascript" src="tests.js"></script>
+  
+  <script>
+    checkit = new CheckIt('localstorage');
+
+    // Run findCurrentDay every 10 minutes
+    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+  </script>
 </head>
 <body>
     

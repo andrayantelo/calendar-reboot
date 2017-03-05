@@ -739,16 +739,6 @@ CheckIt.prototype.findCurrentDay = function() {
 };
 
 
-
-$(document).ready(function() {
-    
-    checkit = new CheckIt('localStorage');
-  
-    // Run findCurrentDay every 10 minutes
-    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
-    
-});
-
 //CODE FOR MONTH AND CALENDAR OBJECTS
 var Month = function(dateString) {
     
