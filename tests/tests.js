@@ -178,14 +178,23 @@ QUnit.test("addMonth test", function( assert ) {
 });
 
 QUnit.test("generateEmptyCalendar test", function( assert ) {
-    assert.expect(2);
+    assert.expect(13);
     var $calendarDiv = this.fixture.find('#calendarDiv');
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
-    assert.ok($calendarDiv.find('#201701'));
-
+    assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
+    assert.equal($calendarDiv.find('#yearHeader').text(), this.calendar.monthObjects[0].monthYear);
+    assert.equal(this.fixture.find('.week').length, 6);
+    assert.equal(this.fixture.find('td').length, 49);
+    assert.equal(this.fixture.find('.nil').length, 42);
+    
+    var daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    $calendarDiv.find('#dayNames td').each(function(index, td) {
+        assert.equal($(this).html(), daysOfWeek[index]);
+    });
     
 });
+
 
 QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
     assert.expect(0);

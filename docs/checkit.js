@@ -337,8 +337,8 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
         $calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
         if (monthObj.monthIndex === 0 || monthObj.isFirst) {
-            var yearHeader = "<div class='page-header text-center'>" +
-                "<h2>" + monthObj.monthYear + "</h2>" +
+            var yearHeader = "<div class='page-header text-center' id='yearHeader'>" +
+                "<h2>"+monthObj.monthYear + "</h2>" +
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
