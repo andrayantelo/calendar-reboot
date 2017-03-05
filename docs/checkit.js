@@ -780,11 +780,13 @@ var generateUniqueId = function() {
 var emptyCalendarState = function(params) {
     var startDate = moment(params.startDate, "YYYY-MM-DD");
     var endDate = moment(params.endDate, "YYYY-MM-DD");
-    // Should an error be thrown if the calendar title parameter is an empty string?
+    
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
         throw new Error("End date must be a date after start date.");
     }
-    
+    if (params.calendarTitle === "") {
+        throw new Error("Must provide a calendar title.");
+    }
     return{
         //"YYYYMMDD" string
         startDateString: startDate.format("YYYYMMDD"),

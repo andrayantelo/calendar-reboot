@@ -52,11 +52,11 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(7);
-    var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: ""};
+    assert.expect(9);
+    var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Hello"};
     var state = emptyCalendarState(params);
     
-    assert.equal(state.title, "", "Checking state title");
+    assert.equal(state.title, "Hello", "Checking state title");
     assert.equal(state.startDateString, "20170214", "Checking startDateString");
     assert.equal(state.endDateString, "20170220", "Checking endDateString");
     assert.ok(state.uniqueId);
@@ -71,6 +71,18 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.raises(function() {
         emptyCalendarState(params);
     }, /End date must be a date after start date./, "Testing error message");
+    
+    params.startDate = "2017-02-14";
+    params.endDate = "2017-02-20";
+    params.calendarTitle = "";
+    
+    assert.raises(function() {
+        emptyCalendarState(params);
+    }, Error, "Testing empty calendar title string");
+    
+    assert.raises(function() {
+        emptyCalendarState(params);
+    }, /Must provide a calendar title./, "Testing error message");
 });
 
 // Testing calendar object 
