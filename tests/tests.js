@@ -199,7 +199,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
 });
 
 QUnit.test("fillCalendar test", function( assert ) {
-    assert.expect(66);
+    assert.expect(135);
     
     var $calendarDiv = this.fixture.find('#calendarDiv');
     // Add month to calendar
@@ -239,26 +239,55 @@ QUnit.test("fillCalendar test", function( assert ) {
         "dayIndex object is not empty");
     assert.notOk(jQuery.isEmptyObject(secondMonth.dayIndex),
         "dayIndex object for second month is not empty");
-    /*
-    assert.equal(Object.keys(testmonth.dayIndex).length, 15, "Asserting number of keys in dayIndex object");
     
-    assert.equal($(this).find('.actualDay').length, 15, "Checking the number of .actualDay td elements");
+    assert.equal(Object.keys(firstMonth.dayIndex).length, 28,
+    "Asserting number of keys in dayIndex object of first month.");
     
-    assert.equal($(this).find('.cell').length, 15, "Correct number of .cell div elements");
+    assert.equal(Object.keys(secondMonth.dayIndex).length, 31,
+    "Asserting number of keys in dayIndex object of second month.");
     
-    assert.equal($(this).find('.nill').length, 27, "Correct number of .nill div elements");
+    assert.equal($('#' + firstMonth.monthId).find('.activeDay').length,
+    15, "Checking the number of .activeDay td elements in first month.");
     
-    assert.equal($(this).find('.cell').children().length, 30, "Total number of children of each .cell div");
-    assert.ok($(this).find('.daynumber').text(), ".daynumber divs have text in them");
+    assert.equal($('#' + secondMonth.monthId).find('.activeDay').length,
+     20, "Checking the number of .activeDay td elements in second month.");
+     
+    assert.equal($('#' + firstMonth.monthId).find('.cell').length,
+    28, "Correct number of .cell elements in first month");
     
-    $(this).find('.daynumber').each( function(index) {
-        assert.equal($(this).html(), index + 14, "Correct daynumbers");
-        });
-        
-    $(this).find('.cell').each(function (index) {
-        assert.ok($(this).find('.element').hasClass("hidden"), "Check that .element divs have a hidden class");
+    assert.equal($('#' + secondMonth.monthId).find('.cell').length,
+    31, "Checking the number of .cell td elements in second month.");
+    
+    assert.equal($('#' + firstMonth.monthId).find('.nil').length,
+    14, "Correct number of .nil div elements in first month");
+    
+    assert.equal($('#' + secondMonth.monthId).find('.nil').length,
+    11, "Correct number of .nil div elements in second month");
+    
+    assert.ok($('#' + firstMonth.monthId).find('.daynumber').text(),
+     ".daynumber divs of first month have text in them");
+    assert.ok($('#' + secondMonth.monthId).find('.daynumber').text(),
+    ".daynumber divs of second month have text in them");
+    
+    $('#' + firstMonth.monthId).find('.daynumber').each( function(index) {
+        assert.equal($(this).html(), index + 1,
+        "Correct daynumbers in first month");
     });
-    */
+        
+    $('#' + secondMonth.monthId).find('.daynumber').each(function(index) {
+        assert.equal($(this).html(), index + 1,
+        "Correct daynumbers in second month");
+    });
+       
+    $('#' + firstMonth.monthId).find('.element').each(function (index) {
+        assert.ok($(this).hasClass("hidden"),
+        "Check that .element divs have a hidden class in first month");
+    });
+    
+    $('#' + secondMonth.monthId).find('.element').each(function (index) {
+        assert.ok($(this).hasClass('hidden'),
+        "Check that .element divs have a hidden class in second month");
+    });
 
 });
 
