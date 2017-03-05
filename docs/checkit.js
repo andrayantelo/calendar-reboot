@@ -464,8 +464,8 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
-        
-    $calendarDiv.find('.month > .week').each( function(index) {
+    
+    $calendarDiv.find('.month .week').each( function(index) {
         if ($(this).find('td > .nil').length === 7) {
             $(this).remove();
         }
