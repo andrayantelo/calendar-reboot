@@ -134,7 +134,7 @@ CheckIt.prototype.addMonth = function() {
 CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
-    console.log("attaching click handler");
+    
     monthObjArray.forEach( function(monthObj) {
         var $monthDiv = $('#' + monthObj.monthId);
         $monthDiv.find('.activeDay').click(function(event) {
@@ -239,12 +239,21 @@ CheckIt.prototype.clearDropdown = function() {
     this.$calendarDropdown.empty();
 };
 
+
 CheckIt.prototype.initLocalStorage = function() {
     this.store = new LocalCalendarStorage('');
+    // Fill the dropdown with user's saved calendar titles/
+    this.fillDropdown();
+    
+    // Display the user's active calendar.
+    this.displayActiveCalendar();
+    
+    //Show the build Calendar form.
+    this.$buildFormAccordion.removeAttr('hidden');
 };
 
 CheckIt.prototype.initFirebase = function() {
-    console.log('initializing firebase');
+    
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
@@ -406,7 +415,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
         
         // Go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
-            console.log("Filling tds");
+            
             // The indexOfTableTd is where we are currently on the month table
             // which td are we in, from 0 to 41, because there are 6 rows
             // or 7 columns 
@@ -474,11 +483,9 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
-    console.log("removing empty weeks");
+    
     $calendarDiv.find('.month .week').each( function(index) {
-        console.log("found a week");
         if ($(this).find('td > .nil').length === 7) {
-            console.log("found", this);
             $(this).remove();
         }
     })
