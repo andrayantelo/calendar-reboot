@@ -145,7 +145,51 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
 });
 
 
+// Testing checkit object 
+QUnit.module( "CheckIt Tests", {
+
+beforeEach: function() {
+    // Prepare something once for all tests
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    this.checkit = new CheckIt('localStorage');
+}
+
+});
+
+function selectorNameTest(testName, selectorName, expected) {
+    QUnit.test(testName, function(assert) {
+        assert.expect(1);
+        assert.equal(selectorName.selector, expected);
+    });
+};
+
+QUnit.test("Initialize CheckIt test", function( assert ) {
+    assert.expect(1);
+    assert.equal(this.checkit.mode, 'localStorage', "Checking checkit object's mode");
+    selectorNameTest("userPic selector test", this.checkit.$userPic, '#user-pic');
+    selectorNameTest("userName selector test", this.checkit.$userName, '#user-name');
+    selectorNameTest("Sign-in button selector test", this.checkit.$signInButton, '#sign-in');
+    selectorNameTest("Sign-out button selector test", this.checkit.$signOutButton, '#sign-out');
+    selectorNameTest("getStarted selector test", this.checkit.$getStarted, '#getStarted');
+    selectorNameTest("buildFormAccordion selector test", this.checkit.$buildFormAccordion, '#buildFormAccordion');
+    selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
+    selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
+    selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
+    
+});
+
+
+
+
+
+
+
+
+
 /*
+
 function yearHeaderTest(name, isFirst, numOfChildren, div) {
     QUnit.test(name, function( assert ) {
         assert.expect(1);
