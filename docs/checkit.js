@@ -306,14 +306,18 @@ CheckIt.prototype.updateUserDescription = function(user) {
     }
 };
 
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
+        
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
-
+        // Update user email
+        this.store.updateUserEmail();
+        
         // Set the user's profile pic and name.
         this.updateUserDescription(user);
 
@@ -470,8 +474,8 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
-        
-    $calendarDiv.find('.month > .week').each( function(index) {
+    
+    $calendarDiv.find('.month .week').each( function(index) {
         if ($(this).find('td > .nil').length === 7) {
             $(this).remove();
         }
@@ -697,6 +701,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
     this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
+    this.findCurrentDay();
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -715,14 +720,32 @@ CheckIt.prototype.clearPage = function() {
     this.$calendarDiv.children('.monthframe').remove();
 };
 
+CheckIt.prototype.findCurrentDay = function() {
+    // Finds current day to apply CSS to it.
+    
+    // Clear the page of any days in the calendar that may have the class
+    // 'today' on them
+    if (this.$calendarDiv === undefined) {
+        return;
+    }
+    
+    this.$calendarDiv.find('.today').removeClass("today");
+    
+    var today = moment();
+    var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
+    
+    this.$calendarDiv.find('#' + todayId).addClass("today");
+
+};
+
 
 
 $(document).ready(function() {
     
-    checkit = new CheckIt(localStorage);
-
-    // Event listener for backgroundActivityChange
-   
+    checkit = new CheckIt('localStorage');
+  
+    // Run findCurrentDay every 10 minutes
+    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
     
 });
 

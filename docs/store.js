@@ -172,6 +172,26 @@ var firebaseCalendarStorage = function(params) {
         
     };
     
+    self.updateUserEmail = function() {
+        // Updates the user's email in the database.
+        var userId = self.user.uid;
+        var userEmail = self.user.email;
+        
+        var updates = {};
+        updates['users/' + userId + '/email'] = userEmail;
+        
+        self.startWork();
+        return self.database.ref().update(updates)
+            .then(function() {
+                self.endWork();
+            })
+            .catch(function(err) {
+                console.error("Unable to update email: " + err);
+                self.endWork();
+                return err;
+            })
+    };
+    
     self.setActiveById = function(calendarObjId) {
         // Set the active calendar/object by using its Id
         
