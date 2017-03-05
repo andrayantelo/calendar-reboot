@@ -69,43 +69,11 @@ function CheckIt(mode) {
 
 };
 
-CheckIt.prototype.addMonth = function() {
+CheckIt.prototype.addMonth = function(calObj) {
     // Add a single month to the calendar
     
-    // Get the active Calendar information because you need to know what the 
-    // last month is as well as the endDate.
-    this.store.getActive()
-        .then(function (activeCalendarId) {
-            this.store.loadById(activeCalendarId)
-                .then(function (activeCalendarState) {
-                   if (activeCalendarState !==  null) {
-                       var state = activeCalendarState;
-                       console.log(state);
-                       // Create a calendar so that you can manipulate this calendar State
-                       var calendar = new Calendar(state);
-
-                       // Add a month to this calendar
-                       this.attachCellClickHandler(calendar, [calendar.addMonth()]);
-
-                   }
-               }.bind(this))
-               .catch(function(err) {
-                   console.error("Could not load calendar " + err);
-                   // Remove active status from the id we just tried to load
-                   // because we were not able to load it.
-                   this.store.removeActive();
-                   this.uncollapseBuildMenu();
-               }.bind(this));
-           
-       }.bind(this))
-       
-       .catch(function () {
-           console.log("Could not load current active calendar");
-           this.uncollapseBuildMenu();
-       }.bind(this));
-    
-    
-    
+    // Add a month to this calendar
+    this.attachCheckmarkClickHandler(calObj, [calObj.addMonth()]);    
 };
 
 CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {

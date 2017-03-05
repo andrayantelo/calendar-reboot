@@ -165,9 +165,19 @@ function selectorNameTest(testName, selectorName, expected) {
     });
 };
 
+
+QUnit.test("addMonth test", function( assert ) {
+    assert.expect(2);
+    assert.equal(this.calendar.monthObjects.length, 1);
+    this.checkit.addMonth(this.calendar);
+    assert.equal(this.calendar.monthObjects.length, 2);
+    
+});
+
 QUnit.test("Initialize CheckIt test", function( assert ) {
     assert.expect(1);
     assert.equal(this.checkit.mode, 'localStorage', "Checking checkit object's mode");
+    
     selectorNameTest("userPic selector test", this.checkit.$userPic, '#user-pic');
     selectorNameTest("userName selector test", this.checkit.$userName, '#user-name');
     selectorNameTest("Sign-in button selector test", this.checkit.$signInButton, '#sign-in');
@@ -196,13 +206,6 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("buildCalendarForm selector test", this.checkit.$buildCalendarForm, '#collapseOne');
     selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#calendarDiv');
 });
-
-
-
-
-
-
-
 
 
 /*
