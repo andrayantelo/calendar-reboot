@@ -368,10 +368,11 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
+
 CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    
+    var app = this;
     // Add the title of the calendar
     $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
                         calObj.state.title + '</h1></div>');
@@ -388,7 +389,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).load("template.html");
+        $('#' + monthObj.monthId).append(app.getTemplate());
             
     });
     
@@ -866,3 +867,171 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
 
 };
     
+CheckIt.prototype.getTemplate = function() {
+    
+    return $.parseHTML(
+            '<div class="header">\
+          <span class="month-year"> </span>\
+        </div> <!-- /.header -->\
+        \
+        <div id="dayNames">\
+          <table id="days">\
+            <td>S</td>\
+            <td>M</td>\
+            <td>T</td>\
+            <td>W</td>\
+            <td>T</td>\
+            <td>F</td>\
+            <td>S</td>\
+          </table>\
+        </div> <!-- /#dayNames -->\
+        \
+        \
+        <div class="monthContainer">    \
+          <table class="month">\
+            <tbody>\
+              <tr class="week">\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+                <td>\
+                  <div class="nil"></div>\
+                </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+            <tr class="week">\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+              <td>\
+                <div class="nil"></div>\
+              </td>\
+            </tr>\
+          </tbody>\
+        </table>\
+        </div><!-- end of class="monthcontainer" div -->\
+        '
+        );
+    
+};
