@@ -199,26 +199,47 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
 });
 
 QUnit.test("fillCalendar test", function( assert ) {
-    assert.expect(2);
-    var done = assert.async();
+    assert.expect(66);
     
     var $calendarDiv = this.fixture.find('#calendarDiv');
+    // Add month to calendar
+    this.checkit.addMonth(this.calendar);
+    var firstMonth = this.calendar.monthObjects[0];
+    var secondMonth = this.calendar.monthObjects[1];
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     
-    // TODO check this for a month that does not include a yearHeader
-    assert.equal($calendarDiv.find('.monthframe').children().length, 4, "Number of children of monthframe div");
-    
+    assert.equal($calendarDiv.find('#20171').children().length, 4,
+        "Number of children of first month");
+    assert.equal($calendarDiv.find('#20172').children().length, 3,
+        "Number of children of second month");
     this.checkit.fillCalendar(this.calendar);
-    assert.equal($calendarDiv.find(".activeDay").first().children('.cell').attr('id'), 20170214, "Check start day of the month");
-    //Check first inactiveDay is the first of the month
-    assert.equal($calendarDiv.find(".inactiveDay").first().children('.cell').attr('id'), 20170201, "Check first of the month");
-    /*
-    $(this).find('.cell').each( function(index) {
-        assert.equal($(this).attr('id'), '201702' + (index + 14), "Checking id's of .cell divs");
-    });
     
-    assert.equal($(this).find(".month-year").text(), "February 2017");
-    assert.notOk(jQuery.isEmptyObject(testmonth.dayIndex), "dayIndex object is not empty");
+    assert.equal($calendarDiv.find(".activeDay").first().children('.cell')
+        .attr('id'), 20170214, "Check start day of the month");
+        
+    //Check first inactiveDay is the first of the month
+    assert.equal($calendarDiv.find(".inactiveDay").first().children('.cell')
+        .attr('id'), 20170201, "Check first of the month");
+  
+    $('#' + firstMonth.monthId).find('.cell').each( function(index) {
+        assert.equal($(this).attr('id'), '201702' + 
+        (index + 1 < 10? '0' + (index + 1).toString(): (index + 1).toString()),
+        "Checking id's of .cell divs for first month");
+    });
+    $('#' + secondMonth.monthId).find('.cell').each( function(index) {
+        assert.equal($(this).attr('id'), '201703' +
+        (index + 1 < 10? '0' + (index + 1).toString(): (index + 1).toString()),
+        "Checking id's of .cell divs for first month");
+    });
+   
+    assert.equal($('#' + firstMonth.monthId).find(".month-year").text(),
+        "February 2017");
+    
+    assert.notOk(jQuery.isEmptyObject(firstMonth.dayIndex),
+        "dayIndex object is not empty");
+    assert.notOk(jQuery.isEmptyObject(secondMonth.dayIndex),
+        "dayIndex object for second month is not empty");
+    /*
     assert.equal(Object.keys(testmonth.dayIndex).length, 15, "Asserting number of keys in dayIndex object");
     
     assert.equal($(this).find('.actualDay').length, 15, "Checking the number of .actualDay td elements");
