@@ -126,11 +126,13 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    assert.expect(7);
+    assert.expect(9);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
 
     assert.ok(Array.isArray(monthObjects));
+    assert.ok(monthObjects[0].isFirst);
+    assert.ok(!monthObjects[1].isFirst);
     assert.equal(monthObjects[0].dateString, "20170101");
     assert.equal(monthObjects[1].dateString, "20170201");
     assert.equal(monthObjects[1].lastActiveDay, 14);
@@ -181,6 +183,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
     assert.ok($calendarDiv.find('#201701'));
+
     
 });
 
