@@ -177,7 +177,24 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
     selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
     selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
-    
+    selectorNameTest("startDatePicker selector test", this.checkit.$startDatePicker, '#datetimepicker1');
+    selectorNameTest("startDatePickerInput selector test", this.checkit.$startDatePickerInput, '#datetimepicker1 input');
+    selectorNameTest("endDatePicker selector test", this.checkit.$endDatePicker, '#datetimepicker2');
+    selectorNameTest("endDatePickerInput selector test", this.checkit.$endDatePickerInput, '#datetimepicker2 input');
+    selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
+    selectorNameTest("startDateErrorSpan selector test", this.checkit.$startDateErrorSpan, '#inputError-dateFormGroup');
+    selectorNameTest("endDateErrorSpan selector test", this.checkit.$endDateErrorSpan, '#inputError-dateFormGroup2');
+    selectorNameTest("titleErrorSpan selector test", this.checkit.$titleErrorSpan,'#inputError-titleFormGroup');
+    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleGlyphiconTag, '#span-titleFormGroup');
+    selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
+    selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
+    selectorNameTest("createButton selector test", this.checkit.$createButton, '#createButton');
+    selectorNameTest("deleteButton selector test", this.checkit.$deleteButton, '#deleteButton');
+    selectorNameTest("calendarTitle selector test", this.checkit.$calendarTitle, '#calendarTitle');
+    selectorNameTest("startDate selector test", this.checkit.$startDate, '#startDate');
+    selectorNameTest("endDate selector test", this.checkit.$endDate, '#endDate');
+    selectorNameTest("buildCalendarForm selector test", this.checkit.$buildCalendarForm, '#collapseOne');
+    selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#calendarDiv');
 });
 
 
