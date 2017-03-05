@@ -691,6 +691,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
     this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
+    this.findCurrentDay();
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
@@ -709,13 +710,31 @@ CheckIt.prototype.clearPage = function() {
     this.$calendarDiv.children('.monthframe').remove();
 };
 
+CheckIt.prototype.findCurrentDay = function() {
+    // Finds current day to apply CSS to it.
+    
+    // Clear the page of any days in the calendar that may have the class
+    // 'today' on them
+    if (this.$calendarDiv === undefined) {
+        return;
+    }
+    
+    this.$calendarDiv.find('.today').removeClass("today");
+    
+    var today = moment();
+    var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
+    
+    this.$calendarDiv.find('#' + todayId).addClass("today");
+
+};
+
 
 
 $(document).ready(function() {
     
     checkit = new CheckIt();
-    // Event listener for backgroundActivityChange
-   
+    // Run findCurrentDay every 10 minutes
+    setInterval(checkit.findCurrentDay.bind(checkit), 600000);
     
 });
 
