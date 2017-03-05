@@ -154,6 +154,7 @@ beforeEach: function() {
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
     this.checkit = new CheckIt('localStorage');
+    this.fixture = $('#qunit-fixture');
 }
 
 });
@@ -172,6 +173,19 @@ QUnit.test("addMonth test", function( assert ) {
     this.checkit.addMonth(this.calendar);
     assert.equal(this.calendar.monthObjects.length, 2);
     
+});
+
+QUnit.test("generateEmptyCalendar test", function( assert ) {
+    assert.expect(2);
+    var $calendarDiv = this.fixture.find('#calendarDiv');
+    this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
+    assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
+    assert.ok($calendarDiv.find('#201701'));
+    
+});
+
+QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
+    assert.expect(0);
 });
 
 QUnit.test("Initialize CheckIt test", function( assert ) {

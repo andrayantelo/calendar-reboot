@@ -326,24 +326,23 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
 CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    var app = this;
+    var checkitApp = this;
     // Add the title of the calendar
-    $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-                        calObj.state.title + '</h1></div>');
+    $calendarDiv.append('<div id="calendarTitleHeading"><h1 class="page-header\
+                         text-center">'+calObj.state.title + '</h1></div>');
                         
-
     calObj.monthObjects.forEach (function(monthObj, index) {
         
         //the div ID is the monthID
         $calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
-        if (self.monthIndex === 0) {
+        if (monthObj.monthIndex === 0) {
             var yearHeader = "<div class='page-header text-center'>" +
                 "<h2>" + monthObj.monthYear + "</h2>" +
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).append(app.getTemplate());
+        $('#' + monthObj.monthId).append(checkitApp.getTemplate());
             
     });
     
