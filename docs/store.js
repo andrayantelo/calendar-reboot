@@ -341,7 +341,6 @@ var firebaseCalendarStorage = function(params) {
             });
         
     };
-
     
     
 };

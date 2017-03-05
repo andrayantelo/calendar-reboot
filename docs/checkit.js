@@ -3,6 +3,7 @@
 function CheckIt(mode) {
     // Shortcuts to DOM elements.
     this.mode = mode;
+    
     this.$userPic = $('#user-pic');
     this.$userName = $('#user-name');
     this.$signInButton = $('#sign-in');
@@ -133,7 +134,7 @@ CheckIt.prototype.addMonth = function() {
 CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     var checkitObj = this;
-    
+    console.log("attaching click handler");
     monthObjArray.forEach( function(monthObj) {
         var $monthDiv = $('#' + monthObj.monthId);
         $monthDiv.find('.activeDay').click(function(event) {
@@ -243,7 +244,7 @@ CheckIt.prototype.initLocalStorage = function() {
 };
 
 CheckIt.prototype.initFirebase = function() {
-    
+    console.log('initializing firebase');
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
@@ -387,7 +388,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).append($('#template').html());
+        $('#' + monthObj.monthId).load("template.html");
             
     });
     
@@ -395,7 +396,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
-
+    
     calObj.monthObjects.forEach (function(monthObj) {
         
         var $monthId = $('#'+ monthObj.monthId);
@@ -404,7 +405,7 @@ CheckIt.prototype.fillCalendar = function(calObj) {
         
         // Go through each td and fill in correct day number
         $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
-            
+            console.log("Filling tds");
             // The indexOfTableTd is where we are currently on the month table
             // which td are we in, from 0 to 41, because there are 6 rows
             // or 7 columns 
@@ -472,9 +473,11 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
-    
+    console.log("removing empty weeks");
     $calendarDiv.find('.month .week').each( function(index) {
+        console.log("found a week");
         if ($(this).find('td > .nil').length === 7) {
+            console.log("found", this);
             $(this).remove();
         }
     })
@@ -492,6 +495,8 @@ CheckIt.prototype.uncollapseBuildMenu = function() {
 
 CheckIt.prototype.clearForm = function() {
     // Clears the buildCalendar form.
+    
+    // TODO only removeFormErrors if there are any errors on display
     this.removeFormErrors();
     this.$fullForm[0].reset();
 };
@@ -693,13 +698,15 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     // builds the front end of a calendar object. creates the html
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
-    
+
     this.generateEmptyCalendar(calendarObject, this.$calendarDiv);
-    this.fillCalendar(calendarObject);
+    this.fillCalendar(calendarObject)
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, this.$calendarDiv);
     this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
     this.findCurrentDay();
+
+
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {

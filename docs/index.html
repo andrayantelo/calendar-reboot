@@ -74,10 +74,12 @@
         <link rel="stylesheet" type="text/css" href="calendar.css">
  
         <script>
-            checkit = new CheckIt('firebase');
-  
-            // Run findCurrentDay every 10 minutes
-            setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+            $(document).ready( function() {
+                checkit = new CheckIt('firebase');
+      
+                // Run findCurrentDay every 10 minutes
+                setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+            });
         </script>
         
         
