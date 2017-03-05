@@ -336,7 +336,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
         //the div ID is the monthID
         $calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
-        if (monthObj.monthIndex === 0) {
+        if (monthObj.monthIndex === 0 || monthObj.isFirst) {
             var yearHeader = "<div class='page-header text-center'>" +
                 "<h2>" + monthObj.monthYear + "</h2>" +
                 "</div>";
@@ -813,6 +813,8 @@ Calendar.prototype.generateMonthObjects = function(startDate, endDate) {
     //change the number of days for the last month object to the endDate date.
 
     monthObjects[monthObjects.length-1].lastActiveDay = endDate.date();
+    // Give the first month the property isFirst
+    monthObjects[0].isFirst = true;
 
     return monthObjects;
 
