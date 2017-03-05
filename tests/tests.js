@@ -52,19 +52,19 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(6);
+    assert.expect(7);
     var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: ""};
     var state = emptyCalendarState(params);
     
     assert.equal(state.title, "", "Checking state title");
     assert.equal(state.startDateString, "20170214", "Checking startDateString");
     assert.equal(state.endDateString, "20170220", "Checking endDateString");
-    // What kind of assertion for uniqueId?
+    assert.ok(state.uniqueId);
     assert.deepEqual(state.checkedDays, {});
     
     //assert that an exception is thrown with invalid dates.
     var params = {startDate: "2017-02-14", endDate: "2017-01-01", calendarTitle: "hello"};
-    // I don't understand the qunit api for assert.raises (or assert.throws)
+    
     assert.raises(function() {
         emptyCalendarState(params);
         }, Error, "testing invalid dates");
@@ -79,7 +79,7 @@ QUnit.module( "Calendar Tests", {
 beforeEach: function() {
     // Prepare something once for all tests
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    //console.log(this.params);
+    
     this.state = emptyCalendarState(this.params);
     
     this.calendar = new Calendar(this.state);
@@ -123,7 +123,7 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
     assert.equal(monthObjects[1].dateString, "20170201");
     assert.equal(monthObjects[1].lastActiveDay, 14);
     assert.equal(monthObjects.length, 2);
-    // Don't understand why this assertion passes
+    
     assert.raises(function() {
         this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
         }, Error, "Testing invalid dates");
