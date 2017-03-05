@@ -126,13 +126,10 @@ QUnit.test("addMonth calendar method test", function(assert) {
 
 QUnit.test("generateMonthObjects calendar method test", function(assert) {
     
-    assert.expect(9);
+    assert.expect(7);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
-
     assert.ok(Array.isArray(monthObjects));
-    assert.ok(monthObjects[0].isFirst);
-    assert.ok(!monthObjects[1].isFirst);
     assert.equal(monthObjects[0].dateString, "20170101");
     assert.equal(monthObjects[1].dateString, "20170201");
     assert.equal(monthObjects[1].lastActiveDay, 14);
@@ -161,13 +158,6 @@ beforeEach: function() {
 
 });
 
-function selectorNameTest(testName, selectorName, expected) {
-    QUnit.test(testName, function(assert) {
-        assert.expect(1);
-        assert.equal(selectorName.selector, expected);
-    });
-};
-
 
 QUnit.test("addMonth test", function( assert ) {
     assert.expect(2);
@@ -178,7 +168,7 @@ QUnit.test("addMonth test", function( assert ) {
 });
 
 QUnit.test("generateEmptyCalendar test", function( assert ) {
-    assert.expect(13);
+    assert.expect(14);
     var $calendarDiv = this.fixture.find('#calendarDiv');
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
@@ -193,13 +183,15 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
         assert.equal($(this).html(), daysOfWeek[index]);
     });
     
-    //TODO test with a calendar with more than one month to make sure
-    // the second month does not get a yearHeader.
-    
+    this.checkit.addMonth(this.calendar);
+    $calendarDiv.empty();
+    this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
+    assert.notOk($calendarDiv.find('20172').find('#yearHeader').text(),
+    "Make sure second month does not have a yearHeader");
 });
 
 QUnit.test("fillCalendar test", function( assert ) {
-    assert.expect(135);
+    assert.expect(72);
     
     var $calendarDiv = this.fixture.find('#calendarDiv');
     // Add month to calendar
@@ -235,11 +227,6 @@ QUnit.test("fillCalendar test", function( assert ) {
     assert.equal($('#' + firstMonth.monthId).find(".month-year").text(),
         "February 2017");
     
-    assert.notOk(jQuery.isEmptyObject(firstMonth.dayIndex),
-        "dayIndex object is not empty");
-    assert.notOk(jQuery.isEmptyObject(secondMonth.dayIndex),
-        "dayIndex object for second month is not empty");
-    
     assert.equal(Object.keys(firstMonth.dayIndex).length, 28,
     "Asserting number of keys in dayIndex object of first month.");
     
@@ -264,36 +251,75 @@ QUnit.test("fillCalendar test", function( assert ) {
     assert.equal($('#' + secondMonth.monthId).find('.nil').length,
     11, "Correct number of .nil div elements in second month");
     
-    assert.ok($('#' + firstMonth.monthId).find('.daynumber').text(),
-     ".daynumber divs of first month have text in them");
-    assert.ok($('#' + secondMonth.monthId).find('.daynumber').text(),
-    ".daynumber divs of second month have text in them");
-    
-    $('#' + firstMonth.monthId).find('.daynumber').each( function(index) {
-        assert.equal($(this).html(), index + 1,
-        "Correct daynumbers in first month");
-    });
-        
-    $('#' + secondMonth.monthId).find('.daynumber').each(function(index) {
-        assert.equal($(this).html(), index + 1,
-        "Correct daynumbers in second month");
-    });
-       
-    $('#' + firstMonth.monthId).find('.element').each(function (index) {
-        assert.ok($(this).hasClass("hidden"),
-        "Check that .element divs have a hidden class in first month");
-    });
-    
-    $('#' + secondMonth.monthId).find('.element').each(function (index) {
-        assert.ok($(this).hasClass('hidden'),
-        "Check that .element divs have a hidden class in second month");
-    });
+    fillMonth("Checking first month html", firstMonth, $calendarDiv, 29);
+    fillMonth("Checking second month html", secondMonth, $calendarDiv, 32);
+
 
 });
+
+function fillMonth(testName, monthObj, $div, expected) {
+    QUnit.test(testName, function(assert) {
+        assert.expect(expected);
+        assert.notOk(jQuery.isEmptyObject(monthObj.dayIndex),
+            "dayIndex object for month is not empty");
+        $div.find('#' + monthObj.monthId).find('.daynumber').each( function(index) {
+            assert.equal($(this).html(), index + 1,
+            "Correct daynumbers in first month");
+        });
+        $div.find('#' + monthObj.monthId).find('.element').each(function (index) {
+            assert.ok($(this).hasClass("hidden"),
+            "Check that .element divs have a hidden class in first month");
+        });
+    });
+};
+
+QUnit.module( "Checkit Calendar Manipulation Tests", {
+  beforeEach: function() {
+    // prepare something before each test
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    this.checkit = new CheckIt('localStorage');
+    this.fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.fixture.find('#calendarDiv');
+    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+    this.checkit.fillCalendar(this.calendar);
+
+  },
+  afterEach: function() {
+    // clean up after each test
+    this.$calendarDiv.empty();
+  }
+});
+
 
 QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
-    assert.expect(0);
+    assert.expect(6);
+    this.checkit.attachCheckmarkClickHandler(this.calendar,
+        this.calendar.monthObjects);
+    
+    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 7);
+    // Check valentine's day
+    this.$calendarDiv.find('#20170214').trigger('click');
+    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 6);
+    assert.equal(this.calendar.state.checkedDays['20170214'], 1);
+    // Uncheck valentine's day
+    this.$calendarDiv.find('#20170214').trigger('click');
+    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 7);
+    assert.deepEqual(this.calendar.state.checkedDays, {});
+    // Check that this information was updated in localStorage
+    var storedState = JSON.parse(localStorage.getItem(this.calendar.state.uniqueId));
+    assert.deepEqual(storedState.checkedDays, this.calendar.state.checkedDays);
 });
+
+/*
+function selectorNameTest(testName, selectorName, expected) {
+    QUnit.test(testName, function(assert) {
+        assert.expect(1);
+        assert.equal(selectorName.selector, expected);
+    });
+};
+
 
 QUnit.test("Initialize CheckIt test", function( assert ) {
     assert.expect(1);
@@ -331,57 +357,6 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
 
 /*
 
-QUnit.test("fillMonthDiv test", function ( assert ) {
-    assert.expect(56);
-    var done = assert.async();
-    
-    // Define fixture out here because 'this' changes inside of the load 
-    // function's 'complete' callback
-    
-    var fixture = this.fixture;
-    var testmonth = this.testmonth;
-    
-    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
-    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
-        
-        // Test that template was added as a child
-        assert.equal($(this).children().attr('id'), 'template');
-        assert.equal($(this).children().length, 1, "Number of children of monthframe div");
-        
-        testmonth.fillMonthDiv();
-        // May need to modify the below when I switch to using fully filled months. but possibly not depending on
-        // if I still use the class actualDay
-        assert.equal($(this).find(".actualDay").first().children('.cell').attr('id'), 20170214, "Check start day of the month");
-        
-        $(this).find('.cell').each( function(index) {
-            assert.equal($(this).attr('id'), '201702' + (index + 14), "Checking id's of .cell divs");
-        });
-        
-        assert.equal($(this).find(".month-year").text(), "February 2017");
-        assert.notOk(jQuery.isEmptyObject(testmonth.dayIndex), "dayIndex object is not empty");
-        assert.equal(Object.keys(testmonth.dayIndex).length, 15, "Asserting number of keys in dayIndex object");
-        
-        assert.equal($(this).find('.actualDay').length, 15, "Checking the number of .actualDay td elements");
-        
-        assert.equal($(this).find('.cell').length, 15, "Correct number of .cell div elements");
-        
-        assert.equal($(this).find('.nill').length, 27, "Correct number of .nill div elements");
-        
-        assert.equal($(this).find('.cell').children().length, 30, "Total number of children of each .cell div");
-        assert.ok($(this).find('.daynumber').text(), ".daynumber divs have text in them");
-        
-        $(this).find('.daynumber').each( function(index) {
-            assert.equal($(this).html(), index + 14, "Correct daynumbers");
-            });
-            
-        $(this).find('.cell').each(function (index) {
-            assert.ok($(this).find('.element').hasClass("hidden"), "Check that .element divs have a hidden class");
-        });
-        
-        done();
-    })
-   
-});
 
 QUnit.test("removeEmptyWeeks test", function( assert ) {
     // This test will need to be modified if an entire month is included 
