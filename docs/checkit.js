@@ -82,13 +82,11 @@ function CheckIt(mode) {
     this.$signInButton.click(this.signIn.bind(this));
    
     
-    // We have to connect to Firebase before we can access it.
-    // WHEN PAGE LOADS
-    if (this.mode === 'firebase') {
-        this.initFirebase();
-    }
-    else {
-        this.initLocalStorage();
+    // Initialize storage
+    switch (this.mode) {
+      case 'firebase': this.initFirebase(); break;
+      case 'localStorage': this.initLocalStorage(); break;
+      default: throw new Error("Unknown storage mode: '" + this.mode + "'");
     }
 
 };
