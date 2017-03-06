@@ -438,9 +438,11 @@ CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     })
 };
 
-CheckIt.prototype.collapseBuildMenu = function() {
-    // Collapse the build calendar form.
-    this.$buildCalendarForm.collapse('hide');
+CheckIt.prototype.collapseForm = function($form) {
+    // Collapse a collapsible form.
+    // $form is the selector for the collapsible form.
+    
+    this.$form.collapse('hide');
 };
 
 CheckIt.prototype.uncollapseBuildMenu = function() {
@@ -483,7 +485,7 @@ CheckIt.prototype.createCalendar = function() {
     
         //build the calendar
         this.buildCalendar(calendar);
-        this.collapseBuildMenu(); 
+        this.collapseForm(this.$buildCalendarForm); 
    }
 };
 
@@ -497,7 +499,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
         .then(function(state) {
             var calendar = new Calendar(state);
             this.displayCalendar(calendar);
-            this.collapseBuildMenu(); 
+            this.collapseForm(this.$buildCalendarForm); 
         }.bind(this))
         .catch(function() {
             console.log("Calendar not in storage");
