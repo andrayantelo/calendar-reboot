@@ -246,13 +246,13 @@ table {
     background: red
 }*/
 
-.today > .daynumber{
+.currentDay > .daynumber{
     
     font-weight: bold;
     font-size: 18px;
 } 
 
-.today {
+.currentDay {
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f5f6f6+0,dbdce2+21,b8bac6+49,dddfe3+80,f5f6f6+100;Grey+Pipe */
     background: #f5f6f6; /* Old browsers */
     background: -moz-linear-gradient(top,  #f5f6f6 0%, #dbdce2 21%, #b8bac6 49%, #dddfe3 80%, #f5f6f6 100%); /* FF3.6-15 */

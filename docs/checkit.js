@@ -680,17 +680,20 @@ CheckIt.prototype.findCurrentDay = function() {
     // Finds current day to apply CSS to it.
     
     // Clear the page of any days in the calendar that may have the class
-    // 'today' on them
+    // 'currentDay' on them
     if (this.$calendarDiv === undefined) {
         return;
     }
-    
-    this.$calendarDiv.find('.today').removeClass("today");
+
+    if (this.$calendarDiv.find('.currentDay').length) {
+        
+        this.removeClass("currentDay");
+    }
     
     var today = moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
     
-    this.$calendarDiv.find('#' + todayId).addClass("today");
+    this.$calendarDiv.find('#' + todayId).addClass("currentDay");
 
 };
 

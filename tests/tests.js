@@ -331,7 +331,23 @@ QUnit.test("generateCheckmarks test", function( assert ) {
 });
 
 QUnit.test("removeEmptyWeeks test", function( assert ) {
-    assert.expect(0);
+    assert.expect(2);
+    
+    // Check that there are 6 .weeks
+    assert.equal(this.$calendarDiv.find('.week').length, 6);
+    
+    this.checkit.removeEmptyWeeks(this.calendar, this.$calendarDiv);
+    assert.equal(this.$calendarDiv.find('.week').length, 5);
+    
+});
+
+QUnit.test("findCurrentDay test", function( assert ) {
+    assert.expect(2);
+    
+    var currentDay = "20170214";
+    assert.equal(this.$calendarDiv.find('#20170214').attr('class'), 'cell');
+    this.checkit.findCurrentDay();
+    assert.equal(this.$calendarDiv.find('.currentDay'), 0);
 });
 
 /*
