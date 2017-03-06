@@ -32,29 +32,7 @@ function CheckIt(mode) {
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
-    
-    var opts = {
-      lines: 13 // The number of lines to draw
-    , length: 28 // The length of each line
-    , width: 14 // The line thickness
-    , radius: 42 // The radius of the inner circle
-    , scale: 1 // Scales overall size of the spinner
-    , corners: 1 // Corner roundness (0..1)
-    , color: '#000' // #rgb or #rrggbb or array of colors
-    , opacity: 0.25 // Opacity of the lines
-    , rotate: 0 // The rotation offset
-    , direction: 1 // 1: clockwise, -1: counterclockwise
-    , speed: 1 // Rounds per second
-    , trail: 60 // Afterglow percentage
-    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-    , zIndex: 2e9 // The z-index (defaults to 2000000000)
-    , className: 'spinner' // The CSS class to assign to the spinner
-    , top: '50%' // Top position relative to parent
-    , left: '50%' // Left position relative to parent
-    , shadow: false // Whether to render a shadow
-    , hwaccel: false // Whether to use hardware acceleration
-    , position: 'absolute' // Element positioning
-    }
+    this.$loadingWheel = $('#loadingWheel');
     
     this.spinner = new Spinner();
     
@@ -92,43 +70,10 @@ function CheckIt(mode) {
 
 };
 
-CheckIt.prototype.addMonth = function() {
+CheckIt.prototype.addMonth = function(calObj) {
     // Add a single month to the calendar
-    
-    // Get the active Calendar information because you need to know what the 
-    // last month is as well as the endDate.
-    this.store.getActive()
-        .then(function (activeCalendarId) {
-            this.store.loadById(activeCalendarId)
-                .then(function (activeCalendarState) {
-                   if (activeCalendarState !==  null) {
-                       var state = activeCalendarState;
-                       console.log(state);
-                       // Create a calendar so that you can manipulate this calendar State
-                       var calendar = new Calendar(state);
 
-                       // Add a month to this calendar
-                       this.attachCellClickHandler(calendar, [calendar.addMonth()]);
-
-                   }
-               }.bind(this))
-               .catch(function(err) {
-                   console.error("Could not load calendar " + err);
-                   // Remove active status from the id we just tried to load
-                   // because we were not able to load it.
-                   this.store.removeActive();
-                   this.uncollapseBuildMenu();
-               }.bind(this));
-           
-       }.bind(this))
-       
-       .catch(function () {
-           console.log("Could not load current active calendar");
-           this.uncollapseBuildMenu();
-       }.bind(this));
-    
-    
-    
+    this.attachCheckmarkClickHandler(calObj, [calObj.addMonth()]);    
 };
 
 CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) {
@@ -168,14 +113,14 @@ CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) 
 };
 
 
-CheckIt.prototype.displayLoadingWheel = function(elementId) {
+CheckIt.prototype.displayLoadingWheel = function($elementId) {
     // Displays the loading wheel.
     
     // Parameters: elementId 
-           // A string pertaining to the id of the element
+           // A jquery selector pertaining to the element
            // where you want to place the loading wheel.
-    var target = $('#loadingWheel').get()[0];
     
+    var target = $elementId.get()[0];
     this.spinner.spin(target);
     
 };
@@ -184,11 +129,14 @@ CheckIt.prototype.hideLoadingWheel = function() {
     this.spinner.stop();
 };
 
-CheckIt.prototype.fillDropdown = function() {
+CheckIt.prototype.fillDropdown = function($dropdown) {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
     // Clear the dropdown before filling it 
-    this.$calendarDropdown.empty();
+    // $dropdown is the jquery selector of the element you are going to 
+    // be adding these calendar titles to.
+    var dropdown = $dropdown || this.$calendarDropdown;
+    dropdown.empty();
     
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
@@ -290,7 +238,7 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
     // will tell us whether or not the loadingWheel should be on display or not.
 
     if (activeCalls > 0) {
-        this.displayLoadingWheel("loadingWheel");
+        this.displayLoadingWheel(this.$loadingWheel);
     }
     else if (activeCalls === 0) {
         this.hideLoadingWheel();
@@ -381,24 +329,23 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
 CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    var app = this;
+    var checkitApp = this;
     // Add the title of the calendar
-    $calendarDiv.append('<div id="calendarTitleHeading"> <h1 class="page-header text-center">' +
-                        calObj.state.title + '</h1></div>');
+    $calendarDiv.append('<div id="calendarTitleHeading"><h1 class="page-header\
+                         text-center">'+calObj.state.title + '</h1></div>');
                         
-
     calObj.monthObjects.forEach (function(monthObj, index) {
         
         //the div ID is the monthID
         $calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
-        if (self.monthIndex === 0) {
-            var yearHeader = "<div class='page-header text-center'>" +
-                "<h2>" + monthObj.monthYear + "</h2>" +
+        if (monthObj.monthIndex === 0 || index === 0) {
+            var yearHeader = "<div class='page-header text-center' id='yearHeader'>" +
+                "<h2>"+monthObj.monthYear + "</h2>" +
                 "</div>";
             $('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).append(app.getTemplate());
+        $('#' + monthObj.monthId).append(checkitApp.getTemplate());
             
     });
     
@@ -733,21 +680,27 @@ CheckIt.prototype.clearPage = function() {
     this.$calendarDiv.children('.monthframe').remove();
 };
 
-CheckIt.prototype.findCurrentDay = function() {
+CheckIt.prototype.findCurrentDay = function(currentDay) {
     // Finds current day to apply CSS to it.
-    
+    // Pass the day you are looking for as a parameter "YYYYMMDD"
     // Clear the page of any days in the calendar that may have the class
-    // 'today' on them
+    // 'currentDay' on them
     if (this.$calendarDiv === undefined) {
         return;
     }
+
+    if (this.$calendarDiv.find('.currentDay').length) {
+        
+        this.removeClass("currentDay");
+    }
     
-    this.$calendarDiv.find('.today').removeClass("today");
-    
-    var today = moment();
+    var today = moment(currentDay, "YYYYMMDD") || moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
-    
-    this.$calendarDiv.find('#' + todayId).addClass("today");
+    // If current day is not actually an ACTIVE day in the calendar, don't add it
+    this.$calendarDiv.find('.activeDay')
+        .children('.cell')
+        .filter('#' + todayId)
+        .addClass('currentDay');
 
 };
 
@@ -1042,3 +995,27 @@ CheckIt.prototype.getTemplate = function() {
         );
     
 };
+
+// Options for Spinner, currently not being used.
+CheckIt.prototype.opts = {
+      lines: 13 // The number of lines to draw
+    , length: 28 // The length of each line
+    , width: 14 // The line thickness
+    , radius: 42 // The radius of the inner circle
+    , scale: 1 // Scales overall size of the spinner
+    , corners: 1 // Corner roundness (0..1)
+    , color: '#000' // #rgb or #rrggbb or array of colors
+    , opacity: 0.25 // Opacity of the lines
+    , rotate: 0 // The rotation offset
+    , direction: 1 // 1: clockwise, -1: counterclockwise
+    , speed: 1 // Rounds per second
+    , trail: 60 // Afterglow percentage
+    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+    , zIndex: 2e9 // The z-index (defaults to 2000000000)
+    , className: 'spinner' // The CSS class to assign to the spinner
+    , top: '50%' // Top position relative to parent
+    , left: '50%' // Left position relative to parent
+    , shadow: false // Whether to render a shadow
+    , hwaccel: false // Whether to use hardware acceleration
+    , position: 'absolute' // Element positioning
+}

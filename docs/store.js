@@ -362,7 +362,7 @@ var LocalCalendarStorage = function(params) {
     var toKey = function(id) {
         //make a key out of a uniqueId
         
-        var key = prefix + "_" + id;
+        var key = prefix ? prefix + "_" + id : id;
         return key;
     };
     
