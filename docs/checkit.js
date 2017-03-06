@@ -32,6 +32,7 @@ function CheckIt(mode) {
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
     this.$calendarDiv = $('#calendarDiv');
+    this.$loadingWheel = $('#loadingWheel');
     
     this.spinner = new Spinner();
     
@@ -112,14 +113,14 @@ CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) 
 };
 
 
-CheckIt.prototype.displayLoadingWheel = function(elementId) {
+CheckIt.prototype.displayLoadingWheel = function($elementId) {
     // Displays the loading wheel.
     
     // Parameters: elementId 
-           // A string pertaining to the id of the element
+           // A jquery selector pertaining to the element
            // where you want to place the loading wheel.
-    var target = $('#loadingWheel').get()[0];
     
+    var target = $elementId.get()[0];
     this.spinner.spin(target);
     
 };
@@ -128,10 +129,13 @@ CheckIt.prototype.hideLoadingWheel = function() {
     this.spinner.stop();
 };
 
-CheckIt.prototype.fillDropdown = function() {
+CheckIt.prototype.fillDropdown = function($dropdown) {
      // Load the calendar Ids from storage and fill the dropdown with calendar
     // titles.
     // Clear the dropdown before filling it 
+    // $dropdown is the jquery selector of the element you are going to 
+    // be adding these calendar titles to.
+    
     this.$calendarDropdown.empty();
     
     this.store.getAllCalendarIds()
@@ -234,7 +238,7 @@ CheckIt.prototype.onActivityChanged = function(activeCalls) {
     // will tell us whether or not the loadingWheel should be on display or not.
 
     if (activeCalls > 0) {
-        this.displayLoadingWheel("loadingWheel");
+        this.displayLoadingWheel(this.$loadingWheel);
     }
     else if (activeCalls === 0) {
         this.hideLoadingWheel();

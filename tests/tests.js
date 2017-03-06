@@ -273,7 +273,51 @@ function fillMonth(testName, monthObj, $div, expected) {
     });
 };
 
-QUnit.module( "Checkit Calendar Manipulation Tests", {
+function selectorNameTest(testName, selectorName, expected) {
+    QUnit.test(testName, function(assert) {
+        assert.expect(1);
+        assert.equal(selectorName.selector, expected);
+    });
+};
+
+
+QUnit.test("Initialize CheckIt test", function( assert ) {
+    assert.expect(2);
+    assert.equal(this.checkit.mode, 'localStorage', "Checking checkit object's mode");
+    
+    selectorNameTest("userPic selector test", this.checkit.$userPic, '#user-pic');
+    selectorNameTest("userName selector test", this.checkit.$userName, '#user-name');
+    selectorNameTest("Sign-in button selector test", this.checkit.$signInButton, '#sign-in');
+    selectorNameTest("Sign-out button selector test", this.checkit.$signOutButton, '#sign-out');
+    selectorNameTest("getStarted selector test", this.checkit.$getStarted, '#getStarted');
+    selectorNameTest("buildFormAccordion selector test", this.checkit.$buildFormAccordion, '#buildFormAccordion');
+    selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
+    selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
+    selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
+    selectorNameTest("startDatePicker selector test", this.checkit.$startDatePicker, '#datetimepicker1');
+    selectorNameTest("startDatePickerInput selector test", this.checkit.$startDatePickerInput, '#datetimepicker1 input');
+    selectorNameTest("endDatePicker selector test", this.checkit.$endDatePicker, '#datetimepicker2');
+    selectorNameTest("endDatePickerInput selector test", this.checkit.$endDatePickerInput, '#datetimepicker2 input');
+    selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
+    selectorNameTest("startDateErrorSpan selector test", this.checkit.$startDateErrorSpan, '#inputError-dateFormGroup');
+    selectorNameTest("endDateErrorSpan selector test", this.checkit.$endDateErrorSpan, '#inputError-dateFormGroup2');
+    selectorNameTest("titleErrorSpan selector test", this.checkit.$titleErrorSpan,'#inputError-titleFormGroup');
+    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleGlyphiconTag, '#span-titleFormGroup');
+    selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
+    selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
+    selectorNameTest("createButton selector test", this.checkit.$createButton, '#createButton');
+    selectorNameTest("deleteButton selector test", this.checkit.$deleteButton, '#deleteButton');
+    selectorNameTest("calendarTitle selector test", this.checkit.$calendarTitle, '#calendarTitle');
+    selectorNameTest("startDate selector test", this.checkit.$startDate, '#startDate');
+    selectorNameTest("endDate selector test", this.checkit.$endDate, '#endDate');
+    selectorNameTest("buildCalendarForm selector test", this.checkit.$buildCalendarForm, '#collapseOne');
+    selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#calendarDiv');
+    selectorNameTest("loadingWheel selector test", this.checkit.$loadingWheel, '#loadingWheel');
+    assert.equal(jQuery.type(this.checkit.spinner), 'object');
+});
+
+
+QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
   beforeEach: function() {
     // prepare something before each test
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
@@ -355,93 +399,42 @@ QUnit.test("findCurrentDay test", function( assert ) {
     
 });
 
-/*
-function selectorNameTest(testName, selectorName, expected) {
-    QUnit.test(testName, function(assert) {
-        assert.expect(1);
-        assert.equal(selectorName.selector, expected);
-    });
-};
+QUnit.module( "Checkit DOM manipulation tests", {
+  beforeEach: function() {
+    // prepare something before each test
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    this.checkit = new CheckIt('localStorage');
+    this.fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.fixture.find('#calendarDiv');
+    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+    this.checkit.fillCalendar(this.calendar);
+    this.checkit.attachCheckmarkClickHandler(this.calendar, this.calendar.monthObjects);
+    this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
+    this.checkit.removeEmptyWeeks(this.calendar, this.$calendarDiv);
+    this.checkit.findCurrentDay('20170214');
 
-
-QUnit.test("Initialize CheckIt test", function( assert ) {
-    assert.expect(1);
-    assert.equal(this.checkit.mode, 'localStorage', "Checking checkit object's mode");
-    
-    selectorNameTest("userPic selector test", this.checkit.$userPic, '#user-pic');
-    selectorNameTest("userName selector test", this.checkit.$userName, '#user-name');
-    selectorNameTest("Sign-in button selector test", this.checkit.$signInButton, '#sign-in');
-    selectorNameTest("Sign-out button selector test", this.checkit.$signOutButton, '#sign-out');
-    selectorNameTest("getStarted selector test", this.checkit.$getStarted, '#getStarted');
-    selectorNameTest("buildFormAccordion selector test", this.checkit.$buildFormAccordion, '#buildFormAccordion');
-    selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
-    selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
-    selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
-    selectorNameTest("startDatePicker selector test", this.checkit.$startDatePicker, '#datetimepicker1');
-    selectorNameTest("startDatePickerInput selector test", this.checkit.$startDatePickerInput, '#datetimepicker1 input');
-    selectorNameTest("endDatePicker selector test", this.checkit.$endDatePicker, '#datetimepicker2');
-    selectorNameTest("endDatePickerInput selector test", this.checkit.$endDatePickerInput, '#datetimepicker2 input');
-    selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
-    selectorNameTest("startDateErrorSpan selector test", this.checkit.$startDateErrorSpan, '#inputError-dateFormGroup');
-    selectorNameTest("endDateErrorSpan selector test", this.checkit.$endDateErrorSpan, '#inputError-dateFormGroup2');
-    selectorNameTest("titleErrorSpan selector test", this.checkit.$titleErrorSpan,'#inputError-titleFormGroup');
-    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleGlyphiconTag, '#span-titleFormGroup');
-    selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
-    selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
-    selectorNameTest("createButton selector test", this.checkit.$createButton, '#createButton');
-    selectorNameTest("deleteButton selector test", this.checkit.$deleteButton, '#deleteButton');
-    selectorNameTest("calendarTitle selector test", this.checkit.$calendarTitle, '#calendarTitle');
-    selectorNameTest("startDate selector test", this.checkit.$startDate, '#startDate');
-    selectorNameTest("endDate selector test", this.checkit.$endDate, '#endDate');
-    selectorNameTest("buildCalendarForm selector test", this.checkit.$buildCalendarForm, '#collapseOne');
-    selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#calendarDiv');
+  },
+  afterEach: function() {
+    // clean up after each test
+    this.$calendarDiv.empty();
+  }
 });
 
-
-/*
-
-
-QUnit.test("removeEmptyWeeks test", function( assert ) {
-    // This test will need to be modified if an entire month is included 
-    // with grayed out days for inactive days
+QUnit.test("displayLoadingWheel test", function( assert ) {
     assert.expect(2);
-    
-    var done = assert.async();
-    var fixture = this.fixture;
-    var testmonth = this.testmonth;
-    
-    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
-    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
-        testmonth.fillMonthDiv();
-        assert.equal($(this).find('.week').length, 6, "Check number of weeks generated");
-        testmonth.removeEmptyWeeks('calendarDiv');
-        assert.equal($(this).find('.week').length, 3);
-        
-        done();
-    })
+    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    this.checkit.displayLoadingWheel(this.$calendarDiv.find('#loadingWheel'));
+    assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 1);
+    // div with class 'spinner' added to loadingWheel
+    assert.equal(this.$calendarDiv.find('#loadingWheel > .spinner').length, 1);
 });
 
-QUnit.test("attachClickHandler test", function( assert ) {
-    assert.expect(0);
-    var done = assert.async();
-    var fixture = this.fixture;
-    var testmonth = this.testmonth;
-    var checkit = new CheckIt();
-    var testcal = new Calendar({startDate: "20170214", endDate: "20170228", title: "hello"}, checkit);
-    testmonth.calendar = testcal;
-    
-    fixture.find('#calendarDiv').append(`<div class="monthframe" id="${testmonth.monthId}"></div>`);
-    fixture.find(`#${testmonth.monthId}`).load('template.html', function() {
-        testmonth.fillMonthDiv();
-        testmonth.removeEmptyWeeks('calendarDiv');
-        testmonth.attachClickHandler();
-        console.log(this);
-        //assert.equal($(this).find('.hidden').length, 15);
-        //$(this).find('#20170214').trigger('click');
-        
-        console.log(testmonth.calendar);
-    })
-    
+QUnit.test("hideLoadingWheel test", function( assert ) {
+    assert.expect(1);
+    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    this.checkit.displayLoadingWheel(this.$calendarDiv.find('#loadingWheel'));
+    this.checkit.hideLoadingWheel();
+    assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
-
-*/
