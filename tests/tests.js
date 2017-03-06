@@ -460,6 +460,10 @@ QUnit.test("show and hide Form test", function( assert ) {
 
 QUnit.test("clearForm test", function( assert ) {
     assert.expect(0);
+    var formHTML = `<form><div class="form-group"><label for="exemail">
+        Email address</label><input type="email" class="form-control" 
+        id="exampleInputEmail1" placeholder="Email"></div></form>`;
+    
 });
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {

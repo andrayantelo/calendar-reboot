@@ -452,12 +452,15 @@ CheckIt.prototype.showForm = function($form) {
     $form.collapse('show');
 };
 
-CheckIt.prototype.clearForm = function() {
+CheckIt.prototype.clearForm = function($fullForm) {
     // Clears the buildCalendar form.
-    
-    // TODO only removeFormErrors if there are any errors on display
-    this.removeFormErrors();
+    // $fullForm is the selector for the form div
+    // Only removeFormErrors if there are any errors on display
+    if ($fullForm.find('has-error')) {
+        this.removeFormErrors();
+    }
     this.$fullForm[0].reset();
+    
 };
 
 CheckIt.prototype.createCalendar = function() {
@@ -557,6 +560,7 @@ CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
 CheckIt.prototype.addFormError = function(id, srId) {
 
     // Set the appropriate CSS on the form fields to indicate an error state
+    // srId is the id for the screen reader element
     
     id.addClass('has-error has-feedback');
     srId.removeClass('hidden');
@@ -566,6 +570,7 @@ CheckIt.prototype.addFormError = function(id, srId) {
 CheckIt.prototype.removeFormError = function(id, srId) {
 
     // Removes error state CSS on form fields
+    // srId is the id for the screen reader element
     
     id.removeClass('has-error has-feedback');
     srId.removeClass('hidden');
