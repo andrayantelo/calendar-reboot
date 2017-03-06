@@ -171,14 +171,14 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .catch(function(err) {
                    console.error("Could not load calendar " + err);
                    this.store.removeActive();
-                   this.uncollapseForm(this.$buildCalendarForm);
+                   this.showForm(this.$buildCalendarForm);
                }.bind(this));
            
        }.bind(this))
        
        .catch(function () {
            console.log("There is no current active calendar");
-           this.uncollapseForm(this.$buildCalendarForm);
+           this.showForm(this.$buildCalendarForm);
        }.bind(this));
 }
 
@@ -445,7 +445,7 @@ CheckIt.prototype.hideForm = function($form) {
     $form.collapse('hide');
 };
 
-CheckIt.prototype.uncollapseForm = function($form) {
+CheckIt.prototype.showeForm = function($form) {
     // Show a collapsible form.
     // Parameter $form is the selector for a collapsible form.
     
@@ -530,7 +530,7 @@ CheckIt.prototype.deleteCalendar = function() {
                 //console.log("clearing the page");
                 //clear the page
                 this.clearPage();
-                this.uncollapseForm(this.$buildCalendarForm); 
+                this.showForm(this.$buildCalendarForm); 
             }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");
