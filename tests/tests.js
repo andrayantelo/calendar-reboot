@@ -252,7 +252,7 @@ QUnit.test("fillCalendar test", function( assert ) {
     11, "Correct number of .nil div elements in second month");
     
     fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
-    fillMonth("Checking second month html", secondMonth, $calendarDiv, 32);
+    fillMonth("Checking second month html", secondMonth, $calendarDiv, 52);
 
 
 });
@@ -268,7 +268,7 @@ function fillMonth(testName, monthObj, $div, expected) {
         });
         $div.find('#' + monthObj.monthId).find('.checkmark').each(function (index) {
             assert.ok($(this).hasClass("hidden"),
-            "Check that .element divs have a hidden class in first month");
+            "Check that .checkmark divs have a hidden class in first month");
         });
     });
 };
@@ -313,7 +313,7 @@ QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
 });
 
 QUnit.test("generateCheckmarks test", function( assert ) {
-    assert.expect(0);
+    assert.expect(1);
     this.checkit.attachCheckmarkClickHandler(this.calendar,
         this.calendar.monthObjects);
     // Check valentine's day
@@ -325,8 +325,13 @@ QUnit.test("generateCheckmarks test", function( assert ) {
     this.checkit.attachCheckmarkClickHandler(this.calendar,
         this.calendar.monthObjects);
     this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
-    // Make sure valentine's day is checked
-    console.log(this.$calendarDiv.find('#20170214'));
+    // Make sure valentine's day is checked on the DOM
+    assert.equal(this.$calendarDiv.find('#20170214').find('.checkmark')
+                 .attr('hidden'), undefined);
+});
+
+QUnit.test("removeEmptyWeeks test", function( assert ) {
+    assert.expect(0);
 });
 
 /*
