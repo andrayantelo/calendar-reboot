@@ -440,13 +440,15 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
 });
 
 QUnit.test("collapseForm test", function( assert ) {
-    assert.expect(1);
+    assert.expect(3);
     this.$calendarDiv.append(`<div id="testCollapse" class="collapse"></div>`);
     
-    var testCollapse = this.$calendarDiv.find('#testCollapse');
-    assert.equal(testCollapse.css('display'), 'none');
-    //this.checkit.collapseForm($
-    
+    var $testCollapse = this.$calendarDiv.find('#testCollapse');
+    assert.equal($testCollapse.css('display'), 'none');
+    this.checkit.uncollapseForm($testCollapse);
+    assert.equal($testCollapse.css('display'), 'block');
+    this.checkit.collapseForm($testCollapse);
+    assert.equal($testCollapse.css('display'), 'none');
 });
 
 QUnit.test("uncollapseBuildMenu test", function( assert ) {
