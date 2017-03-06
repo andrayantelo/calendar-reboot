@@ -442,14 +442,14 @@ CheckIt.prototype.collapseForm = function($form) {
     // Collapse a collapsible form.
     // Parameter $form is the selector for a collapsible form.
     
-    this.$form.collapse('hide');
+    $form.collapse('hide');
 };
 
 CheckIt.prototype.uncollapseForm = function($form) {
     // Show a collapsible form.
     // Parameter $form is the selector for a collapsible form.
     
-    this.$form.collapse('show');
+    $form.collapse('show');
 };
 
 CheckIt.prototype.clearForm = function() {
