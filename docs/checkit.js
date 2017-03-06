@@ -692,8 +692,12 @@ CheckIt.prototype.findCurrentDay = function() {
     
     var today = moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
-    
-    this.$calendarDiv.find('#' + todayId).addClass("currentDay");
+    // If current day is not actually an ACTIVE day in the calendar, don't add it
+    this.$calendarDiv.find('.activeDay').each( function(index, activeDay) {
+        if ($(activeDay).children('.cell').attr('id') === todayId) {
+            $(activeDay).children('.cell').addClass('currentDay');
+        }
+    });
 
 };
 

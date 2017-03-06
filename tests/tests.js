@@ -347,7 +347,7 @@ QUnit.test("findCurrentDay test", function( assert ) {
     var currentDay = "20170214";
     assert.equal(this.$calendarDiv.find('#20170214').attr('class'), 'cell');
     this.checkit.findCurrentDay();
-    assert.equal(this.$calendarDiv.find('.currentDay'), 0);
+    assert.equal(this.$calendarDiv.find('.currentDay').length, 0);
 });
 
 /*
