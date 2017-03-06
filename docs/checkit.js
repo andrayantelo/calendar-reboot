@@ -135,8 +135,8 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
     // Clear the dropdown before filling it 
     // $dropdown is the jquery selector of the element you are going to 
     // be adding these calendar titles to.
-    
-    this.$calendarDropdown.empty();
+    var dropdown = $dropdown || this.$calendarDropdown;
+    dropdown.empty();
     
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {

@@ -438,3 +438,185 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
     this.checkit.hideLoadingWheel();
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
+
+QUnit.test("collapseBuildMenu test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("uncollapseBuildMenu test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("clearForm test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("addCalendarToDropdown test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("removeFromCalendarDropdown test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("clearDropdown test", function(assert) {
+});
+
+QUnit.test("clearPage", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.module( "Build Calendar Form Tests", {
+  before: function() {
+    // prepare something once for all tests
+  }
+  beforeEach: function() {
+    // prepare something before each test
+  },
+  afterEach: function() {
+    // clean up after each test
+  },
+  after: function() {
+    // clean up once after all tests are done
+  }
+});
+// TODO Likely have to refactor the below functions
+QUnit.test("addFormError test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("removeFormError test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("addGlyphicon test", function( assert) {
+    assert.expect(0);
+});
+
+QUnit.test("removeGlyphicon test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("removeFormErrors test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("validateDates test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("validateInput test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("validateForm test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.module( "CheckIt tests for functions that involve store", {
+  before: function() {
+    // prepare something once for all tests
+  }
+  beforeEach: function() {
+    // prepare something before each test
+  },
+  afterEach: function() {
+    // clean up after each test
+  },
+  after: function() {
+    // clean up once after all tests are done
+  }
+});
+
+// TODO test that tests if the correct init function runs depending on
+// which storage is passed to CheckIt
+QUnit.test("initLocalStorage test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("displayActiveCalendar test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("fillDropdown test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("onActivityChanged test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("createCalendar test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("loadFromDropdown test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("deleteCalendar test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("buildCalendar test", function(assert) {
+    // Probably not needed because each function inside of buildCalendar
+    // has already been tested.
+    assert.expect(0);
+});
+
+QUnit.test("displayCalendar test", function(assert) {
+    assert.expect(0);
+});
+
+
+QUnit.module( "CheckIt tests for functions that involve firebase", {
+  before: function() {
+    // prepare something once for all tests
+  }
+  beforeEach: function() {
+    // prepare something before each test
+  },
+  afterEach: function() {
+    // clean up after each test
+  },
+  after: function() {
+    // clean up once after all tests are done
+  }
+});
+
+QUnit.test("initFirebase test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("signIn test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("signOut test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("updateUserDescription test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("onAuthStateChanged test", function(assert) {
+    assert.expect(0);
+});
+
+// And pretty much all of the same functions as localStorage (createCalendar, etc)
+
+QUnit.module( "CheckIt tests for clickHandlers", {
+  before: function() {
+    // prepare something once for all tests
+  }
+  beforeEach: function() {
+    // prepare something before each test
+  },
+  afterEach: function() {
+    // clean up after each test
+  },
+  after: function() {
+    // clean up once after all tests are done
+  }
+});
