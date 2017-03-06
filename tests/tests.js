@@ -342,12 +342,17 @@ QUnit.test("removeEmptyWeeks test", function( assert ) {
 });
 
 QUnit.test("findCurrentDay test", function( assert ) {
-    assert.expect(2);
+    assert.expect(3);
     
     var currentDay = "20170214";
     assert.equal(this.$calendarDiv.find('#20170214').attr('class'), 'cell');
     this.checkit.findCurrentDay();
+    // today's date does not exist in this calendar.
     assert.equal(this.$calendarDiv.find('.currentDay').length, 0);
+    // Pass valentine's day in as the currentDay
+    this.checkit.findCurrentDay(currentDay);
+    assert.equal(this.$calendarDiv.find('.currentDay').length, 1);
+    
 });
 
 /*
