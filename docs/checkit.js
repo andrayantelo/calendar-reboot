@@ -19,10 +19,10 @@ function CheckIt(mode) {
     this.$endDatePicker = $('#datetimepicker2');
     this.$endDatePickerInput = $('#datetimepicker2 input');
     this.$calendarDropdown = $('#calendarDropdown');
-    this.$startDateErrorSpan = $('#inputError-dateFormGroup');
-    this.$endDateErrorSpan = $('#inputError-dateFormGroup2');
-    this.$titleErrorSpan = $('#inputError-titleFormGroup');
-    this.$titleGlyphiconTag = $('#span-titleFormGroup');
+    this.$srStartDateError = $('#srStartDateError');
+    this.$srEndDateError = $('#srEndDateError');
+    this.$srTitleError = $('#srTitleError');
+    this.$titleErrorGlyphicon = $('#titleErrorGlyphicon');
     this.$clearButton = $('#clearButton');
     this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
@@ -464,41 +464,119 @@ CheckIt.prototype.clearForm = function($fullForm) {
     
 };
 
-CheckIt.prototype.addFormError = function(id, srId) {
+CheckIt.prototype.addFieldError = function($id, $srId) {
 
-    // Set the appropriate CSS on the form fields to indicate an error state
-    // srId is the id for the screen reader element
+    // Set the appropriate CSS on the form field to indicate an error state
+    // $id is the selector for the input field with the error
+    // $srId is the selector for the screen reader element
     
-    id.addClass('has-error has-feedback');
-    srId.removeClass('hidden');
+    $id.addClass('has-error has-feedback');
+    $srId.removeClass('hidden');
     
 };
 
-CheckIt.prototype.removeFormError = function(id, srId) {
-
-    // Removes error state CSS on form fields
-    // srId is the id for the screen reader element
+CheckIt.prototype.removeFieldError = function($id, $srId) {
+    // Removes error state CSS on form field 
+    // $id is the selector for the input field with the error
+    // $srId is the selector for the screen reader element
     
-    id.removeClass('has-error has-feedback');
-    srId.removeClass('hidden');
+    $id.removeClass('has-error has-feedback');
+    $srId.removeClass('hidden');
 };
 
-CheckIt.prototype.addGlyphicon = function(id) {
-
+CheckIt.prototype.addGlyphicon = function($id) {
+    // $id is the selector for the span element that contains the glyphicon
     id.removeClass('hidden');
 };
 
-CheckIt.prototype.removeGlyphicon = function(id) {
-    
+CheckIt.prototype.removeGlyphicon = function($id) {
+    // $id is the selector for the span element that contains the glyphicon
     id.addClass('hidden');
 };
 
 CheckIt.prototype.removeFormErrors = function() {
     //remove the error classes and glyphicons from the form inputs
-    removeFormError(this.$startDateForm, this.$startDateErrorSpan);
-    removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-    removeFormError(this.$calendarTitleForm, this.$titleErrorSpan);
+    removeFieldError(this.$startDateForm, this.$startDateErrorSpan);
+    removeFieldError(this.$endDateForm, this.$endDateErrorSpan);
+    removeFieldError(this.$calendarTitleForm, this.$titleErrorSpan);
     removeGlyphicon(this.$titleGlyphiconTag);
+};
+
+CheckIt.prototype.validateDates = function(startDateString, endDateString) {
+    // Ensure that the end Date comes after the start Date and that there is no
+    // more than 5 years between them.
+        
+    var startDate = moment(startDateString, "YYYY-MM-DD");
+    var endDate = moment(endDateString, "YYYY-MM-DD");
+    
+    var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
+    
+    if (startDate.isBefore(endDate)) {
+        this.removeFieldError(this.$endDateForm, this.$endDateErrorSpan);
+        // If there are more than 5 years between the dates return false for invalid
+        return (difference < 5);
+    }
+    else {
+        // Mark the endDate input field red
+        this.addFieldError(this.$endDateForm, this.$endDateErrorSpan);
+        return false;
+    }
+    
+};
+
+CheckIt.prototype.validateInput = function($form, inputId) {
+    // Validate a single input field of a form
+    // Parameters: $form is the selector for the form element in question
+    // inputId is the id of the input field we are validating.
+    
+    var inputVal = $form.find('#' + inputId).val();
+    // If user hasn't written anything we fail immediately
+    if (!inputVal) {
+        this.addForm
+    }
+};
+
+CheckIt.prototype.validateInput = function($formGroup) {
+    //
+    var id = $formGroup.attr('id');
+    var $input = $('#inputError-' + id);
+    var inputId = $formGroup.find("input").attr("id");
+    var $calendarSpan = $('#span-' +  id);
+    var inputValue = $formGroup.find('input[type=text]').val();
+    
+    // If the user hasn't written anything we fail immediately
+    if (inputValue === "" || inputValue === null) {
+        this.addFormError($formGroup, $input )
+        
+        //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
+        //check if we are dealing with the title
+        if (inputId === "calendarTitle") {
+            this.addGlyphicon($calendarSpan);
+        }
+        return false;
+    }
+    else {
+        this.removeFormError($formGroup, $input );
+        //remove glyphicon, only for title input tag
+        if (inputId === "calendarTitle") {
+            this.removeGlyphicon($calendarSpan);
+        }
+    }
+    return true;
+};
+
+CheckIt.prototype.validateForm = function(startDateString, endDateString) {
+        
+        
+    var validateTitle = this.validateInput(this.$calendarTitleForm);
+    var validateStartDate = this.validateInput(this.$startDateForm);
+    var validateEndDate = this.validateInput(this.$endDateForm);
+    
+    var isValid = validateTitle && validateStartDate && validateEndDate;
+    
+    // Make sure input is OK before parsing and validating dates
+    return (isValid && this.validateDates(startDateString, endDateString));
+   
 };
 
 CheckIt.prototype.createCalendar = function() {
@@ -593,70 +671,6 @@ CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
     //in the navbar
     
     this.$calendarDropdown.children('#' + uniqueId).remove();
-};
-
-CheckIt.prototype.validateDates = function(startDateString, endDateString) {
-    // Ensure that the end Date comes after the start Date and that there is no
-    // more than 5 years between them.
-        
-    var startDate = moment(startDateString, "YYYY-MM-DD");
-    var endDate = moment(endDateString, "YYYY-MM-DD");
-    
-    var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
-    
-    if (startDate.isBefore(endDate)) {
-        this.removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-        // If there are more than 5 years between the dates return false for invalid
-        return (difference < 5);
-    }
-    else {
-        this.addFormError(this.$endDateForm, this.$endDateErrorSpan);
-        return false;
-    }
-    
-};
-
-CheckIt.prototype.validateInput = function($formGroup) {
-    //a variable for the input tag value
-    var id = $formGroup.attr('id');
-    var $input = $('#inputError-' + id);
-    var inputId = $formGroup.find("input").attr("id");
-    var $calendarSpan = $('#span-' +  id);
-    var inputValue = $formGroup.find('input[type=text]').val();
-    
-    // If the user hasn't written anything we fail immediately
-    if (inputValue === "" || inputValue === null) {
-        this.addFormError($formGroup, $input )
-        
-        //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
-        //check if we are dealing with the title
-        if (inputId === "calendarTitle") {
-            this.addGlyphicon($calendarSpan);
-        }
-        return false;
-    }
-    else {
-        this.removeFormError($formGroup, $input );
-        //remove glyphicon, only for title input tag
-        if (inputId === "calendarTitle") {
-            this.removeGlyphicon($calendarSpan);
-        }
-    }
-    return true;
-};
-
-CheckIt.prototype.validateForm = function(startDateString, endDateString) {
-        
-        
-    var validateTitle = this.validateInput(this.$calendarTitleForm);
-    var validateStartDate = this.validateInput(this.$startDateForm);
-    var validateEndDate = this.validateInput(this.$endDateForm);
-    
-    var isValid = validateTitle && validateStartDate && validateEndDate;
-    
-    // Make sure input is OK before parsing and validating dates
-    return (isValid && this.validateDates(startDateString, endDateString));
-   
 };
 
 CheckIt.prototype.buildCalendar = function(calendarObject) {
