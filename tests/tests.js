@@ -460,6 +460,7 @@ QUnit.test("removeFromCalendarDropdown test", function( assert ) {
 });
 
 QUnit.test("clearDropdown test", function(assert) {
+    assert.expect(0);
 });
 
 QUnit.test("clearPage", function(assert) {
@@ -469,7 +470,7 @@ QUnit.test("clearPage", function(assert) {
 QUnit.module( "Build Calendar Form Tests", {
   before: function() {
     // prepare something once for all tests
-  }
+  },
   beforeEach: function() {
     // prepare something before each test
   },
@@ -516,7 +517,7 @@ QUnit.test("validateForm test", function(assert) {
 QUnit.module( "CheckIt tests for functions that involve store", {
   before: function() {
     // prepare something once for all tests
-  }
+  },
   beforeEach: function() {
     // prepare something before each test
   },
@@ -572,7 +573,7 @@ QUnit.test("displayCalendar test", function(assert) {
 QUnit.module( "CheckIt tests for functions that involve firebase", {
   before: function() {
     // prepare something once for all tests
-  }
+  },
   beforeEach: function() {
     // prepare something before each test
   },
@@ -609,7 +610,7 @@ QUnit.test("onAuthStateChanged test", function(assert) {
 QUnit.module( "CheckIt tests for clickHandlers", {
   before: function() {
     // prepare something once for all tests
-  }
+  },
   beforeEach: function() {
     // prepare something before each test
   },
