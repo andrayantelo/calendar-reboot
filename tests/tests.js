@@ -186,7 +186,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     this.checkit.addMonth(this.calendar);
     $calendarDiv.empty();
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
-    assert.notOk($calendarDiv.find('20172').find('#yearHeader').text(),
+    assert.notOk($calendarDiv.find('20172 > #yearHeader').text(),
     "Make sure second month does not have a yearHeader");
 });
 
@@ -207,7 +207,7 @@ QUnit.test("fillCalendar test", function( assert ) {
     this.checkit.fillCalendar(this.calendar);
     
     assert.equal($calendarDiv.find(".activeDay").first().children('.cell')
-        .attr('id'), 20170214, "Check start day of the month");
+       .attr('id'), 20170214, "Check start day of the month");
         
     //Check first inactiveDay is the first of the month
     assert.equal($calendarDiv.find(".inactiveDay").first().children('.cell')
@@ -262,11 +262,11 @@ function fillMonth(testName, monthObj, $div, expected) {
         assert.expect(expected);
         assert.notOk(jQuery.isEmptyObject(monthObj.dayIndex),
             "dayIndex object for month is not empty");
-        $div.find('#' + monthObj.monthId).find('.daynumber').each( function(index) {
+        $div.find('#' + monthObj.monthId + ' .daynumber').each( function(index) {
             assert.equal($(this).html(), index + 1,
             "Correct daynumbers in first month");
         });
-        $div.find('#' + monthObj.monthId).find('.checkmark').each(function (index) {
+        $div.find('#' + monthObj.monthId + ' .checkmark').each(function (index) {
             assert.ok($(this).hasClass("hidden"),
             "Check that .checkmark divs have a hidden class in first month");
         });
@@ -349,7 +349,7 @@ QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
     assert.equal(this.calendar.state.checkedDays['20170214'], 1);
     // Uncheck valentine's day
     this.$calendarDiv.find('#20170214').trigger('click');
-    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 7);
+    assert.equal(this.$calendarDiv.find('#20171 .hidden').length, 7);
     assert.deepEqual(this.calendar.state.checkedDays, {});
     // Check that this information was updated in localStorage
     var storedState = JSON.parse(localStorage.getItem(this.calendar.state.uniqueId));
@@ -370,7 +370,7 @@ QUnit.test("generateCheckmarks test", function( assert ) {
         this.calendar.monthObjects);
     this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
     // Make sure valentine's day is checked on the DOM
-    assert.equal(this.$calendarDiv.find('#20170214').find('.checkmark')
+    assert.equal(this.$calendarDiv.find('#20170214 .checkmark')
                  .attr('hidden'), undefined);
 });
 
