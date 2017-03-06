@@ -251,7 +251,7 @@ QUnit.test("fillCalendar test", function( assert ) {
     assert.equal($('#' + secondMonth.monthId).find('.nil').length,
     11, "Correct number of .nil div elements in second month");
     
-    fillMonth("Checking first month html", firstMonth, $calendarDiv, 29);
+    fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
     fillMonth("Checking second month html", secondMonth, $calendarDiv, 32);
 
 
@@ -266,7 +266,7 @@ function fillMonth(testName, monthObj, $div, expected) {
             assert.equal($(this).html(), index + 1,
             "Correct daynumbers in first month");
         });
-        $div.find('#' + monthObj.monthId).find('.element').each(function (index) {
+        $div.find('#' + monthObj.monthId).find('.checkmark').each(function (index) {
             assert.ok($(this).hasClass("hidden"),
             "Check that .element divs have a hidden class in first month");
         });
@@ -310,6 +310,23 @@ QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
     // Check that this information was updated in localStorage
     var storedState = JSON.parse(localStorage.getItem(this.calendar.state.uniqueId));
     assert.deepEqual(storedState.checkedDays, this.calendar.state.checkedDays);
+});
+
+QUnit.test("generateCheckmarks test", function( assert ) {
+    assert.expect(0);
+    this.checkit.attachCheckmarkClickHandler(this.calendar,
+        this.calendar.monthObjects);
+    // Check valentine's day
+    this.$calendarDiv.find('#20170214').trigger('click');
+    // Clear calendar, and build again
+    this.$calendarDiv.empty();
+    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+    this.checkit.fillCalendar(this.calendar);
+    this.checkit.attachCheckmarkClickHandler(this.calendar,
+        this.calendar.monthObjects);
+    this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
+    // Make sure valentine's day is checked
+    console.log(this.$calendarDiv.find('#20170214'));
 });
 
 /*
