@@ -456,11 +456,49 @@ CheckIt.prototype.clearForm = function($fullForm) {
     // Clears the buildCalendar form.
     // $fullForm is the selector for the form div
     // Only removeFormErrors if there are any errors on display
+    var checkit = this;
     if ($fullForm.find('has-error')) {
-        this.removeFormErrors();
+        checkit.removeFormError();
     }
     this.$fullForm[0].reset();
     
+};
+
+CheckIt.prototype.addFormError = function(id, srId) {
+
+    // Set the appropriate CSS on the form fields to indicate an error state
+    // srId is the id for the screen reader element
+    
+    id.addClass('has-error has-feedback');
+    srId.removeClass('hidden');
+    
+};
+
+CheckIt.prototype.removeFormError = function(id, srId) {
+
+    // Removes error state CSS on form fields
+    // srId is the id for the screen reader element
+    
+    id.removeClass('has-error has-feedback');
+    srId.removeClass('hidden');
+};
+
+CheckIt.prototype.addGlyphicon = function(id) {
+
+    id.removeClass('hidden');
+};
+
+CheckIt.prototype.removeGlyphicon = function(id) {
+    
+    id.addClass('hidden');
+};
+
+CheckIt.prototype.removeFormErrors = function() {
+    //remove the error classes and glyphicons from the form inputs
+    removeFormError(this.$startDateForm, this.$startDateErrorSpan);
+    removeFormError(this.$endDateForm, this.$endDateErrorSpan);
+    removeFormError(this.$calendarTitleForm, this.$titleErrorSpan);
+    removeGlyphicon(this.$titleGlyphiconTag);
 };
 
 CheckIt.prototype.createCalendar = function() {
@@ -555,43 +593,6 @@ CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
     //in the navbar
     
     this.$calendarDropdown.children('#' + uniqueId).remove();
-};
-
-CheckIt.prototype.addFormError = function(id, srId) {
-
-    // Set the appropriate CSS on the form fields to indicate an error state
-    // srId is the id for the screen reader element
-    
-    id.addClass('has-error has-feedback');
-    srId.removeClass('hidden');
-    
-};
-
-CheckIt.prototype.removeFormError = function(id, srId) {
-
-    // Removes error state CSS on form fields
-    // srId is the id for the screen reader element
-    
-    id.removeClass('has-error has-feedback');
-    srId.removeClass('hidden');
-};
-
-CheckIt.prototype.addGlyphicon = function(id) {
-
-    id.removeClass('hidden');
-};
-
-CheckIt.prototype.removeGlyphicon = function(id) {
-    
-    id.addClass('hidden');
-};
-
-CheckIt.prototype.removeFormErrors = function() {
-    //remove the error classes and glyphicons from the form inputs
-    removeFormError(this.$startDateForm, this.$startDateErrorSpan);
-    removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-    removeFormError(this.$calendarTitleForm, this.$titleErrorSpan);
-    removeGlyphicon(this.$titleGlyphiconTag);
 };
 
 CheckIt.prototype.validateDates = function(startDateString, endDateString) {

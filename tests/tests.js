@@ -459,11 +459,16 @@ QUnit.test("show and hide Form test", function( assert ) {
 });
 
 QUnit.test("clearForm test", function( assert ) {
-    assert.expect(0);
+    assert.expect(1);
     var formHTML = `<form><div class="form-group"><label for="exemail">
         Email address</label><input type="email" class="form-control" 
-        id="exampleInputEmail1" placeholder="Email"></div></form>`;
-    
+        id="exemail" placeholder="Email"></div></form>`;
+    this.$calendarDiv.append(formHTML);
+    var $form = this.$calendarDiv.find('#exemail');
+    $form.val('what@what.com');
+    assert.equal($form.val(), 'what@what.com');
+    this.checkit.clearForm($form);
+    console.log($form.val());
 });
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {
