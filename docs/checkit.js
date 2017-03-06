@@ -445,7 +445,7 @@ CheckIt.prototype.hideForm = function($form) {
     $form.collapse('hide');
 };
 
-CheckIt.prototype.showeForm = function($form) {
+CheckIt.prototype.showForm = function($form) {
     // Show a collapsible form.
     // Parameter $form is the selector for a collapsible form.
     
