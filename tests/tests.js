@@ -342,10 +342,10 @@ QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
     this.checkit.attachCheckmarkClickHandler(this.calendar,
         this.calendar.monthObjects);
     
-    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 7);
+    assert.equal(this.$calendarDiv.find('#20171 .hidden').length, 7);
     // Check valentine's day
     this.$calendarDiv.find('#20170214').trigger('click');
-    assert.equal(this.$calendarDiv.find('#20171').find('.hidden').length, 6);
+    assert.equal(this.$calendarDiv.find('#20171 .hidden').length, 6);
     assert.equal(this.calendar.state.checkedDays['20170214'], 1);
     // Uncheck valentine's day
     this.$calendarDiv.find('#20170214').trigger('click');
