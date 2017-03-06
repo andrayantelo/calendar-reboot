@@ -153,7 +153,7 @@ beforeEach: function() {
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
     this.checkit = new CheckIt('localStorage');
-    this.fixture = $('#qunit-fixture');
+    this.$fixture = $('#qunit-fixture');
 }
 
 });
@@ -169,14 +169,14 @@ QUnit.test("addMonth test", function( assert ) {
 
 QUnit.test("generateEmptyCalendar test", function( assert ) {
     assert.expect(14);
-    var $calendarDiv = this.fixture.find('#calendarDiv');
+    var $calendarDiv = this.$fixture.find('#calendarDiv');
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
     assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
     assert.equal($calendarDiv.find('#yearHeader').text(), this.calendar.monthObjects[0].monthYear);
-    assert.equal(this.fixture.find('.week').length, 6);
-    assert.equal(this.fixture.find('td').length, 49);
-    assert.equal(this.fixture.find('.nil').length, 42);
+    assert.equal(this.$fixture.find('.week').length, 6);
+    assert.equal(this.$fixture.find('td').length, 49);
+    assert.equal(this.$fixture.find('.nil').length, 42);
     
     var daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     $calendarDiv.find('#dayNames td').each(function(index, td) {
@@ -193,7 +193,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
 QUnit.test("fillCalendar test", function( assert ) {
     assert.expect(72);
     
-    var $calendarDiv = this.fixture.find('#calendarDiv');
+    var $calendarDiv = this.$fixture.find('#calendarDiv');
     // Add month to calendar
     this.checkit.addMonth(this.calendar);
     var firstMonth = this.calendar.monthObjects[0];
@@ -324,8 +324,8 @@ QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
     this.checkit = new CheckIt('localStorage');
-    this.fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.fixture.find('#calendarDiv');
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
     this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
     this.checkit.fillCalendar(this.calendar);
 
@@ -406,8 +406,8 @@ QUnit.module( "Checkit DOM manipulation tests", {
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
     this.checkit = new CheckIt('localStorage');
-    this.fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.fixture.find('#calendarDiv');
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
     this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
     this.checkit.fillCalendar(this.calendar);
     this.checkit.attachCheckmarkClickHandler(this.calendar, this.calendar.monthObjects);
