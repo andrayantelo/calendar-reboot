@@ -12,8 +12,8 @@ function CheckIt(mode) {
     this.$getStarted = $('#getStarted');
     this.$buildFormAccordion = $('#buildFormAccordion');
     this.$calendarTitleForm = $('#titleFormGroup');
-    this.$startDateForm = $('#dateFormGroup');
-    this.$endDateForm = $('#dateFormGroup2');
+    this.$startDateForm = $('#startDateFormGroup');
+    this.$endDateForm = $('#endDateFormGroup');
     this.$startDatePicker = $('#datetimepicker1');
     this.$startDatePickerInput = $('#datetimepicker1 input');
     this.$endDatePicker = $('#datetimepicker2');
@@ -37,7 +37,9 @@ function CheckIt(mode) {
     this.spinner = new Spinner();
     
     // Click handlers for the DOM
-    this.$clearButton.click(this.clearForm.bind(this));
+    this.$clearButton.click(function() {
+        this.clearForm(this.$fullForm);
+        }.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
@@ -457,8 +459,8 @@ CheckIt.prototype.clearForm = function($fullForm) {
     // $fullForm is the selector for the form div
     // Only removeFormErrors if there are any errors on display
     var checkit = this;
-    if ($fullForm.find('has-error')) {
-        checkit.removeFormError();
+    if ($fullForm.find('.has-error')) {
+        checkit.removeFormErrors();
     }
     this.$fullForm[0].reset();
     
@@ -467,9 +469,9 @@ CheckIt.prototype.clearForm = function($fullForm) {
 CheckIt.prototype.addFieldError = function($id, $srId) {
 
     // Set the appropriate CSS on the form field to indicate an error state
-    // $id is the selector for the input field with the error
+    // $id is the selector for the div with class .form-group that
+    // surrounds the input field with the error
     // $srId is the selector for the screen reader element
-    
     $id.addClass('has-error has-feedback');
     $srId.removeClass('hidden');
     
@@ -477,7 +479,8 @@ CheckIt.prototype.addFieldError = function($id, $srId) {
 
 CheckIt.prototype.removeFieldError = function($id, $srId) {
     // Removes error state CSS on form field 
-    // $id is the selector for the input field with the error
+    // $id is the selector for the div with class .form-group that
+    // surrounds the input field with the error
     // $srId is the selector for the screen reader element
     
     $id.removeClass('has-error has-feedback');
@@ -486,20 +489,21 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
 
 CheckIt.prototype.addGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
-    id.removeClass('hidden');
+    $id.removeClass('hidden');
 };
 
 CheckIt.prototype.removeGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
-    id.addClass('hidden');
+    $id.addClass('hidden');
 };
 
 CheckIt.prototype.removeFormErrors = function() {
-    //remove the error classes and glyphicons from the form inputs
-    removeFieldError(this.$startDateForm, this.$startDateErrorSpan);
-    removeFieldError(this.$endDateForm, this.$endDateErrorSpan);
-    removeFieldError(this.$calendarTitleForm, this.$titleErrorSpan);
-    removeGlyphicon(this.$titleGlyphiconTag);
+    // Remove the error classes and glyphicons from the form input fields
+    
+    this.removeFieldError(this.$startDateForm, this.$srStartDateError);
+    this.removeFieldError(this.$endDateForm, this.$srEndDateError);
+    this.removeFieldError(this.$calendarTitleForm, this.$srTitleError);
+    this.removeGlyphicon(this.$titleErrorGlyphicon);
 };
 
 CheckIt.prototype.validateDates = function(startDateString, endDateString) {
@@ -518,59 +522,51 @@ CheckIt.prototype.validateDates = function(startDateString, endDateString) {
     }
     else {
         // Mark the endDate input field red
-        this.addFieldError(this.$endDateForm, this.$endDateErrorSpan);
+        this.addFieldError(this.$endDateForm, this.$srEndDateError);
         return false;
     }
     
 };
 
-CheckIt.prototype.validateInput = function($form, inputId) {
+CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
     // Validate a single input field of a form
     // Parameters: $form is the selector for the form element in question
+    // $inputFormGroup is the selector for the div with the class .form-group
+    // that surrounds the input field in question
     // inputId is the id of the input field we are validating.
     
+    var $srElement = $inputFormGroup.find('.sr-only');
     var inputVal = $form.find('#' + inputId).val();
+    var $glyphicon = $inputFormGroup.find('.glyph');
+    
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
-        this.addForm
-    }
-};
-
-CheckIt.prototype.validateInput = function($formGroup) {
-    //
-    var id = $formGroup.attr('id');
-    var $input = $('#inputError-' + id);
-    var inputId = $formGroup.find("input").attr("id");
-    var $calendarSpan = $('#span-' +  id);
-    var inputValue = $formGroup.find('input[type=text]').val();
-    
-    // If the user hasn't written anything we fail immediately
-    if (inputValue === "" || inputValue === null) {
-        this.addFormError($formGroup, $input )
-        
-        //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
-        //check if we are dealing with the title
-        if (inputId === "calendarTitle") {
-            this.addGlyphicon($calendarSpan);
+        // screen reader element for this input field
+        this.addFieldError($inputFormGroup, $srElement);
+        // if the input field has a span element with a glyphicon
+        // reveal the error glyphicon
+        if ($glyphicon.length) {
+            this.addGlyphicon($glyphicon);
         }
         return false;
     }
     else {
-        this.removeFormError($formGroup, $input );
-        //remove glyphicon, only for title input tag
-        if (inputId === "calendarTitle") {
-            this.removeGlyphicon($calendarSpan);
+        this.removeFieldError($inputFormGroup, $srElement);
+        // Remove glyphicon if it exists
+        if ($glyphicon.length) {
+            this.removeGlyphicon($glyphicon);
         }
     }
     return true;
+    
 };
 
 CheckIt.prototype.validateForm = function(startDateString, endDateString) {
         
         
-    var validateTitle = this.validateInput(this.$calendarTitleForm);
-    var validateStartDate = this.validateInput(this.$startDateForm);
-    var validateEndDate = this.validateInput(this.$endDateForm);
+    var validateTitle = this.validateInput(this.$fullForm, this.$calendarTitleForm, 'calendarTitle');
+    var validateStartDate = this.validateInput(this.$fullForm, this.$startDateForm, 'startDate');
+    var validateEndDate = this.validateInput(this.$fullForm, this.$endDateForm, 'endDate');
     
     var isValid = validateTitle && validateStartDate && validateEndDate;
     
