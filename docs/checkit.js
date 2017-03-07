@@ -535,13 +535,13 @@ CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
     // that surrounds the input field in question
     // inputId is the id of the input field we are validating.
     
+    // Screen reader element for this input field
     var $srElement = $inputFormGroup.find('.sr-only');
     var inputVal = $form.find('#' + inputId).val();
     var $glyphicon = $inputFormGroup.find('.glyph');
     
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
-        // screen reader element for this input field
         this.addFieldError($inputFormGroup, $srElement);
         // if the input field has a span element with a glyphicon
         // reveal the error glyphicon
