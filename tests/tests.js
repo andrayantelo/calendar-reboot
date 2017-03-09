@@ -291,18 +291,18 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("Sign-out button selector test", this.checkit.$signOutButton, '#sign-out');
     selectorNameTest("getStarted selector test", this.checkit.$getStarted, '#getStarted');
     selectorNameTest("buildFormAccordion selector test", this.checkit.$buildFormAccordion, '#buildFormAccordion');
-    selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
-    selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
-    selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
+    selectorNameTest("titleForm selector test", this.checkit.$titleFormGroup, '#titleFormGroup');
+    selectorNameTest("startDateForm selector test", this.checkit.$startDateFormGroup, '#startDateFormGroup');
+    selectorNameTest("endDateForm selector test", this.checkit.$endDateFormGroup, '#endDateFormGroup');
     selectorNameTest("startDatePicker selector test", this.checkit.$startDatePicker, '#datetimepicker1');
     selectorNameTest("startDatePickerInput selector test", this.checkit.$startDatePickerInput, '#datetimepicker1 input');
     selectorNameTest("endDatePicker selector test", this.checkit.$endDatePicker, '#datetimepicker2');
     selectorNameTest("endDatePickerInput selector test", this.checkit.$endDatePickerInput, '#datetimepicker2 input');
     selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
-    selectorNameTest("startDateErrorSpan selector test", this.checkit.$startDateErrorSpan, '#inputError-dateFormGroup');
-    selectorNameTest("endDateErrorSpan selector test", this.checkit.$endDateErrorSpan, '#inputError-dateFormGroup2');
-    selectorNameTest("titleErrorSpan selector test", this.checkit.$titleErrorSpan,'#inputError-titleFormGroup');
-    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleGlyphiconTag, '#span-titleFormGroup');
+    selectorNameTest("startDateErrorSpan selector test", this.checkit.$srStartDateError, '#srStartDateError');
+    selectorNameTest("endDateErrorSpan selector test", this.checkit.$srEndDateError, '#srEndDateError');
+    selectorNameTest("titleErrorSpan selector test", this.checkit.$srTitleError,'#srTitleError');
+    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleErrorGlyphicon, '#titleErrorGlyphicon');
     selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
     selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
     selectorNameTest("createButton selector test", this.checkit.$createButton, '#createButton');
@@ -462,6 +462,12 @@ QUnit.module( "Form Tests", {
     this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    var formHTML = `<form id="fullForm"><div class="form-group">
+        <input type="email" class="form-control" 
+        id="exemail"></div></form>`;
+    this.$calendarDiv.append(formHTML);
+    this.$form = this.$calendarDiv.find('#fullForm');
+    
   },
   afterEach: function() {
     // clean up after each test
@@ -484,24 +490,18 @@ QUnit.test("show and hide Form test", function( assert ) {
     setTimeout(function(){ 
         assert.equal($testCollapse.css('display'), 'none');
         }, 350);
-    
-
 });
 
 QUnit.test("clearForm test", function( assert ) {
-    assert.expect(2);
-    var formHTML = `<form><div class="form-group"><label for="exemail">
-        Email address</label><input type="email" class="form-control" 
-        id="exemail" placeholder="Email"></div></form>`;
-    this.$calendarDiv.append(formHTML);
-    var $form = this.$calendarDiv.find('#exemail');
-    $form.val('what@what.com');
-    assert.equal($form.val(), 'what@what.com');
-    $form[0].reset();
-    console.log($form.val());
-    console.log($form[0]);
-    this.checkit.clearForm($form);
-    console.log($form.val());
+    assert.expect(0);
+
+    var $formInput = this.$form.find('input');
+    $formInput.val('what@what.com');
+    console.log(this.$fixture.find('#fullForm input').val());
+    
+    //assert.equal($formInput.val(), 'what@what.com');;
+    this.checkit.clearForm(this.$form);
+    console.log(this.$fixture.find('#fullForm input').val());
 });
 
 QUnit.test("addFormError test", function( assert ) {
@@ -514,7 +514,7 @@ QUnit.test("removeFormError test", function( assert ) {
 
 QUnit.test("addGlyphicon test", function( assert) {
     assert.expect(0);
-});
+});  
 
 QUnit.test("removeGlyphicon test", function(assert) {
     assert.expect(0);

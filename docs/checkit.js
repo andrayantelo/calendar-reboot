@@ -462,8 +462,7 @@ CheckIt.prototype.clearForm = function($fullForm) {
     if ($fullForm.find('.has-error')) {
         checkit.removeFormErrors();
     }
-    this.$fullForm[0].reset();
-    
+    this.$fullForm.trigger("reset"); 
 };
 
 CheckIt.prototype.addFieldError = function($id, $srId) {
