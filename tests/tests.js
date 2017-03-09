@@ -566,7 +566,7 @@ QUnit.test("removeGlyphicon test", function(assert) {
 
 QUnit.test("removeFormErrors test", function(assert) {
     assert.expect(0);
-    // first add error to the form field and glyph
+    // first add error to the form field and glyph TODO
     // then run remove errors
     // assert that there are no error classes
     //this.checkit.removeFormErrors(this.$form);
