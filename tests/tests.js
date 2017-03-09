@@ -469,8 +469,8 @@ QUnit.module( "Form Tests", {
     this.$form = this.$calendarDiv.find('#fullForm');
     this.$formGroup = this.$form.find('#emailFormGroup');
     this.$sr = this.$form.find('#sr');
-    this.$form.append(`<span id="heart" class="glyphicon glyphicon-heart hidden" 
-        aria-hidden="true"></span>`);
+    this.$form.find('.form-group').append(`<span id="heart" 
+        class="glyphicon glyphicon-heart hidden glyph" aria-hidden="true"></span>`);
   },
   afterEach: function() {
     // clean up after each test
@@ -504,6 +504,7 @@ QUnit.test("clearForm test", function( assert ) {
     assert.equal($formInput.val(), 'what@what.com');
     
     this.checkit.clearForm(this.$form);
+    
     assert.equal($formInput.val(), "");
 });
 
@@ -537,9 +538,12 @@ QUnit.test("addGlyphicon test", function( assert) {
     assert.expect(2);
     
     assert.ok(this.$form.find('#heart').hasClass('hidden'));
-    
+
     this.checkit.addGlyphicon(this.$form.find('#heart'));
     assert.notOk(this.$form.find('#heart').hasClass('hidden'));
+    
+    // Check when you pass a selector that does not have a glyphicon TODO
+    this.checkit.addGlyphicon(this.$form.find('#heart'));
 });  
 
 QUnit.test("removeGlyphicon test", function(assert) {
@@ -549,10 +553,13 @@ QUnit.test("removeGlyphicon test", function(assert) {
     assert.notOk(this.$form.find('#heart').hasClass('hidden'));
     this.checkit.removeGlyphicon(this.$form.find('#heart'));
     assert.ok(this.$form.find('#heart').hasClass('hidden'));
+    
+    // TODO check when you pass a selector that does not have a glyphicon
 });
 
 QUnit.test("removeFormErrors test", function(assert) {
     assert.expect(0);
+    //this.checkit.removeFormErrors(this.$form);
 });
 
 QUnit.test("validateDates test", function(assert) {

@@ -459,7 +459,7 @@ CheckIt.prototype.clearForm = function($fullForm) {
     // $fullForm is the selector for the form div
     // Only removeFormErrors if there are any errors on display
     if ($fullForm.find('.has-error')) {
-        this.removeFormErrors();
+        this.removeFormErrors($fullForm);
     }
     $fullForm.trigger("reset"); 
 };
@@ -486,23 +486,36 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
 
 CheckIt.prototype.addGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
+    
+    if (!$id.hasClass('glyph')) {
+        console.error("No glyphicon");
+        return;
+    }
     $id.removeClass('hidden');
     $id.attr('aria-hidden', 'false');
 };
 
 CheckIt.prototype.removeGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
+
+    if (!$id.hasClass('glyph')) {
+        console.error("No glyphicon");
+        return;
+    }
     $id.addClass('hidden');
     $id.attr('aria-hidden', 'true');
 };
 
-CheckIt.prototype.removeFormErrors = function() {
+CheckIt.prototype.removeFormErrors = function($fullForm) {
     // Remove the error classes and glyphicons from the form input fields
+
+    var checkit = this;
     
-    this.removeFieldError(this.$startDateFormGroup, this.$srStartDateError);
-    this.removeFieldError(this.$endDateFormGroup, this.$srEndDateError);
-    this.removeFieldError(this.$titleFormGroup, this.$srTitleError);
-    this.removeGlyphicon(this.$titleErrorGlyphicon);
+    $fullForm.find('.form-group').each(function(index, value) {
+        checkit.removeFieldError($(this), $(this).find('.sr-only'));
+        checkit.removeGlyphicon($(this).find('.glyph'));
+    });
+    
 };
 
 CheckIt.prototype.validateDates = function(startDateString, endDateString) {
@@ -561,10 +574,16 @@ CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
 };
 
 CheckIt.prototype.validateForm = function(startDateString, endDateString) {
-        
+    
+    console.log("VALIDATING TITLE");
     var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle');
+    console.log("validateTitle: " + validateTitle);
+    console.log("VALIDATING STARTDATE");
     var validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate');
+    console.log("validateStartDate: " + validateStartDate);
+    console.log("VALIDATING ENDDATE");
     var validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate');
+    console.log("validateEndDate: " + validateEndDate);
     
     var isValid = validateTitle && validateStartDate && validateEndDate;
     
