@@ -469,6 +469,8 @@ QUnit.module( "Form Tests", {
     this.$form = this.$calendarDiv.find('#fullForm');
     this.$formGroup = this.$form.find('#emailFormGroup');
     this.$sr = this.$form.find('#sr');
+    this.$form.append(`<span id="heart" class="glyphicon glyphicon-heart hidden" 
+        aria-hidden="true"></span>`);
   },
   afterEach: function() {
     // clean up after each test
@@ -532,11 +534,21 @@ QUnit.test("removeFieldError test", function( assert ) {
 });
 
 QUnit.test("addGlyphicon test", function( assert) {
-    assert.expect(0);
+    assert.expect(2);
+    
+    assert.ok(this.$form.find('#heart').hasClass('hidden'));
+    
+    this.checkit.addGlyphicon(this.$form.find('#heart'));
+    assert.notOk(this.$form.find('#heart').hasClass('hidden'));
 });  
 
 QUnit.test("removeGlyphicon test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    
+    this.$form.find('#heart').removeClass('hidden');
+    assert.notOk(this.$form.find('#heart').hasClass('hidden'));
+    this.checkit.removeGlyphicon(this.$form.find('#heart'));
+    assert.ok(this.$form.find('#heart').hasClass('hidden'));
 });
 
 QUnit.test("removeFormErrors test", function(assert) {
