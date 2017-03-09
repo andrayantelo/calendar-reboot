@@ -535,26 +535,33 @@ QUnit.test("removeFieldError test", function( assert ) {
 });
 
 QUnit.test("addGlyphicon test", function( assert) {
-    assert.expect(2);
+    assert.expect(3);
     
     assert.ok(this.$form.find('#heart').hasClass('hidden'));
 
     this.checkit.addGlyphicon(this.$form.find('#heart'));
     assert.notOk(this.$form.find('#heart').hasClass('hidden'));
     
-    // Check when you pass a selector that does not have a glyphicon TODO
+    this.$form.find('#heart').addClass('hidden');
+    this.$form.find('#heart').removeClass('glyph');
+    // addGlyphicon should remove the class 'hidden' from #heart
     this.checkit.addGlyphicon(this.$form.find('#heart'));
+    assert.ok(this.$form.find('#heart').hasClass('hidden'));
 });  
 
 QUnit.test("removeGlyphicon test", function(assert) {
-    assert.expect(2);
+    assert.expect(3);
     
     this.$form.find('#heart').removeClass('hidden');
     assert.notOk(this.$form.find('#heart').hasClass('hidden'));
     this.checkit.removeGlyphicon(this.$form.find('#heart'));
     assert.ok(this.$form.find('#heart').hasClass('hidden'));
     
-    // TODO check when you pass a selector that does not have a glyphicon
+    this.$form.find('#heart').removeClass('hidden');
+    this.$form.find('#heart').removeClass('glyph');
+    // removeGlyphicon should add class 'hidden' to #heart
+    this.checkit.removeGlyphicon(this.$form.find('#heart'));
+    assert.notOk(this.$form.find('#heart').hasClass('hidden'));
 });
 
 QUnit.test("removeFormErrors test", function(assert) {
