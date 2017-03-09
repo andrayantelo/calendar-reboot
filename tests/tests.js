@@ -462,9 +462,9 @@ QUnit.module( "Form Tests", {
     this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    var formHTML = `<form id="fullForm"><div class="form-group">
-        <input type="email" class="form-control" 
-        id="exemail"></div></form>`;
+    var formHTML = `<form id="fullForm"><div class="form-group" 
+        id="emailFormGroup"><input type="email" class="form-control" 
+        id="exemail"></div><span id="sr" class="sr-only hidden">(error)</span></form>`;
     this.$calendarDiv.append(formHTML);
     this.$form = this.$calendarDiv.find('#fullForm');
     
@@ -504,12 +504,22 @@ QUnit.test("clearForm test", function( assert ) {
     assert.equal($formInput.val(), "");
 });
 
-QUnit.test("addFormError test", function( assert ) {
-    assert.expect(0);
+QUnit.test("addFieldError test", function( assert ) {
+    assert.expect(4);
+    
+    var $formGroup = this.$form.find('#emailFormGroup');
+    var $sr = this.$form.find('#sr');
+    assert.equal($formGroup.find('has-error').length, 0);
+    assert.ok($sr.hasClass('hidden'));
+    this.checkit.addFieldError($formGroup, $sr);
+    
+    assert.ok($formGroup.hasClass('has-error'));
+    assert.notOk($sr.hasClass('hidden'));
 });
 
-QUnit.test("removeFormError test", function( assert ) {
+QUnit.test("removeFieldError test", function( assert ) {
     assert.expect(0);
+    
 });
 
 QUnit.test("addGlyphicon test", function( assert) {
