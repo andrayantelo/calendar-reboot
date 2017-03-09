@@ -467,7 +467,8 @@ QUnit.module( "Form Tests", {
         id="exemail"></div><span id="sr" class="sr-only hidden">(error)</span></form>`;
     this.$calendarDiv.append(formHTML);
     this.$form = this.$calendarDiv.find('#fullForm');
-    
+    this.$formGroup = this.$form.find('#emailFormGroup');
+    this.$sr = this.$form.find('#sr');
   },
   afterEach: function() {
     // clean up after each test
@@ -507,18 +508,26 @@ QUnit.test("clearForm test", function( assert ) {
 QUnit.test("addFieldError test", function( assert ) {
     assert.expect(4);
     
-    var $formGroup = this.$form.find('#emailFormGroup');
-    var $sr = this.$form.find('#sr');
-    assert.equal($formGroup.find('has-error').length, 0);
-    assert.ok($sr.hasClass('hidden'));
-    this.checkit.addFieldError($formGroup, $sr);
+    assert.equal(this.$formGroup.find('has-error').length, 0);
+    assert.ok(this.$sr.hasClass('hidden'));
+    this.checkit.addFieldError(this.$formGroup, this.$sr);
     
-    assert.ok($formGroup.hasClass('has-error'));
-    assert.notOk($sr.hasClass('hidden'));
+    assert.ok(this.$formGroup.hasClass('has-error'));
+    assert.notOk(this.$sr.hasClass('hidden'));
 });
 
 QUnit.test("removeFieldError test", function( assert ) {
-    assert.expect(0);
+    assert.expect(4);
+    // Give the form errors
+    this.$formGroup.addClass('has-error has-feedback');
+    this.$sr.removeClass('hidden');
+    
+    assert.ok(this.$formGroup.hasClass('has-error has-feedback'));
+    assert.notOk(this.$sr.hasClass('hidden'));
+    // Remove the rrors
+    this.checkit.removeFieldError(this.$formGroup, this.$sr);
+    assert.notOk(this.$formGroup.hasClass('has-error has-feedback'));
+    assert.ok(this.$sr.hasClass('hidden'));
     
 });
 

@@ -481,7 +481,7 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
     // surrounds the input field with the error
     // $srId is the selector for the screen reader element
     $id.removeClass('has-error has-feedback');
-    $srId.removeClass('hidden');
+    $srId.addClass('hidden');
 };
 
 CheckIt.prototype.addGlyphicon = function($id) {
