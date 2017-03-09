@@ -487,11 +487,13 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
 CheckIt.prototype.addGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
     $id.removeClass('hidden');
+    $id.attr('aria-hidden', 'false');
 };
 
 CheckIt.prototype.removeGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
     $id.addClass('hidden');
+    $id.attr('aria-hidden', 'true');
 };
 
 CheckIt.prototype.removeFormErrors = function() {
