@@ -458,11 +458,10 @@ CheckIt.prototype.clearForm = function($fullForm) {
     // Clears the buildCalendar form.
     // $fullForm is the selector for the form div
     // Only removeFormErrors if there are any errors on display
-    var checkit = this;
     if ($fullForm.find('.has-error')) {
-        checkit.removeFormErrors();
+        this.removeFormErrors();
     }
-    this.$fullForm.trigger("reset"); 
+    $fullForm.trigger("reset"); 
 };
 
 CheckIt.prototype.addFieldError = function($id, $srId) {

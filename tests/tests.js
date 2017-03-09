@@ -493,15 +493,15 @@ QUnit.test("show and hide Form test", function( assert ) {
 });
 
 QUnit.test("clearForm test", function( assert ) {
-    assert.expect(0);
+    assert.expect(2);
 
     var $formInput = this.$form.find('input');
     $formInput.val('what@what.com');
-    console.log(this.$fixture.find('#fullForm input').val());
+
+    assert.equal($formInput.val(), 'what@what.com');
     
-    //assert.equal($formInput.val(), 'what@what.com');;
     this.checkit.clearForm(this.$form);
-    console.log(this.$fixture.find('#fullForm input').val());
+    assert.equal($formInput.val(), "");
 });
 
 QUnit.test("addFormError test", function( assert ) {
