@@ -439,6 +439,36 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
 
+
+QUnit.test("addCalendarToDropdown test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("removeFromCalendarDropdown test", function( assert ) {
+    assert.expect(0);
+});
+
+QUnit.test("clearDropdown test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("clearPage", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.module( "Form Tests", {
+  beforeEach: function() {
+    // prepare something before each test
+    this.checkit = new CheckIt('localStorage');
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+  },
+  afterEach: function() {
+    // clean up after each test
+    this.$calendarDiv.empty();
+  }
+});
+
 QUnit.test("show and hide Form test", function( assert ) {
     assert.expect(1);
     
@@ -459,7 +489,7 @@ QUnit.test("show and hide Form test", function( assert ) {
 });
 
 QUnit.test("clearForm test", function( assert ) {
-    assert.expect(1);
+    assert.expect(2);
     var formHTML = `<form><div class="form-group"><label for="exemail">
         Email address</label><input type="email" class="form-control" 
         id="exemail" placeholder="Email"></div></form>`;
@@ -467,41 +497,13 @@ QUnit.test("clearForm test", function( assert ) {
     var $form = this.$calendarDiv.find('#exemail');
     $form.val('what@what.com');
     assert.equal($form.val(), 'what@what.com');
+    $form[0].reset();
+    console.log($form.val());
+    console.log($form[0]);
     this.checkit.clearForm($form);
     console.log($form.val());
 });
 
-QUnit.test("addCalendarToDropdown test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("removeFromCalendarDropdown test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("clearDropdown test", function(assert) {
-    assert.expect(0);
-});
-
-QUnit.test("clearPage", function(assert) {
-    assert.expect(0);
-});
-
-QUnit.module( "Build Calendar Form Tests", {
-  before: function() {
-    // prepare something once for all tests
-  },
-  beforeEach: function() {
-    // prepare something before each test
-  },
-  afterEach: function() {
-    // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
-  }
-});
-// TODO Likely have to refactor the below functions
 QUnit.test("addFormError test", function( assert ) {
     assert.expect(0);
 });

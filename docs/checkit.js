@@ -11,9 +11,9 @@ function CheckIt(mode) {
    
     this.$getStarted = $('#getStarted');
     this.$buildFormAccordion = $('#buildFormAccordion');
-    this.$calendarTitleForm = $('#titleFormGroup');
-    this.$startDateForm = $('#startDateFormGroup');
-    this.$endDateForm = $('#endDateFormGroup');
+    this.$titleFormGroup = $('#titleFormGroup');
+    this.$startDateFormGroup = $('#startDateFormGroup');
+    this.$endDateFormGroup = $('#endDateFormGroup');
     this.$startDatePicker = $('#datetimepicker1');
     this.$startDatePickerInput = $('#datetimepicker1 input');
     this.$endDatePicker = $('#datetimepicker2');
@@ -441,15 +441,15 @@ CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
 };
 
 CheckIt.prototype.hideForm = function($form) {
-    // Collapse a collapsible form.
-    // Parameter $form is the selector for a collapsible form.
+    // Collapse a collapsible div (in checkit's case forms).
+    // Parameter $form is the selector for a collapsible form (or div).
     
     $form.collapse('hide');
 };
 
 CheckIt.prototype.showForm = function($form) {
     // Show a collapsible form.
-    // Parameter $form is the selector for a collapsible form.
+    // Parameter $form is the selector for a collapsible form (or div).
     
     $form.collapse('show');
 };
@@ -482,7 +482,6 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
     // $id is the selector for the div with class .form-group that
     // surrounds the input field with the error
     // $srId is the selector for the screen reader element
-    
     $id.removeClass('has-error has-feedback');
     $srId.removeClass('hidden');
 };
@@ -500,9 +499,9 @@ CheckIt.prototype.removeGlyphicon = function($id) {
 CheckIt.prototype.removeFormErrors = function() {
     // Remove the error classes and glyphicons from the form input fields
     
-    this.removeFieldError(this.$startDateForm, this.$srStartDateError);
-    this.removeFieldError(this.$endDateForm, this.$srEndDateError);
-    this.removeFieldError(this.$calendarTitleForm, this.$srTitleError);
+    this.removeFieldError(this.$startDateFormGroup, this.$srStartDateError);
+    this.removeFieldError(this.$endDateFormGroup, this.$srEndDateError);
+    this.removeFieldError(this.$titleFormGroup, this.$srTitleError);
     this.removeGlyphicon(this.$titleErrorGlyphicon);
 };
 
@@ -516,7 +515,7 @@ CheckIt.prototype.validateDates = function(startDateString, endDateString) {
     var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
     if (startDate.isBefore(endDate)) {
-        this.removeFieldError(this.$endDateForm, this.$endDateErrorSpan);
+        this.removeFieldError(this.$endDateForm, this.$srEndDateError);
         // If there are more than 5 years between the dates return false for invalid
         return (difference < 5);
     }
@@ -563,10 +562,9 @@ CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
 
 CheckIt.prototype.validateForm = function(startDateString, endDateString) {
         
-        
-    var validateTitle = this.validateInput(this.$fullForm, this.$calendarTitleForm, 'calendarTitle');
-    var validateStartDate = this.validateInput(this.$fullForm, this.$startDateForm, 'startDate');
-    var validateEndDate = this.validateInput(this.$fullForm, this.$endDateForm, 'endDate');
+    var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle');
+    var validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate');
+    var validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate');
     
     var isValid = validateTitle && validateStartDate && validateEndDate;
     
