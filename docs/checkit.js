@@ -146,7 +146,8 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
             
             for (var key in allCalendarIds) {
                 if (allCalendarIds.hasOwnProperty(key)) {
-                    this.addCalendarToDropdown(key, allCalendarIds[key]);
+                    this.addCalendarToDropdown(key, allCalendarIds[key],
+                        this.$calendarDropdown);
                 }
             }
         }.bind(this))
@@ -184,9 +185,9 @@ CheckIt.prototype.displayActiveCalendar = function() {
        }.bind(this));
 }
 
-CheckIt.prototype.clearDropdown = function() {
+CheckIt.prototype.clearDropdown = function($dropdown) {
     // Removes all items from the Saved Items dropdown.
-    this.$calendarDropdown.empty();
+    $dropdown.empty();
 };
 
 
@@ -634,7 +635,8 @@ CheckIt.prototype.createCalendar = function() {
         this.store.initializeCalendar(calendar);
 
         //add calendar to dropdown
-        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
+        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title,
+            this.$calendarDropdown);
     
         //build the calendar
         this.buildCalendar(calendar);
@@ -690,19 +692,19 @@ CheckIt.prototype.deleteCalendar = function() {
     }
 };
 
-CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title) {
+CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title, $dropdown) {
     //add the calendar with unique Id, uniqueId, and title, title, to
     //the saved calendars dropdown on the navbar.
     
-    this.$calendarDropdown.append('<li id="' + uniqueId
+    $dropdown.append('<li id="' + uniqueId
             + '"><a href=#>' + title + '</a></li>');
 };
 
-CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
+CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId, $dropdown) {
     //remove the calendar with uniqueId from the saved calendars dropdown
     //in the navbar
     
-    this.$calendarDropdown.children('#' + uniqueId).remove();
+    $dropdown.children('#' + uniqueId).remove();
 };
 
 CheckIt.prototype.buildCalendar = function(calendarObject) {

@@ -446,18 +446,48 @@ QUnit.test("clearPage", function(assert) {
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
+QUnit.module( "CheckIt tests dropdown", {
+  beforeEach: function() {
+    // prepare something before each test
+    this.checkit = new CheckIt('localStorage');
+    this.$fixture = $('#qunit-fixture');
+    this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
+        </div>`);
+    this.$dropdown = this.$fixture.find('#dropdown');
+  },
+  afterEach: function() {
+    // clean up after each test
+    this.$fixture.find('#dropdown').empty();
+  }
+});
+
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {
-    assert.expect(0);
-    console.log(this.$fixture.html());
+    assert.expect(2);
+    this.checkit.addCalendarToDropdown("1234", "Hello", this.$dropdown);
+    assert.equal(this.$dropdown.children().attr('id'), '1234');
+    assert.equal(this.$dropdown.children().text(), "Hello");
 });
 
 QUnit.test("removeFromCalendarDropdown test", function( assert ) {
-    assert.expect(0);
+    assert.expect(4);
+    this.$dropdown.append(`<li id="1234">Hello</li>`);
+    assert.equal(this.$dropdown.children().attr('id'), '1234');
+    assert.equal(this.$dropdown.children().text(), "Hello");
+    assert.equal(this.$dropdown.children().length, 1);
+    this.checkit.removeFromCalendarDropdown("1234", this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 0);
 });
 
 QUnit.test("clearDropdown test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    this.$dropdown.append(`<li id="1">Hello</li>`);
+    this.$dropdown.append(`<li id="2">Hoi</li>`);
+    this.$dropdown.append(`<li id="3">Hola</li>`);
+    
+    assert.equal(this.$dropdown.children().length, 3);
+    checkit.clearDropdown(this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 0);
 });
 
 
