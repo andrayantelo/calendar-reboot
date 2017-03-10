@@ -316,7 +316,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.clearDropdown();
         
         //Clear the page.
-        this.clearPage();
+        this.clearPage(this.$calendarDiv);
         
         // Remove the build Calendar form.
         this.$buildFormAccordion.attr('hidden', 'true');
@@ -540,7 +540,6 @@ CheckIt.prototype.validateDates = function(startDateString, endDateString, $form
     var $sr = $formGroup.find('.sr-only');
     var $helpBlock = $formGroup.find('#helpBlock');
     var $fiveYears = $formGroup.find('#fiveYears');
-    console.log("checking if end date is after start date");
     var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
     if (startDate.isBefore(endDate)) {
@@ -601,15 +600,9 @@ CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
 
 CheckIt.prototype.validateForm = function(startDateString, endDateString) {
     
-    console.log("VALIDATING TITLE");
     var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle');
-    console.log("validateTitle: " + validateTitle);
-    console.log("VALIDATING STARTDATE");
     var validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate');
-    console.log("validateStartDate: " + validateStartDate);
-    console.log("VALIDATING ENDDATE");
     var validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate');
-    console.log("validateEndDate: " + validateEndDate);
     
     var isValid = validateTitle && validateStartDate && validateEndDate;
     
@@ -628,7 +621,7 @@ CheckIt.prototype.createCalendar = function() {
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
-        this.clearPage();
+        this.clearPage(this.$calendarDiv);
 
         //make a calendar State
         var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
@@ -687,7 +680,7 @@ CheckIt.prototype.deleteCalendar = function() {
                 this.store.removeActive();
                 //console.log("clearing the page");
                 //clear the page
-                this.clearPage();
+                this.clearPage(this.$calendarDiv);
                 this.showForm(this.$buildCalendarForm); 
             }.bind(this))
             .catch(function() {
@@ -730,17 +723,17 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
 CheckIt.prototype.displayCalendar = function(calendarObj) {
     //load a state and build the calendar on the page
     
-    this.clearPage();
+    this.clearPage(this.$calendarDiv);
     this.buildCalendar(calendarObj);
     this.store.setActiveById(calendarObj.state.uniqueId);
     this.store.save(calendarObj);
 };
 
-CheckIt.prototype.clearPage = function() {
+CheckIt.prototype.clearPage = function($div) {
     // Remove all divs from page except #template
     
-    this.$calendarDiv.find('#calendarTitleHeading').remove();
-    this.$calendarDiv.children('.monthframe').remove();
+    $div.find('#calendarTitleHeading').remove();
+    $div.children('.monthframe').remove();
 };
 
 CheckIt.prototype.findCurrentDay = function(currentDay) {

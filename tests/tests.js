@@ -439,9 +439,17 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
 
+QUnit.test("clearPage", function(assert) {
+    assert.expect(2);
+    assert.ok(this.$calendarDiv.children().length > 0);
+    checkit.clearPage(this.$calendarDiv);
+    assert.notOk(this.$calendarDiv.children().length > 0);
+});
+
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {
     assert.expect(0);
+    console.log(this.$fixture.html());
 });
 
 QUnit.test("removeFromCalendarDropdown test", function( assert ) {
@@ -452,9 +460,7 @@ QUnit.test("clearDropdown test", function(assert) {
     assert.expect(0);
 });
 
-QUnit.test("clearPage", function(assert) {
-    assert.expect(0);
-});
+
 
 QUnit.module( "Form Tests", {
   beforeEach: function() {
@@ -464,7 +470,10 @@ QUnit.module( "Form Tests", {
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
     var formHTML = `<form id="fullForm"><div class="form-group" 
         id="emailFormGroup"><input type="email" class="form-control" 
-        id="exemail"></div><span id="sr" class="sr-only hidden">(error)</span></form>`;
+        id="exemail"><span id="sr" class="sr-only hidden">(error)</span>
+        <span id="helpBlock" class="help-block hidden">This is some help text
+        .</span><span id ="fiveYears" class="help-block hidden">Five years.
+        </span></div></form>`;
     this.$calendarDiv.append(formHTML);
     this.$form = this.$calendarDiv.find('#fullForm');
     this.$formGroup = this.$form.find('#emailFormGroup');
@@ -472,6 +481,8 @@ QUnit.module( "Form Tests", {
     this.$form.find('.form-group').append(`<span id="heart" 
         class="glyphicon glyphicon-heart hidden glyph" aria-hidden="true"></span>`);
     this.$heart = this.$form.find('#heart');
+    this.$helpBlock = this.$formGroup.find('#helpBlock');
+    this.$fiveYears = this.$formGroup.find('#fiveYears');
   },
   afterEach: function() {
     // clean up after each test
@@ -565,6 +576,22 @@ QUnit.test("removeGlyphicon test", function(assert) {
     assert.notOk(this.$heart.hasClass('hidden'));
 });
 
+QUnit.test("addHelpBlock test", function(assert) {
+    assert.expect(2);
+
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
+    this.checkit.addHelpBlock(this.$helpBlock);
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "helpBlock is not hidden");
+});
+
+QUnit.test("removeHelpBlock test", function(assert) {
+    assert.expect(2);
+    
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
+    this.checkit.removeHelpBlock(this.$helpBlock);
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
+});
+
 QUnit.test("removeFormErrors test", function(assert) {
     assert.expect(6);
     // Add errors to input field and reveal glyphicon and assert
@@ -581,7 +608,7 @@ QUnit.test("removeFormErrors test", function(assert) {
 });
 
 QUnit.test("validateDates test", function(assert) {
-    assert.expect(13);
+    assert.expect(17);
     // Ensure true is returned when dates are correct (startDate before
     // endDate and no more than 5 years between them
     
@@ -602,39 +629,55 @@ QUnit.test("validateDates test", function(assert) {
     assert.notOk(invalidDates, "endDate < startDate");
     assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
     assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "endDate < startDate helpBlock");
     // Remove errors
     this.$formGroup.removeClass('has-error');
     this.$formGroup.removeClass('has-feedback');
+    this.$helpBlock.addClass('hidden');
     // Ensure false when endDate is before startDate AND they are more than 
-    // 5 years apart
+    // 5 years apart, in this case, the form just shows error for the 
+    // end date being before the start date
     var endDate = "2011-01-01";
     var invalidYear = this.checkit.validateDates(startDate, endDate,
         this.$formGroup);
     assert.notOk(invalidYear, "endDate < startDate and > 5 years");
     assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
     assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "endDate < startDate helpBlock");
+    assert.ok(this.$fiveYears.hasClass('hidden'), "> 5 years apart");
     // Remove errors
     this.$formGroup.removeClass('has-error');
     this.$formGroup.removeClass('has-feedback');
+    this.$helpBlock.addClass('hidden');
+    this.$fiveYears.addClass('hidden');
     // Ensure false when endDate is after startDate BUT they are more than 5
-    // years apart. Function should just return false, but not add any errors
-    
+    // years apart. Function should return false, add a helpBlock, and field errors
     var endDate = "2023-01-01";
     var moreThanFive = this.checkit.validateDates(startDate, endDate,
         this.$formGroup);
     assert.notOk(moreThanFive, "More than five years invalid");
-    assert.notOk(this.$formGroup.hasClass('has-error'), "does not have has-error");
-    assert.notOk(this.$formGroup.hasClass('has-feedback'), 'does not have has-feedback class');
+    assert.ok(this.$formGroup.hasClass('has-error'), "does not have has-error");
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'does not have has-feedback class');
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpClass is hidden");
+    assert.notOk(this.$fiveYears.hasClass('hidden'), "Over five years");
 
-    
 });
 
 QUnit.test("validateInput test", function(assert) {
-    assert.expect(0);
+    assert.expect(4);
+    // Ensure validateInput returns false for an empty string
+    var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
+    assert.notOk(empty, "validateInput returns false for empty string");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'error for invalid input');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'feedback for invalid input');
+    assert.notOk(this.$heart.hasClass('hidden'), 'glyphicon is visible');
 });
 
 QUnit.test("validateForm test", function(assert) {
     assert.expect(0);
+    // validateForm is made up of individual functions that I already tested
+    // Do I need to write this?
+
 });
 
 QUnit.module( "CheckIt tests for functions that involve store", {
