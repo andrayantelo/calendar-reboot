@@ -484,6 +484,15 @@ CheckIt.prototype.removeFieldError = function($id, $srId) {
     $srId.addClass('hidden');
 };
 
+CheckIt.prototype.addHelpBlock = function($helpBlock) {
+    // Removes the hidden class from the $helpBlock
+    $helpBlock.removeClass('hidden');
+};
+
+CheckIt.prototype.removeHelpBlock = function($helpBlock) {
+    $helpBlock.addClass('hidden');
+};
+
 CheckIt.prototype.addGlyphicon = function($id) {
     // $id is the selector for the span element that contains the glyphicon
     
@@ -518,23 +527,40 @@ CheckIt.prototype.removeFormErrors = function($fullForm) {
     
 };
 
-CheckIt.prototype.validateDates = function(startDateString, endDateString) {
+CheckIt.prototype.validateDates = function(startDateString, endDateString, $formGroup) {
     // Ensure that the end Date comes after the start Date and that there is no
     // more than 5 years between them.
+    // Parameters: 
+    //    startDateString: "YYYY-MM-DD"
+    //    endDateString: "YYYY-MM-DD"
+    //    $formGroup: jQuery selector for the form where you will be adding errors
         
     var startDate = moment(startDateString, "YYYY-MM-DD");
     var endDate = moment(endDateString, "YYYY-MM-DD");
-    
+    var $sr = $formGroup.find('.sr-only');
+    var $helpBlock = $formGroup.find('#helpBlock');
+    var $fiveYears = $formGroup.find('#fiveYears');
+    console.log("checking if end date is after start date");
     var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
     if (startDate.isBefore(endDate)) {
-        this.removeFieldError(this.$endDateForm, this.$srEndDateError);
+        // startDate is before endDate so errors can be removed.
+        this.removeFieldError($formGroup, $sr);
+        this.removeHelpBlock($helpBlock);
         // If there are more than 5 years between the dates return false for invalid
-        return (difference < 5);
+        if (difference < 5) {
+            this.removeHelpBlock($fiveYears);
+            return true;
+        }
+        else { 
+            this.addFieldError($formGroup, $sr);
+            this.addHelpBlock($fiveYears);
+        }
     }
     else {
-        // Mark the endDate input field red
-        this.addFieldError(this.$endDateForm, this.$srEndDateError);
+        // Mark the endDate input field red because endDate is after startDate
+        this.addFieldError($formGroup, $sr);
+        this.addHelpBlock($helpBlock);
         return false;
     }
     
@@ -588,7 +614,7 @@ CheckIt.prototype.validateForm = function(startDateString, endDateString) {
     var isValid = validateTitle && validateStartDate && validateEndDate;
     
     // Make sure input is OK before parsing and validating dates
-    return (isValid && this.validateDates(startDateString, endDateString));
+    return (isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
    
 };
 

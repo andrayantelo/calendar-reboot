@@ -581,7 +581,52 @@ QUnit.test("removeFormErrors test", function(assert) {
 });
 
 QUnit.test("validateDates test", function(assert) {
-    assert.expect(0);
+    assert.expect(13);
+    // Ensure true is returned when dates are correct (startDate before
+    // endDate and no more than 5 years between them
+    
+    var startDate = "2017-01-01";
+    var endDate = "2017-02-01";
+    
+    var validDates = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.ok(validDates, "endDate > startDate < 5 years");
+    assert.notOk(this.$formGroup.hasClass('has-error'));
+    assert.notOk(this.$formGroup.hasClass('has-feedback'));
+    
+    // Ensure false when endDate is before startDate but they are still
+    // less than 5 years apart.
+    var endDate = "2016-12-01";
+    var invalidDates = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(invalidDates, "endDate < startDate");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    // Remove errors
+    this.$formGroup.removeClass('has-error');
+    this.$formGroup.removeClass('has-feedback');
+    // Ensure false when endDate is before startDate AND they are more than 
+    // 5 years apart
+    var endDate = "2011-01-01";
+    var invalidYear = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(invalidYear, "endDate < startDate and > 5 years");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    // Remove errors
+    this.$formGroup.removeClass('has-error');
+    this.$formGroup.removeClass('has-feedback');
+    // Ensure false when endDate is after startDate BUT they are more than 5
+    // years apart. Function should just return false, but not add any errors
+    
+    var endDate = "2023-01-01";
+    var moreThanFive = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(moreThanFive, "More than five years invalid");
+    assert.notOk(this.$formGroup.hasClass('has-error'), "does not have has-error");
+    assert.notOk(this.$formGroup.hasClass('has-feedback'), 'does not have has-feedback class');
+
+    
 });
 
 QUnit.test("validateInput test", function(assert) {
