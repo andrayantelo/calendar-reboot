@@ -366,11 +366,11 @@ var LocalCalendarStorage = function(params) {
         return key;
     };
     
-    setInStorage = function(key, val) {
+    self.setInStorage_ = function(key, val) {
         localStorage.setItem(self._toKey(key), JSON.stringify(val));
     };
     
-    getFromStorage = function(key) {
+    self.getFromStorage_ = function(key) {
         var storageItem = localStorage.getItem(self._toKey(key))
         if (storageItem !== null) {
             storageItem = JSON.parse(storageItem);
@@ -378,13 +378,13 @@ var LocalCalendarStorage = function(params) {
         return storageItem;
     };
     
-    removeFromStorage = function(key) {
+    self.removeFromStorage_ = function(key) {
         localStorage.removeItem(self._toKey(key));
     };
 
     
     self.onActivityChanged = function(func) {
-        // Will run checkit's onActivityChanged.
+        // Adds functions to activityChangeFunctions.
         
         //TODO extend this to support multiple callbacks
         self.activityChangeFunctions.push(func);
@@ -397,7 +397,7 @@ var LocalCalendarStorage = function(params) {
         
         // Will dispatch the event backgroundActivityChange 
         self.activityChangeFunctions.forEach(function(func) {
-            func(self.activeCalls);
+            func(self.activeCalls, 'loadingWheel');
         });
         
     };
@@ -413,7 +413,7 @@ var LocalCalendarStorage = function(params) {
         
         // Dispatch the activityChanged listener
         self.activityChangeFunctions.forEach(function(func) {
-            func(self.activeCalls);
+            func(self.activeCalls, 'loadingWheel');
         });
       
     };
@@ -424,7 +424,7 @@ var LocalCalendarStorage = function(params) {
             self.endWork();
         };
         
-        var randomNumber = Math.random() * 4000;
+        var randomNumber = Math.random() * 100;
         self.startWork();
         setTimeout(runFunc, randomNumber);
         
@@ -434,7 +434,7 @@ var LocalCalendarStorage = function(params) {
         // Returns a promise for the allCalendarIds object from storage
         
         return new Promise( function(resolve, reject) {
-            var allCalendarIds = getFromStorage(allCalendarIdsKey);
+            var allCalendarIds = self.getFromStorage_(allCalendarIdsKey);
             
             if (allCalendarIds !== null ) {
                 jitter(resolve, allCalendarIds);
@@ -455,7 +455,7 @@ var LocalCalendarStorage = function(params) {
         
         //store the state in localStorage
         var stateP = new Promise(function(resolve, reject) {
-            setInStorage(calendarObj.state.uniqueId, calendarObj.state);
+            self.setInStorage_(calendarObj.state.uniqueId, calendarObj.state);
             jitter(resolve);
         });
         
@@ -464,13 +464,13 @@ var LocalCalendarStorage = function(params) {
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                setInStorage(allCalendarIdsKey, allCalendarIds);
+                self.setInStorage_(allCalendarIdsKey, allCalendarIds);
             })
             .catch(function () {
                 console.log("No previous calendars in storage");
                 var allCalendarIds = {};
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
-                setInStorage(allCalendarIdsKey, allCalendarIds);
+                self.setInStorage_(allCalendarIdsKey, allCalendarIds);
             })
             
         return Promise.all([stateP, idsP]);
@@ -491,11 +491,11 @@ var LocalCalendarStorage = function(params) {
                 // Delete the calendar from allCalendarIds.
                 delete allCalendarIds[uniqueId];
                 // Save that change
-                setInStorage(allCalendarIdsKey, allCalendarIds);
+                self.setInStorage_(allCalendarIdsKey, allCalendarIds);
                 // Remove the calendar from local storage
-                removeFromStorage(uniqueId);
+                self.removeFromStorage_(uniqueId);
                 // Remove active status from the calendar
-                removeFromStorage(current_active_calendar);
+                self.removeFromStorage_(current_active_calendar);
             })
             .catch(function () {
                 console.log("Unable to remove calendar");
@@ -506,7 +506,7 @@ var LocalCalendarStorage = function(params) {
     self.loadById = function(calendarObjId) {
         // Return a promise to a calendar object using its Id
         return new Promise( function(resolve, reject) {
-            var calendar = getFromStorage(calendarObjId);
+            var calendar = self.getFromStorage_(calendarObjId);
             
             if (calendar !== null) {
                 jitter(resolve, calendar);
@@ -522,7 +522,7 @@ var LocalCalendarStorage = function(params) {
         // Return a promise to the active_calendar id from storage
         
         return new Promise( function(resolve, reject) {
-            var activeCalendarId = getFromStorage(current_active_calendar);
+            var activeCalendarId = self.getFromStorage_(current_active_calendar);
             
             if (activeCalendarId !== null ) {
                 // Signal that the promise succeeded and make the value ready to go. 
@@ -539,7 +539,7 @@ var LocalCalendarStorage = function(params) {
         // Return a promise, remove the active_calendar item from storage.
         
         return new Promise( function(resolve, reject) {
-            removeFromStorage(current_active_calendar);
+            self.removeFromStorage_(current_active_calendar);
             jitter(resolve);
         })
     };
@@ -547,7 +547,7 @@ var LocalCalendarStorage = function(params) {
     self.setActiveById = function(calendarObjId) {
         // Set the active calendar/object by using its Id
         return new Promise( function(resolve, reject) {
-            setInStorage(current_active_calendar, calendarObjId);
+            self.setInStorage_(current_active_calendar, calendarObjId);
             jitter(resolve);
         })
     };
