@@ -1,14 +1,14 @@
 // Firebase storage manager.
 var firebaseCalendarStorage = function(params) {
     var self = this;
-    var prefix = params['storeId'] || "";
+    var prefix = params.storeId || "";
     // Get a reference to the database service
     self.database = firebase.database();
     // This tells you whether the storage is actively working.
     self.activeCalls = 0;
     self.activityChangeFunctions = [];
     
-    self.user = params['user'];
+    self.user = params.user;
     
     var jitter = function(func, arg) {
         var runFunc = function () {
@@ -350,7 +350,7 @@ var firebaseCalendarStorage = function(params) {
 // LocalStorage storage manager
 var LocalCalendarStorage = function(params) {
     var self = this;
-    var prefix = params['storeId'] || "";
+    var prefix = params.storeId || "";
     var allCalendarIdsKey = 'allCalendarIdsKey';
     //the current_active_calendar is the key for localStorage that stores
     //the active calendar's Id
