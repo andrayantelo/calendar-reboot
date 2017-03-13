@@ -713,24 +713,40 @@ QUnit.test("validateForm test", function(assert) {
 QUnit.module( "CheckIt tests for functions that involve store", {
   beforeEach: function() {
     // prepare something before each test
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    
+    this.$fixture.append(
+        `<script>
+        $(document).ready( function() {
+        checkit = new CheckIt('localStorage');
+        });
+        </script>`);
+    this.checkit = checkit;
+    this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
+        </div>`);
+    this.$dropdown = this.$fixture.find('#dropdown');
   },
   afterEach: function() {
     // clean up after each test
+    this.$calendarDiv.empty();
   }
 });
 
 // TODO test that tests if the correct init function runs depending on
 // which storage is passed to CheckIt
-QUnit.test("initLocalStorage test", function(assert) {
-    assert.expect(0);
-});
-
 QUnit.test("displayActiveCalendar test", function(assert) {
     assert.expect(0);
 });
 
 QUnit.test("fillDropdown test", function(assert) {
     assert.expect(0);
+});
+
+QUnit.test("initLocalStorage test", function(assert) {
+    assert.expect(0);
+    console.log(typeof(this.checkit));
+    
 });
 
 QUnit.test("onActivityChanged test", function(assert) {
