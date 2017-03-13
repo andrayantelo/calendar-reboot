@@ -99,6 +99,8 @@ QUnit.test("getAllCalendarIds test", function(assert) {
         assert.deepEqual(val, {'1234' : 'hello', '5678': 'world'});
         done();
     });
+    localStorage.removeItem('allCalendarIdsKey');
+    var fakeCalendarP = this.store.getAllCalendarIds();
 });
 
 QUnit.test("save test", function(assert) {
