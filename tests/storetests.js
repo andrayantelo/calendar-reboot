@@ -90,5 +90,16 @@ QUnit.test("endWork test", function(assert) {
 });
 
 QUnit.test("getAllCalendarIds test", function(assert) {
+    assert.expect(2);
+    var done = assert.async();
+    var calendarIdsP = this.store.getAllCalendarIds();
+    assert.equal(typeof calendarIdsP, 'object');
+    var calendarIds = calendarIdsP.then(function(val) {
+        assert.deepEqual(val, {'1234' : 'hello', '5678': 'world'});
+        done();
+    });
+});
+
+QUnit.test("save test", function(assert) {
     assert.expect(0);
 });
