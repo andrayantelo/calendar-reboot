@@ -101,5 +101,17 @@ QUnit.test("getAllCalendarIds test", function(assert) {
 });
 
 QUnit.test("save test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    var done = assert.async();
+    var store = this.store;
+    var state = {uniqueId: '123', title: 'Hello World', startDateString: "20170101",
+        endDateString: "20170202"}
+    var calendarIds = {'1234' : 'hello', '5678': 'world', '123': 'Hello World'};
+    var calObj = new Calendar(state);
+    var saveP = this.store.save(calObj);
+    saveP.then(function() {
+        assert.deepEqual(store.getFromStorage_('123'), state);
+        assert.deepEqual(store.getFromStorage_('allCalendarIdsKey'), calendarIds);
+        done();
+    });
 });
