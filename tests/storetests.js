@@ -132,3 +132,24 @@ QUnit.test("RemoveById test", function(assert) {
         done();
     });
 });
+
+QUnit.test("loadById test", function(assert) {
+    assert.expect(2);
+    var done = assert.async(2);
+    var loadP = this.store.loadById('1234');
+    loadP.then(function(val) {
+        assert.deepEqual(val, {uniqueId: '1234', title: 'hello'});
+        done()
+    });
+    var fakeP = this.store.loadById('123');
+    fakeP.then(function(val) {
+        assert.equal(val, {uniqueId: '123', title: 'Hello World',
+            startDateString: "20170101",
+            endDateString: "20170202"});
+        done();
+
+    }, function(val) {
+        assert.equal(val, "Calendar not found");
+        done()
+        });
+});

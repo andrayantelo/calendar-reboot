@@ -504,7 +504,7 @@ var LocalCalendarStorage = function(params) {
     };
     
     self.loadById = function(calendarObjId) {
-        // Return a promise to a calendar object using its Id
+        // Return a promise to a calendar state using its Id
         return new Promise( function(resolve, reject) {
             var calendar = self.getFromStorage_(calendarObjId);
             
