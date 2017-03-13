@@ -90,6 +90,7 @@ QUnit.test("endWork test", function(assert) {
 });
 
 QUnit.test("getAllCalendarIds test", function(assert) {
+    // TODO test for error case
     assert.expect(2);
     var done = assert.async();
     var calendarIdsP = this.store.getAllCalendarIds();
@@ -101,6 +102,7 @@ QUnit.test("getAllCalendarIds test", function(assert) {
 });
 
 QUnit.test("save test", function(assert) {
+    // TODO test for error case
     assert.expect(2);
     var done = assert.async();
     var store = this.store;
@@ -117,6 +119,7 @@ QUnit.test("save test", function(assert) {
 });
 
 QUnit.test("RemoveById test", function(assert) {
+    // TODO Test for error case
     assert.expect(1);
     var done = assert.async();
     var store = this.store;
