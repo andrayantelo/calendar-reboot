@@ -52,7 +52,7 @@ QUnit.module("localCalendarStorage and checkit Tests", {
         this.store.setInStorage_(worldState.uniqueId, worldState);
         //add loading wheel
         this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
-    },
+        },
     afterEach: function() {
         this.$calendarDiv.empty();
         localStorage.clear();
@@ -112,6 +112,23 @@ QUnit.test("save test", function(assert) {
     saveP.then(function() {
         assert.deepEqual(store.getFromStorage_('123'), state);
         assert.deepEqual(store.getFromStorage_('allCalendarIdsKey'), calendarIds);
+        done();
+    });
+});
+
+QUnit.test("RemoveById test", function(assert) {
+    assert.expect(1);
+    var done = assert.async();
+    var store = this.store;
+    var state = {uniqueId: '123', title: 'Hello World', startDateString: "20170101",
+        endDateString: "20170202"}
+    var calendarIds = {'1234' : 'hello', '5678': 'world', '123': 'Hello World'};
+    var calObj = new Calendar(state);
+    var saveP = this.store.save(calObj);
+    
+    var removeP = this.store.removeById('123');
+    removeP.then(function() {
+        assert.deepEqual(store.getFromStorage_('123'), null);
         done();
     });
 });
