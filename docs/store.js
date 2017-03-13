@@ -359,7 +359,7 @@ var LocalCalendarStorage = function(params) {
     self.activeCalls = 0;
     self.activityChangeFunctions = [];
     
-    var toKey = function(id) {
+    self._toKey = function(id) {
         //make a key out of a uniqueId
         
         var key = prefix ? prefix + "_" + id : id;
@@ -367,11 +367,11 @@ var LocalCalendarStorage = function(params) {
     };
     
     setInStorage = function(key, val) {
-        localStorage.setItem(toKey(key), JSON.stringify(val));
+        localStorage.setItem(self._toKey(key), JSON.stringify(val));
     };
     
     getFromStorage = function(key) {
-        var storageItem = localStorage.getItem(toKey(key))
+        var storageItem = localStorage.getItem(self._toKey(key))
         if (storageItem !== null) {
             storageItem = JSON.parse(storageItem);
         }
@@ -379,7 +379,7 @@ var LocalCalendarStorage = function(params) {
     };
     
     removeFromStorage = function(key) {
-        localStorage.removeItem(toKey(key));
+        localStorage.removeItem(self._toKey(key));
     };
 
     

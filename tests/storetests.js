@@ -16,27 +16,38 @@ QUnit.test("initLocalStorage test", function(assert) {
     assert.deepEqual(this.lstore.activityChangeFunctions, []);
 });
 
-// localStorage helper functions
-QUnit.module("LocalStorage Helper Functions Tests", {
-});
-
 QUnit.test("toKey Test", function(assert) {
-    assert.equal(0);
+    assert.expect(1);
     var id = '1234';
     var prefix = 'test';
-    var keyId = toKey(id);
-    
+    var keyId = this.lstore._toKey(id);
     assert.equal(keyId, 'test_1234');
 });
 
-QUnit.test("setInStorage Test", function(assert) {
+QUnit.test("onActivityChanged test", function(assert) {
+    assert.expect(2);
+    this.lstore.onActivityChanged('function');
+    assert.deepEqual(this.lstore.activityChangeFunctions[0], 'function');
+    assert.equal(this.lstore.activityChangeFunctions.length, 1);
 });
 
-QUnit.test("getFromStorage Test", function(assert) {
+QUnit.test("localCalendarStorage and checkit Tests", {
+    beforeEach: function() {
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    
+        this.$fixture.append(
+            `<script>
+            $(document).ready( function() {
+            checkit = new CheckIt('localStorage');
+            });
+            </script>`);
+        this.checkit = checkit;
+    },
+    afterEach: function() {
+    }
 });
 
-QUnit.test("removeFromStorage Test", function(assert) {
+QUnit.test("Checkit's onActivityChanged test", {
 });
 
-QUnit.test("Jitter Test", function(assert) {
-});
