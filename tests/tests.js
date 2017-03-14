@@ -711,28 +711,63 @@ QUnit.test("validateForm test", function(assert) {
 });
 
 QUnit.module( "CheckIt tests for functions that involve store", {
-  before: function() {
-    // prepare something once for all tests
-  },
   beforeEach: function() {
     // prepare something before each test
+    localStorage.clear();
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    
+    this.$fixture.append(
+        `<script>
+        $(document).ready( function() {
+        checkit = new CheckIt('localStorage');
+        });
+        </script>`);
+    this.checkit = checkit;
+    this.store = this.checkit.store;
+    
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    var uniqueId = this.calendar.state.uniqueId;
+    
+    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+    this.checkit.fillCalendar(this.calendar);
+    // Set some calendars in localStorage
+    // allCalendarIds
+    var allCalendarIdsKey = 'allCalendarIdsKey';
+    var allCalendarIds = {'1234' : 'hello', '5678': 'world', uniqueId: 'Test Calendar'};
+    localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
+    // currentActiveCalendar
+    var current_active_calendar = 'current_active_calendar';
+    localStorage.setItem(current_active_calendar, '1234');
+    //calendar states
+    var helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
+    var worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
+    localStorage.setItem(uniqueId, JSON.stringify(this.state));
+    localStorage.setItem(helloState.uniqueId, JSON.stringify(helloState));
+    localStorage.setItem(worldState.uniqueId, JSON.stringify(worldState));
+    //add loading wheel
+    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    
   },
   afterEach: function() {
     // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
+    this.$calendarDiv.empty()
+    localStorage.clear();
   }
 });
 
 // TODO test that tests if the correct init function runs depending on
 // which storage is passed to CheckIt
-QUnit.test("initLocalStorage test", function(assert) {
-    assert.expect(0);
-});
 
 QUnit.test("displayActiveCalendar test", function(assert) {
-    assert.expect(0);
+    assert.expect(1);
+    // When there is a current Active Calendar
+    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    assert.equal(activeCal, '1234');
+    
+    
 });
 
 QUnit.test("fillDropdown test", function(assert) {
