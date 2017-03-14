@@ -197,12 +197,39 @@ QUnit.test("getActive test", function(assert) {
 
 QUnit.test("removeActive test", function(assert) {
     assert.expect(2);
+    
     assert.equal(this.store.getFromStorage_('current_active_calendar'), '1234');
     var removeActiveP = this.store.removeActive();
-    
+   
     assert.equal(this.store.getFromStorage_('current_active_calendar'), undefined);
 });
 
 QUnit.test("setActiveById test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    
+    assert.equal(this.store.getFromStorage_('current_active_calendar'), '1234');
+    
+    var setActiveP = this.store.setActiveById('5678');
+    assert.equal(this.store.getFromStorage_('current_active_calendar'), '5678');
+});
+
+QUnit.test("initializeCalendar test", function(assert) {
+    assert.expect(3);
+    var done = assert.async();
+    var state = {uniqueId: '123', title: 'Hello World', startDateString: "20170101",
+        endDateString: "20170202"}
+    var calObj = new Calendar(state);
+    var initializeP = this.store.initializeCalendar(calObj);
+    
+    initializeP.then(function() {
+        var savedState = JSON.parse(localStorage.getItem('123'));
+        var allCalendarIds = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+        var currentCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+        assert.equal(currentCal, '123');
+        assert.deepEqual(savedState, {uniqueId: "123", title: "Hello World",
+            startDateString: "20170101", endDateString: "20170202"});
+        assert.deepEqual(allCalendarIds, {123: "Hello World", 1234: "hello", 5678: "world"});
+        
+        done();
+    });
 });

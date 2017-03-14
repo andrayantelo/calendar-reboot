@@ -558,15 +558,13 @@ var LocalCalendarStorage = function(params) {
         // Initializes a calendar in the database. Adds the calendar creator
         // as a writer and a reader, sets the calendar as the currentActiveCalendar
         // and then runs the save method (store cal state and allCalendarIds
-        
-        return new Promise( function(resolve, reject) {
-            self.setActiveById(calendarObj.state.uniqueId);
-            self.save(calendarObj);
-            jitter(resolve);
-        });
-                
-        
+
+        var setActiveP = self.setActiveById(calendarObj.state.uniqueId);
+        var saveP = self.save(calendarObj);
+            
+        return Promise.all([setActiveP, saveP]);
     };
-    
+
+// TODO addWriter and addReader for localStorage? Don't have user.uid though
     
 };
