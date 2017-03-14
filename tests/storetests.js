@@ -168,4 +168,41 @@ QUnit.test("loadById test", function(assert) {
         });
 });
 
+QUnit.test("getActive test", function(assert) {
+    assert.expect(2);
+    var done = assert.async(2);
+    // when current_active_calendar exists
+    var activeP = this.store.getActive();
+    activeP.then(function(value) {
+        assert.equal(value, '1234');
+        done();
+    }, function(reason) {
+        // manually fail assertion, because it should have passed in this case
+        assert.ok(false, "getActive test failed");
+        done();
+    });
+    
+    // When current_active_calendar does not exist
+    localStorage.removeItem('current_active_calendar');
+    var failActiveP = this.store.getActive();
+    failActiveP.then(function(value) {
+        // Manually fail, because it should have failed in this case.
+        assert.ok(false, "getActive test when no active failed");
+        done();
+    }, function(reason) {
+        assert.equal(reason, "Not found");
+        done();
+    });
+});
 
+QUnit.test("removeActive test", function(assert) {
+    assert.expect(2);
+    assert.equal(this.store.getFromStorage_('current_active_calendar'), '1234');
+    var removeActiveP = this.store.removeActive();
+    
+    assert.equal(this.store.getFromStorage_('current_active_calendar'), undefined);
+});
+
+QUnit.test("setActiveById test", function(assert) {
+    assert.expect(0);
+});

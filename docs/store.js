@@ -499,8 +499,8 @@ var LocalCalendarStorage = function(params) {
                 // Remove active status from the calendar
                 self.removeFromStorage_(current_active_calendar);
             })
-            .catch(function (err) {
-                console.log("Unable to remove calendar" + err);
+            .catch(function (reason) {
+                console.log("Unable to remove calendar" + reason);
             });
         
     };
