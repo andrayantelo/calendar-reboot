@@ -92,7 +92,7 @@ QUnit.test("endWork test", function(assert) {
 QUnit.test("getAllCalendarIds test", function(assert) {
     
     assert.expect(3);
-    var done = assert.async();
+    var done = assert.async(2);
     var calendarIdsP = this.store.getAllCalendarIds();
     assert.equal(typeof calendarIdsP, 'object');
     var calendarIds = calendarIdsP.then(function(val) {
@@ -102,8 +102,10 @@ QUnit.test("getAllCalendarIds test", function(assert) {
     localStorage.removeItem('allCalendarIdsKey');
 
     var fakeCalendarP = this.store.getAllCalendarIds();
+    
     fakeCalendarP.then(function(val) {
         assert.equal(val, "Not found");
+        done();
         });
 });
 
@@ -123,7 +125,17 @@ QUnit.test("save test", function(assert) {
         done();
     });
     
-    // Error case, 
+    // Error case, key already exists in storage
+    // Error case, allCalendarIdsKey is not in storage yet
+    
+    /*var saveAgainP = this.store.save(calObj);
+    saveAgainP.then(function(val) {
+        console.log("save success");
+        console.log(val);
+    }, function(reason) {
+        console.log("save failed");
+        console.log(reason);
+    });*/
 });
 
 QUnit.test("RemoveById test", function(assert) {

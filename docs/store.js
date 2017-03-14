@@ -369,7 +369,7 @@ var LocalCalendarStorage = function(params) {
     self.setInStorage_ = function(key, val) {
         // Check if key already exists in localStorage
         if (localStorage.getItem(self._toKey(key)) !== null ||
-        local.Storage.getItem(self._toKey(key)) !== undefined) {
+        localStorage.getItem(self._toKey(key)) !== undefined) {
             console.error("Need to pick a unique storage key");
         }
         localStorage.setItem(self._toKey(key), JSON.stringify(val));
