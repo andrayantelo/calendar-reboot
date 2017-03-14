@@ -26,6 +26,8 @@ QUnit.test("toKey Test", function(assert) {
 
 QUnit.module("localCalendarStorage and checkit Tests", {
     beforeEach: function() {
+        // Clear localStorage before putting anything in it
+        localStorage.clear();
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
         
@@ -110,7 +112,7 @@ QUnit.test("getAllCalendarIds test", function(assert) {
 });
 
 QUnit.test("save test", function(assert) {
-    // TODO test for error case
+    // TODO What's the error case here?
     assert.expect(2);
     var done = assert.async();
     var store = this.store;
@@ -125,21 +127,10 @@ QUnit.test("save test", function(assert) {
         done();
     });
     
-    // Error case, key already exists in storage
-    // Error case, allCalendarIdsKey is not in storage yet
-    
-    /*var saveAgainP = this.store.save(calObj);
-    saveAgainP.then(function(val) {
-        console.log("save success");
-        console.log(val);
-    }, function(reason) {
-        console.log("save failed");
-        console.log(reason);
-    });*/
 });
 
 QUnit.test("RemoveById test", function(assert) {
-    // TODO Test for error case
+    // TODO is there an error case here that I could test?
     assert.expect(1);
     var done = assert.async();
     var store = this.store;
@@ -176,3 +167,5 @@ QUnit.test("loadById test", function(assert) {
         done()
         });
 });
+
+
