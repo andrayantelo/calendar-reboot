@@ -91,7 +91,7 @@ QUnit.test("endWork test", function(assert) {
 
 QUnit.test("getAllCalendarIds test", function(assert) {
     // TODO test for error case
-    assert.expect(2);
+    assert.expect(3);
     var done = assert.async();
     var calendarIdsP = this.store.getAllCalendarIds();
     assert.equal(typeof calendarIdsP, 'object');
@@ -100,7 +100,11 @@ QUnit.test("getAllCalendarIds test", function(assert) {
         done();
     });
     localStorage.removeItem('allCalendarIdsKey');
+
     var fakeCalendarP = this.store.getAllCalendarIds();
+    fakeCalendarP.then(function(val) {
+        assert.equal(val, "Not found");
+        });
 });
 
 QUnit.test("save test", function(assert) {
