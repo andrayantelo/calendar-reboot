@@ -10,18 +10,6 @@ var firebaseCalendarStorage = function(params) {
     
     self.user = params.user;
     
-    var jitter = function(func, arg) {
-        var runFunc = function () {
-            func(arg);
-            self.endWork();
-        };
-        
-        var randomNumber = Math.random() * 500;
-        self.startWork();
-        setTimeout(runFunc, randomNumber);
-            
-    };
-    
     self.onActivityChanged = function(func) {
         // Will run checkit's onActivityChanged.
         
