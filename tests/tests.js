@@ -291,18 +291,18 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("Sign-out button selector test", this.checkit.$signOutButton, '#sign-out');
     selectorNameTest("getStarted selector test", this.checkit.$getStarted, '#getStarted');
     selectorNameTest("buildFormAccordion selector test", this.checkit.$buildFormAccordion, '#buildFormAccordion');
-    selectorNameTest("calendarTitleForm selector test", this.checkit.$calendarTitleForm, '#titleFormGroup');
-    selectorNameTest("startDateForm selector test", this.checkit.$startDateForm, '#dateFormGroup');
-    selectorNameTest("endDateForm selector test", this.checkit.$endDateForm, '#dateFormGroup2');
+    selectorNameTest("titleForm selector test", this.checkit.$titleFormGroup, '#titleFormGroup');
+    selectorNameTest("startDateForm selector test", this.checkit.$startDateFormGroup, '#startDateFormGroup');
+    selectorNameTest("endDateForm selector test", this.checkit.$endDateFormGroup, '#endDateFormGroup');
     selectorNameTest("startDatePicker selector test", this.checkit.$startDatePicker, '#datetimepicker1');
     selectorNameTest("startDatePickerInput selector test", this.checkit.$startDatePickerInput, '#datetimepicker1 input');
     selectorNameTest("endDatePicker selector test", this.checkit.$endDatePicker, '#datetimepicker2');
     selectorNameTest("endDatePickerInput selector test", this.checkit.$endDatePickerInput, '#datetimepicker2 input');
     selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
-    selectorNameTest("startDateErrorSpan selector test", this.checkit.$startDateErrorSpan, '#inputError-dateFormGroup');
-    selectorNameTest("endDateErrorSpan selector test", this.checkit.$endDateErrorSpan, '#inputError-dateFormGroup2');
-    selectorNameTest("titleErrorSpan selector test", this.checkit.$titleErrorSpan,'#inputError-titleFormGroup');
-    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleGlyphiconTag, '#span-titleFormGroup');
+    selectorNameTest("startDateErrorSpan selector test", this.checkit.$srStartDateError, '#srStartDateError');
+    selectorNameTest("endDateErrorSpan selector test", this.checkit.$srEndDateError, '#srEndDateError');
+    selectorNameTest("titleErrorSpan selector test", this.checkit.$srTitleError,'#srTitleError');
+    selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleErrorGlyphicon, '#titleErrorGlyphicon');
     selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
     selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
     selectorNameTest("createButton selector test", this.checkit.$createButton, '#createButton');
@@ -439,108 +439,321 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
 
-QUnit.test("collapseBuildMenu test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("uncollapseBuildMenu test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("clearForm test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("addCalendarToDropdown test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("removeFromCalendarDropdown test", function( assert ) {
-    assert.expect(0);
-});
-
-QUnit.test("clearDropdown test", function(assert) {
-    assert.expect(0);
-});
-
 QUnit.test("clearPage", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    assert.ok(this.$calendarDiv.children().length > 0);
+    checkit.clearPage(this.$calendarDiv);
+    assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
-QUnit.module( "Build Calendar Form Tests", {
-  before: function() {
-    // prepare something once for all tests
-  },
+QUnit.module( "CheckIt tests dropdown", {
   beforeEach: function() {
     // prepare something before each test
+    this.checkit = new CheckIt('localStorage');
+    this.$fixture = $('#qunit-fixture');
+    this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
+        </div>`);
+    this.$dropdown = this.$fixture.find('#dropdown');
   },
   afterEach: function() {
     // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
+    this.$fixture.find('#dropdown').empty();
   }
 });
-// TODO Likely have to refactor the below functions
-QUnit.test("addFormError test", function( assert ) {
-    assert.expect(0);
+
+
+QUnit.test("addCalendarToDropdown test", function( assert ) {
+    assert.expect(5);
+        // Check with items in dropdown already.
+    this.$dropdown.append("<li>Hello World</li>");
+    assert.equal(this.$dropdown.children().length, 1);
+    this.checkit.addCalendarToDropdown("101", "Cal", this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 2);
+    
+    assert.equal(this.$dropdown.find('#1234').length, 0);
+    this.checkit.addCalendarToDropdown("1234", "Hello", this.$dropdown);
+    assert.equal(this.$dropdown.find('#1234').text(), "Hello");
+    assert.equal(this.$dropdown.find('#1234').length, 1);
 });
 
-QUnit.test("removeFormError test", function( assert ) {
-    assert.expect(0);
+QUnit.test("removeFromCalendarDropdown test", function( assert ) {
+    assert.expect(4);
+    this.$dropdown.append(`<li id="1234">Hello</li>`);
+    assert.equal(this.$dropdown.children().attr('id'), '1234');
+    assert.equal(this.$dropdown.children().text(), "Hello");
+    assert.equal(this.$dropdown.children().length, 1);
+    this.checkit.removeFromCalendarDropdown("1234", this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 0);
+});
+
+QUnit.test("clearDropdown test", function(assert) {
+    assert.expect(2);
+    this.$dropdown.append(`<li id="1">Hello</li>`);
+    this.$dropdown.append(`<li id="2">Hoi</li>`);
+    this.$dropdown.append(`<li id="3">Hola</li>`);
+    
+    assert.equal(this.$dropdown.children().length, 3);
+    checkit.clearDropdown(this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 0);
+});
+
+
+
+QUnit.module( "Form Tests", {
+  beforeEach: function() {
+    // prepare something before each test
+    this.checkit = new CheckIt('localStorage');
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    var formHTML = `<form id="fullForm"><div class="form-group" 
+        id="emailFormGroup"><input type="email" class="form-control" 
+        id="exemail"><span id="sr" class="sr-only hidden">(error)</span>
+        <span id="helpBlock" class="help-block hidden">This is some help text
+        .</span><span id ="fiveYears" class="help-block hidden">Five years.
+        </span></div></form>`;
+    this.$calendarDiv.append(formHTML);
+    this.$form = this.$calendarDiv.find('#fullForm');
+    this.$formGroup = this.$form.find('#emailFormGroup');
+    this.$sr = this.$form.find('#sr');
+    this.$form.find('.form-group').append(`<span id="heart" 
+        class="glyphicon glyphicon-heart hidden glyph" aria-hidden="true"></span>`);
+    this.$heart = this.$form.find('#heart');
+    this.$helpBlock = this.$formGroup.find('#helpBlock');
+    this.$fiveYears = this.$formGroup.find('#fiveYears');
+  },
+  afterEach: function() {
+    // clean up after each test
+    this.$calendarDiv.empty();
+  }
+});
+
+QUnit.test("show and hide Form test", function( assert ) {
+    assert.expect(1);
+    
+    this.$calendarDiv.append(`<div id="testCollapse" class="collapse"></div>`);
+    
+    var $testCollapse = this.$calendarDiv.find('#testCollapse');
+    assert.equal($testCollapse.css('display'), 'none');
+    this.checkit.showForm($testCollapse);
+    setTimeout(function(){ 
+        assert.equal($testCollapse.css('display'), 'block');
+        }, 350);
+    this.checkit.hideForm($testCollapse);
+    setTimeout(function(){ 
+        assert.equal($testCollapse.css('display'), 'none');
+        }, 350);
+});
+
+QUnit.test("clearForm test", function( assert ) {
+    assert.expect(2);
+
+    var $formInput = this.$form.find('input');
+    $formInput.val('what@what.com');
+
+    assert.equal($formInput.val(), 'what@what.com');
+    
+    this.checkit.clearForm(this.$form);
+    
+    assert.equal($formInput.val(), "");
+});
+
+QUnit.test("addFieldError test", function( assert ) {
+    assert.expect(4);
+    
+    assert.equal(this.$formGroup.find('has-error').length, 0);
+    assert.ok(this.$sr.hasClass('hidden'));
+    this.checkit.addFieldError(this.$formGroup, this.$sr);
+    
+    assert.ok(this.$formGroup.hasClass('has-error'));
+    assert.notOk(this.$sr.hasClass('hidden'));
+});
+
+QUnit.test("removeFieldError test", function( assert ) {
+    assert.expect(4);
+    // Give the form errors
+    this.$formGroup.addClass('has-error has-feedback');
+    this.$sr.removeClass('hidden');
+    
+    assert.ok(this.$formGroup.hasClass('has-error has-feedback'));
+    assert.notOk(this.$sr.hasClass('hidden'));
+    // Remove the rrors
+    this.checkit.removeFieldError(this.$formGroup, this.$sr);
+    assert.notOk(this.$formGroup.hasClass('has-error has-feedback'));
+    assert.ok(this.$sr.hasClass('hidden'));
+    
 });
 
 QUnit.test("addGlyphicon test", function( assert) {
-    assert.expect(0);
-});
+    assert.expect(3);
+    
+    assert.ok(this.$heart.hasClass('hidden'));
+
+    this.checkit.addGlyphicon(this.$heart);
+    assert.notOk(this.$heart.hasClass('hidden'));
+    
+    this.$heart.addClass('hidden');
+    this.$heart.removeClass('glyph');
+    // addGlyphicon should remove the class 'hidden' from #heart
+    this.checkit.addGlyphicon(this.$heart);
+    assert.ok(this.$heart.hasClass('hidden'));
+});  
 
 QUnit.test("removeGlyphicon test", function(assert) {
-    assert.expect(0);
+    assert.expect(3);
+    
+    this.$heart.removeClass('hidden');
+    assert.notOk(this.$heart.hasClass('hidden'));
+    this.checkit.removeGlyphicon(this.$heart);
+    assert.ok(this.$heart.hasClass('hidden'));
+    
+    this.$heart.removeClass('hidden');
+    this.$heart.removeClass('glyph');
+    // removeGlyphicon should add class 'hidden' to #heart
+    this.checkit.removeGlyphicon(this.$heart);
+    assert.notOk(this.$heart.hasClass('hidden'));
+});
+
+QUnit.test("addHelpBlock test", function(assert) {
+    assert.expect(2);
+
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
+    this.checkit.addHelpBlock(this.$helpBlock);
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "helpBlock is not hidden");
+});
+
+QUnit.test("removeHelpBlock test", function(assert) {
+    assert.expect(2);
+    
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
+    this.checkit.removeHelpBlock(this.$helpBlock);
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
 });
 
 QUnit.test("removeFormErrors test", function(assert) {
-    assert.expect(0);
+    assert.expect(6);
+    // Add errors to input field and reveal glyphicon and assert
+    this.$heart.removeClass('hidden');
+    assert.notOk(this.$heart.hasClass('hidden'));
+    this.$formGroup.addClass('has-error has-feedback');
+    assert.ok(this.$formGroup.hasClass('has-error'));
+    assert.ok(this.$formGroup.hasClass('has-feedback'));
+    // Remove form errors and assert
+    this.checkit.removeFormErrors(this.$form);
+    assert.ok(this.$heart.hasClass('hidden'));
+    assert.notOk(this.$formGroup.hasClass('has-error'));
+    assert.notOk(this.$formGroup.hasClass('has-feedback'));
 });
 
 QUnit.test("validateDates test", function(assert) {
-    assert.expect(0);
+    assert.expect(17);
+    // Ensure true is returned when dates are correct (startDate before
+    // endDate and no more than 5 years between them
+    
+    var startDate = "2017-01-01";
+    var endDate = "2017-02-01";
+    
+    var validDates = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.ok(validDates, "endDate > startDate < 5 years");
+    assert.notOk(this.$formGroup.hasClass('has-error'));
+    assert.notOk(this.$formGroup.hasClass('has-feedback'));
+    
+    // Ensure false when endDate is before startDate but they are still
+    // less than 5 years apart.
+    var endDate = "2016-12-01";
+    var invalidDates = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(invalidDates, "endDate < startDate");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "endDate < startDate helpBlock");
+    // Remove errors
+    this.$formGroup.removeClass('has-error');
+    this.$formGroup.removeClass('has-feedback');
+    this.$helpBlock.addClass('hidden');
+    // Ensure false when endDate is before startDate AND they are more than 
+    // 5 years apart, in this case, the form just shows error for the 
+    // end date being before the start date
+    var endDate = "2011-01-01";
+    var invalidYear = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(invalidYear, "endDate < startDate and > 5 years");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'Has has-feedback class');
+    assert.notOk(this.$helpBlock.hasClass('hidden'), "endDate < startDate helpBlock");
+    assert.ok(this.$fiveYears.hasClass('hidden'), "> 5 years apart");
+    // Remove errors
+    this.$formGroup.removeClass('has-error');
+    this.$formGroup.removeClass('has-feedback');
+    this.$helpBlock.addClass('hidden');
+    this.$fiveYears.addClass('hidden');
+    // Ensure false when endDate is after startDate BUT they are more than 5
+    // years apart. Function should return false, add a helpBlock, and field errors
+    var endDate = "2023-01-01";
+    var moreThanFive = this.checkit.validateDates(startDate, endDate,
+        this.$formGroup);
+    assert.notOk(moreThanFive, "More than five years invalid");
+    assert.ok(this.$formGroup.hasClass('has-error'), "does not have has-error");
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'does not have has-feedback class');
+    assert.ok(this.$helpBlock.hasClass('hidden'), "helpClass is hidden");
+    assert.notOk(this.$fiveYears.hasClass('hidden'), "Over five years");
+
 });
 
 QUnit.test("validateInput test", function(assert) {
-    assert.expect(0);
+    assert.expect(4);
+    // Ensure validateInput returns false for an empty string
+    var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
+    assert.notOk(empty, "validateInput returns false for empty string");
+    assert.ok(this.$formGroup.hasClass('has-error'), 'error for invalid input');
+    assert.ok(this.$formGroup.hasClass('has-feedback'), 'feedback for invalid input');
+    assert.notOk(this.$heart.hasClass('hidden'), 'glyphicon is visible');
 });
 
 QUnit.test("validateForm test", function(assert) {
     assert.expect(0);
+    // validateForm is made up of individual functions that I already tested
+    // Do I need to write this?
+
 });
 
 QUnit.module( "CheckIt tests for functions that involve store", {
-  before: function() {
-    // prepare something once for all tests
-  },
   beforeEach: function() {
     // prepare something before each test
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    
+    this.$fixture.append(
+        `<script>
+        $(document).ready( function() {
+        checkit = new CheckIt('localStorage');
+        });
+        </script>`);
+    this.checkit = checkit;
+    this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
+        </div>`);
+    this.$dropdown = this.$fixture.find('#dropdown');
   },
   afterEach: function() {
     // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
+    this.$calendarDiv.empty();
   }
 });
 
 // TODO test that tests if the correct init function runs depending on
 // which storage is passed to CheckIt
-QUnit.test("initLocalStorage test", function(assert) {
-    assert.expect(0);
-});
-
 QUnit.test("displayActiveCalendar test", function(assert) {
     assert.expect(0);
 });
 
 QUnit.test("fillDropdown test", function(assert) {
     assert.expect(0);
+});
+
+QUnit.test("initLocalStorage test", function(assert) {
+    assert.expect(0);
+    console.log(typeof(this.checkit));
+    
 });
 
 QUnit.test("onActivityChanged test", function(assert) {

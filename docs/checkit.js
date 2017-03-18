@@ -11,18 +11,18 @@ function CheckIt(mode) {
    
     this.$getStarted = $('#getStarted');
     this.$buildFormAccordion = $('#buildFormAccordion');
-    this.$calendarTitleForm = $('#titleFormGroup');
-    this.$startDateForm = $('#dateFormGroup');
-    this.$endDateForm = $('#dateFormGroup2');
+    this.$titleFormGroup = $('#titleFormGroup');
+    this.$startDateFormGroup = $('#startDateFormGroup');
+    this.$endDateFormGroup = $('#endDateFormGroup');
     this.$startDatePicker = $('#datetimepicker1');
     this.$startDatePickerInput = $('#datetimepicker1 input');
     this.$endDatePicker = $('#datetimepicker2');
     this.$endDatePickerInput = $('#datetimepicker2 input');
     this.$calendarDropdown = $('#calendarDropdown');
-    this.$startDateErrorSpan = $('#inputError-dateFormGroup');
-    this.$endDateErrorSpan = $('#inputError-dateFormGroup2');
-    this.$titleErrorSpan = $('#inputError-titleFormGroup');
-    this.$titleGlyphiconTag = $('#span-titleFormGroup');
+    this.$srStartDateError = $('#srStartDateError');
+    this.$srEndDateError = $('#srEndDateError');
+    this.$srTitleError = $('#srTitleError');
+    this.$titleErrorGlyphicon = $('#titleErrorGlyphicon');
     this.$clearButton = $('#clearButton');
     this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
@@ -37,7 +37,9 @@ function CheckIt(mode) {
     this.spinner = new Spinner();
     
     // Click handlers for the DOM
-    this.$clearButton.click(this.clearForm.bind(this));
+    this.$clearButton.click(function() {
+        this.clearForm(this.$fullForm);
+        }.bind(this));
     this.$createButton.click(this.createCalendar.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
@@ -144,7 +146,8 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
             
             for (var key in allCalendarIds) {
                 if (allCalendarIds.hasOwnProperty(key)) {
-                    this.addCalendarToDropdown(key, allCalendarIds[key]);
+                    this.addCalendarToDropdown(key, allCalendarIds[key],
+                        this.$calendarDropdown);
                 }
             }
         }.bind(this))
@@ -171,25 +174,25 @@ CheckIt.prototype.displayActiveCalendar = function() {
                .catch(function(err) {
                    console.error("Could not load calendar " + err);
                    this.store.removeActive();
-                   this.uncollapseBuildMenu();
+                   this.showForm(this.$buildCalendarForm);
                }.bind(this));
            
        }.bind(this))
        
        .catch(function () {
            console.log("There is no current active calendar");
-           this.uncollapseBuildMenu();
+           this.showForm(this.$buildCalendarForm);
        }.bind(this));
 }
 
-CheckIt.prototype.clearDropdown = function() {
+CheckIt.prototype.clearDropdown = function($dropdown) {
     // Removes all items from the Saved Items dropdown.
-    this.$calendarDropdown.empty();
+    $dropdown.empty();
 };
 
 
 CheckIt.prototype.initLocalStorage = function() {
-    this.store = new LocalCalendarStorage('');
+    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown();
     
@@ -198,6 +201,8 @@ CheckIt.prototype.initLocalStorage = function() {
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
+    
+    this.store.activityChangeFunctions.push(this.onActivityChanged.bind(this));
 };
 
 CheckIt.prototype.initFirebase = function() {
@@ -208,7 +213,7 @@ CheckIt.prototype.initFirebase = function() {
     firebase.database.enableLogging(false);
     
     // Initiates firebase database
-    this.store = new firebaseCalendarStorage({'storeId': 'checkit'});
+    this.store = new FirebaseCalendarStorage({'storeId': 'checkit'});
     
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
@@ -232,13 +237,12 @@ CheckIt.prototype.signOut = function() {
 };
 
 // Triggers when there is a change in the storage.
-CheckIt.prototype.onActivityChanged = function(activeCalls) {
+CheckIt.prototype.onActivityChanged = function(activeCalls, id) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
-    // Passing storageObj as argument to have access to activity calls, which
-    // will tell us whether or not the loadingWheel should be on display or not.
-
+    
+    var $id = $('#' + id);
     if (activeCalls > 0) {
-        this.displayLoadingWheel(this.$loadingWheel);
+        this.displayLoadingWheel($id);
     }
     else if (activeCalls === 0) {
         this.hideLoadingWheel();
@@ -311,10 +315,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.$signInButton.removeAttr('hidden');
         
         //Clear the saved Calendars dropdown menu.
-        this.clearDropdown();
+        this.clearDropdown(this.$calendarDropdown);
         
         //Clear the page.
-        this.clearPage();
+        this.clearPage(this.$calendarDiv);
         
         // Remove the build Calendar form.
         this.$buildFormAccordion.attr('hidden', 'true');
@@ -438,22 +442,175 @@ CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     })
 };
 
-CheckIt.prototype.collapseBuildMenu = function() {
-    // Collapse the build calendar form.
-    this.$buildCalendarForm.collapse('hide');
-};
-
-CheckIt.prototype.uncollapseBuildMenu = function() {
-    // Show the build calendar form.
-    this.$buildCalendarForm.collapse('show');
-};
-
-CheckIt.prototype.clearForm = function() {
-    // Clears the buildCalendar form.
+CheckIt.prototype.hideForm = function($form) {
+    // Collapse a collapsible div (in checkit's case forms).
+    // Parameter $form is the selector for a collapsible form (or div).
     
-    // TODO only removeFormErrors if there are any errors on display
-    this.removeFormErrors();
-    this.$fullForm[0].reset();
+    $form.collapse('hide');
+};
+
+CheckIt.prototype.showForm = function($form) {
+    // Show a collapsible form.
+    // Parameter $form is the selector for a collapsible form (or div).
+    
+    $form.collapse('show');
+};
+
+CheckIt.prototype.clearForm = function($fullForm) {
+    // Clears the buildCalendar form.
+    // $fullForm is the selector for the form div
+    // Only removeFormErrors if there are any errors on display
+    if ($fullForm.find('.has-error')) {
+        this.removeFormErrors($fullForm);
+    }
+    $fullForm.trigger("reset"); 
+};
+
+CheckIt.prototype.addFieldError = function($id, $srId) {
+
+    // Set the appropriate CSS on the form field to indicate an error state
+    // $id is the selector for the div with class .form-group that
+    // surrounds the input field with the error
+    // $srId is the selector for the screen reader element
+    $id.addClass('has-error has-feedback');
+    $srId.removeClass('hidden');
+    
+};
+
+CheckIt.prototype.removeFieldError = function($id, $srId) {
+    // Removes error state CSS on form field 
+    // $id is the selector for the div with class .form-group that
+    // surrounds the input field with the error
+    // $srId is the selector for the screen reader element
+    $id.removeClass('has-error has-feedback');
+    $srId.addClass('hidden');
+};
+
+CheckIt.prototype.addHelpBlock = function($helpBlock) {
+    // Removes the hidden class from the $helpBlock
+    $helpBlock.removeClass('hidden');
+};
+
+CheckIt.prototype.removeHelpBlock = function($helpBlock) {
+    $helpBlock.addClass('hidden');
+};
+
+CheckIt.prototype.addGlyphicon = function($id) {
+    // $id is the selector for the span element that contains the glyphicon
+    
+    if (!$id.hasClass('glyph')) {
+        console.error("No glyphicon");
+        return;
+    }
+    $id.removeClass('hidden');
+    $id.attr('aria-hidden', 'false');
+};
+
+CheckIt.prototype.removeGlyphicon = function($id) {
+    // $id is the selector for the span element that contains the glyphicon
+
+    if (!$id.hasClass('glyph')) {
+        console.error("No glyphicon");
+        return;
+    }
+    $id.addClass('hidden');
+    $id.attr('aria-hidden', 'true');
+};
+
+CheckIt.prototype.removeFormErrors = function($fullForm) {
+    // Remove the error classes and glyphicons from the form input fields
+
+    var checkit = this;
+    
+    $fullForm.find('.form-group').each(function(index, value) {
+        checkit.removeFieldError($(this), $(this).find('.sr-only'));
+        checkit.removeGlyphicon($(this).find('.glyph'));
+    });
+    
+};
+
+CheckIt.prototype.validateDates = function(startDateString, endDateString, $formGroup) {
+    // Ensure that the end Date comes after the start Date and that there is no
+    // more than 5 years between them.
+    // Parameters: 
+    //    startDateString: "YYYY-MM-DD"
+    //    endDateString: "YYYY-MM-DD"
+    //    $formGroup: jQuery selector for the form where you will be adding errors
+        
+    var startDate = moment(startDateString, "YYYY-MM-DD");
+    var endDate = moment(endDateString, "YYYY-MM-DD");
+    var $sr = $formGroup.find('.sr-only');
+    var $helpBlock = $formGroup.find('#helpBlock');
+    var $fiveYears = $formGroup.find('#fiveYears');
+    var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
+    
+    if (startDate.isBefore(endDate)) {
+        // startDate is before endDate so errors can be removed.
+        this.removeFieldError($formGroup, $sr);
+        this.removeHelpBlock($helpBlock);
+        // If there are more than 5 years between the dates return false for invalid
+        if (difference < 5) {
+            this.removeHelpBlock($fiveYears);
+            return true;
+        }
+        else { 
+            this.addFieldError($formGroup, $sr);
+            this.addHelpBlock($fiveYears);
+        }
+    }
+    else {
+        // Mark the endDate input field red because endDate is after startDate
+        this.addFieldError($formGroup, $sr);
+        this.addHelpBlock($helpBlock);
+        return false;
+    }
+    
+};
+
+CheckIt.prototype.validateInput = function($form, $inputFormGroup, inputId) {
+    // Validate a single input field of a form
+    // Parameters: $form is the selector for the form element in question
+    // $inputFormGroup is the selector for the div with the class .form-group
+    // that surrounds the input field in question
+    // inputId is the id of the input field we are validating.
+    
+    // Screen reader element for this input field
+    var $srElement = $inputFormGroup.find('.sr-only');
+    var inputVal = $form.find('#' + inputId).val();
+    var $glyphicon = $inputFormGroup.find('.glyph');
+    
+    // If user hasn't written anything we fail immediately
+    if (!inputVal) {
+        this.addFieldError($inputFormGroup, $srElement);
+        // if the input field has a span element with a glyphicon
+        // reveal the error glyphicon
+        if ($glyphicon.length) {
+            this.addGlyphicon($glyphicon);
+        }
+        return false;
+    }
+    else {
+        this.removeFieldError($inputFormGroup, $srElement);
+        // Remove glyphicon if it exists
+        if ($glyphicon.length) {
+            this.removeGlyphicon($glyphicon);
+        }
+    }
+    return true;
+    
+};
+
+CheckIt.prototype.validateForm = function(startDateString, endDateString) {
+    
+    var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle');
+    var validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate');
+    var validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate');
+    
+    var isValid = validateTitle && validateStartDate && validateEndDate;
+    
+    // Make sure input is OK before parsing and validating dates
+    return (isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
+   
 };
 
 CheckIt.prototype.createCalendar = function() {
@@ -466,7 +623,7 @@ CheckIt.prototype.createCalendar = function() {
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
-        this.clearPage();
+        this.clearPage(this.$calendarDiv);
 
         //make a calendar State
         var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
@@ -479,11 +636,12 @@ CheckIt.prototype.createCalendar = function() {
         this.store.initializeCalendar(calendar);
 
         //add calendar to dropdown
-        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title);
+        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title,
+            this.$calendarDropdown);
     
         //build the calendar
         this.buildCalendar(calendar);
-        this.collapseBuildMenu(); 
+        this.hideForm(this.$buildCalendarForm); 
    }
 };
 
@@ -497,7 +655,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
         .then(function(state) {
             var calendar = new Calendar(state);
             this.displayCalendar(calendar);
-            this.collapseBuildMenu(); 
+            this.hideForm(this.$buildCalendarForm); 
         }.bind(this))
         .catch(function() {
             console.log("Calendar not in storage");
@@ -525,8 +683,8 @@ CheckIt.prototype.deleteCalendar = function() {
                 this.store.removeActive();
                 //console.log("clearing the page");
                 //clear the page
-                this.clearPage();
-                this.uncollapseBuildMenu(); 
+                this.clearPage(this.$calendarDiv);
+                this.showForm(this.$buildCalendarForm); 
             }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");
@@ -535,118 +693,19 @@ CheckIt.prototype.deleteCalendar = function() {
     }
 };
 
-CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title) {
+CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title, $dropdown) {
     //add the calendar with unique Id, uniqueId, and title, title, to
     //the saved calendars dropdown on the navbar.
     
-    this.$calendarDropdown.append('<li id="' + uniqueId
+    $dropdown.append('<li id="' + uniqueId
             + '"><a href=#>' + title + '</a></li>');
 };
 
-CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId) {
+CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId, $dropdown) {
     //remove the calendar with uniqueId from the saved calendars dropdown
     //in the navbar
     
-    this.$calendarDropdown.children('#' + uniqueId).remove();
-};
-
-CheckIt.prototype.addFormError = function(id, srId) {
-
-    // Set the appropriate CSS on the form fields to indicate an error state
-    
-    id.addClass('has-error has-feedback');
-    srId.removeClass('hidden');
-    
-};
-
-CheckIt.prototype.removeFormError = function(id, srId) {
-
-    // Removes error state CSS on form fields
-    
-    id.removeClass('has-error has-feedback');
-    srId.removeClass('hidden');
-};
-
-CheckIt.prototype.addGlyphicon = function(id) {
-
-    id.removeClass('hidden');
-};
-
-CheckIt.prototype.removeGlyphicon = function(id) {
-    
-    id.addClass('hidden');
-};
-
-CheckIt.prototype.removeFormErrors = function() {
-    //remove the error classes and glyphicons from the form inputs
-    removeFormError(this.$startDateForm, this.$startDateErrorSpan);
-    removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-    removeFormError(this.$calendarTitleForm, this.$titleErrorSpan);
-    removeGlyphicon(this.$titleGlyphiconTag);
-};
-
-CheckIt.prototype.validateDates = function(startDateString, endDateString) {
-    // Ensure that the end Date comes after the start Date and that there is no
-    // more than 5 years between them.
-        
-    var startDate = moment(startDateString, "YYYY-MM-DD");
-    var endDate = moment(endDateString, "YYYY-MM-DD");
-    
-    var difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
-    
-    if (startDate.isBefore(endDate)) {
-        this.removeFormError(this.$endDateForm, this.$endDateErrorSpan);
-        // If there are more than 5 years between the dates return false for invalid
-        return (difference < 5);
-    }
-    else {
-        this.addFormError(this.$endDateForm, this.$endDateErrorSpan);
-        return false;
-    }
-    
-};
-
-CheckIt.prototype.validateInput = function($formGroup) {
-    //a variable for the input tag value
-    var id = $formGroup.attr('id');
-    var $input = $('#inputError-' + id);
-    var inputId = $formGroup.find("input").attr("id");
-    var $calendarSpan = $('#span-' +  id);
-    var inputValue = $formGroup.find('input[type=text]').val();
-    
-    // If the user hasn't written anything we fail immediately
-    if (inputValue === "" || inputValue === null) {
-        this.addFormError($formGroup, $input )
-        
-        //reveal the error glyphicon, ONLY THE TITLE HAS A GLYPHICON
-        //check if we are dealing with the title
-        if (inputId === "calendarTitle") {
-            this.addGlyphicon($calendarSpan);
-        }
-        return false;
-    }
-    else {
-        this.removeFormError($formGroup, $input );
-        //remove glyphicon, only for title input tag
-        if (inputId === "calendarTitle") {
-            this.removeGlyphicon($calendarSpan);
-        }
-    }
-    return true;
-};
-
-CheckIt.prototype.validateForm = function(startDateString, endDateString) {
-        
-        
-    var validateTitle = this.validateInput(this.$calendarTitleForm);
-    var validateStartDate = this.validateInput(this.$startDateForm);
-    var validateEndDate = this.validateInput(this.$endDateForm);
-    
-    var isValid = validateTitle && validateStartDate && validateEndDate;
-    
-    // Make sure input is OK before parsing and validating dates
-    return (isValid && this.validateDates(startDateString, endDateString));
-   
+    $dropdown.children('#' + uniqueId).remove();
 };
 
 CheckIt.prototype.buildCalendar = function(calendarObject) {
@@ -667,17 +726,17 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
 CheckIt.prototype.displayCalendar = function(calendarObj) {
     //load a state and build the calendar on the page
     
-    this.clearPage();
+    this.clearPage(this.$calendarDiv);
     this.buildCalendar(calendarObj);
     this.store.setActiveById(calendarObj.state.uniqueId);
     this.store.save(calendarObj);
 };
 
-CheckIt.prototype.clearPage = function() {
-    // Remove all divs from page except #template
+CheckIt.prototype.clearPage = function($div) {
+    // Remove all checkit related divs from page
     
-    this.$calendarDiv.find('#calendarTitleHeading').remove();
-    this.$calendarDiv.children('.monthframe').remove();
+    $div.find('#calendarTitleHeading').remove();
+    $div.children('.monthframe').remove();
 };
 
 CheckIt.prototype.findCurrentDay = function(currentDay) {
