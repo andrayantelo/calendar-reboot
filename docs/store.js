@@ -1,5 +1,5 @@
 // Firebase storage manager.
-var firebaseCalendarStorage = function(params) {
+var FirebaseCalendarStorage = function(params) {
     var self = this;
     var prefix = params.storeId || "";
     // Get a reference to the database service
@@ -407,13 +407,13 @@ var LocalCalendarStorage = function(params) {
       
     };
     
-    var jitter = function(func, arg) {
+    var jitter = function(params) {
         var runFunc = function () {
-            func(arg);
+            params.func(params.arg);
             self.endWork();
         };
         
-        var randomNumber = Math.random() * 100;
+        var randomNumber = Math.random() * params.milliseconds;
         self.startWork();
         setTimeout(runFunc, randomNumber);
         
@@ -426,10 +426,10 @@ var LocalCalendarStorage = function(params) {
             var allCalendarIds = self.getFromStorage_(allCalendarIdsKey);
             
             if (allCalendarIds !== null ) {
-                jitter(resolve, allCalendarIds);
+                jitter({func: resolve, arg: allCalendarIds, milliseconds: 100});
             }
             else {
-                jitter(reject, "Not found");
+                jitter({func: reject, arg:"Not found", miliseconds:100});
             }})
             .then( function(ids) {
                 return ids;
@@ -446,7 +446,7 @@ var LocalCalendarStorage = function(params) {
         //store the state in localStorage
         var stateP = new Promise(function(resolve, reject) {
             self.setInStorage_(calendarObj.state.uniqueId, calendarObj.state);
-            jitter(resolve);
+            jitter({func: resolve, milliseconds: 100});
         });
         
         
@@ -499,10 +499,10 @@ var LocalCalendarStorage = function(params) {
             var calendar = self.getFromStorage_(calendarObjId);
             
             if (calendar !== null) {
-                jitter(resolve, calendar);
+                jitter({func: resolve, arg: calendar, milliseconds:100});
             }
             else {
-                jitter(reject, "Calendar not found");
+                jitter({func: reject, arg:"Calendar not found", milliseconds:100});
             }
         })
   
@@ -516,10 +516,10 @@ var LocalCalendarStorage = function(params) {
             
             if (activeCalendarId !== null ) {
                 // Signal that the promise succeeded and make the value ready to go. 
-                jitter(resolve, activeCalendarId);
+                jitter({func:resolve, arg: ctiveCalendarId, milliseconds: 100});
             }
             else {
-                jitter(reject, "Not found");
+                jitter({func: reject, arg: "Not found", milliseconds:100});
             }
         })
         
@@ -530,7 +530,7 @@ var LocalCalendarStorage = function(params) {
         
         return new Promise( function(resolve, reject) {
             self.removeFromStorage_(current_active_calendar);
-            jitter(resolve);
+            jitter({func: resolve, milliseconds: 100});
         })
     };
     
@@ -538,7 +538,7 @@ var LocalCalendarStorage = function(params) {
         // Set the active calendar/object by using its Id
         return new Promise( function(resolve, reject) {
             self.setInStorage_(current_active_calendar, calendarObjId);
-            jitter(resolve);
+            jitter({func: resolve, milliseconds: 100});
         })
     };
     
