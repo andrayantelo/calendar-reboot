@@ -463,10 +463,17 @@ QUnit.module( "CheckIt tests dropdown", {
 
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {
-    assert.expect(2);
+    assert.expect(5);
+        // Check with items in dropdown already.
+    this.$dropdown.append("<li>Hello World</li>");
+    assert.equal(this.$dropdown.children().length, 1);
+    this.checkit.addCalendarToDropdown("101", "Cal", this.$dropdown);
+    assert.equal(this.$dropdown.children().length, 2);
+    
+    assert.equal(this.$dropdown.find('#1234').length, 0);
     this.checkit.addCalendarToDropdown("1234", "Hello", this.$dropdown);
-    assert.equal(this.$dropdown.children().attr('id'), '1234');
-    assert.equal(this.$dropdown.children().text(), "Hello");
+    assert.equal(this.$dropdown.find('#1234').text(), "Hello");
+    assert.equal(this.$dropdown.find('#1234').length, 1);
 });
 
 QUnit.test("removeFromCalendarDropdown test", function( assert ) {
@@ -713,7 +720,9 @@ QUnit.test("validateForm test", function(assert) {
 QUnit.module( "CheckIt tests for functions that involve store", {
   beforeEach: function() {
     // prepare something before each test
+
     localStorage.clear();
+
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
     
@@ -724,6 +733,7 @@ QUnit.module( "CheckIt tests for functions that involve store", {
         });
         </script>`);
     this.checkit = checkit;
+
     this.store = this.checkit.store;
     
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
@@ -773,13 +783,12 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     console.log(this.$calendarDiv.find('h1').text());
 
     // When there isn't a current active calendar
-    
-    
-    
 });
 
-QUnit.test("fillDropdown test", function(assert) {
+QUnit.test("initLocalStorage test", function(assert) {
     assert.expect(0);
+    console.log(typeof(this.checkit));
+    
 });
 
 QUnit.test("onActivityChanged test", function(assert) {
