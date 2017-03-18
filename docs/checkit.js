@@ -168,6 +168,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
                        var calendar = new Calendar(state);
+                       console.log('about to DISPLAY CALENDAR!');
                        this.displayCalendar(calendar);
                    }
                }.bind(this))
@@ -724,7 +725,8 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {
     //load a state and build the calendar on the page
-    
+    console.log("building calendar for");
+    console.log(calendarObj);
     this.clearPage(this.$calendarDiv);
     this.buildCalendar(calendarObj);
     this.store.setActiveById(calendarObj.state.uniqueId);

@@ -763,9 +763,17 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 
 QUnit.test("displayActiveCalendar test", function(assert) {
     assert.expect(1);
+
     // When there is a current Active Calendar
     var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
     assert.equal(activeCal, '1234');
+    console.log("Running checkit's displayActiveCalendar");
+    this.checkit.displayActiveCalendar();
+    
+    console.log(this.$calendarDiv.find('h1').text());
+
+    // When there isn't a current active calendar
+    
     
     
 });
