@@ -192,7 +192,7 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 
 
 CheckIt.prototype.initLocalStorage = function() {
-    this.store = new LocalCalendarStorage('');
+    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown();
     
@@ -201,6 +201,8 @@ CheckIt.prototype.initLocalStorage = function() {
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
+    
+    this.store.activityChangeFunctions.push(this.onActivityChanged.bind(this));
 };
 
 CheckIt.prototype.initFirebase = function() {
@@ -211,7 +213,7 @@ CheckIt.prototype.initFirebase = function() {
     firebase.database.enableLogging(false);
     
     // Initiates firebase database
-    this.store = new firebaseCalendarStorage({'storeId': 'checkit'});
+    this.store = new FirebaseCalendarStorage({'storeId': 'checkit'});
     
     this.store.onActivityChanged(this.onActivityChanged.bind(this));
     
@@ -235,13 +237,12 @@ CheckIt.prototype.signOut = function() {
 };
 
 // Triggers when there is a change in the storage.
-CheckIt.prototype.onActivityChanged = function(activeCalls) {
+CheckIt.prototype.onActivityChanged = function(activeCalls, id) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
-    // Passing storageObj as argument to have access to activity calls, which
-    // will tell us whether or not the loadingWheel should be on display or not.
-
+    
+    var $id = $('#' + id);
     if (activeCalls > 0) {
-        this.displayLoadingWheel(this.$loadingWheel);
+        this.displayLoadingWheel($id);
     }
     else if (activeCalls === 0) {
         this.hideLoadingWheel();
@@ -314,7 +315,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.$signInButton.removeAttr('hidden');
         
         //Clear the saved Calendars dropdown menu.
-        this.clearDropdown();
+        this.clearDropdown(this.$calendarDropdown);
         
         //Clear the page.
         this.clearPage(this.$calendarDiv);

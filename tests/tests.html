@@ -39,15 +39,10 @@
   <link rel="stylesheet" type="text/css" href="../docs/calendar.css">
 
   <!-- My tests -->
-  <script type ="text/javascript" src="tests.js"></script>
+  <script type="text/javascript" src="storetests.js"></script>
+  <!--<script type ="text/javascript" src="tests.js"></script>-->
   
   <script>
-    $(document).ready( function() {
-        checkit = new CheckIt('localStorage');
-
-        // Run findCurrentDay every 10 minutes
-        setInterval(checkit.findCurrentDay.bind(checkit), 600000);
-    });
   </script>
 </head>
 <body>
