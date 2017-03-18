@@ -463,7 +463,7 @@ QUnit.module( "CheckIt tests dropdown", {
 
 
 QUnit.test("addCalendarToDropdown test", function( assert ) {
-    assert.expect(4);
+    assert.expect(5);
         // Check with items in dropdown already.
     this.$dropdown.append("<li>Hello World</li>");
     assert.equal(this.$dropdown.children().length, 1);
@@ -473,6 +473,7 @@ QUnit.test("addCalendarToDropdown test", function( assert ) {
     assert.equal(this.$dropdown.find('#1234').length, 0);
     this.checkit.addCalendarToDropdown("1234", "Hello", this.$dropdown);
     assert.equal(this.$dropdown.find('#1234').text(), "Hello");
+    assert.equal(this.$dropdown.find('#1234').length, 1);
 });
 
 QUnit.test("removeFromCalendarDropdown test", function( assert ) {
