@@ -1,6 +1,6 @@
 
 // Initializes CheckIt
-function CheckIt(mode) {
+function CheckIt(mode, calendarDiv) {
     // Shortcuts to DOM elements.
     this.mode = mode;
     
@@ -31,8 +31,8 @@ function CheckIt(mode) {
     this.$startDate = $('#startDate');
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
-    this.$calendarDiv = $('#calendarDiv');
     this.$loadingWheel = $('#loadingWheel');
+    this.$calendarDiv = calendarDiv;
     
     this.spinner = new Spinner();
     
@@ -157,14 +157,23 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
         }.bind(this));
 };
 
+// TODO setCalendarDiv, clear page should only clear the div with the calendar in it
+// that div you pass as an argument, and don't pass the calendarDiv that lives on
+// checkit to any of these calendar methods
+
+CheckIt.prototype.setCalendarDiv = function($div) {
+    this.$calendarDiv = $div;
+};
+
 CheckIt.prototype.displayActiveCalendar = function($div) {
     // Display the active calendar if there is one.
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
     // $div is the div where you want to build the calendar
-   this.store.getActive()
+    console.log("displaying calendar on div:");
+    console.log($div);
+   return this.store.getActive()
        .then(function (activeCalendarId) {
-           
            this.store.loadById(activeCalendarId)
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
@@ -196,10 +205,10 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 CheckIt.prototype.initLocalStorage = function() {
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
     // Fill the dropdown with user's saved calendar titles/
-    this.fillDropdown(this.$calendarDropdown);
+    //this.fillDropdown(this.$calendarDropdown);
     
     // Display the user's active calendar.
-    this.displayActiveCalendar(this.$calendarDiv);
+    //this.displayActiveCalendar(this.$calendarDiv);
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
@@ -337,6 +346,8 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
     // display.
     var checkitApp = this;
     // Add the title of the calendar
+    console.log("Generating empty calendar for:");
+    console.log($calendarDiv);
     $calendarDiv.append('<div id="calendarTitleHeading"><h1 class="page-header\
                          text-center">'+calObj.state.title + '</h1></div>');
                         
@@ -359,7 +370,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
-    
+
     calObj.monthObjects.forEach (function(monthObj) {
         
         var $monthId = $('#'+ monthObj.monthId);
@@ -417,7 +428,8 @@ CheckIt.prototype.fillCalendar = function(calObj) {
 CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
     // Display saved checkmarks on calendar
     // div is which div do you want to look through for checkmarks
-    
+    console.log("generating checkmarks for:");
+    console.log($calendarDiv);
     if (calObj.state.checkedDays === undefined) {
         console.log("No days are checked");
         return;
@@ -436,7 +448,8 @@ CheckIt.prototype.generateCheckmarks = function(calObj, $calendarDiv) {
 
 CheckIt.prototype.removeEmptyWeeks = function(calObj, $calendarDiv) {
     // Remove empty weeks from the calendar
-    
+    console.log("removing empty weeks for");
+    console.log($calendarDiv);
     $calendarDiv.find('.month .week').each( function(index) {
         if ($(this).find('td > .nil').length === 7) {
             $(this).remove();
@@ -715,9 +728,10 @@ CheckIt.prototype.buildCalendar = function(calendarObject, $div) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     //$div is the div where you want to build the calendar
-
+    console.log("Running build Calendar for div");
+    console.log($div);
     this.generateEmptyCalendar(calendarObject, $div);
-    this.fillCalendar(calendarObject)
+    this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
     this.generateCheckmarks(calendarObject, $div);
     this.removeEmptyWeeks(calendarObject, $div);
@@ -729,6 +743,8 @@ CheckIt.prototype.buildCalendar = function(calendarObject, $div) {
 CheckIt.prototype.displayCalendar = function(calendarObj, $div) {
     //load a state and build the calendar on the page
     // $div is the div where you want to build the calendar
+    console.log("Running displayCalendar in div:");
+    console.log($div);
     this.clearPage(this.$calendarDiv);
     this.buildCalendar(calendarObj, $div);
     this.store.setActiveById(calendarObj.state.uniqueId);

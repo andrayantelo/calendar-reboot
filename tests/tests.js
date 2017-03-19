@@ -725,14 +725,8 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    
-    this.$fixture.append(
-        `<script>
-        $(document).ready( function() {
-        checkit = new CheckIt('localStorage');
-        });
-        </script>`);
-    this.checkit = checkit;
+ 
+    this.checkit = new CheckIt('localStorage');
 
     this.store = this.checkit.store;
     
@@ -748,9 +742,10 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     var allCalendarIdsKey = 'allCalendarIdsKey';
     var allCalendarIds = {'1234' : 'hello', '5678': 'world', uniqueId: 'Test Calendar'};
     localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
-    // currentActiveCalendar
+    //current active calendar
     var current_active_calendar = 'current_active_calendar';
     localStorage.setItem(current_active_calendar, '1234');
+
     //calendar states
     var helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
     var worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
@@ -771,18 +766,29 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 // which storage is passed to CheckIt
 
 QUnit.test("displayActiveCalendar test", function(assert) {
-    assert.expect(1);
+    assert.expect(0);
     // When there isn't a current active calendar
-    console.log(this.$calendarDiv.html());
+    
     // When there is a current Active Calendar
+    // currentActiveCalendar
+    var done = assert.async();
     var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
-    assert.equal(activeCal, '1234');
-    console.log(activeCal);
-    this.checkit.displayActiveCalendar();
-    
-    console.log(this.$calendarDiv.find('h1').text());
-    
+    var loadId = JSON.parse(localStorage.getItem(activeCal));
 
+    var $calendarDiv = this.$calendarDiv;
+    console.log($calendarDiv);
+    console.log(this.$fixture.find('#calendarDiv'));
+    this.checkit.displayActiveCalendar(this.$fixture.find('#calendarDiv'))
+        .then(function() {
+            console.log($calendarDiv.find('h1').text());
+            //console.log($('#calendarDiv').html());
+            var acCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+            console.log(acCal);
+            done();
+        }, function(reason) {
+            console.log("error: " + reason);
+            done();
+            });
     
 });
 
