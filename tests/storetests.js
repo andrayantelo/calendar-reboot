@@ -34,7 +34,7 @@ QUnit.module("localCalendarStorage and checkit Tests", {
         this.$fixture.append(
             `<script>
             $(document).ready( function() {
-            checkit = new CheckIt('localStorage');
+            checkit = new CheckIt('localStorage', $('#calendarDiv'));
             });
             </script>`);
         this.checkit = checkit;
