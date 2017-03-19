@@ -64,7 +64,7 @@ var FirebaseCalendarStorage = function(params) {
             .catch(function(err) {
                 self.endWork();
                 console.error(err);
-                return err;
+                return {};
             })
         })
     };
@@ -454,8 +454,6 @@ var LocalCalendarStorage = function(params) {
         //put calendar in allCalendarIdss and store it
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
-                console.log("in save function, allCalendarIds:");
-                console.log(allCalendarIds);
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 self.setInStorage_(allCalendarIdsKey, allCalendarIds);
             })

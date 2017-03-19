@@ -157,10 +157,6 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
         }.bind(this));
 };
 
-// TODO setCalendarDiv, clear page should only clear the div with the calendar in it
-// that div you pass as an argument, and don't pass the calendarDiv that lives on
-// checkit to any of these calendar methods
-
 CheckIt.prototype.setCalendarDiv = function($div) {
     // Changes the calendarDiv selector. $div is the selector of the new
     // div you want to use.
@@ -179,7 +175,8 @@ CheckIt.prototype.displayActiveCalendar = function() {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
                        var calendar = new Calendar(state);
-                       this.displayCalendar(calendar, this.$calendarDiv);
+                       this.generateEmptyCalendar(calendar);
+                       this.displayCalendar(calendar);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -358,9 +355,9 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
             var yearHeader = "<div class='page-header text-center' id='yearHeader'>" +
                 "<h2>"+monthObj.monthYear + "</h2>" +
                 "</div>";
-            $('#' + monthObj.monthId).append(yearHeader);
+            checkitApp.$calendarDiv.find('#' + monthObj.monthId).append(yearHeader);
         }
-        $('#' + monthObj.monthId).append(checkitApp.getTemplate());
+        checkitApp.$calendarDiv.find('#' + monthObj.monthId).append(checkitApp.getTemplate());
             
     });
     
@@ -368,15 +365,16 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
 
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
+    var checkit = this;
 
     calObj.monthObjects.forEach (function(monthObj) {
         
-        var $monthId = $('#'+ monthObj.monthId);
+        var monthId = '#' + monthObj.monthId;
         
-        $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
+        checkit.$calendarDiv.find(monthId).find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
         
         // Go through each td and fill in correct day number
-        $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
+        checkit.$calendarDiv.find(monthId).find($('.week')).find('td').each( function(indexOfTableTd) {
             
             // The indexOfTableTd is where we are currently on the month table
             // which td are we in, from 0 to 41, because there are 6 rows
@@ -634,7 +632,7 @@ CheckIt.prototype.createCalendar = function() {
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
-        this.clearPage(this.$calendarDiv);
+        this.clearPage();
 
         //make a calendar State
         var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
@@ -694,7 +692,7 @@ CheckIt.prototype.deleteCalendar = function() {
                 this.store.removeActive();
                 //console.log("clearing the page");
                 //clear the page
-                this.clearPage(this.$calendarDiv);
+                this.clearPage();
                 this.showForm(this.$buildCalendarForm); 
             }.bind(this))
             .catch(function() {
@@ -739,17 +737,17 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
     //load a state and build the calendar on the page
     // $div is the div where you want to build the calendar
 
-    this.clearPage(this.$calendarDiv);
+    this.clearPage();
     this.buildCalendar(calendarObj);
     this.store.setActiveById(calendarObj.state.uniqueId);
     this.store.save(calendarObj);
 };
 
-CheckIt.prototype.clearPage = function($div) {
+CheckIt.prototype.clearPage = function() {
     // Remove all checkit related divs from page
     
-    $div.find('#calendarTitleHeading').remove();
-    $div.children('.monthframe').remove();
+    this.$calendarDiv.find('#calendarTitleHeading').remove();
+    this.$calendarDiv.children('.monthframe').remove();
 };
 
 CheckIt.prototype.findCurrentDay = function(currentDay) {
