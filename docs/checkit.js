@@ -143,11 +143,12 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
-            
-            for (var key in allCalendarIds) {
-                if (allCalendarIds.hasOwnProperty(key)) {
-                    this.addCalendarToDropdown(key, allCalendarIds[key],
-                        this.$calendarDropdown);
+            if (allCalendarIds) {
+                for (var key in allCalendarIds) {
+                    if (allCalendarIds.hasOwnProperty(key)) {
+                        this.addCalendarToDropdown(key, allCalendarIds[key],
+                            this.$calendarDropdown);
+                    }
                 }
             }
         }.bind(this))
@@ -156,10 +157,11 @@ CheckIt.prototype.fillDropdown = function($dropdown) {
         }.bind(this));
 };
 
-CheckIt.prototype.displayActiveCalendar = function() {
+CheckIt.prototype.displayActiveCalendar = function($div) {
     // Display the active calendar if there is one.
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
+    // $div is the div where you want to build the calendar
    this.store.getActive()
        .then(function (activeCalendarId) {
            
@@ -168,8 +170,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
                        var calendar = new Calendar(state);
-                       console.log('about to DISPLAY CALENDAR!');
-                       this.displayCalendar(calendar);
+                       this.displayCalendar(calendar, $div);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -195,10 +196,10 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 CheckIt.prototype.initLocalStorage = function() {
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
     // Fill the dropdown with user's saved calendar titles/
-    this.fillDropdown();
+    this.fillDropdown(this.$calendarDropdown);
     
     // Display the user's active calendar.
-    this.displayActiveCalendar();
+    this.displayActiveCalendar(this.$calendarDiv);
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
@@ -291,10 +292,10 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.$signInButton.attr('hidden', 'true');
         
         // Fill the dropdown with user's saved calendar titles/
-        this.fillDropdown();
+        this.fillDropdown(this.$calendarDropdown);
         
         // Display the user's active calendar.
-        this.displayActiveCalendar();
+        this.displayActiveCalendar(this.$calendarDiv);
         
         //Show the build Calendar form.
         this.$buildFormAccordion.removeAttr('hidden');
@@ -641,12 +642,12 @@ CheckIt.prototype.createCalendar = function() {
             this.$calendarDropdown);
     
         //build the calendar
-        this.buildCalendar(calendar);
+        this.buildCalendar(calendar, this.$calendarDiv);
         this.hideForm(this.$buildCalendarForm); 
    }
 };
 
-CheckIt.prototype.loadFromDropdown = function( event ) {
+CheckIt.prototype.loadFromDropdown = function( event) {
     // Load the data, clear the page, build the saved calendar.
     
     //load the saved calendar with the title that was clicked
@@ -655,7 +656,7 @@ CheckIt.prototype.loadFromDropdown = function( event ) {
     return this.store.loadById(dropdownItemId)
         .then(function(state) {
             var calendar = new Calendar(state);
-            this.displayCalendar(calendar);
+            this.displayCalendar(calendar, this.$calendarDiv);
             this.hideForm(this.$buildCalendarForm); 
         }.bind(this))
         .catch(function() {
@@ -709,27 +710,27 @@ CheckIt.prototype.removeFromCalendarDropdown = function(uniqueId, $dropdown) {
     $dropdown.children('#' + uniqueId).remove();
 };
 
-CheckIt.prototype.buildCalendar = function(calendarObject) {
+CheckIt.prototype.buildCalendar = function(calendarObject, $div) {
     // builds the front end of a calendar object. creates the html
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
+    //$div is the div where you want to build the calendar
 
-    this.generateEmptyCalendar(calendarObject, this.$calendarDiv);
+    this.generateEmptyCalendar(calendarObject, $div);
     this.fillCalendar(calendarObject)
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
-    this.generateCheckmarks(calendarObject, this.$calendarDiv);
-    this.removeEmptyWeeks(calendarObject, this.$calendarDiv);
+    this.generateCheckmarks(calendarObject, $div);
+    this.removeEmptyWeeks(calendarObject, $div);
     this.findCurrentDay();
 
 
 };
 
-CheckIt.prototype.displayCalendar = function(calendarObj) {
+CheckIt.prototype.displayCalendar = function(calendarObj, $div) {
     //load a state and build the calendar on the page
-    console.log("building calendar for");
-    console.log(calendarObj);
+    // $div is the div where you want to build the calendar
     this.clearPage(this.$calendarDiv);
-    this.buildCalendar(calendarObj);
+    this.buildCalendar(calendarObj, $div);
     this.store.setActiveById(calendarObj.state.uniqueId);
     this.store.save(calendarObj);
 };

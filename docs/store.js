@@ -437,7 +437,7 @@ var LocalCalendarStorage = function(params) {
             })
             .catch( function(reason) {
                 console.log("getAllCalendarIds catch function running. " + reason);
-                return reason;
+                return false;
             });
     };
     

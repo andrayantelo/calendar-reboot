@@ -442,7 +442,7 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
 QUnit.test("clearPage", function(assert) {
     assert.expect(2);
     assert.ok(this.$calendarDiv.children().length > 0);
-    checkit.clearPage(this.$calendarDiv);
+    this.checkit.clearPage(this.$calendarDiv);
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
@@ -493,7 +493,7 @@ QUnit.test("clearDropdown test", function(assert) {
     this.$dropdown.append(`<li id="3">Hola</li>`);
     
     assert.equal(this.$dropdown.children().length, 3);
-    checkit.clearDropdown(this.$dropdown);
+    this.checkit.clearDropdown(this.$dropdown);
     assert.equal(this.$dropdown.children().length, 0);
 });
 
@@ -764,7 +764,6 @@ QUnit.module( "CheckIt tests for functions that involve store", {
   afterEach: function() {
     // clean up after each test
     this.$calendarDiv.empty()
-    localStorage.clear();
   }
 });
 
@@ -773,21 +772,23 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 
 QUnit.test("displayActiveCalendar test", function(assert) {
     assert.expect(1);
-
+    // When there isn't a current active calendar
+    console.log(this.$calendarDiv.html());
     // When there is a current Active Calendar
     var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
     assert.equal(activeCal, '1234');
-    console.log("Running checkit's displayActiveCalendar");
+    console.log(activeCal);
     this.checkit.displayActiveCalendar();
     
     console.log(this.$calendarDiv.find('h1').text());
+    
 
-    // When there isn't a current active calendar
+    
 });
 
 QUnit.test("initLocalStorage test", function(assert) {
     assert.expect(0);
-    console.log(typeof(this.checkit));
+    //console.log(this.checkit);
     
 });
 
