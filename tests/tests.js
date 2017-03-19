@@ -149,11 +149,13 @@ QUnit.module( "CheckIt Tests", {
 
 beforeEach: function() {
     // Prepare something once for all tests
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
-    this.checkit = new CheckIt('localStorage');
-    this.$fixture = $('#qunit-fixture');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+    
 }
 
 });
@@ -323,9 +325,9 @@ QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
-    this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
     this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
     this.checkit.fillCalendar(this.calendar);
 
@@ -405,9 +407,9 @@ QUnit.module( "Checkit DOM manipulation tests", {
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
-    this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
     this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
     this.checkit.fillCalendar(this.calendar);
     this.checkit.attachCheckmarkClickHandler(this.calendar, this.calendar.monthObjects);
@@ -449,8 +451,10 @@ QUnit.test("clearPage", function(assert) {
 QUnit.module( "CheckIt tests dropdown", {
   beforeEach: function() {
     // prepare something before each test
-    this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+    
     this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
         </div>`);
     this.$dropdown = this.$fixture.find('#dropdown');
@@ -502,9 +506,9 @@ QUnit.test("clearDropdown test", function(assert) {
 QUnit.module( "Form Tests", {
   beforeEach: function() {
     // prepare something before each test
-    this.checkit = new CheckIt('localStorage');
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
     var formHTML = `<form id="fullForm"><div class="form-group" 
         id="emailFormGroup"><input type="email" class="form-control" 
         id="exemail"><span id="sr" class="sr-only hidden">(error)</span>
@@ -726,7 +730,7 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
  
-    this.checkit = new CheckIt('localStorage');
+    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
 
     this.store = this.checkit.store;
     
