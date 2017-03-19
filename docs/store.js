@@ -436,7 +436,8 @@ var LocalCalendarStorage = function(params) {
             })
             .catch( function(reason) {
                 console.log("getAllCalendarIds catch function running. " + reason);
-                return false;
+                // returns a new promise which resolves with this value {}
+                return {};
             });
     };
     
@@ -453,6 +454,8 @@ var LocalCalendarStorage = function(params) {
         //put calendar in allCalendarIdss and store it
         var idsP = self.getAllCalendarIds()
             .then(function (allCalendarIds) {
+                console.log("in save function, allCalendarIds:");
+                console.log(allCalendarIds);
                 allCalendarIds[calendarObj.state.uniqueId] = calendarObj.state.title;
                 self.setInStorage_(allCalendarIdsKey, allCalendarIds);
             })
