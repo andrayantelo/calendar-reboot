@@ -788,6 +788,9 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     var displayActiveP = this.checkit.displayActiveCalendar();
     displayActiveP.then(function () {
         assert.equal($calendarDiv.find('h1').text(), 'hello');
+        console.log($calendarDiv.html());
+        //TODO
+        console.log($calendarDiv.find('.monthframe').length);
         done()
     });
     
