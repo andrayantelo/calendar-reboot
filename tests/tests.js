@@ -777,7 +777,7 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 // which storage is passed to CheckIt
 
 QUnit.test("displayActiveCalendar test", function(assert) {
-    assert.expect(3);
+    assert.expect(4);
     var $calendarDiv = this.$calendarDiv;
     
     // When there is a current Active Calendar
@@ -793,7 +793,7 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     
     // When there isn't a current active calendar
     localStorage.removeItem('current_active_calendar');
-    // TODO assert there is no current active calendar
+    assert.equal(JSON.parse(localStorage.getItem('current_active_calendar')), null);
     var displayNoP = this.checkit.displayActiveCalendar();
     displayNoP.then(function(val) {
         assert.equal(val, "Not found");
