@@ -793,11 +793,14 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     
     // When there isn't a current active calendar
     localStorage.removeItem('current_active_calendar');
+    // TODO assert there is no current active calendar
     var displayNoP = this.checkit.displayActiveCalendar();
     displayNoP.then(function(val) {
         assert.equal(val, "Not found");
         done()
     });
+    
+    // TODO test for more things to make sure correct calendar is displayed
 });
 
 QUnit.test("initLocalStorage test", function(assert) {
