@@ -777,27 +777,27 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 // which storage is passed to CheckIt
 
 QUnit.test("displayActiveCalendar test", function(assert) {
-    assert.expect(0);
-    // When there isn't a current active calendar
+    assert.expect(3);
+    var $calendarDiv = this.$calendarDiv;
     
     // When there is a current Active Calendar
+    assert.equal($calendarDiv.find('h1').text(), 'Test Calendar');
     // currentActiveCalendar
-    var done = assert.async();
-    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
-    var loadId = JSON.parse(localStorage.getItem(activeCal));
-
-    var $calendarDiv = this.$calendarDiv;
+    var done = assert.async(2);
 
     var displayActiveP = this.checkit.displayActiveCalendar();
-    //displayActiveP.then(function () {
-    setTimeout(function() {
-        console.log($calendarDiv);
-        console.log($calendarDiv.find('h1').text());
-        console.log($('#calendarDiv').html());
-        var acCal = JSON.parse(localStorage.getItem('current_active_calendar'));
-        console.log(acCal);
-    }, 1000);
-    //})
+    displayActiveP.then(function () {
+        assert.equal($calendarDiv.find('h1').text(), 'hello');
+        done()
+    });
+    
+    // When there isn't a current active calendar
+    localStorage.removeItem('current_active_calendar');
+    var displayNoP = this.checkit.displayActiveCalendar();
+    displayNoP.then(function(val) {
+        assert.equal(val, "Not found");
+        done()
+    });
 });
 
 QUnit.test("initLocalStorage test", function(assert) {

@@ -170,7 +170,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
 
    return this.store.getActive()
        .then(function (activeCalendarId) {
-           this.store.loadById(activeCalendarId)
+           return this.store.loadById(activeCalendarId)
                .then(function (activeCalendarState) {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
@@ -186,9 +186,10 @@ CheckIt.prototype.displayActiveCalendar = function() {
            
        }.bind(this))
        
-       .catch(function () {
-           console.log("There is no current active calendar");
+       .catch(function (err) {
+           console.log("There is no current active calendar" + err);
            this.showForm(this.$buildCalendarForm);
+           return err;
        }.bind(this));
 }
 
