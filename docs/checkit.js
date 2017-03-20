@@ -175,8 +175,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
                    if (activeCalendarState !==  null) {
                        var state = activeCalendarState;
                        var calendar = new Calendar(state);
-                       this.generateEmptyCalendar(calendar);
-                       this.displayCalendar(calendar);
+                       return this.displayCalendar(calendar);
                    }
                }.bind(this))
                .catch(function(err) {
@@ -739,8 +738,9 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
 
     this.clearPage();
     this.buildCalendar(calendarObj);
-    this.store.setActiveById(calendarObj.state.uniqueId);
-    this.store.save(calendarObj);
+    var activeP = this.store.setActiveById(calendarObj.state.uniqueId);
+    var saveP = this.store.save(calendarObj);
+    return Promise.all([activeP, saveP]);
 };
 
 CheckIt.prototype.clearPage = function() {

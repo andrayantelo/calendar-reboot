@@ -313,7 +313,7 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("startDate selector test", this.checkit.$startDate, '#startDate');
     selectorNameTest("endDate selector test", this.checkit.$endDate, '#endDate');
     selectorNameTest("buildCalendarForm selector test", this.checkit.$buildCalendarForm, '#collapseOne');
-    selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#calendarDiv');
+    selectorNameTest("calendarDiv selector test", this.checkit.$calendarDiv, '#qunit-fixture #calendarDiv');
     selectorNameTest("loadingWheel selector test", this.checkit.$loadingWheel, '#loadingWheel');
     assert.equal(jQuery.type(this.checkit.spinner), 'object');
 });
@@ -729,9 +729,14 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    this.$fixture.append(
+        `<script>
+        $(document).ready( function() {
+        checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        });
+        </script>`);
  
-    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
-
+    this.checkit = checkit;
     this.store = this.checkit.store;
     
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
@@ -744,7 +749,9 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     // Set some calendars in localStorage
     // allCalendarIds
     var allCalendarIdsKey = 'allCalendarIdsKey';
-    var allCalendarIds = {'1234' : 'hello', '5678': 'world', uniqueId: 'Test Calendar'};
+    var allCalendarIds = {'1234' : 'hello', '5678': 'world'};
+    allCalendarIds[uniqueId] = 'Test Calendar';
+
     localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
     //current active calendar
     var current_active_calendar = 'current_active_calendar';
@@ -780,20 +787,17 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     var loadId = JSON.parse(localStorage.getItem(activeCal));
 
     var $calendarDiv = this.$calendarDiv;
-    console.log($calendarDiv);
-    console.log(this.$fixture.find('#calendarDiv'));
-    this.checkit.displayActiveCalendar(this.$fixture.find('#calendarDiv'))
-        .then(function() {
-            console.log($calendarDiv.find('h1').text());
-            //console.log($('#calendarDiv').html());
-            var acCal = JSON.parse(localStorage.getItem('current_active_calendar'));
-            console.log(acCal);
-            done();
-        }, function(reason) {
-            console.log("error: " + reason);
-            done();
-            });
-    
+
+    var displayActiveP = this.checkit.displayActiveCalendar();
+    //displayActiveP.then(function () {
+    setTimeout(function() {
+        console.log($calendarDiv);
+        console.log($calendarDiv.find('h1').text());
+        console.log($('#calendarDiv').html());
+        var acCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+        console.log(acCal);
+    }, 1000);
+    //})
 });
 
 QUnit.test("initLocalStorage test", function(assert) {
