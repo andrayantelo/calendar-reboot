@@ -864,8 +864,12 @@ QUnit.test("createCalendar test", function(assert) {
     this.checkit.$startDate.val('2017-02-14');
     this.checkit.$endDate.val('2017-03-14');
 
-    // TODO
+    console.log(this.$fixture.html());
     // run createCalendar
+    this.checkit.createCalendar();
+    console.log(this.$fixture.html());
+    //TODO
+    // return promises made in createCalendar??
     // assert that calendar is in dropdown, 
     // calendar html is displayed
     // everything is in storage (active, calendarIds, calId -> state
