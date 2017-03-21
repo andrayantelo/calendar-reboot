@@ -268,8 +268,8 @@ QUnit.test("fillCalendar test", function( assert ) {
     assert.equal($('#' + secondMonth.monthId).find('.nil').length,
     11, "Correct number of .nil div elements in second month");
     
-    fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
-    fillMonth("Checking second month html", secondMonth, $calendarDiv, 52);
+    //fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
+    //fillMonth("Checking second month html", secondMonth, $calendarDiv, 52);
 
 
 });
@@ -781,11 +781,11 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     localStorage.setItem(current_active_calendar, '1234');
 
     //calendar states
-    var helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
-    var worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
+    this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
+    this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
     localStorage.setItem(uniqueId, JSON.stringify(this.state));
-    localStorage.setItem(helloState.uniqueId, JSON.stringify(helloState));
-    localStorage.setItem(worldState.uniqueId, JSON.stringify(worldState));
+    localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
+    localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
     //add loading wheel
     this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
     
@@ -859,14 +859,28 @@ QUnit.test("loadFromDropdown test", function(assert) {
 });
 
 QUnit.test("deleteCalendar test", function(assert) {
-    assert.expect(1);
-
+    assert.expect(6);
+    var done = assert.async()
+    
+    
     var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    var activeCalState = JSON.parse(localStorage.getItem('1234'));
+    var allCalendarIds = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+    
+    assert.equal(allCalendarIds['1234'], 'hello')
+    assert.deepEqual(activeCalState, this.helloState);
     assert.equal(activeCal, '1234');
     
-    this.checkit.deleteCalendar();
-    var noActive = JSON.parse(localStorage.getItem('current_active_calendar'));
-    console.log(noActive);
+    this.checkit.deleteCalendar().then(function() {
+        var noActive = JSON.parse(localStorage.getItem('current_active_calendar'));
+        var state = JSON.parse(localStorage.getItem('1234'));
+        var ids = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+        
+        assert.equal(noActive, null);
+        assert.deepEqual(state, null);
+        assert.equal(ids['123'], null);
+        done();
+    });
 });
 
 QUnit.test("buildCalendar test", function(assert) {
