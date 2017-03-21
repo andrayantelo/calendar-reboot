@@ -884,33 +884,70 @@ QUnit.test("deleteCalendar test", function(assert) {
 });
 
 QUnit.test("buildCalendar test", function(assert) {
+    assert.expect(0);
     // Probably not needed because each function inside of buildCalendar
     // has already been tested.
-    assert.expect(0);
+
 });
 
 QUnit.test("displayCalendar test", function(assert) {
     assert.expect(0);
+    // Uses functions that have all already been tested
 });
 
 
 QUnit.module( "CheckIt tests for functions that involve firebase", {
-  before: function() {
-    // prepare something once for all tests
-  },
   beforeEach: function() {
     // prepare something before each test
+    localStorage.clear();
+    
+    this.$fixture = $('#qunit-fixture');
+    this.$calendarDiv = this.$fixture.find('#calendarDiv');
+    
+    this.$fixture.append(
+        `<script>
+        $(document).ready( function() {
+        checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        });
+        </script>`);
+    
+    this.checkit = checkit;
+    this.store = this.checkit.store;
+        
+    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
+    this.state = emptyCalendarState(this.params);
+    this.calendar = new Calendar(this.state);
+    var uniqueId = this.calendar.state.uniqueId;
+
+    // Set some calendars in localStorage
+    // allCalendarIds
+    var allCalendarIdsKey = 'allCalendarIdsKey';
+    var allCalendarIds = {'1234' : 'hello', '5678': 'world'};
+    allCalendarIds[uniqueId] = 'Test Calendar';
+    
+    localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
+    //current active calendar
+    var current_active_calendar = 'current_active_calendar';
+    localStorage.setItem(current_active_calendar, '1234');
+    
+    //calendar states
+    this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
+    this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
+    localStorage.setItem(uniqueId, JSON.stringify(this.state));
+    localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
+    localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
   },
   afterEach: function() {
     // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
   }
 });
 
 QUnit.test("initFirebase test", function(assert) {
     assert.expect(0);
+    //console.log(this.checkit.mode);
+    
+    // Can only do these tests if I include the firebase key in my html.
+    // should I do that?
 });
 
 QUnit.test("signIn test", function(assert) {
@@ -932,21 +969,15 @@ QUnit.test("onAuthStateChanged test", function(assert) {
 // And pretty much all of the same functions as localStorage (createCalendar, etc)
 
 QUnit.module( "CheckIt tests for clickHandlers", {
-  before: function() {
-    // prepare something once for all tests
-  },
   beforeEach: function() {
     // prepare something before each test
   },
   afterEach: function() {
     // clean up after each test
-  },
-  after: function() {
-    // clean up once after all tests are done
   }
 });
 
 
-
-// TODO test that tests if the correct init function runs depending on
-// which storage is passed to CheckIt
+// Have to have the same html in test html as my app html so that I can
+// test out the buttons and make sure the correct functions are triggered
+// should I do that?
