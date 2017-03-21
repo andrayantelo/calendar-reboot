@@ -685,20 +685,20 @@ CheckIt.prototype.deleteCalendar = function() {
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
 
-        var currentCalendarId = this.store.getActive()
+        return this.store.getActive()
             .then(function(currentCalendarId) {
                 
                 this.removeFromCalendarDropdown(currentCalendarId, this.$calendarDropdown);
                 //delete the calendar and remove its active calendar status
-                this.store.removeById(currentCalendarId)
+                return this.store.removeById(currentCalendarId)
                     .then(function() {
-                        // To delete a calendar you have to be looking at it and if you
-                        // are looking at it that means it is the currentActiveCalendar
-                        this.store.removeActive();
                         //console.log("clearing the page");
                         //clear the page
                         this.clearPage();
-                        this.showForm(this.$buildCalendarForm); 
+                        this.showForm(this.$buildCalendarForm);
+                        // To delete a calendar you have to be looking at it and if you
+                        // are looking at it that means it is the currentActiveCalendar
+                        return this.store.removeActive();
                     }.bind(this))
                     .catch(function() {
                         console.log("Unable to remove calendar from storage.");

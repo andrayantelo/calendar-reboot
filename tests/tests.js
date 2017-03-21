@@ -268,8 +268,8 @@ QUnit.test("fillCalendar test", function( assert ) {
     assert.equal($('#' + secondMonth.monthId).find('.nil').length,
     11, "Correct number of .nil div elements in second month");
     
-    fillMonth("Checking first month html", firstMonth, $calendarDiv, 1);
-    fillMonth("Checking second month html", secondMonth, $calendarDiv, 1);
+    fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
+    fillMonth("Checking second month html", secondMonth, $calendarDiv, 52);
 
 
 });
@@ -859,7 +859,14 @@ QUnit.test("loadFromDropdown test", function(assert) {
 });
 
 QUnit.test("deleteCalendar test", function(assert) {
-    assert.expect(0);
+    assert.expect(1);
+
+    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    assert.equal(activeCal, '1234');
+    
+    this.checkit.deleteCalendar();
+    var noActive = JSON.parse(localStorage.getItem('current_active_calendar'));
+    console.log(noActive);
 });
 
 QUnit.test("buildCalendar test", function(assert) {
