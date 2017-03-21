@@ -643,15 +643,17 @@ CheckIt.prototype.createCalendar = function() {
         // TODO figure out if I should be returning initializeCalendar and buildCalendar promises
         
         // Initialize calendar in the storage
-        this.store.initializeCalendar(calendar);
+        var initP = this.store.initializeCalendar(calendar);
 
         //add calendar to dropdown
         this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title,
             this.$calendarDropdown);
     
         //build the calendar
-        this.buildCalendar(calendar);
+        var buildP = this.buildCalendar(calendar);
         this.hideForm(this.$buildCalendarForm); 
+        
+        return Promise.all([initP, buildP]);
    }
 };
 
@@ -685,16 +687,22 @@ CheckIt.prototype.deleteCalendar = function() {
 
         var currentCalendarId = this.store.getActive()
             .then(function(currentCalendarId) {
-                this.removeFromCalendarDropdown(currentCalendarId);
+                
+                this.removeFromCalendarDropdown(currentCalendarId, this.$calendarDropdown);
                 //delete the calendar and remove its active calendar status
-                this.store.removeById(currentCalendarId);
-                // To delete a calendar you have to be looking at it and if you
-                // are looking at it that means it is the currentActiveCalendar
-                this.store.removeActive();
-                //console.log("clearing the page");
-                //clear the page
-                this.clearPage();
-                this.showForm(this.$buildCalendarForm); 
+                this.store.removeById(currentCalendarId)
+                    .then(function() {
+                        // To delete a calendar you have to be looking at it and if you
+                        // are looking at it that means it is the currentActiveCalendar
+                        this.store.removeActive();
+                        //console.log("clearing the page");
+                        //clear the page
+                        this.clearPage();
+                        this.showForm(this.$buildCalendarForm); 
+                    }.bind(this))
+                    .catch(function() {
+                        console.log("Unable to remove calendar from storage.");
+                    }.bind(this))
             }.bind(this))
             .catch(function() {
                 console.log("Calendar could not be deleted.");

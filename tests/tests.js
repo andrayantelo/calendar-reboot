@@ -761,13 +761,6 @@ QUnit.module( "CheckIt tests for functions that involve store", {
  
     this.checkit = checkit;
     this.store = this.checkit.store;
-    
-    this.$calendarDiv.append('<div class="form-group"><input type="text"' +
-        'id="calendarTitle"></div>');
-    this.$calendarDiv.append('<div class="form-group"><input type="text"' +
-        'id="startDate"></div>');
-    this.$calendarDiv.append('<div class="form-group"><input type="text"' +
-        'id="endDate"></div>');
         
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
@@ -855,30 +848,14 @@ QUnit.test("onActivityChanged test", function(assert) {
 
 QUnit.test("createCalendar test", function(assert) {
     assert.expect(0);
-    // set checkit's startDate, endDate, and calendarTitle selectors
-    this.checkit.$calendarTitle = this.$fixture.find('#calendarTitle');
-    this.checkit.$startDate = this.$fixture.find('#startDate');
-    this.checkit.$endDate = this.$fixture.find('#endDate');
-    
-    this.checkit.$calendarTitle.val('Hello World');
-    this.checkit.$startDate.val('2017-02-14');
-    this.checkit.$endDate.val('2017-03-14');
-
-    console.log(this.$fixture.html());
-    // run createCalendar
-    this.checkit.createCalendar();
-    console.log(this.$fixture.html());
-    //TODO
-    // return promises made in createCalendar??
-    // assert that calendar is in dropdown, 
-    // calendar html is displayed
-    // everything is in storage (active, calendarIds, calId -> state
+    // createCalendar uses functions that have already been tested
     
 
 });
 
 QUnit.test("loadFromDropdown test", function(assert) {
     assert.expect(0);
+    // Uses functions that have already been tested
 });
 
 QUnit.test("deleteCalendar test", function(assert) {
