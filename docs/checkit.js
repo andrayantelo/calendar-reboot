@@ -202,10 +202,10 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 CheckIt.prototype.initLocalStorage = function() {
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
     // Fill the dropdown with user's saved calendar titles/
-    //this.fillDropdown(this.$calendarDropdown);
+    this.fillDropdown(this.$calendarDropdown);
     
     // Display the user's active calendar.
-    //this.displayActiveCalendar(this.$calendarDiv);
+    this.displayActiveCalendar();
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
