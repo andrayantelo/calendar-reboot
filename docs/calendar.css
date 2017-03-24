@@ -12,16 +12,6 @@ body{
 
 /*User sign-in container, user-name, user-pic CSS*/
 
-/*#user-container {
-  display: -webkit-box;      
-  display: -moz-box;         
-  display: -ms-flexbox;      
-  display: -webkit-flex;     
-  display: flex;             
-  flex-direction: row;
-  justify-content: flex-start;
-}*/
-
 #user-container {
   width: 100%;
 }
@@ -96,6 +86,10 @@ body{
 
 .page-header {
   text-align: center;
+}
+
+#getStartedContent {
+  width: 100%;
 }
 
 .btn {
@@ -203,9 +197,6 @@ table {
 .checkmark {
     position: absolute;
 }
- 
-/*replace the content value with the
-corresponding value from the list below*/
  
 .checkmark:before {
     content: "\f00c";
