@@ -75,9 +75,9 @@
  
         <script>
             $(document).ready( function() {
-                checkit = new CheckIt('localStorage');
+                checkit = new CheckIt('firebase');
       
-                // Run findCurrentDay every 10 minutes
+                // Run findCurrentDay every 10 minutes to update the currentDay CSS
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
             });
         </script>
@@ -139,9 +139,9 @@
            </ul> <!-- /.nav navbar-nav -->  
         
         
-         <!-- fourth item in navbar, sign in button -->
+         <!-- fourth item in navbar, sign in button 
            <ul>
-            <div id="user-container">
+            <div hidden id="user-container">
                 <div hidden id="user-pic"></div>
                 <div hidden id="user-name"></div>
                 <button class="btn btn-primary navbar-btn " hidden id="sign-out">
@@ -152,7 +152,7 @@
                 </button>
             </div>
             </ul>
-     
+        -->
 
         </div> <!-- /#main-navbar -->
       </div>  <!-- /.container-fluid -->
@@ -171,6 +171,20 @@
     <!-- Blurb that encourages a user to sign in and get started -->
     <div class="row" hidden id="getStarted">
         <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
+            
+            <div id="user-container">
+                <div hidden id="user-pic"></div>
+                <div hidden id="user-name"></div>
+                <button class="btn btn-primary navbar-btn " hidden id="sign-out">
+                  Sign-out
+                </button>
+                <button class="btn btn-primary navbar-btn " hidden id="sign-in"> 
+                  <!--<i class="material-icons" id="sign-in-pic">account_circle</i>-->
+                  <i class="fa fa-user-circle" aria-hidden="true"></i>
+                  <!--<p id="sign-in-text">Sign-in with Google</p>-->
+                </button>
+            </div>
+            
             <div >
               <h1 class="text-center page-header"> How to Get Started</h1>
               <p>

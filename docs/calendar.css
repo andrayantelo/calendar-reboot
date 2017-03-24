@@ -1,16 +1,85 @@
+html {
+    font-size:100%;
+}
+
+#contentWrapper {
+    padding-top: 70px;
+}
+
 body{
   position: relative;
 }
 
-#navbarContainer{
-  top: 0; 
+/*User sign-in container, user-name, user-pic CSS*/
+
+/*#user-container {
+  display: -webkit-box;      
+  display: -moz-box;         
+  display: -ms-flexbox;      
+  display: -webkit-flex;     
+  display: flex;             
+  flex-direction: row;
+  justify-content: flex-start;
+}*/
+
+#user-container {
+  width: 100%;
 }
 
+#sign-in {
+  width: 100%;
+  text-align: left;
+}
+
+#sign-in-pic, #sign-in-text {
+  display: inline-block;
+  font-size: 1.5em;
+}
+
+#sign-in-pic {
+}
+
+#sign-in-text {
+  padding-left: 5px;
+  margin-bottom: 1px;
+}
+
+#user-container #user-pic {
+  top: 5px;
+  position: relative;
+  background-image: url('/docs/profile_placeholder.png');
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 40px;
+  background-size: 40px;
+  border-radius: 20px;
+}
+#user-container #user-name {
+  font-size: 16px;
+  line-height: 36px;
+  padding-right: 10px;
+  padding-left: 20px;
+}
+
+#user-name {
+  padding-top:10px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Help page CSS */
 #getStarted {
   font-size: 18px;
-  padding: 10px;
-  margin: 10px;
+  padding: 1px;
+  margin: 1px;
   font-family: sans-serif;
+  text-align: left;
+}
+
+.page-header {
+  text-align: center;
 }
 
 .btn {
@@ -34,55 +103,9 @@ body{
   border: 1px solid transparent;
   border-radius: 4px;
 }
-
-#user-container {
-  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;      /* TWEENER - IE 10 */
-  display: -webkit-flex;     /* NEW - Chrome */
-  display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
-  flex-direction: row;
-  top: 22px;
-  right: 0;
-  padding-left: 10px;
-  justify-content: flex-end;
-  padding-right: 10px;
-}
-#user-container #user-pic {
-  top: 5px;
-  position: relative;
-  display: inline-block;
-  background-image: url('/docs/profile_placeholder.png');
-  background-repeat: no-repeat;
-  width: 40px;
-  height: 40px;
-  background-size: 40px;
-  border-radius: 20px;
-}
-#user-container #user-name {
-  font-size: 16px;
-  line-height: 36px;
-  padding-right: 10px;
-  padding-left: 20px;
-}
-
-#user-name {
-  padding-top:10px;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-html {
-    font-size:100%;
-}
-
-#contentWrapper {
-    padding-top: 70px;
-}
-
    
+   
+/* Calendar CSS */
 .header {
     cursor: default;
     background: #e1e1e1;
@@ -126,6 +149,85 @@ table {
     cursor:default;
     border:1px solid #e6e6e6;
 }
+
+
+.month {
+    width: 100%
+}
+
+/*.dayhighlight {
+    background: red
+}*/
+
+.currentDay > .daynumber{
+    
+    font-weight: bold;
+    font-size: 18px;
+} 
+
+.currentDay {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f5f6f6+0,dbdce2+21,b8bac6+49,dddfe3+80,f5f6f6+100;Grey+Pipe */
+    background: #f5f6f6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f5f6f6 0%, #dbdce2 21%, #b8bac6 49%, #dddfe3 80%, #f5f6f6 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* IE6-9 */
+
+}
+
+.cell {
+    position: relative;     
+}
+
+.daynumber {
+    text-align:left;
+    position: relative;
+} 
+
+.checkmark {
+    position: absolute;
+}
+ 
+/*replace the content value with the
+corresponding value from the list below*/
+ 
+.checkmark:before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+}
+
+
+.cell, .nil {
+    width: 100%;
+    height: 100%; 
+}
+
+
+.nil {
+    background: #f3f3f3;
+}
+
+.activeDay {
+    background: white;
+}
+
+.inactiveDay {
+    background: #f9f9f9;
+}
+
+label {
+    font-weight: normal;
+}
+
+.list-group-item {
+    display: list-item;
+}
+
+
+
 
 
 @media screen and (min-width: 980px) /* Desktop */ {
@@ -237,80 +339,3 @@ table {
   }
 }
 */
-
-.month {
-    width: 100%
-}
-
-/*.dayhighlight {
-    background: red
-}*/
-
-.currentDay > .daynumber{
-    
-    font-weight: bold;
-    font-size: 18px;
-} 
-
-.currentDay {
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f5f6f6+0,dbdce2+21,b8bac6+49,dddfe3+80,f5f6f6+100;Grey+Pipe */
-    background: #f5f6f6; /* Old browsers */
-    background: -moz-linear-gradient(top,  #f5f6f6 0%, #dbdce2 21%, #b8bac6 49%, #dddfe3 80%, #f5f6f6 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* IE6-9 */
-
-}
-
-.cell {
-    position: relative;     
-}
-
-.daynumber {
-    text-align:left;
-    position: relative;
-} 
-
-.checkmark {
-    position: absolute;
-}
- 
-/*replace the content value with the
-corresponding value from the list below*/
- 
-.checkmark:before {
-    content: "\f00c";
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-}
-
-
-.cell, .nil {
-    width: 100%;
-    height: 100%; 
-}
-
-
-.nil {
-    background: #f3f3f3;
-}
-
-.activeDay {
-    background: white;
-}
-
-.inactiveDay {
-    background: #f9f9f9;
-}
-
-label {
-    font-weight: normal;
-}
-
-.list-group-item {
-    display: list-item;
-}
-
-
