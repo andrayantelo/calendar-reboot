@@ -167,30 +167,29 @@ CheckIt.prototype.displayActiveCalendar = function() {
     // Display the active calendar if there is one.
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
+    
+    var checkit = this;
 
-   return this.store.getActive()
-       .then(function (activeCalendarId) {
-           return this.store.loadById(activeCalendarId)
-               .then(function (activeCalendarState) {
-                   if (activeCalendarState !==  null) {
-                       var state = activeCalendarState;
-                       var calendar = new Calendar(state);
-                       return this.displayCalendar(calendar);
-                   }
-               }.bind(this))
-               .catch(function(err) {
-                   console.error("Could not load calendar " + err);
-                   this.store.removeActive();
-                   this.showForm(this.$buildCalendarForm);
-               }.bind(this));
-           
-       }.bind(this))
-       
-       .catch(function (err) {
-           console.log("There is no current active calendar " + err);
-           this.showForm(this.$buildCalendarForm);
-           return err;
-       }.bind(this));
+    return checkit.store.getActive().then(function(activeCalendarId) {
+        return this.store.loadById(activeCalendarId).catch(function(err) {
+            console.log("There is no current active calendar " + err);
+            checkit.store.removeActive();
+            checkit.showForm(checkit.$buildCalendarForm);
+            return err;
+            });
+        })
+        .then(function(activeCalendarState) {
+            if (activeCalendarState !== null) {
+                var state = activeCalendarState;
+                var calendar = new Calendar(state);
+                return checkit.displayCalendar(calendar);
+            }
+        })
+        .catch(function(err) {
+            console.log("Could not display active calendar");
+            checkit.showForm(checkit.$buildCalendarForm);
+            return err;
+        });
 }
 
 CheckIt.prototype.clearDropdown = function($dropdown) {
