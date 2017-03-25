@@ -151,25 +151,11 @@ beforeEach: function() {
     // Initialize a fresh checkit object and a dummy active calendar for every test
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    this.$fixture.append(
-        `<script>
-        $(document).ready( function() {
-        checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
-        });
-        </script>`);
  
-    this.checkit = checkit;
+    this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
-    
-    this.$calendarDiv = this.checkit.$calendarDiv;
-    console.log("beforeEach is running, expected 6");
-    
-}, 
-
-afterEach: function() {
-    
 }
 
 });
@@ -754,17 +740,8 @@ QUnit.module( "CheckIt tests for functions that involve store", {
 
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
-
-    // TODO add a dropdown for testing
-    
-    this.$fixture.append(
-        `<script>
-        $(document).ready( function() {
-        checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
-        });
-        </script>`);
  
-    this.checkit = checkit;
+    this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
     this.store = this.checkit.store;
         
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
