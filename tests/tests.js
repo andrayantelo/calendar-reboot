@@ -890,8 +890,28 @@ QUnit.test("buildCalendar test", function(assert) {
 });
 
 QUnit.test("displayCalendar test", function(assert) {
-    assert.expect(0);
+    assert.expect(7);
     // Uses functions that have all already been tested
+    var $calendarDiv = this.$calendarDiv;
+    //Ensure currently displayed calendar is 'Test Calendar'
+    var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
+    
+    assert.equal(calTitle, 'Test Calendar');
+    assert.equal($calendarDiv.find('.monthContainer').length, 1);
+    
+    //display 'hello' calendar
+    this.checkit.displayCalendar(this.helloCal);
+    
+    //check that 'hello' is displayed and not 'Test Calendar'
+    assert.equal($calendarDiv.find('.calendarTitleHeading').length, 1);
+    assert.equal($calendarDiv.find('.calendarTitleHeading').text(), 'hello');
+    assert.equal($calendarDiv.find('.monthContainer').length, 12);
+    
+    // check that 'hello' is active calendar in storage
+    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    assert.equal(activeCal, '1234');
+    var state = JSON.parse(localStorage.getItem(activeCal));
+    assert.deepEqual(this.helloState, state);
 });
 
 
