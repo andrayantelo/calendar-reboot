@@ -399,7 +399,7 @@ var LocalCalendarStorage = function(params) {
         self.activeCalls -= 1;
         
         if (self.activeCalls < 0) {
-            console.error("No work has been started");
+            console.error("Number of active calls is negative");
             self.activeCalls = 0;
             return;
         }
