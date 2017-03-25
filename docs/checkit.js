@@ -187,7 +187,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
        }.bind(this))
        
        .catch(function (err) {
-           console.log("There is no current active calendar" + err);
+           console.log("There is no current active calendar " + err);
            this.showForm(this.$buildCalendarForm);
            return err;
        }.bind(this));
@@ -683,29 +683,26 @@ CheckIt.prototype.deleteCalendar = function() {
     
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
-
-        return this.store.getActive()
-            .then(function(currentCalendarId) {
+        
+        var checkit = this;
                 
-                this.removeFromCalendarDropdown(currentCalendarId, this.$calendarDropdown);
-                //delete the calendar and remove its active calendar status
-                return this.store.removeById(currentCalendarId)
-                    .then(function() {
-                        //console.log("clearing the page");
-                        //clear the page
-                        this.clearCalendarDiv();
-                        this.showForm(this.$buildCalendarForm);
-                        // To delete a calendar you have to be looking at it and if you
-                        // are looking at it that means it is the currentActiveCalendar
-                        return this.store.removeActive();
-                    }.bind(this))
-                    .catch(function() {
-                        console.log("Unable to remove calendar from storage.");
-                    }.bind(this))
-            }.bind(this))
-            .catch(function() {
-                console.log("Calendar could not be deleted.");
-            }.bind(this));
+        return checkit.store.getActive().then(function(currentCalendarId) {
+            // remove calendar from dropdown
+            checkit.removeFromCalendarDropdown(currentCalendarId,
+            checkit.$calendarDropdown);
+            // remove calendar state from storage
+            return checkit.store.removeById(currentCalendarId).catch(function(err) {
+                console.log("Unable to remove calendar from storage.");
+                return err;
+                });
+            }).then(function() {
+                checkit.clearCalendarDiv();
+                checkit.showForm(checkit.$buildCalendarForm);
+                return checkit.store.removeActive().catch(function(err) {
+                    console.log("Unable to remove active status from calendar");
+                    return err;
+                });
+            }).catch(function() {console.log(err); });
     
     }
 };
