@@ -326,7 +326,7 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         this.clearDropdown(this.$calendarDropdown);
         
         //Clear the page.
-        this.clearPage();
+        this.clearCalendarDiv();
         
         // Remove the build Calendar form.
         this.$buildFormAccordion.attr('hidden', 'true');
@@ -632,7 +632,7 @@ CheckIt.prototype.createCalendar = function() {
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
-        this.clearPage();
+        this.clearCalendarDiv();
 
         //make a calendar State
         var state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
@@ -694,7 +694,7 @@ CheckIt.prototype.deleteCalendar = function() {
                     .then(function() {
                         //console.log("clearing the page");
                         //clear the page
-                        this.clearPage();
+                        this.clearCalendarDiv();
                         this.showForm(this.$buildCalendarForm);
                         // To delete a calendar you have to be looking at it and if you
                         // are looking at it that means it is the currentActiveCalendar
@@ -746,14 +746,14 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
     //load a state and build the calendar on the page
     // $div is the div where you want to build the calendar
 
-    this.clearPage();
+    this.clearCalendarDiv();
     this.buildCalendar(calendarObj);
     var activeP = this.store.setActiveById(calendarObj.state.uniqueId);
     var saveP = this.store.save(calendarObj);
     return Promise.all([activeP, saveP]);
 };
 
-CheckIt.prototype.clearPage = function() {
+CheckIt.prototype.clearCalendarDiv = function() {
     // Remove all checkit related divs from page
     
     this.$calendarDiv.find('#calendarTitleHeading').remove();
