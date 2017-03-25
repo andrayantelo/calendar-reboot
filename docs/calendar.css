@@ -10,6 +10,11 @@ body{
   position: relative;
 }
 
+/*navbar css TODO */
+#navbarContainer {
+  padding: 0 15px;
+}
+
 /*User sign-in container, user-name, user-pic CSS*/
 
 #user-container {
@@ -63,12 +68,13 @@ body{
 #user-container #user-name {
   font-size: 16px;
   line-height: 36px;
-  padding-right: 10px;
-  padding-left: 20px;
 }
 
 #user-name {
+  font-size: 16px;
   padding-top:10px;
+  padding-left: 20px;
+  padding-right: 10px;
 }
 
 [hidden] {
@@ -94,7 +100,7 @@ body{
 
 .btn {
   /*display: inline-block;*/
-  padding: 6px 12px;
+  /*padding: 6px 12px; */
   margin-bottom: 0;
   font-size: 14px;
   font-weight: normal;

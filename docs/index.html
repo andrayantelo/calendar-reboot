@@ -87,88 +87,94 @@
     </head>
 <body id="bootstrap-overrides">
     
-    
-<div id ="navbarContainer">
-  <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container-fluid">
-          <!-- Brand and toggle grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse"
-            data-target=".navbar-collapse" aria-expanded="false" id="navMenu">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Checkit Calendars</a>
-        </div>
-        
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="main-navbar">
-          <ul class="nav navbar-nav" id="navbar-list">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             
-            <!-- first item in navbar, list item containing dropdown menu -->
             
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-              aria-haspopup="true" aria-expanded="false">Saved Calendars <span class="caret">
-              </span></a>
-              <!-- the list of SAVED CALENDARS inside of the dropdown -->
-              <ul class="dropdown-menu" id="calendarDropdown">
-                <li></li>
-              </ul> <!-- /.dropdown-menu -->
-            </li> <!-- /.dropdown -->
-          
-          <!-- second item in navbar, options dropdown -->
-           <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-              aria-haspopup="true" aria-expanded="false">Options <span class="caret">
-              </span></a>
-              <!-- the list of Options inside of the dropdown -->
-              <ul class="dropdown-menu" id="optionsDropdown">
-                <li>
-                    <a href="#" role="button" id="deleteButton">Delete Calendar</a>
+            <!-- get rid of horizontal scroll bar TODO -->
+            <div id ="navbarContainer">
+              <nav class="navbar navbar-default navbar-fixed-top">
+
+                      <!-- Brand and toggle grouped for better mobile display -->
+                    <div class="navbar-header">
+                      <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target=".navbar-collapse" aria-expanded="false" id="navMenu">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                      </button>
+                      <a class="navbar-brand" href="#">Checkit Calendars</a>
+                    </div>
                     
-                </li>
-              </ul> <!-- /.dropdown-menu -->
-            </li> <!-- /.dropdown -->
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="main-navbar">
+                      <ul class="nav navbar-nav" id="navbar-list">
+                        
+                        <!-- first item in navbar, list item containing dropdown menu -->
+                        
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                          aria-haspopup="true" aria-expanded="false">Saved Calendars <span class="caret">
+                          </span></a>
+                          <!-- the list of SAVED CALENDARS inside of the dropdown -->
+                          <ul class="dropdown-menu" id="calendarDropdown">
+                            <li></li>
+                          </ul> <!-- /.dropdown-menu -->
+                        </li> <!-- /.dropdown -->
+                      
+                      <!-- second item in navbar, options dropdown -->
+                       <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                          aria-haspopup="true" aria-expanded="false">Options <span class="caret">
+                          </span></a>
+                          <!-- the list of Options inside of the dropdown -->
+                          <ul class="dropdown-menu" id="optionsDropdown">
+                            <li>
+                                <a href="#" role="button" id="deleteButton">Delete Calendar</a>
+                                
+                            </li>
+                          </ul> <!-- /.dropdown-menu -->
+                        </li> <!-- /.dropdown -->
+                        
+                        <!-- third item in navbar, loading wheel div -->
+                        <div id="loadingWheel"></div>
             
-            <!-- third item in navbar, loading wheel div -->
-            <div id="loadingWheel"></div>
-
-           </ul> <!-- /.nav navbar-nav -->  
-        
-        
-         <!-- fourth item in navbar, sign in button 
-           <ul>
-            <div hidden id="user-container">
-                <div hidden id="user-pic"></div>
-                <div hidden id="user-name"></div>
-                <button class="btn btn-primary navbar-btn " hidden id="sign-out">
-                  Sign-out
-                </button>
-                <button class="btn btn-primary navbar-btn " hidden id="sign-in"> 
-                  <i class="material-icons">account_circle</i>Sign-in with Google
-                </button>
-            </div>
-            </ul>
-        -->
-
-        </div> <!-- /#main-navbar -->
-      </div>  <!-- /.container-fluid -->
-      
-  </nav> <!-- /.navbar navbar-default -->
-
-    
-    
-</div> <!-- /#navbarContainer -->
+                       </ul> <!-- /.nav navbar-nav -->  
+                    
+                    
+                     <!-- fourth item in navbar, sign in button  TODO
+                       <ul>
+                        <div hidden id="user-container">
+                            <div hidden id="user-pic"></div>
+                            <div hidden id="user-name"></div>
+                            <button class="btn btn-primary navbar-btn " hidden id="sign-out">
+                              Sign-out
+                            </button>
+                            <button class="btn btn-primary navbar-btn " hidden id="sign-in"> 
+                              <i class="material-icons">account_circle</i>Sign-in with Google
+                            </button>
+                        </div>
+                        </ul>
+                    -->
+            
+                    </div> <!-- /#main-navbar -->
+                  
+              </nav> <!-- /.navbar navbar-default -->
+                
+            </div> <!-- /#navbarContainer -->
+            
+        </div> <!-- /.col -->
+    </div> <!-- /.row -->
+</div> <!-- /.container -->
 
  
 
 
-<div id="contentWrapper" class="container-fluid">
+<!-- <div id="contentWrapper" class="container-fluid">
     
-    <!-- Blurb that encourages a user to sign in and get started -->
+    <!-- Blurb that encourages a user to sign in and get started 
     <div class="row" hidden id="getStarted">
         <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
             
@@ -214,14 +220,14 @@
                       </li>
                   </ol>
               </p>
-            </div> <!-- /#getStartedContent -->
+            </div> <!-- /#getStartedContent 
               
-            </div> <!-- /.col -->
-        </div> <!-- /.row -->
-    </div> <!-- /.container-fluid-->
+            </div> <!-- /.col 
+        </div> <!-- /.row 
+    </div> <!-- /.container-fluid 
     
     
-    <!--<div class="row">
+    <!--<div class="row"> <!-- TODO fix image so that the edges don't touch edge of screen 
         <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-10 col-lg-offset-2 col-lg-8"
         
             <div id="sampleCalendarContainer">
