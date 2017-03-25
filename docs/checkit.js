@@ -640,7 +640,6 @@ CheckIt.prototype.createCalendar = function() {
         //make calendar object
 
         var calendar = new Calendar(state);
-        // TODO figure out if I should be returning initializeCalendar and buildCalendar promises
         
         // Initialize calendar in the storage
         var initP = this.store.initializeCalendar(calendar);
