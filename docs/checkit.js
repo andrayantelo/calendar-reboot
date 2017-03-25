@@ -171,7 +171,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
     var checkit = this;
 
     return checkit.store.getActive().then(function(activeCalendarId) {
-        return this.store.loadById(activeCalendarId).catch(function(err) {
+        return checkit.store.loadById(activeCalendarId).catch(function(err) {
             console.log("There is no current active calendar " + err);
             checkit.store.removeActive();
             checkit.showForm(checkit.$buildCalendarForm);
@@ -186,7 +186,7 @@ CheckIt.prototype.displayActiveCalendar = function() {
             }
         })
         .catch(function(err) {
-            console.log("Could not display active calendar");
+            console.log("Could not display active calendar" + err);
             checkit.showForm(checkit.$buildCalendarForm);
             return err;
         });
@@ -365,10 +365,10 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
 CheckIt.prototype.fillCalendar = function(calObj) {
     // Fill an empty calendar with appropriate calendar data.
     var checkit = this;
-
+    
     calObj.monthObjects.forEach (function(monthObj) {
-        
-        var $monthId = checkit.$calendarDiv.find('#' + monthObj.monthId).
+    
+        var $monthId = checkit.$calendarDiv.find('#' + monthObj.monthId);
         
         $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
         
