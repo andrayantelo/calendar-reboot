@@ -62,7 +62,7 @@ QUnit.module("localCalendarStorage and checkit Tests", {
 // With localStorage
 QUnit.test("Checkit's store initialization", function(assert) {
     assert.expect(1);
-    assert.equal(checkit.mode, 'localStorage');
+    assert.equal(this.checkit.mode, 'localStorage');
 });
 
 QUnit.test("onActivityChanged test", function(assert) {
