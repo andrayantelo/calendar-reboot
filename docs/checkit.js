@@ -369,12 +369,12 @@ CheckIt.prototype.fillCalendar = function(calObj) {
 
     calObj.monthObjects.forEach (function(monthObj) {
         
-        var monthId = '#' + monthObj.monthId;
+        var $monthId = checkit.$calendarDiv.find('#' + monthObj.monthId).
         
-        checkit.$calendarDiv.find(monthId).find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
+        $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
         
         // Go through each td and fill in correct day number
-        checkit.$calendarDiv.find(monthId).find($('.week')).find('td').each( function(indexOfTableTd) {
+        $monthId.find($('.week')).find('td').each( function(indexOfTableTd) {
             
             // The indexOfTableTd is where we are currently on the month table
             // which td are we in, from 0 to 41, because there are 6 rows
