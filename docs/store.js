@@ -395,11 +395,13 @@ var LocalCalendarStorage = function(params) {
     
     self.endWork = function() {
         // Will decrement the counter and maybe fire an event.
-        
-        
+
         self.activeCalls -= 1;
+        
         if (self.activeCalls < 0) {
             console.error("No work has been started");
+            self.activeCalls = 0;
+            return;
         }
         
         // Dispatch the activityChanged listener

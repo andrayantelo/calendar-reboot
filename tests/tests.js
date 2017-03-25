@@ -810,7 +810,7 @@ QUnit.test("displayActiveCalendar test", function(assert) {
 });
 
 QUnit.test("onActivityChanged test", function(assert) {
-    assert.expect(3);
+    assert.expect(4);
     // check that loading wheel is displayed when active calls > 0 and hidden
     // when active calls === 0, what about if active calls < 0? throw an error?
     
@@ -823,8 +823,9 @@ QUnit.test("onActivityChanged test", function(assert) {
     this.checkit.onActivityChanged(0, 'loadingWheel');
     assert.equal($('#loadingWheel').children().length, 0);
     
-    // it's possible for active calls to be less than zero, maybe I should have the loading wheel
-    // spinning if active calls is <= 0? 
+    // check that there is no loadingWheel if activeCalls < 0
+    this.checkit.onActivityChanged(-1, 'loadingWheel');
+    assert.equal($('#loadingWheel').children().length, 0);
     
 });
 
