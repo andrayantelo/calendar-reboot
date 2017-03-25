@@ -187,7 +187,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     assert.expect(14);
     var $calendarDiv = this.$calendarDiv;
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
-    assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
+    assert.equal($calendarDiv.find('.calendarTitleHeading').text(), "Test Calendar");
     assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
     assert.equal($calendarDiv.find('.yearHeader').text(), this.calendar.monthObjects[0].monthYear);
     assert.equal(this.$fixture.find('.week').length, 6);
@@ -467,6 +467,7 @@ QUnit.test("clearCalendarDiv", function(assert) {
     assert.expect(2);
     assert.ok(this.$calendarDiv.children().length > 0);
     this.checkit.clearCalendarDiv();
+    console.log(this.$calendarDiv.html());
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
@@ -801,7 +802,7 @@ QUnit.module( "CheckIt tests for functions that involve store", {
   afterEach: function() {
     // clean up calendar html, and reset checkit's calendar div
     this.$calendarDiv.empty()
-    this.checkit.setCalendarDiv($calendarDiv);
+    this.checkit.setCalendarDiv(this.$calendarDiv);
   }
 });
 
@@ -881,7 +882,7 @@ QUnit.test("deleteCalendar test", function(assert) {
 });
 
 QUnit.test("buildCalendar test", function(assert) {
-    assert.expect(4);
+    assert.expect(6);
     var $calendarDiv = this.$calendarDiv;
     // Ensure currently displayed calendar is 'Test Calendar'
     var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
@@ -890,26 +891,24 @@ QUnit.test("buildCalendar test", function(assert) {
     assert.equal($calendarDiv.find('.monthContainer').length, 1);
     
     // append a div to $qunit-fixture where new calendar will be built
-    this.$fixture.append(`<div id="test"></div>`);
+    $calendarDiv.append(`<div id="test"></div>`);
     // Set it as the active calendar Div
-    this.checkit.setCalendarDiv(this.$fixture.find('#test'));
+    this.checkit.setCalendarDiv($calendarDiv.find('#test'));
+    // Build the calendar
     this.checkit.buildCalendar(this.helloCal);
     
+    // check that $calendarDiv now has two calendar titles
+    assert.equal($calendarDiv.find('.calendarTitleHeading').length, 2);
+    
+    //check the second calendar's title and number of months
     var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
     var months = $calendarDiv.find('#test .monthContainer').length;
     
     assert.equal(secondCalTitle, 'hello');
     assert.equal(months, 12);
-    
-    // make $calendarDiv checkit's calendar div again
-    this.checkit.setCalendarDiv($calendarDiv);
-    //ensure $calendarDiv still only has one month
-    console.log($calendarDiv.children('.calendarTitleHeading').text());
-    $calendarDiv.find('.calendarTitleHeading').each(function(i, val) {
-        console.log(val);
-    });
-    console.log($calendarDiv.find('#test .calendarTitleHeading').text());
-    //assert.equal($calendarDiv.find('.monthContainer').length, 1);
+  
+    //ensure Test Calendar still only has one month
+    assert.equal($calendarDiv.find('.monthContainer').length, 13);
 });
 
 QUnit.test("displayCalendar test", function(assert) {

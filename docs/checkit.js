@@ -752,7 +752,7 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
 CheckIt.prototype.clearCalendarDiv = function() {
     // Remove all checkit related divs from page
     
-    this.$calendarDiv.find('#calendarTitleHeading').remove();
+    this.$calendarDiv.find('.calendarTitleHeading').remove();
     this.$calendarDiv.children('.monthframe').remove();
 };
 
