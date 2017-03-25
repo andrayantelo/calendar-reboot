@@ -106,7 +106,7 @@ QUnit.test("getAllCalendarIds test", function(assert) {
     var fakeCalendarP = this.store.getAllCalendarIds();
     
     fakeCalendarP.then(function(val) {
-        assert.equal(val, "Not found");
+        assert.deepEqual(val, {});
         done();
         });
 });

@@ -64,6 +64,8 @@ var FirebaseCalendarStorage = function(params) {
             .catch(function(err) {
                 self.endWork();
                 console.error(err);
+                // return empty object for functions that need allCalendarIds
+                // like fillDropdown
                 return {};
             })
         })
@@ -436,7 +438,9 @@ var LocalCalendarStorage = function(params) {
             })
             .catch( function(reason) {
                 console.log("getAllCalendarIds catch function running. " + reason);
-                // returns a new promise which resolves with this value {}
+                // return empty object to be used in functions like 
+                // fillDropdown. Empty because there was nothing store in storage
+                // for allCalendarIds
                 return {};
             });
     };

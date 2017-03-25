@@ -9,7 +9,7 @@ QUnit.module( "Month Tests", {
 
 
 beforeEach: function() {
-    // Prepare something once for all tests
+    // Initiate a test month object
     this.valentine = moment("2017-02-14", "YYYY-MM-DD");
     this.dateString = this.valentine.format("YYYYMMDD");
     this.testmonth = new Month(this.dateString);
@@ -89,7 +89,7 @@ QUnit.test("emptyCalendarState test", function(assert) {
 QUnit.module( "Calendar Tests", {
 
 beforeEach: function() {
-    // Prepare something once for all tests
+    // Initiate a test calendar object for testing
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     
     this.state = emptyCalendarState(this.params);
@@ -148,7 +148,7 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
 QUnit.module( "CheckIt Tests", {
 
 beforeEach: function() {
-    // Prepare something once for all tests
+    // Initialize a fresh checkit object and a dummy active calendar for every test
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
     this.$fixture.append(
@@ -341,7 +341,8 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
 
 QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
   beforeEach: function() {
-    // prepare something before each test
+    // Initialize a test calendar object, checkit object, and generate
+    // the test calendar html
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
@@ -353,7 +354,7 @@ QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
 
   },
   afterEach: function() {
-    // clean up after each test
+    // clean up calendar html 
     this.$calendarDiv.empty();
   }
 });
@@ -423,7 +424,8 @@ QUnit.test("findCurrentDay test", function( assert ) {
 
 QUnit.module( "Checkit DOM manipulation tests", {
   beforeEach: function() {
-    // prepare something before each test
+    // Initiate a test calendar object, checkit object, and generate all
+    // the html for the test calendar. 
     this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
     this.state = emptyCalendarState(this.params);
     this.calendar = new Calendar(this.state);
@@ -439,7 +441,7 @@ QUnit.module( "Checkit DOM manipulation tests", {
 
   },
   afterEach: function() {
-    // clean up after each test
+    // clean up calendar html
     this.$calendarDiv.empty();
   }
 });
@@ -461,10 +463,10 @@ QUnit.test("hideLoadingWheel test", function( assert ) {
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
 
-QUnit.test("clearPage", function(assert) {
+QUnit.test("clearCalendarDiv", function(assert) {
     assert.expect(2);
     assert.ok(this.$calendarDiv.children().length > 0);
-    this.checkit.clearPage(this.$calendarDiv);
+    this.checkit.clearCalendarDiv();
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
@@ -525,7 +527,8 @@ QUnit.test("clearDropdown test", function(assert) {
 
 QUnit.module( "Form Tests", {
   beforeEach: function() {
-    // prepare something before each test
+    // Initiate a checkit object, and html for a mock form that includes
+    // hidden error elements
     this.$fixture = $('#qunit-fixture');
     this.$calendarDiv = this.$fixture.find('#calendarDiv');
     this.checkit = new CheckIt('localStorage', this.$calendarDiv);
@@ -546,7 +549,7 @@ QUnit.module( "Form Tests", {
     this.$fiveYears = this.$formGroup.find('#fiveYears');
   },
   afterEach: function() {
-    // clean up after each test
+    // clean up html
     this.$calendarDiv.empty();
   }
 });
@@ -743,7 +746,9 @@ QUnit.test("validateForm test", function(assert) {
 
 QUnit.module( "CheckIt tests for functions that involve store", {
   beforeEach: function() {
-    // prepare something before each test
+    // clear localStorage, initiate checkit object, calendar object, and
+    // store in storage other test calendars. Also generate html for one
+    // of the test calendars
 
     localStorage.clear();
 
@@ -791,7 +796,7 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     
   },
   afterEach: function() {
-    // clean up after each test
+    // clean up calendar html
     this.$calendarDiv.empty()
   }
 });
@@ -898,7 +903,8 @@ QUnit.test("displayCalendar test", function(assert) {
 
 QUnit.module( "CheckIt tests for functions that involve firebase", {
   beforeEach: function() {
-    // prepare something before each test
+    // Initiate a checkit object, calendar object, and store other calendars
+    // in storage for testing
     localStorage.clear();
     
     this.$fixture = $('#qunit-fixture');
