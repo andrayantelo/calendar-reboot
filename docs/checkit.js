@@ -33,7 +33,7 @@ function CheckIt(mode, calendarDiv) {
     this.$buildCalendarForm = $('#collapseOne');
     this.$loadingWheel = $('#loadingWheel');
     
-    if (calendarDiv.length === 0) {
+    if (calendarDiv === undefined) {
         console.error("Selector given for calendar div does not select anything.");
     }
     this.$calendarDiv = calendarDiv;
