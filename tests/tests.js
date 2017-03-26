@@ -189,7 +189,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     $calendarDiv.empty();
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.notOk($calendarDiv.find('20172 > .year-header').text(),
-    "Make sure second month does not have a year-header");
+        "Make sure second month does not have a year-header");
 });
 
 QUnit.test("fillCalendar test", function( assert ) {
