@@ -64,7 +64,9 @@ var FirebaseCalendarStorage = function(params) {
             .catch(function(err) {
                 self.endWork();
                 console.error(err);
-                return err;
+                // return empty object for functions that need allCalendarIds
+                // like fillDropdown
+                return {};
             })
         })
     };
@@ -280,7 +282,6 @@ var FirebaseCalendarStorage = function(params) {
     // Return a promise of a calendar state using its Id
     
         var userId = self.user.uid;
-        
         self.startWork();
         return new Promise( function(resolve, reject) {
             self.database.ref('calendars/' + calendarObjId + '/calendarState')
@@ -394,11 +395,13 @@ var LocalCalendarStorage = function(params) {
     
     self.endWork = function() {
         // Will decrement the counter and maybe fire an event.
-        
-        
+
         self.activeCalls -= 1;
+        
         if (self.activeCalls < 0) {
-            console.error("No work has been started");
+            console.error("Number of active calls is negative");
+            self.activeCalls = 0;
+            return;
         }
         
         // Dispatch the activityChanged listener
@@ -437,7 +440,10 @@ var LocalCalendarStorage = function(params) {
             })
             .catch( function(reason) {
                 console.log("getAllCalendarIds catch function running. " + reason);
-                return reason;
+                // return empty object to be used in functions like 
+                // fillDropdown. Empty because there was nothing store in storage
+                // for allCalendarIds
+                return {};
             });
     };
     

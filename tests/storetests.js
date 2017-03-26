@@ -2,11 +2,8 @@
 
 QUnit.module("LocalStorage Store Tests", {
   beforeEach: function() {
-    // prepare something before each test
+    // Initiate a test localCalendarStorage object
     this.lstore = new LocalCalendarStorage({storeId: 'test'});
-  },
-  afterEach: function() {
-    // clean up after each test
   }
 });
 
@@ -26,7 +23,8 @@ QUnit.test("toKey Test", function(assert) {
 
 QUnit.module("localCalendarStorage and checkit Tests", {
     beforeEach: function() {
-        // Clear localStorage before putting anything in it
+        // Initiate checkit object, store test calendars in storage and
+        // append a loadingWheel div to calendar html
         localStorage.clear();
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
@@ -34,7 +32,7 @@ QUnit.module("localCalendarStorage and checkit Tests", {
         this.$fixture.append(
             `<script>
             $(document).ready( function() {
-            checkit = new CheckIt('localStorage');
+            checkit = new CheckIt('localStorage', $('#calendarDiv'));
             });
             </script>`);
         this.checkit = checkit;
@@ -56,6 +54,7 @@ QUnit.module("localCalendarStorage and checkit Tests", {
         this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
         },
     afterEach: function() {
+        // clear localStorage and clear calendar html
         this.$calendarDiv.empty();
         localStorage.clear();
     }
@@ -106,7 +105,7 @@ QUnit.test("getAllCalendarIds test", function(assert) {
     var fakeCalendarP = this.store.getAllCalendarIds();
     
     fakeCalendarP.then(function(val) {
-        assert.equal(val, "Not found");
+        assert.deepEqual(val, {});
         done();
         });
 });
