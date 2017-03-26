@@ -173,9 +173,9 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     assert.expect(14);
     var $calendarDiv = this.$calendarDiv;
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
-    assert.equal($calendarDiv.find('#calendarTitleHeading').text(), "Test Calendar");
+    assert.equal($calendarDiv.find('.calendarTitleHeading').text(), "Test Calendar");
     assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
-    assert.equal($calendarDiv.find('#yearHeader').text(), this.calendar.monthObjects[0].monthYear);
+    assert.equal($calendarDiv.find('.year-header').text(), this.calendar.monthObjects[0].monthYear);
     assert.equal(this.$fixture.find('.week').length, 6);
     assert.equal(this.$fixture.find('td').length, 49);
     assert.equal(this.$fixture.find('.nil').length, 42);
@@ -188,8 +188,8 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     this.checkit.addMonth(this.calendar);
     $calendarDiv.empty();
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
-    assert.notOk($calendarDiv.find('20172 > #yearHeader').text(),
-    "Make sure second month does not have a yearHeader");
+    assert.notOk($calendarDiv.find('20172 > .year-header').text(),
+        "Make sure second month does not have a year-header");
 });
 
 QUnit.test("fillCalendar test", function( assert ) {
@@ -453,6 +453,7 @@ QUnit.test("clearCalendarDiv", function(assert) {
     assert.expect(2);
     assert.ok(this.$calendarDiv.children().length > 0);
     this.checkit.clearCalendarDiv();
+    console.log(this.$calendarDiv.html());
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
@@ -770,11 +771,14 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
     //add loading wheel
     this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    // make calendar objects out of hello calendar and world calendar
+    this.helloCal = new Calendar(this.helloState);
+    this.worldCal = new Calendar(this.worldState);
     
   },
   afterEach: function() {
-    // clean up calendar html
-    this.$calendarDiv.empty()
+    // clean up calendar html, and reset checkit's calendar div
+    this.$calendarDiv.empty();
   }
 });
 
@@ -829,18 +833,6 @@ QUnit.test("onActivityChanged test", function(assert) {
     
 });
 
-QUnit.test("createCalendar test", function(assert) {
-    assert.expect(0);
-    // createCalendar uses functions that have already been tested
-    
-
-});
-
-QUnit.test("loadFromDropdown test", function(assert) {
-    assert.expect(0);
-    // Uses functions that have already been tested
-});
-
 QUnit.test("deleteCalendar test", function(assert) {
     assert.expect(6);
     var done = assert.async()
@@ -867,15 +859,58 @@ QUnit.test("deleteCalendar test", function(assert) {
 });
 
 QUnit.test("buildCalendar test", function(assert) {
-    assert.expect(0);
-    // Probably not needed because each function inside of buildCalendar
-    // has already been tested.
-
+    assert.expect(6);
+    var $calendarDiv = this.$calendarDiv;
+    // Ensure currently displayed calendar is 'Test Calendar'
+    var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
+    
+    assert.equal(calTitle, 'Test Calendar');
+    assert.equal($calendarDiv.find('.monthContainer').length, 1);
+    
+    // append a div to $qunit-fixture where new calendar will be built
+    $calendarDiv.append(`<div id="test"></div>`);
+    // Set it as the active calendar Div
+    this.checkit.setCalendarDiv($calendarDiv.find('#test'));
+    // Build the calendar
+    this.checkit.buildCalendar(this.helloCal);
+    
+    // check that $calendarDiv now has two calendar titles
+    assert.equal($calendarDiv.find('.calendarTitleHeading').length, 2);
+    
+    //check the second calendar's title and number of months
+    var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
+    var months = $calendarDiv.find('#test .monthContainer').length;
+    
+    assert.equal(secondCalTitle, 'hello');
+    assert.equal(months, 12);
+  
+    //ensure Test Calendar still only has one month
+    assert.equal($calendarDiv.find('.monthContainer').length, 13);
 });
 
 QUnit.test("displayCalendar test", function(assert) {
-    assert.expect(0);
+    assert.expect(7);
     // Uses functions that have all already been tested
+    var $calendarDiv = this.$calendarDiv;
+    //Ensure currently displayed calendar is 'Test Calendar'
+    var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
+    
+    assert.equal(calTitle, 'Test Calendar');
+    assert.equal($calendarDiv.find('.monthContainer').length, 1);
+    
+    //display 'hello' calendar
+    this.checkit.displayCalendar(this.helloCal);
+    
+    //check that 'hello' is displayed and not 'Test Calendar'
+    assert.equal($calendarDiv.find('.calendarTitleHeading').length, 1);
+    assert.equal($calendarDiv.find('.calendarTitleHeading').text(), 'hello');
+    assert.equal($calendarDiv.find('.monthContainer').length, 12);
+    
+    // check that 'hello' is active calendar in storage
+    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    assert.equal(activeCal, '1234');
+    var state = JSON.parse(localStorage.getItem(activeCal));
+    assert.deepEqual(this.helloState, state);
 });
 
 
@@ -961,6 +996,17 @@ QUnit.module( "CheckIt tests for clickHandlers", {
   }
 });
 
+QUnit.test("createCalendar test", function(assert) {
+    assert.expect(0);
+    // createCalendar uses functions that have already been tested
+    
+
+});
+
+QUnit.test("loadFromDropdown test", function(assert) {
+    assert.expect(0);
+    // Uses functions that have already been tested
+});
 
 // Have to have the same html in test html as my app html so that I can
 // test out the buttons and make sure the correct functions are triggered

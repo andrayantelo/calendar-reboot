@@ -347,7 +347,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
     // display.
     var checkitApp = this;
     // Add the title of the calendar
-    this.$calendarDiv.append('<div id="calendarTitleHeading"><h1 class="page-header\
+    checkitApp.$calendarDiv.append('<div class="calendarTitleHeading"><h1 class="page-header\
                          text-center">'+calObj.state.title + '</h1></div>');
                         
     calObj.monthObjects.forEach (function(monthObj, index) {
@@ -356,7 +356,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
         checkitApp.$calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
         if (monthObj.monthIndex === 0 || index === 0) {
-            var yearHeader = "<div class='page-header text-center' id='yearHeader'>" +
+            var yearHeader = "<div class='page-header text-center year-header'>" +
                 "<h2>"+monthObj.monthYear + "</h2>" +
                 "</div>";
             checkitApp.$calendarDiv.find('#' + monthObj.monthId).append(yearHeader);
@@ -730,7 +730,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     // builds the front end of a calendar object. creates the html
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
-    //$div is the div where you want to build the calendar
+    // Calendars must be built in an empty div
 
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
@@ -756,7 +756,7 @@ CheckIt.prototype.displayCalendar = function(calendarObj) {
 CheckIt.prototype.clearCalendarDiv = function() {
     // Remove all checkit related divs from page
     
-    this.$calendarDiv.find('#calendarTitleHeading').remove();
+    this.$calendarDiv.find('.calendarTitleHeading').remove();
     this.$calendarDiv.children('.monthframe').remove();
 };
 
