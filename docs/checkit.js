@@ -36,9 +36,8 @@ function CheckIt(mode, calendarDiv) {
     if (calendarDiv.length === 0) {
         console.error("Selector given for calendar div does not select anything.");
     }
-    else {
-        this.$calendarDiv = calendarDiv;
-    }
+    this.$calendarDiv = calendarDiv;
+    
     
     this.spinner = new Spinner();
     

@@ -324,12 +324,6 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     assert.equal(jQuery.type(this.checkit.spinner), 'object');
 });
 
-QUnit.test("Init checkit with incorrect selector test",function(assert) {
-    assert.expect(1);
-    var newCheckIt = new CheckIt('localStorage', $('#test'));
-    assert.equal(newCheckIt.$calendarDiv, undefined);
-});
-
 
 QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
   beforeEach: function() {
