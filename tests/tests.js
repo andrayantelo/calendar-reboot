@@ -175,7 +175,7 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('.calendarTitleHeading').text(), "Test Calendar");
     assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
-    assert.equal($calendarDiv.find('.yearHeader').text(), this.calendar.monthObjects[0].monthYear);
+    assert.equal($calendarDiv.find('.year-header').text(), this.calendar.monthObjects[0].monthYear);
     assert.equal(this.$fixture.find('.week').length, 6);
     assert.equal(this.$fixture.find('td').length, 49);
     assert.equal(this.$fixture.find('.nil').length, 42);
@@ -188,8 +188,8 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     this.checkit.addMonth(this.calendar);
     $calendarDiv.empty();
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
-    assert.notOk($calendarDiv.find('20172 > .yearHeader').text(),
-    "Make sure second month does not have a yearHeader");
+    assert.notOk($calendarDiv.find('20172 > .year-header').text(),
+    "Make sure second month does not have a year-header");
 });
 
 QUnit.test("fillCalendar test", function( assert ) {

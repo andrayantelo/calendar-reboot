@@ -356,7 +356,7 @@ CheckIt.prototype.generateEmptyCalendar = function(calObj) {
         checkitApp.$calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
         if (monthObj.monthIndex === 0 || index === 0) {
-            var yearHeader = "<div class='page-header text-center yearHeader'>" +
+            var yearHeader = "<div class='page-header text-center year-header'>" +
                 "<h2>"+monthObj.monthYear + "</h2>" +
                 "</div>";
             checkitApp.$calendarDiv.find('#' + monthObj.monthId).append(yearHeader);
