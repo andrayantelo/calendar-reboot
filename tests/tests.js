@@ -771,15 +771,14 @@ QUnit.module( "CheckIt tests for functions that involve store", {
     localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
     //add loading wheel
     this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
-    // make calendar object out of hello calendar and world calendar
+    // make calendar objects out of hello calendar and world calendar
     this.helloCal = new Calendar(this.helloState);
     this.worldCal = new Calendar(this.worldState);
     
   },
   afterEach: function() {
     // clean up calendar html, and reset checkit's calendar div
-    this.$calendarDiv.empty()
-    this.checkit.setCalendarDiv(this.$calendarDiv);
+    this.$calendarDiv.empty();
   }
 });
 
