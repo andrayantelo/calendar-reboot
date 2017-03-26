@@ -32,7 +32,12 @@ function CheckIt(mode, calendarDiv) {
     this.$endDate = $('#endDate');
     this.$buildCalendarForm = $('#collapseOne');
     this.$loadingWheel = $('#loadingWheel');
+    
+    if (calendarDiv && calendarDiv.length === 0) {
+        console.error("Selector given for calendar div does not select anything.");
+    }
     this.$calendarDiv = calendarDiv;
+    
     
     this.spinner = new Spinner();
     
