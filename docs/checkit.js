@@ -730,8 +730,7 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     // builds the front end of a calendar object. creates the html
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
-    // Calendars must be built in different divs than other calendar
-    // or clear a previous div before building a new calendar
+    // Calendars must be built in an empty div
 
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
