@@ -2,37 +2,28 @@ body{
   position: relative;
 }
 
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+    font-size:100%;
+}
+
+#contentWrapper {
+    padding-top: 30px;
+}
+
+.page-header {
+  text-align: center;
+}
+
+/* Navbar CSS
+ * *******************************/
+
 #navbarContainer{
   top: 0; 
-}
-
-#getStarted {
-  font-size: 18px;
-  padding: 10px;
-  margin: 10px;
-  font-family: sans-serif;
-}
-
-.btn {
-  /*display: inline-block;*/
-  padding: 6px 12px;
-  margin-bottom: 0;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.42857143;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  -ms-touch-action: manipulation;
-      touch-action: manipulation;
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
 }
 
 #user-container {
@@ -96,18 +87,40 @@ body{
   padding-top:10px;
 }
 
-[hidden] {
-  display: none !important;
+/* content CSS *
+ * **********************************/
+
+#getStarted {
+  font-size: 18px;
+  padding: 10px;
+  margin: 10px;
+  font-family: sans-serif;
 }
 
-html {
-    font-size:100%;
+.btn {
+  /*display: inline-block;*/
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
 }
 
-#contentWrapper {
-    padding-top: 70px;
-}
-
+/* Calendar CSS 
+ * *********************************/
    
 .header {
     cursor: default;
@@ -232,8 +245,16 @@ label {
 }
 
 
+/* Media queries *
+ * *****************************************/
 
 @media screen and (min-width: 960px) /* Desktop */ {
+  #sampleCalendarImage {
+    margin-left: auto;
+    margin-right: auto;
+    
+  }
+  
   .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
@@ -261,6 +282,10 @@ label {
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
+  #contentWrapper {
+    padding-top: 50px;
+  }
+  
   #user-container {
     display: inline-block;
     width: initial;
@@ -296,12 +321,12 @@ label {
   td {
     height: 103px;
     width: 103px;
+  }
 }
 
-  
-}
 
-@media screen and (max-width: 500px) /* mobile*/  {
+/*
+@media screen and (max-width: 500px) {
   .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
@@ -311,9 +336,9 @@ label {
 }
   .checkmark {
     font-size: 14px;
-    /*--adjust as necessary--*/
+    /*--adjust as necessary--
     color: #000;
-    /*font-size: 28px;*/
+    /*font-size: 28px;
     padding-right: 0.5em;
     position: absolute;
     top: 30%;
@@ -326,7 +351,7 @@ label {
 }
 
   #createButton, #clearButton {
-    /*padding: 5px 10px 5px 10px; */
+    /*padding: 5px 10px 5px 10px; 
     font-size: 16px; 
     line-height: 1.5; 
     border-top-left-radius: 0px;
@@ -342,3 +367,4 @@ label {
       height: 40px;
     }
 }
+*/
