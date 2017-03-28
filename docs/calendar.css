@@ -57,13 +57,11 @@ body{
 
 /* material-icons rules */
 /* Rules for sizing the icon. */
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }
+.material-icons.md { font-size: 24px; }
+
 
 #sign-in-text {
-  font-size: 22px;
+  font-size: 18px;
   margin: 0;
   padding-left: 5px;
 }
@@ -256,6 +254,14 @@ label {
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
+  #sign-in, #sign-out {
+    float: right;
+  }
+  
+  .material-icons.md, #sign-in-text { 
+    font-size: 16px; 
+  }
+  
   .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
