@@ -12,7 +12,7 @@ html {
 }
 
 #contentWrapper {
-    padding-top: 30px;
+    padding-top: 79px;
 }
 
 .page-header {
@@ -202,22 +202,6 @@ table {
     position: relative;
 } 
 
-.checkmark {
-    position: absolute;
-}
- 
-/*replace the content value with the
-corresponding value from the list below*/
- 
-.checkmark:before {
-    content: "\f00c";
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-}
-
-
 .cell, .nil {
     width: 100%;
     height: 100%; 
@@ -244,6 +228,52 @@ label {
     display: list-item;
 }
 
+.monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
+
+.checkmark {
+    font-size: 14px;
+    /*--adjust as necessary--*/
+    color: #000;
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -7px;
+    left: 50%;
+  }
+  
+.checkmark {
+    position: absolute;
+}
+ 
+/*replace the content value with the
+corresponding value from the list below*/
+ 
+.checkmark:before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+}
+
+td {
+    width: 55px;
+    height: 55px;
+}
+
+#createButton, #clearButton {
+    font-size: 16px; 
+    line-height: 1.5; 
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+} 
+  
 
 /* Media queries *
  * *****************************************/
@@ -266,7 +296,6 @@ label {
     font-size: 40px;
     /*--adjust as necessary--*/
     color: #000;
-    /*font-size: 28px;*/
     padding-right: 0.5em;
     position: absolute;
     margin: 0 0 0 -20px;
@@ -274,18 +303,16 @@ label {
     left: 50%;
   }
   td {
-    height: 90px;
-    width: 90px;
+    height: 150px;
+    width: 150px;
   }
-   
+/* TODO adjust td's so that they are square.
+ * http://stackoverflow.com/questions/20456694/grid-of-responsive-squares/20457076#20457076
+ * /
 
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
-  #contentWrapper {
-    padding-top: 50px;
-  }
-  
   #user-container {
     display: inline-block;
     width: initial;
@@ -306,12 +333,10 @@ label {
     margin-top: 25px;
     position: relative;
     width: 100%
-}
+  }
   .checkmark {
     font-size: 36px;
-    /*--adjust as necessary--*/
     color: #000;
-    /*font-size: 28px;*/
     padding-right: 0.5em;
     position: absolute;
     top: 30%;
@@ -324,47 +349,3 @@ label {
   }
 }
 
-
-/*
-@media screen and (max-width: 500px) {
-  .monthframe, #template {
-    margin:auto;
-    margin-bottom: 25px;
-    margin-top: 25px;
-    position: relative;
-    width: 100%
-}
-  .checkmark {
-    font-size: 14px;
-    /*--adjust as necessary--
-    color: #000;
-    /*font-size: 28px;
-    padding-right: 0.5em;
-    position: absolute;
-    top: 30%;
-    margin: 0 0 0 -7px;
-    left: 50%;
-  }
-  td {
-    width: 55px;
-    height: 55px;
-}
-
-  #createButton, #clearButton {
-    /*padding: 5px 10px 5px 10px; 
-    font-size: 16px; 
-    line-height: 1.5; 
-    border-top-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-  } 
-  
-
-}
-
-@media screen and (max-width: 320px) {
-    td {
-      width: 40px;
-      height: 40px;
-    }
-}
-*/
