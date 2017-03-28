@@ -36,18 +36,39 @@ body{
 }
 
 #user-container {
-  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;      /* TWEENER - IE 10 */
-  display: -webkit-flex;     /* NEW - Chrome */
-  display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
-  flex-direction: row;
-  top: 22px;
-  right: 0;
-  padding-left: 10px;
-  justify-content: flex-end;
-  padding-right: 10px;
+  width: 100%;
+  padding-bottom: 10px;
 }
+
+#sign-in, #sign-out {
+  text-align: center;
+  display: inline-block;
+}
+
+.material-icons, #sign-in-text {
+  display: inline-block;
+  padding: 0;
+}
+
+
+.material-icons {
+  vertical-align: top!important;
+}
+
+/* material-icons rules */
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+#sign-in-text {
+  font-size: 22px;
+  margin: 0;
+  padding-left: 5px;
+}
+
+
 #user-container #user-pic {
   top: 5px;
   position: relative;
@@ -128,115 +149,7 @@ table {
 }
 
 
-@media screen and (min-width: 980px) /* Desktop */ {
-  .monthframe, #template {
-    margin:auto;
-    margin-bottom: 25px;
-    margin-top: 25px;
-    position: relative;
-    width: 60%
-}
-  .checkmark {
-    font-size: 40px;
-    /*--adjust as necessary--*/
-    color: #000;
-    /*font-size: 28px;*/
-    padding-right: 0.5em;
-    position: absolute;
-    margin: 0 0 0 -20px;
-    top: 20%;
-    left: 50%;
-  }
-  td {
-    height: 90px;
-    width: 90px;
-  }
-   
 
-}
-
-@media screen and (max-width: 979px) /*tablet*/ {
-  .monthframe, #template {
-    margin:auto;
-    margin-bottom: 25px;
-    margin-top: 25px;
-    position: relative;
-    width: 100%
-}
-  .checkmark {
-    font-size: 36px;
-    /*--adjust as necessary--*/
-    color: #000;
-    /*font-size: 28px;*/
-    padding-right: 0.5em;
-    position: absolute;
-    top: 30%;
-    margin: 0 0 0 -18px;
-    left: 50%;
-    }
-  td {
-    height: 103px;
-    width: 103px;
-}
-
-  
-}
-
-@media screen and (max-width: 500px) /* mobile*/  {
-  .monthframe, #template {
-    margin:auto;
-    margin-bottom: 25px;
-    margin-top: 25px;
-    position: relative;
-    width: 100%
-}
-  .checkmark {
-    font-size: 14px;
-    /*--adjust as necessary--*/
-    color: #000;
-    /*font-size: 28px;*/
-    padding-right: 0.5em;
-    position: absolute;
-    top: 30%;
-    margin: 0 0 0 -7px;
-    left: 50%;
-  }
-  td {
-    width: 55px;
-    height: 55px;
-}
-
-  #createButton, #clearButton {
-    /*padding: 5px 10px 5px 10px; */
-    font-size: 16px; 
-    line-height: 1.5; 
-    border-top-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-  } 
-  
-
-}
-
-@media screen and (max-width: 320px) {
-    td {
-      width: 40px;
-      height: 40px;
-    }
-}
-
-/*@media screen and (max-width: 170px) for when you resize your screen {
-  .navbar-brand {
-    font-size: 15px;
-    line-height: 15px;
-  }
-  #contentWrapper {
-    padding-top: 110px;
-  }
-  #setButton, #clearButton {
-    margin-top: 5px;
-  }
-}
-*/
 
 .month {
     width: 100%
@@ -314,3 +227,99 @@ label {
 }
 
 
+
+@media screen and (min-width: 960px) /* Desktop */ {
+  .monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 60%
+}
+  .checkmark {
+    font-size: 40px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    margin: 0 0 0 -20px;
+    top: 20%;
+    left: 50%;
+  }
+  td {
+    height: 90px;
+    width: 90px;
+  }
+   
+
+}
+
+@media screen and (min-width: 768px) /*tablet*/ {
+  .monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
+  .checkmark {
+    font-size: 36px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -18px;
+    left: 50%;
+    }
+  td {
+    height: 103px;
+    width: 103px;
+}
+
+  
+}
+
+@media screen and (max-width: 500px) /* mobile*/  {
+  .monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
+  .checkmark {
+    font-size: 14px;
+    /*--adjust as necessary--*/
+    color: #000;
+    /*font-size: 28px;*/
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -7px;
+    left: 50%;
+  }
+  td {
+    width: 55px;
+    height: 55px;
+}
+
+  #createButton, #clearButton {
+    /*padding: 5px 10px 5px 10px; */
+    font-size: 16px; 
+    line-height: 1.5; 
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  } 
+  
+
+}
+
+@media screen and (max-width: 320px) {
+    td {
+      width: 40px;
+      height: 40px;
+    }
+}
