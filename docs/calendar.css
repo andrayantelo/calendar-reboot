@@ -77,12 +77,19 @@ body{
   height: 40px;
   background-size: 40px;
   border-radius: 20px;
+  float: left;
 }
 #user-container #user-name {
   font-size: 16px;
   line-height: 36px;
   padding-right: 10px;
-  padding-left: 20px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+  float: left;
+}
+
+#sign-out {
+  float: left;
 }
 
 #user-name {
@@ -254,7 +261,13 @@ label {
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
-  #sign-in, #sign-out {
+  #user-container {
+    display: inline-block;
+    width: initial;
+    float: right;
+  }
+  
+  #sign-in {
     float: right;
   }
   
