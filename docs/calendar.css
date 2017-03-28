@@ -249,6 +249,12 @@ label {
  * *****************************************/
 
 @media screen and (min-width: 960px) /* Desktop */ {
+  #sampleCalendarImage {
+    margin-left: auto;
+    margin-right: auto;
+    
+  }
+  
   .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
