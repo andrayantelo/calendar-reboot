@@ -12,7 +12,11 @@ html {
 }
 
 #contentWrapper {
-    padding-top: 70px;
+    padding-top: 30px;
+}
+
+.page-header {
+  text-align: center;
 }
 
 /* Navbar CSS
@@ -272,6 +276,10 @@ label {
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
+  #contentWrapper {
+    padding-top: 50px;
+  }
+  
   #user-container {
     display: inline-block;
     width: initial;
@@ -307,12 +315,12 @@ label {
   td {
     height: 103px;
     width: 103px;
+  }
 }
 
-  
-}
 
-@media screen and (max-width: 500px) /* mobile*/  {
+/*
+@media screen and (max-width: 500px) {
   .monthframe, #template {
     margin:auto;
     margin-bottom: 25px;
@@ -322,9 +330,9 @@ label {
 }
   .checkmark {
     font-size: 14px;
-    /*--adjust as necessary--*/
+    /*--adjust as necessary--
     color: #000;
-    /*font-size: 28px;*/
+    /*font-size: 28px;
     padding-right: 0.5em;
     position: absolute;
     top: 30%;
@@ -337,7 +345,7 @@ label {
 }
 
   #createButton, #clearButton {
-    /*padding: 5px 10px 5px 10px; */
+    /*padding: 5px 10px 5px 10px; 
     font-size: 16px; 
     line-height: 1.5; 
     border-top-left-radius: 0px;
@@ -353,3 +361,4 @@ label {
       height: 40px;
     }
 }
+*/
