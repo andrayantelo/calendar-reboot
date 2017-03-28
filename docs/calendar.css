@@ -1,7 +1,3 @@
-html {
-    font-size:100%;
-}
-
 #contentWrapper {
     padding-top: 70px;
 }
@@ -12,7 +8,7 @@ body{
 
 /*navbar css TODO */
 #navbarContainer {
-  padding: 0 15px;
+  top: 0;
 }
 
 /*User sign-in container, user-name, user-pic CSS*/
