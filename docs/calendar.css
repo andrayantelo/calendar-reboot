@@ -146,6 +146,8 @@ html {
 
 table {
     border-collapse: collapse;
+    /*fixed: allows you to set width and height*/
+    table-layout: auto;
 }
 
     
@@ -154,7 +156,6 @@ table {
     text-transform: upper-case;
     font-size: 100%;
     line-height: 26px;
-    /*height: 50px; */
     color:#000000;
     width: 100%;
     display: table;
@@ -164,18 +165,12 @@ table {
     text-align: center;
     cursor:default;
     border:1px solid #e6e6e6;
+    height: 48px;
 }
-
-
-
 
 .month {
     width: 100%
 }
-
-/*.dayhighlight {
-    background: red
-}*/
 
 .currentDay > .daynumber{
     
@@ -262,10 +257,6 @@ corresponding value from the list below*/
     text-decoration: inherit;
 }
 
-td {
-    width: 55px;
-    height: 55px;
-}
 
 #createButton, #clearButton {
     font-size: 16px; 
@@ -302,13 +293,13 @@ td {
     top: 20%;
     left: 50%;
   }
-  td {
+  /*td {
     height: 150px;
     width: 150px;
-  }
+  }*/
 /* TODO adjust td's so that they are square.
  * http://stackoverflow.com/questions/20456694/grid-of-responsive-squares/20457076#20457076
- * /
+ * */
 
 }
 
@@ -343,9 +334,9 @@ td {
     margin: 0 0 0 -18px;
     left: 50%;
     }
-  td {
+  /*td {
     height: 103px;
     width: 103px;
-  }
+  }*/
 }
 
