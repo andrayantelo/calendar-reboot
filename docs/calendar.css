@@ -293,13 +293,9 @@ corresponding value from the list below*/
     top: 20%;
     left: 50%;
   }
-  /*td {
-    height: 150px;
-    width: 150px;
-  }*/
-/* TODO adjust td's so that they are square.
- * http://stackoverflow.com/questions/20456694/grid-of-responsive-squares/20457076#20457076
- * */
+  td {
+    height: 155px!important;
+  }
 
 }
 
@@ -334,9 +330,8 @@ corresponding value from the list below*/
     margin: 0 0 0 -18px;
     left: 50%;
     }
-  /*td {
-    height: 103px;
-    width: 103px;
-  }*/
+  td {
+    height: 105px;
+  }
 }
 
