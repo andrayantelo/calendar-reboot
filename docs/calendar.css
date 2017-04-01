@@ -2,6 +2,10 @@ body{
   position: relative;
 }
 
+div {
+  display: block;
+}
+
 
 [hidden] {
   display: none !important;
@@ -12,7 +16,7 @@ html {
 }
 
 #contentWrapper {
-    padding-top: 30px;
+    padding-top: 70px;
 }
 
 .page-header {
@@ -48,7 +52,9 @@ html {
 
 /* material-icons rules */
 /* Rules for sizing the icon. */
-.material-icons.md { font-size: 24px; }
+.material-icons.md { 
+  font-size: 24px; 
+}
 
 
 #sign-in-text {
@@ -146,36 +152,39 @@ html {
 
 table {
     border-collapse: collapse;
+    /*fixed: allows you to set width and height*/
+    table-layout: auto;
 }
 
-    
+#dayNames {
+  width: 100%;
+  background: #e1e1e1;
+}
+
 #days {
-    background: #e1e1e1;
     text-transform: upper-case;
-    font-size: 100%;
     line-height: 26px;
-    /*height: 50px; */
     color:#000000;
     width: 100%;
     display: table;
+    table-layout: fixed;
 }
 
- td {
+#days td {
+  width: 14.3%;
+  text-align: center;
+}
+
+.monthContainer .month .week td {
     text-align: center;
     cursor:default;
     border:1px solid #e6e6e6;
+    height: 48px;
 }
-
-
-
 
 .month {
     width: 100%
 }
-
-/*.dayhighlight {
-    background: red
-}*/
 
 .currentDay > .daynumber{
     
@@ -193,18 +202,60 @@ table {
 
 }
 
-.cell {
+.monthContainer .month .week td .cell {
     position: relative;     
 }
 
-.daynumber {
+.monthContainer .month .week td .cell .daynumber {
     text-align:left;
     position: relative;
 } 
 
-.checkmark {
-    position: absolute;
+.monthContainer .month .week td .cell, .monthContainer .month .week td .nil {
+    width: 100%;
+    height: 100%; 
 }
+
+
+.monthContainer .month .week td .nil {
+    background: #f3f3f3;
+}
+
+.monthContainer .month .week .activeDay {
+    background: white;
+}
+
+.monthContainer .month .week .inactiveDay {
+  background: #ededed;
+}
+
+label {
+    font-weight: normal;
+}
+
+.list-group-item {
+    display: list-item;
+}
+
+.monthframe, #template {
+    margin:auto;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    position: relative;
+    width: 100%
+}
+
+.monthContainer .month .week td .cell .checkmark {
+    font-size: 14px;
+    /*--adjust as necessary--*/
+    color: #000;
+    padding-right: 0.5em;
+    position: absolute;
+    top: 30%;
+    margin: 0 0 0 -7px;
+    left: 50%;
+    position: absolute;
+  }
  
 /*replace the content value with the
 corresponding value from the list below*/
@@ -218,32 +269,13 @@ corresponding value from the list below*/
 }
 
 
-.cell, .nil {
-    width: 100%;
-    height: 100%; 
-}
-
-
-.nil {
-    background: #f3f3f3;
-}
-
-.activeDay {
-    background: white;
-}
-
-.inactiveDay {
-    background: #f9f9f9;
-}
-
-label {
-    font-weight: normal;
-}
-
-.list-group-item {
-    display: list-item;
-}
-
+#createButton, #clearButton {
+    font-size: 16px; 
+    line-height: 1.5; 
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+} 
+  
 
 /* Media queries *
  * *****************************************/
@@ -262,30 +294,35 @@ label {
     position: relative;
     width: 60%
 }
-  .checkmark {
+  .monthContainer .month .week td .cell .checkmark {
     font-size: 40px;
     /*--adjust as necessary--*/
     color: #000;
-    /*font-size: 28px;*/
     padding-right: 0.5em;
     position: absolute;
     margin: 0 0 0 -20px;
     top: 20%;
     left: 50%;
   }
-  td {
-    height: 90px;
-    width: 90px;
+  .monthContainer .month .week td {
+    height: 155px!important;
   }
-   
+  
+  #bootstrap-overrides {
+    font-size: 16px;
+  }
+  
+  #days {
+    margin-top: 10px;
+  }
+  
+  .month-year, #dayNames {
+    padding: 10px 0 10px 0;
+  }
 
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
-  #contentWrapper {
-    padding-top: 50px;
-  }
-  
   #user-container {
     display: inline-block;
     width: initial;
@@ -306,65 +343,18 @@ label {
     margin-top: 25px;
     position: relative;
     width: 100%
-}
-  .checkmark {
+  }
+  .monthContainer .month .week td .cell .checkmark {
     font-size: 36px;
-    /*--adjust as necessary--*/
     color: #000;
-    /*font-size: 28px;*/
     padding-right: 0.5em;
     position: absolute;
     top: 30%;
     margin: 0 0 0 -18px;
     left: 50%;
     }
-  td {
-    height: 103px;
-    width: 103px;
+  .monthContainer .month .week td {
+    height: 105px;
   }
 }
 
-
-/*
-@media screen and (max-width: 500px) {
-  .monthframe, #template {
-    margin:auto;
-    margin-bottom: 25px;
-    margin-top: 25px;
-    position: relative;
-    width: 100%
-}
-  .checkmark {
-    font-size: 14px;
-    /*--adjust as necessary--
-    color: #000;
-    /*font-size: 28px;
-    padding-right: 0.5em;
-    position: absolute;
-    top: 30%;
-    margin: 0 0 0 -7px;
-    left: 50%;
-  }
-  td {
-    width: 55px;
-    height: 55px;
-}
-
-  #createButton, #clearButton {
-    /*padding: 5px 10px 5px 10px; 
-    font-size: 16px; 
-    line-height: 1.5; 
-    border-top-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-  } 
-  
-
-}
-
-@media screen and (max-width: 320px) {
-    td {
-      width: 40px;
-      height: 40px;
-    }
-}
-*/
