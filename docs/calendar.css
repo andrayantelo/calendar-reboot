@@ -2,6 +2,10 @@ body{
   position: relative;
 }
 
+div {
+  display: block;
+}
+
 
 [hidden] {
   display: none !important;
@@ -152,9 +156,12 @@ table {
     table-layout: auto;
 }
 
-    
+#dayNames {
+  width: 100%;
+  background: #e1e1e1;
+}
+
 #days {
-    background: #e1e1e1;
     text-transform: upper-case;
     line-height: 26px;
     color:#000000;
@@ -302,7 +309,15 @@ corresponding value from the list below*/
   }
   
   #bootstrap-overrides {
-    font-size: 18px;
+    font-size: 16px;
+  }
+  
+  #days {
+    margin-top: 10px;
+  }
+  
+  .month-year, #dayNames {
+    padding: 10px 0 10px 0;
   }
 
 }
