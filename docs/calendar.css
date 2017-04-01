@@ -156,11 +156,16 @@ table {
 #days {
     background: #e1e1e1;
     text-transform: upper-case;
-    font-size: 100%;
     line-height: 26px;
     color:#000000;
     width: 100%;
     display: table;
+    table-layout: fixed;
+}
+
+#days td {
+  width: 14.3%;
+  text-align: center;
 }
 
 .monthContainer .month .week td {
@@ -294,6 +299,10 @@ corresponding value from the list below*/
   }
   .monthContainer .month .week td {
     height: 155px!important;
+  }
+  
+  #bootstrap-overrides {
+    font-size: 18px;
   }
 
 }
