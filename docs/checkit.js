@@ -738,8 +738,6 @@ CheckIt.prototype.buildCalendar = function(calendarObject) {
     this.generateCheckmarks(calendarObject);
     this.removeEmptyWeeks(calendarObject);
     this.findCurrentDay();
-
-
 };
 
 CheckIt.prototype.displayCalendar = function(calendarObj) {

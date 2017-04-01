@@ -12,7 +12,7 @@ html {
 }
 
 #contentWrapper {
-    padding-top: 79px;
+    padding-top: 70px;
 }
 
 .page-header {
@@ -48,7 +48,9 @@ html {
 
 /* material-icons rules */
 /* Rules for sizing the icon. */
-.material-icons.md { font-size: 24px; }
+.material-icons.md { 
+  font-size: 24px; 
+}
 
 
 #sign-in-text {
@@ -161,7 +163,7 @@ table {
     display: table;
 }
 
- td {
+.monthContainer .month .week td {
     text-align: center;
     cursor:default;
     border:1px solid #e6e6e6;
@@ -188,31 +190,31 @@ table {
 
 }
 
-.cell {
+.monthContainer .month .week td .cell {
     position: relative;     
 }
 
-.daynumber {
+.monthContainer .month .week td .cell .daynumber {
     text-align:left;
     position: relative;
 } 
 
-.cell, .nil {
+.monthContainer .month .week td .cell, .monthContainer .month .week td .nil {
     width: 100%;
     height: 100%; 
 }
 
 
-.nil {
+.monthContainer .month .week td .nil {
     background: #f3f3f3;
 }
 
-.activeDay {
+.monthContainer .month .week .activeDay {
     background: white;
 }
 
-.inactiveDay {
-    background: #f9f9f9;
+.monthContainer .month .week .inactiveDay {
+  background: #ededed;
 }
 
 label {
@@ -231,7 +233,7 @@ label {
     width: 100%
 }
 
-.checkmark {
+.monthContainer .month .week td .cell .checkmark {
     font-size: 14px;
     /*--adjust as necessary--*/
     color: #000;
@@ -240,11 +242,8 @@ label {
     top: 30%;
     margin: 0 0 0 -7px;
     left: 50%;
-  }
-  
-.checkmark {
     position: absolute;
-}
+  }
  
 /*replace the content value with the
 corresponding value from the list below*/
@@ -283,7 +282,7 @@ corresponding value from the list below*/
     position: relative;
     width: 60%
 }
-  .checkmark {
+  .monthContainer .month .week td .cell .checkmark {
     font-size: 40px;
     /*--adjust as necessary--*/
     color: #000;
@@ -293,7 +292,7 @@ corresponding value from the list below*/
     top: 20%;
     left: 50%;
   }
-  td {
+  .monthContainer .month .week td {
     height: 155px!important;
   }
 
@@ -321,7 +320,7 @@ corresponding value from the list below*/
     position: relative;
     width: 100%
   }
-  .checkmark {
+  .monthContainer .month .week td .cell .checkmark {
     font-size: 36px;
     color: #000;
     padding-right: 0.5em;
@@ -330,7 +329,7 @@ corresponding value from the list below*/
     margin: 0 0 0 -18px;
     left: 50%;
     }
-  td {
+  .monthContainer .month .week td {
     height: 105px;
   }
 }
