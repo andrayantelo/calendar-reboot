@@ -76,7 +76,7 @@
         <script>
             $(document).ready( function() {
 
-                checkit = new CheckIt('localStorage', $('#calendarDiv'));
+                checkit = new CheckIt('firebase', $('#calendarDiv'));
                 
                 // Run findCurrentDay every 10 minutes
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
@@ -146,11 +146,11 @@
                 <div hidden id="user-pic"></div>
                 <div hidden id="user-name"></div>
                 <button class="btn btn-primary navbar-btn " hidden id="sign-out">
-                  Sign-out
+                  <span id="sign-out-text">Sign-out</span>
                 </button>
                 <button class="btn btn-primary navbar-btn " hidden id="sign-in"> 
                   <i class="material-icons md">account_circle</i>
-                  <p id="sign-in-text">Sign-in with Google</p>
+                  <span id="sign-in-text">Sign-in with Google</span>
                 </button>
             </div>
        
@@ -202,10 +202,10 @@
                         </ul> 
                       </li>
                   </ol>
-              </p>
               <h1 class="page-header">Sample Calendar</h1>
               <div id="calendarSampleContainer">
-                  <img class="img-responsive" id="sampleCalendarImage" src="samplecalendar.png"/>
+                  <img class="img-responsive" alt="Sample Maraton Training calendar"
+                    id="sampleCalendarImage" src="samplecalendar.png"/>
               </div>
             </div>
         </div> <!-- /.col -->
@@ -216,15 +216,17 @@
           
           <!-- put form inside of accordion -->
          
-          <div hidden id="buildFormAccordion" hidden class="panel-group" aria-multiselectable="true">
+          <div hidden id="buildFormAccordion" role="tablist" class="panel-group" aria-multiselectable="true">
               <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingOne">
-                  <h5 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      Build Calendar
-                    </a>
-                  </h5>
-                </div> <!--/.panel-heading -->
+                <div role="tablist">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                      <h5 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                          Build Calendar
+                        </a>
+                      </h5>
+                    </div> <!--/.panel-heading -->
+                </div>
 
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
           <div class="panel-body">
@@ -245,7 +247,7 @@
                           
                           <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
                           <span class="input-group-addon">
-                              <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
+                              <span class="calendarIcon glyphicon glyphicon-calendar"></span>
                           </span>
                       </div> <!-- /.input-group date -->
                          
@@ -258,7 +260,7 @@
                           
                           <input type='text' id='endDate' class="form-control" placeholder="Pick an End Date" />
                           <span class="input-group-addon">
-                              <span id="calendarIcon" class="glyphicon glyphicon-calendar"></span>
+                              <span class="calendarIcon glyphicon glyphicon-calendar"></span>
                           </span>
                       </div> <!-- /.input-group date -->
                       <span id="helpBlock" class="help-block hidden">The end date must be after the start date.</span>
@@ -278,15 +280,18 @@
                     </div> <!--/.col-md-3-->
                   </div>  <!-- /.row -->
                   
-              </div> <!-- /.col-md-6 -->
+                </form>
+                  
+              </div> <!-- /.col-md-5 -->
             </div> <!-- /.row -->
-          </div> <!-- /.container -->
         
-        </form>
+        
       </div> <!--/.panel-body -->
     </div> <!--/.collapseOne panel-collapse-->
   </div> <!--/.panel -->
 </div> <!-- /.accordion panel-group -->
+
+ </div> <!-- /.container -->
   
 
 <!-- calendarWrapper contains the actual calendar -->
