@@ -120,14 +120,14 @@ CheckIt.prototype.attachCheckmarkClickHandler = function(calObj, monthObjArray) 
 };
 
 
-CheckIt.prototype.displayLoadingWheel = function($elementId) {
+CheckIt.prototype.displayLoadingWheel = function($elementSelector) {
     // Displays the loading wheel.
     
     // Parameters: elementId 
            // A jquery selector pertaining to the element
            // where you want to place the loading wheel.
     
-    var target = $elementId.get()[0];
+    var target = $elementSelector.get()[0];
     this.spinner.spin(target);
     
 };
@@ -283,7 +283,7 @@ CheckIt.prototype.updateUserDescription = function(user) {
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
-        
+        console.log("onAuthStateChanged running");
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
@@ -758,28 +758,28 @@ CheckIt.prototype.clearCalendarDiv = function() {
     this.$calendarDiv.children('.monthframe').remove();
 };
 
-CheckIt.prototype.findCurrentDay = function(currentDay) {
-    // Finds current day to apply CSS to it.
+CheckIt.prototype.findCurrentDay = function() {
+    // Finds current day to apply CSS to it and so that the browser scrolls to it.
     // Pass the day you are looking for as a parameter "YYYYMMDD"
     // Clear the page of any days in the calendar that may have the class
     // 'currentDay' on them
+    
     if (this.$calendarDiv === undefined) {
         return;
     }
 
     if (this.$calendarDiv.find('.currentDay').length) {
-        
         this.removeClass("currentDay");
     }
     
-    var today = moment(currentDay, "YYYYMMDD") || moment();
+    var today = moment();
     var todayId = moment({"year":today.year(), "month":today.month(), "day": today.date()}).format("YYYYMMDD");
     // If current day is not actually an ACTIVE day in the calendar, don't add it
     this.$calendarDiv.find('.activeDay')
         .children('.cell')
         .filter('#' + todayId)
         .addClass('currentDay');
-
+    return todayId;
 };
 
 

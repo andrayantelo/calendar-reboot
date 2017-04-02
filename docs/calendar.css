@@ -45,7 +45,16 @@ html {
   padding: 0;
 }
 
+#navbar-list {
+  display: inline-block;
+  width: 50%;
+}
 
+
+#navbar-list a {
+  float: left;
+}
+ 
 .material-icons {
   vertical-align: top!important;
 }
