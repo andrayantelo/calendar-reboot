@@ -76,8 +76,8 @@
         <script>
             $(document).ready( function() {
 
-                checkit = new CheckIt('firebase', $('#calendarDiv'));
-      
+                checkit = new CheckIt('localStorage', $('#calendarDiv'));
+                
                 // Run findCurrentDay every 10 minutes
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
             });
@@ -119,6 +119,9 @@
                 <li></li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
+            
+          <!-- third item in navbar, loading wheel div -->
+            <div id="loadingWheel"></div>
           
           <!-- second item in navbar, options dropdown -->
            <li class="dropdown">
@@ -133,13 +136,10 @@
                 </li>
               </ul> <!-- /.dropdown-menu -->
             </li> <!-- /.dropdown -->
-            
-            <!-- third item in navbar, loading wheel div -->
-            <div id="loadingWheel"></div>
 
            </ul> <!-- /.nav navbar-nav -->  
-        
-        
+         
+
          <!-- fourth item in navbar, sign in button -->
            
             <div id="user-container">
@@ -161,7 +161,7 @@
       
   </nav> <!-- /.navbar navbar-default -->
 
-    
+  
     
 </div> <!-- /#navbarContainer -->
 
