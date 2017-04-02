@@ -18,6 +18,9 @@
         <!-- include jquery -->
         <script src="//code.jquery.com/jquery-1.12.4.js"></script>
         
+        <!-- scrollTo jQuery plugin -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.0/jquery.scrollTo.min.js"></script>
+        
         <!-- bootstrap, moment, datetimepicker, bootstrap css, datetimepicker css -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
@@ -65,9 +68,9 @@
         
         </script>
         
-        <!-- <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+        <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
-        -->
+        
         
         <script type ="text/javascript" src="store.js"></script>
         <script type ="text/javascript" src="checkit.js"></script> 
@@ -80,14 +83,9 @@
                 
                 // Run findCurrentDay every 10 minutes
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
-                
-                // Scroll to current day
         
-                //Run once first // TODO
+                //Run once first 
                 var currentDay = checkit.findCurrentDay();
-                console.log(currentDay);
-                var elem = document.getElementById(currentDay) //.scrollIntoView();
-                console.log(elem);
             });
         </script>
     </head>
