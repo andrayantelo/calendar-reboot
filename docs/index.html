@@ -80,11 +80,16 @@
                 
                 // Run findCurrentDay every 10 minutes
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
+                
+                // Scroll to current day
+        
+                //Run once first // TODO
+                var currentDay = checkit.findCurrentDay();
+                console.log(currentDay);
+                var elem = document.getElementById(currentDay) //.scrollIntoView();
+                console.log(elem);
             });
         </script>
-        
-        
-        
     </head>
 <body id="bootstrap-overrides">
     
@@ -216,9 +221,9 @@
           
           <!-- put form inside of accordion -->
          
-          <div hidden id="buildFormAccordion" role="tablist" class="panel-group" aria-multiselectable="true">
+          <div hidden id="buildFormAccordion" class="panel-group" aria-multiselectable="true">
               <div class="panel panel-default">
-                <div role="tablist">
+               
                     <div class="panel-heading" role="tab" id="headingOne">
                       <h5 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -226,7 +231,7 @@
                         </a>
                       </h5>
                     </div> <!--/.panel-heading -->
-                </div>
+                
 
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
           <div class="panel-body">

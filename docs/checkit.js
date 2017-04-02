@@ -312,14 +312,6 @@ CheckIt.prototype.onAuthStateChanged = function(user) {
         
         //Hide the get started blurb.
         this.$getStarted.attr('hidden', 'true');
-        
-        // Scroll to current day
-        
-        //Run once first // TODO
-        var currentDay = checkit.findCurrentDay();
-        console.log(currentDay);
-        var elem = document.getElementById(currentDay) //.scrollIntoView();
-        console.log(elem);
     
       }
     else { // User is signed out!
