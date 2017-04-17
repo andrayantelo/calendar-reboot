@@ -204,7 +204,7 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 
 
 CheckIt.prototype.initLocalStorage = function() {
-    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 100});
+    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10000});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
     

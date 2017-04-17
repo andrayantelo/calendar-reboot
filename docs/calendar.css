@@ -6,9 +6,16 @@ div {
   display: block;
 }
 
-
 [hidden] {
   display: none !important;
+}
+
+#loadingWheelContainer {
+  position: absolute;
+  left: 50%;
+  margin-left: 20px;
+  top: 24px;
+  z-index: 1031;
 }
 
 html {
@@ -290,6 +297,14 @@ corresponding value from the list below*/
  * *****************************************/
 
 @media screen and (min-width: 960px) /* Desktop */ {
+
+  #loadingWheelContainer {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+  }
+  
   #sampleCalendarImage {
     margin-left: auto;
     margin-right: auto;
@@ -332,6 +347,11 @@ corresponding value from the list below*/
 }
 
 @media screen and (min-width: 768px) /*tablet*/ {
+
+  #loadingWheelContainer {
+    margin-left: 80px;
+  }
+  
   #user-container {
     display: inline-block;
     width: initial;
