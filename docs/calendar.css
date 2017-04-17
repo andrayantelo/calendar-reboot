@@ -31,7 +31,7 @@ html {
 }
 
 /* Navbar CSS
- * *******************************/
+ * *****************************/
 
 #navbarContainer{
   top: 0; 
@@ -39,7 +39,6 @@ html {
 
 #user-container {
   width: 100%;
-  padding-bottom: 10px;
 }
 
 #sign-in, #sign-out {
