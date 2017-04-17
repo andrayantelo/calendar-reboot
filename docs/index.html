@@ -79,7 +79,7 @@
         <script>
             $(document).ready( function() {
 
-                checkit = new CheckIt('localStorage', $('#calendarDiv'));
+                checkit = new CheckIt('firebase', $('#calendarDiv'));
                 
                 // Run findCurrentDay every 10 minutes
                 setInterval(checkit.findCurrentDay.bind(checkit), 600000);
