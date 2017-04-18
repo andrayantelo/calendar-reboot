@@ -1006,3 +1006,40 @@ QUnit.test("loadFromDropdown test", function(assert) {
 // Have to have the same html in test html as my app html so that I can
 // test out the buttons and make sure the correct functions are triggered
 // should I do that?
+
+// Tests for Calendar Facts functions
+QUnit.module("CheckIt tests for Calendar Facts functions", {
+    beforeEach: function() {
+        // 
+    },
+    afterEach: function() {
+    }
+});
+
+QUnit.test("getNumberOfCheckedDays test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getNumberOfUncheckedDays test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getCheckedDaysStreak test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getUncheckedDaysStreak test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getTotalCalendarDays test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getTotalCalendarWeeks test", function(assert) {
+    assert.expect(0);
+});
+
+QUnit.test("getNumOfDaysLeft test", function(assert) {
+    assert.expect(0);
+});
