@@ -785,11 +785,11 @@ CheckIt.prototype.findCurrentDay = function() {
 
 // Should these be CheckIt functions? or Calendar. TODO
 // How to access the calendar object when I need it for these functions?
-// current active calendar...
+// current active calendar...??
 
 CheckIt.prototype.getNumberOfChecked = function() {
     // Returns the number of checked days in a calendar
-    
+
     var checkit = this;
 
     return checkit.store.getActive().then(function(activeCalendarId) {
