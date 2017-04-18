@@ -782,6 +782,36 @@ CheckIt.prototype.findCurrentDay = function() {
     return todayId;
 };
 
+CheckIt.prototype.getNumberOfCheckedDays = function() {
+    // Returns the number of checked days in a calendar
+};
+
+CheckIt.prototype.getNumberOfUncheckedDays = function() {
+    // Returns number of unchecked days in a calendar
+};
+
+CheckIt.prototype.getCheckedDaysStreak = function() {
+    // Returns the longest streak of checked days
+};
+
+CheckIt.prototype.getUncheckedDaysStreak = function() {
+    // Returns the longest streak of unchecked days
+};
+
+CheckIt.prototype.getTotalCalendarDays = function() {
+    // Returns the total number of active days in the calendar
+};
+
+CheckIt.prototype.getTotalCalendarWeeks = function() {
+    // Returns the total number of active weeks in the calendar
+};
+
+CheckIt.prototype.getNumOfDaysLeft = function() {
+    // Returns the total number of active days left in a calendar starting from current
+    // day to end.
+};
+
+
 
 //CODE FOR MONTH AND CALENDAR OBJECTS
 var Month = function(dateString) {
