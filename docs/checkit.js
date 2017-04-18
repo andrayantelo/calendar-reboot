@@ -782,6 +782,9 @@ CheckIt.prototype.findCurrentDay = function() {
     return todayId;
 };
 
+
+// Should these be CheckIt functions? or Calendar. TODO
+
 CheckIt.prototype.getNumberOfChecked = function(calObj) {
     // Returns the number of checked days in a calendar
     var size = 0, key;
@@ -793,8 +796,9 @@ CheckIt.prototype.getNumberOfChecked = function(calObj) {
     return size;
 };
 
-CheckIt.prototype.getNumberOfUncheckedDays = function(calObj) {
+CheckIt.prototype.getNumberOfUnchecked = function(calObj) {
     // Returns number of unchecked days in a calendar
+
 };
 
 CheckIt.prototype.getCheckedDaysStreak = function(calObj) {
@@ -807,6 +811,9 @@ CheckIt.prototype.getUncheckedDaysStreak = function(calObj) {
 
 CheckIt.prototype.getTotalCalendarDays = function(calObj) {
     // Returns the total number of active days in the calendar
+    
+    var totalDays = calObj.endDate.diff(calObj.startDate, 'days');
+    return totalDays;
 };
 
 CheckIt.prototype.getTotalCalendarWeeks = function(calObj) {
