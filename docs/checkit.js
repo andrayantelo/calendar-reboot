@@ -798,7 +798,7 @@ CheckIt.prototype.getNumberOfChecked = function(calObj) {
 
 CheckIt.prototype.getNumberOfUnchecked = function(calObj) {
     // Returns number of unchecked days in a calendar
-
+    return this.getTotalCalendarDays(calObj) - this.getNumberOfChecked(calObj);
 };
 
 CheckIt.prototype.getCheckedDaysStreak = function(calObj) {

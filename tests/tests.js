@@ -1059,7 +1059,16 @@ QUnit.test("getNumberOfChecked test", function(assert) {
 });
 
 QUnit.test("getNumberOfUnchecked test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
+    
+    var unchecked = this.checkit.getNumberOfUnchecked(this.calendar);
+    
+    assert.equal(unchecked, 365 - 13);
+    
+    this.calendar.addMonth();
+    var unchecked2 = this.checkit.getNumberOfUnchecked(this.calendar);
+    
+    assert.equal(unchecked2, 393 - 13);
 });
 
 QUnit.test("getCheckedDaysStreak test", function(assert) {
