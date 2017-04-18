@@ -1043,18 +1043,29 @@ QUnit.module("CheckIt tests for Calendar Facts functions", {
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
         this.checkit = new CheckIt('localStorage', this.$calendarDiv);
         
+        // Set calendar in localStorage
+        this.checkit.store.save(this.calendar);
+        
         //May not need the calendar html TODO
         this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
         this.checkit.fillCalendar(this.calendar);
     },
     afterEach: function() {
+        localStorage.clear();
     }
 });
 
 QUnit.test("getNumberOfChecked test", function(assert) {
     assert.expect(1);
     
-    var numOfChecked = this.checkit.getNumberOfChecked(this.calendar);
+    // set Test Calendar as current active calendar
+    
+    // TODO why are the "unique" ids different?
+    this.checkit.store.setActiveById(this.calendar.state.uniqueId);
+    console.log("calendar's id: " + this.calendar.state.uniqueId);
+    console.log(JSON.parse(localStorage.getItem('current_active_calendar')));
+    console.log(JSON.parse(localStorage.getItem('allCalendarIdsKey')));
+    var numOfChecked = this.checkit.getNumberOfChecked();
     assert.equal(numOfChecked, 13);
 });
 

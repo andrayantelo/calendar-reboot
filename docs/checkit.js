@@ -283,7 +283,7 @@ CheckIt.prototype.updateUserDescription = function(user) {
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
-        console.log("onAuthStateChanged running");
+        
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         
@@ -784,16 +784,48 @@ CheckIt.prototype.findCurrentDay = function() {
 
 
 // Should these be CheckIt functions? or Calendar. TODO
+// How to access the calendar object when I need it for these functions?
+// current active calendar...
 
-CheckIt.prototype.getNumberOfChecked = function(calObj) {
+CheckIt.prototype.getNumberOfChecked = function() {
     // Returns the number of checked days in a calendar
-    var size = 0, key;
-    for (key in calObj.state.checkedDays) {
-        if (calObj.state.checkedDays.hasOwnProperty(key)) {
-            size++;
-        }
-    }
-    return size;
+    
+    var checkit = this;
+
+    return checkit.store.getActive().then(function(activeCalendarId) {
+        console.log("found this activeCalendarId: " + activeCalendarId);
+        return checkit.store.loadById(activeCalendarId).catch(function(err) {
+            console.log("Couldn't find active calendar specifically in getNumberOfChecked");
+            console.log("There is no current active calendar " + err);
+            checkit.store.removeActive();
+            return err;
+            });
+        })
+        .then(function(activeCalendarState) {
+            
+            if (activeCalendarState !== null) {
+                var state = activeCalendarState;
+                var calendar = new Calendar(state);
+                console.log("found calendar:");
+                console.log(calendar);
+                var size = 0, key;
+                for (key in calendar.state.checkedDays) {
+                    if (calendar.state.checkedDays.hasOwnProperty(key)) {
+                        size++;
+                    }
+                }
+                console.log('PRINTING SIZE');
+                console.log(size);
+                return size;
+            }
+            
+        })
+        .catch(function(err) {
+            console.log("getNumberOfChecked");
+            console.log("Could not get number of checked days" + err);
+            return err;
+        });
+    
 };
 
 CheckIt.prototype.getNumberOfUnchecked = function(calObj) {
@@ -803,6 +835,13 @@ CheckIt.prototype.getNumberOfUnchecked = function(calObj) {
 
 CheckIt.prototype.getCheckedDaysStreak = function(calObj) {
     // Returns the longest streak of checked days
+    var currentStreak = 0;
+    
+    this.$calendarDiv.find('.month .week .activeDay > .cell > .checkmark')
+        .each(function (index) {
+            console.log(index);
+    });
+    
 };
 
 CheckIt.prototype.getUncheckedDaysStreak = function(calObj) {
