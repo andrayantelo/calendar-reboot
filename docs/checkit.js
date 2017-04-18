@@ -204,7 +204,7 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 
 
 CheckIt.prototype.initLocalStorage = function() {
-    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10000});
+    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
     
@@ -782,31 +782,38 @@ CheckIt.prototype.findCurrentDay = function() {
     return todayId;
 };
 
-CheckIt.prototype.getNumberOfCheckedDays = function() {
+CheckIt.prototype.getNumberOfChecked = function(calObj) {
     // Returns the number of checked days in a calendar
+    var size = 0, key;
+    for (key in calObj.state.checkedDays) {
+        if (calObj.state.checkedDays.hasOwnProperty(key)) {
+            size++;
+        }
+    }
+    return size;
 };
 
-CheckIt.prototype.getNumberOfUncheckedDays = function() {
+CheckIt.prototype.getNumberOfUncheckedDays = function(calObj) {
     // Returns number of unchecked days in a calendar
 };
 
-CheckIt.prototype.getCheckedDaysStreak = function() {
+CheckIt.prototype.getCheckedDaysStreak = function(calObj) {
     // Returns the longest streak of checked days
 };
 
-CheckIt.prototype.getUncheckedDaysStreak = function() {
+CheckIt.prototype.getUncheckedDaysStreak = function(calObj) {
     // Returns the longest streak of unchecked days
 };
 
-CheckIt.prototype.getTotalCalendarDays = function() {
+CheckIt.prototype.getTotalCalendarDays = function(calObj) {
     // Returns the total number of active days in the calendar
 };
 
-CheckIt.prototype.getTotalCalendarWeeks = function() {
+CheckIt.prototype.getTotalCalendarWeeks = function(calObj) {
     // Returns the total number of active weeks in the calendar
 };
 
-CheckIt.prototype.getNumOfDaysLeft = function() {
+CheckIt.prototype.getNumOfDaysLeft = function(calObj) {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
 };

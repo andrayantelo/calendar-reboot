@@ -1010,14 +1010,52 @@ QUnit.test("loadFromDropdown test", function(assert) {
 // Tests for Calendar Facts functions
 QUnit.module("CheckIt tests for Calendar Facts functions", {
     beforeEach: function() {
-        // 
+        // Make a sample calendar with sample data
+        // Should be able to get all the data you need from just a calendar object
+        // Initiate a test calendar object for testing
+        this.params = 
+        {
+            startDate: "2017-02-14",
+            endDate: "2018-02-14" ,
+            calendarTitle: "Test Calendar"
+        };
+        
+        this.state = emptyCalendarState(this.params);
+        
+        this.calendar = new Calendar(this.state);
+        this.calendar.state.checkedDays = {
+            "20170214": 1,
+            "20170314": 1,
+            "20170414": 1,
+            "20170514": 1,
+            "20170614": 1,
+            "20170714": 1,
+            "20170814": 1,
+            "20170914": 1,
+            "20171014": 1,
+            "20171114": 1,
+            "20171214": 1,
+            "20180114": 1,
+            "20180214": 1
+        }
+        
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+        
+        //May not need the calendar html TODO
+        this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+        this.checkit.fillCalendar(this.calendar);
     },
     afterEach: function() {
     }
 });
 
-QUnit.test("getNumberOfCheckedDays test", function(assert) {
-    assert.expect(0);
+QUnit.test("getNumberOfChecked test", function(assert) {
+    assert.expect(1);
+    
+    var numOfChecked = this.checkit.getNumberOfChecked(this.calendar);
+    assert.equal(numOfChecked, 13);
 });
 
 QUnit.test("getNumberOfUncheckedDays test", function(assert) {
