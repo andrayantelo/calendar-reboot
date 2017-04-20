@@ -180,8 +180,13 @@ CheckIt.prototype.displayActiveCalendar = function() {
     return checkit.store.getActive()
         .then(function(activeCalendarId) {
             // if loadById returns a rejected promise we want to handle it
-            // before running .then... 
+            // before running .then, all it does is return a rejected promise
+            // with the reason for rejection, but we can remove the active status
+            // we don't really need .then to run after the catch because everything 
+            // is handled inside of .catch. That's why we are returning a rejected
+            // promise, the .then never gets run. 
             return checkit.store.loadById(activeCalendarId)
+                // if loadById returns a rejected promise, TODO
                 .catch(function(err) {
                     console.log("There is no current active calendar " + err);
                     checkit.store.removeActive();
@@ -196,6 +201,8 @@ CheckIt.prototype.displayActiveCalendar = function() {
                         return checkit.displayCalendar(calendar);
                     }
                 })
+        // this gets run if getActive returns a rejected promise, but does it also 
+        // run if loadById returns a rejected promise?
         .catch(function(err) {
             console.log("Could not display active calendar" + err);
             checkit.showForm(checkit.$buildCalendarForm);
