@@ -684,7 +684,6 @@ CheckIt.prototype.deleteCalendar = function() {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
-    
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (confirmation) {
         
@@ -793,37 +792,39 @@ CheckIt.prototype.getNumberOfChecked = function() {
     var checkit = this;
 
     return checkit.store.getActive().then(function(activeCalendarId) {
-        console.log("found this activeCalendarId: " + activeCalendarId);
-        return checkit.store.loadById(activeCalendarId).catch(function(err) {
-            console.log("Couldn't find active calendar specifically in getNumberOfChecked");
+        
+        
+        
+        
+        /*console.log("found this activeCalendarId: " + activeCalendarId);
+    return checkit.store.getActive()
+        .then(function(activeCalendarId) {
+            return checkit.store.loadById(activeCalendarId)
+        .catch(function(err) {
             console.log("There is no current active calendar " + err);
             checkit.store.removeActive();
+            checkit.showForm(checkit.$buildCalendarForm);
             return err;
             });
         })
         .then(function(activeCalendarState) {
-            
             if (activeCalendarState !== null) {
                 var state = activeCalendarState;
                 var calendar = new Calendar(state);
-                console.log("found calendar:");
-                console.log(calendar);
-                var size = 0, key;
-                for (key in calendar.state.checkedDays) {
-                    if (calendar.state.checkedDays.hasOwnProperty(key)) {
-                        size++;
-                    }
-                }
-                console.log('PRINTING SIZE');
-                console.log(size);
-                return size;
+                return checkit.displayCalendar(calendar);
             }
-            
         })
         .catch(function(err) {
-            console.log("getNumberOfChecked");
-            console.log("Could not get number of checked days" + err);
+            console.log("Could not display active calendar" + err);
+            checkit.showForm(checkit.$buildCalendarForm);
             return err;
+        });
+            * 
+            * 
+            */
+            
+            
+            
         });
     
 };
