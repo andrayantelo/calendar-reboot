@@ -176,9 +176,11 @@ CheckIt.prototype.displayActiveCalendar = function() {
     var checkit = this;
 
     // if the first promise doesn't work, then just go to catch, don't
-    // try to 
+    // try to resolve things inside of a catch and then run .then
     return checkit.store.getActive()
         .then(function(activeCalendarId) {
+            // if loadById returns a rejected promise we want to handle it
+            // before running .then... 
             return checkit.store.loadById(activeCalendarId)
                 .catch(function(err) {
                     console.log("There is no current active calendar " + err);
