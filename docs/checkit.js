@@ -175,26 +175,67 @@ CheckIt.prototype.displayActiveCalendar = function() {
     
     var checkit = this;
 
-    return checkit.store.getActive().then(function(activeCalendarId) {
-        return checkit.store.loadById(activeCalendarId).catch(function(err) {
-            console.log("There is no current active calendar " + err);
-            checkit.store.removeActive();
-            checkit.showForm(checkit.$buildCalendarForm);
-            return err;
-            });
+    // if the first promise doesn't work, then just go to catch, don't
+    // try to 
+    return checkit.store.getActive()
+        .then(function(activeCalendarId) {
+            return checkit.store.loadById(activeCalendarId)
+                .catch(function(err) {
+                    console.log("There is no current active calendar " + err);
+                    checkit.store.removeActive();
+                    checkit.showForm(checkit.$buildCalendarForm);
+                    return err;
+                });
         })
-        .then(function(activeCalendarState) {
-            if (activeCalendarState !== null) {
-                var state = activeCalendarState;
-                var calendar = new Calendar(state);
-                return checkit.displayCalendar(calendar);
-            }
-        })
+                .then(function(activeCalendarState) {
+                    if (activeCalendarState !== null) {
+                        var state = activeCalendarState;
+                        var calendar = new Calendar(state);
+                        return checkit.displayCalendar(calendar);
+                    }
+                })
         .catch(function(err) {
             console.log("Could not display active calendar" + err);
             checkit.showForm(checkit.$buildCalendarForm);
             return err;
         });
+        
+        
+        /*
+         * 
+        return checkit.store.getActive()
+        .catch(function(err) {
+            console.error("Couldn't get active calendar id: " + err);
+        })
+        .then(function(currentCalendarId) {
+            // remove calendar from dropdown
+            checkit.removeFromCalendarDropdown(currentCalendarId,
+                                               checkit.$calendarDropdown);
+
+            // remove calendar state from storage
+            return checkit.store.removeById(currentCalendarId)
+                .catch(function(err) {
+                    console.error("Unable to remove calendar from storage.");
+                    // TODO: yes this is an error, but what do we want to do now?
+                    // Do we want to plow onward and clear the div or is this worth
+                    // stopping the entire app over?
+                    return Promise.reject(err);
+                })
+                .then(function() {
+                    checkit.clearCalendarDiv();
+                    checkit.showForm(checkit.$buildCalendarForm);
+                    return checkit.store.removeActive()
+                        .catch(function(err) {
+                            console.error("Unable to remove active status from calendar");
+                            return Promise.reject(err);
+                        });
+                });
+        });
+        * 
+        * 
+        */
+        
+        
 }
 
 CheckIt.prototype.clearDropdown = function($dropdown) {
@@ -694,16 +735,24 @@ CheckIt.prototype.deleteCalendar = function() {
     var checkit = this;
 
     return checkit.store.getActive()
+        // if rejected promise returned catch gets run
         .catch(function(err) {
             console.error("Couldn't get active calendar id: " + err);
+            // we don't return a resolved promise here, so after this, 
+            // we exit the function?
         })
+        // if getActive promise resolved .then gets run
+        // with the resolved value from getActive
         .then(function(currentCalendarId) {
             // remove calendar from dropdown
             checkit.removeFromCalendarDropdown(currentCalendarId,
                                                checkit.$calendarDropdown);
 
             // remove calendar state from storage
+            // another promise is returned 
             return checkit.store.removeById(currentCalendarId)
+                // if removeById is a rejected promise then catch is run, 
+                // if it is a resolved promise catch is ignored.
                 .catch(function(err) {
                     console.error("Unable to remove calendar from storage.");
                     // TODO: yes this is an error, but what do we want to do now?

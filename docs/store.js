@@ -258,9 +258,12 @@ var FirebaseCalendarStorage = function(params) {
         var userId = self.user.uid;
         
         self.startWork();
-        return new Promise(function(resolve, reject) {
+        return new Promise(/*executor*/function(resolve, reject) {
+            // TODO analyze this, .once returns a promise? we don't
+            // have to actually write 'return'?
             self.database.ref('users/' + userId + '/currentActiveCalendar')
-            .once('value')  
+            .once('value')
+            // currentActiveCalendar is the value returned by the .once promise?
             .then(function(currentActiveCalendar) {
                 self.endWork();
                 if (currentActiveCalendar.val() === null) {
