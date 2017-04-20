@@ -108,6 +108,19 @@ html {
   padding-top:10px;
 }
 
+/* Github fork me image CSS
+ * **********************/
+ 
+#forkMe {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  border: 0;
+  width: 120px;
+  height: 120px;
+  z-index: 1;
+}
+
 /* content CSS *
  * **********************************/
 
@@ -359,6 +372,11 @@ corresponding value from the list below*/
   
   #sign-in {
     float: right;
+  }
+  
+  #forkMe {
+    width: 149px;
+    height: 149px;
   }
   
   .material-icons.md, #sign-in-text { 
