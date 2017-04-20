@@ -685,30 +685,43 @@ CheckIt.prototype.deleteCalendar = function() {
     
     // Guard against accidental clicks of the delete button
     
+
     var confirmation = confirm("Are you sure you want to delete your calendar?");
-    if (confirmation) {
-        
-        var checkit = this;
-                
-        return checkit.store.getActive().then(function(currentCalendarId) {
+    if (!confirmation) {
+      return Promise.reject("User cancelled the delete operation.");
+    }
+
+    var checkit = this;
+
+    return checkit.store.getActive()
+        .catch(function(err) {
+            console.error("Couldn't get active calendar id: " + err);
+        })
+        .then(function(currentCalendarId) {
             // remove calendar from dropdown
             checkit.removeFromCalendarDropdown(currentCalendarId,
-            checkit.$calendarDropdown);
+                                               checkit.$calendarDropdown);
+
             // remove calendar state from storage
-            return checkit.store.removeById(currentCalendarId).catch(function(err) {
-                console.log("Unable to remove calendar from storage.");
-                return err;
+            return checkit.store.removeById(currentCalendarId)
+                .catch(function(err) {
+                    console.error("Unable to remove calendar from storage.");
+                    // TODO: yes this is an error, but what do we want to do now?
+                    // Do we want to plow onward and clear the div or is this worth
+                    // stopping the entire app over?
+                    return Promise.reject(err);
+                })
+                .then(function() {
+                    checkit.clearCalendarDiv();
+                    checkit.showForm(checkit.$buildCalendarForm);
+                    return checkit.store.removeActive()
+                        .catch(function(err) {
+                            console.error("Unable to remove active status from calendar");
+                            return Promise.reject(err);
+                        });
                 });
-            }).then(function() {
-                checkit.clearCalendarDiv();
-                checkit.showForm(checkit.$buildCalendarForm);
-                return checkit.store.removeActive().catch(function(err) {
-                    console.log("Unable to remove active status from calendar");
-                    return err;
-                });
-            }).catch(function() {console.log(err); });
+        });
     
-    }
 };
 
 CheckIt.prototype.addCalendarToDropdown = function(uniqueId, title, $dropdown) {
