@@ -276,6 +276,7 @@ var FirebaseCalendarStorage = function(params) {
             .catch(function(err) {
                 self.endWork();
                 console.error(err);
+                // does this return a rejected promise?
                 return err;
             })
         })
