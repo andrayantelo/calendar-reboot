@@ -782,59 +782,30 @@ CheckIt.prototype.findCurrentDay = function() {
 };
 
 
-// Should these be CheckIt functions? or Calendar. TODO
-// How to access the calendar object when I need it for these functions?
-// current active calendar...??
+// calendarAnalyzer takes a calendar object and can analyze facts about it.
 
-CheckIt.prototype.getNumberOfChecked = function() {
-    // Returns the number of checked days in a calendar
-
-    var checkit = this;
-
-    return checkit.store.getActive().then(function(activeCalendarId) {
-        
-        
-        
-        
-        /*console.log("found this activeCalendarId: " + activeCalendarId);
-    return checkit.store.getActive()
-        .then(function(activeCalendarId) {
-            return checkit.store.loadById(activeCalendarId)
-        .catch(function(err) {
-            console.log("There is no current active calendar " + err);
-            checkit.store.removeActive();
-            checkit.showForm(checkit.$buildCalendarForm);
-            return err;
-            });
-        })
-        .then(function(activeCalendarState) {
-            if (activeCalendarState !== null) {
-                var state = activeCalendarState;
-                var calendar = new Calendar(state);
-                return checkit.displayCalendar(calendar);
-            }
-        })
-        .catch(function(err) {
-            console.log("Could not display active calendar" + err);
-            checkit.showForm(checkit.$buildCalendarForm);
-            return err;
-        });
-            * 
-            * 
-            */
-            
-            
-            
-        });
-    
+var CalendarAnalyzer = function(calendarState) {
+    this.calState = calendarState;
 };
 
-CheckIt.prototype.getNumberOfUnchecked = function(calObj) {
+CalendarAnalyzer.prototype.getNumberOfChecked = function() {
+    // Returns the number of checked days in a calendar
+    
+    var size = 0, key;
+    for (key in this.calState.checkedDays) {
+        if (this.calState.checkedDays.hasOwnProperty(key)) {
+            size++;
+        }
+    }
+    return size;
+};
+
+CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
     // Returns number of unchecked days in a calendar
     return this.getTotalCalendarDays(calObj) - this.getNumberOfChecked(calObj);
 };
 
-CheckIt.prototype.getCheckedDaysStreak = function(calObj) {
+CalendarAnalyzer.prototype.getCheckedDaysStreak = function(calObj) {
     // Returns the longest streak of checked days
     var currentStreak = 0;
     
@@ -845,22 +816,22 @@ CheckIt.prototype.getCheckedDaysStreak = function(calObj) {
     
 };
 
-CheckIt.prototype.getUncheckedDaysStreak = function(calObj) {
+CalendarAnalyzer.prototype.getUncheckedDaysStreak = function(calObj) {
     // Returns the longest streak of unchecked days
 };
 
-CheckIt.prototype.getTotalCalendarDays = function(calObj) {
+CalendarAnalyzer.prototype.getTotalCalendarDays = function(calObj) {
     // Returns the total number of active days in the calendar
     
     var totalDays = calObj.endDate.diff(calObj.startDate, 'days');
     return totalDays;
 };
 
-CheckIt.prototype.getTotalCalendarWeeks = function(calObj) {
+CalendarAnalyzer.prototype.getTotalCalendarWeeks = function(calObj) {
     // Returns the total number of active weeks in the calendar
 };
 
-CheckIt.prototype.getNumOfDaysLeft = function(calObj) {
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function(calObj) {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
 };
