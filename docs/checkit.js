@@ -791,13 +791,16 @@ var CalendarAnalyzer = function(calendarState) {
 CalendarAnalyzer.prototype.getNumberOfChecked = function() {
     // Returns the number of checked days in a calendar
     
-    var size = 0, key;
-    for (key in this.calState.checkedDays) {
-        if (this.calState.checkedDays.hasOwnProperty(key)) {
-            size++;
-        }
-    }
-    return size;
+    return Object.keys(this.calState.checkDays).length
+};
+
+CalendarAnalyzer.prototype.getTotalCalendarDays = function() {
+    // Returns the total number of active days in the calendar
+    
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
+    var startDate = moment(this.calState.startDateString, "YYYYMMDD");
+    var totalDays = endDate.diff(startDate, 'days');
+    return totalDays;
 };
 
 CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
@@ -805,26 +808,33 @@ CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
     return this.getTotalCalendarDays(calObj) - this.getNumberOfChecked(calObj);
 };
 
-CalendarAnalyzer.prototype.getCheckedDaysStreak = function(calObj) {
+CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
     // Returns the longest streak of checked days
-    var currentStreak = 0;
     
-    this.$calendarDiv.find('.month .week .activeDay > .cell > .checkmark')
-        .each(function (index) {
-            console.log(index);
-    });
+    var size = 0;
+    var key;
+    var currentStreak = [];
+    var lastDate = 0;
+    var checkedDaysArray = [];
+    
+    // place keys into array and sort the array.
+    for (key in this.calState.checkedDays) {
+        if (this.calState.checkedDays.hasOwnProperty(key)) {
+            checkedDaysArray.push(key);
+        }
+    }
+    checkedDaysArray.sort();
+    
+    // Go element by element 
+    // if lastDate === 0, then lastDate = current date-element (and add it to currentStreak array)
+    // Check if current date-element is 1 day after last date-element
+    // If it is, add it to the currentStreak array (last date-element is already in there)
+    // 
     
 };
 
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function(calObj) {
     // Returns the longest streak of unchecked days
-};
-
-CalendarAnalyzer.prototype.getTotalCalendarDays = function(calObj) {
-    // Returns the total number of active days in the calendar
-    
-    var totalDays = calObj.endDate.diff(calObj.startDate, 'days');
-    return totalDays;
 };
 
 CalendarAnalyzer.prototype.getTotalCalendarWeeks = function(calObj) {

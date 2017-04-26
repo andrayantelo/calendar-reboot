@@ -287,8 +287,8 @@ var FirebaseCalendarStorage = function(params) {
             self.database.ref('calendars/' + calendarObjId + '/calendarState')
             .once('value')
             .then(function(calState) {
-                self.endWork();
                 if (calState.val() !== null) {
+                    self.endWork();
                     return resolve(calState.val());
                 }
                 else {

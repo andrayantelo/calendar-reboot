@@ -1056,16 +1056,11 @@ QUnit.test("getNumberOfChecked test", function(assert) {
 });
 
 QUnit.test("getNumberOfUnchecked test", function(assert) {
-    assert.expect(0);
+    assert.expect(1);
     
-    //var unchecked = this.checkit.getNumberOfUnchecked(this.calendar);
+    var unchecked = this.calendarAnalyzer.getNumberOfUnchecked();
     
-    //assert.equal(unchecked, 365 - 13);
-    
-    //this.calendar.addMonth();
-    //var unchecked2 = this.checkit.getNumberOfUnchecked(this.calendar);
-    
-    //assert.equal(unchecked2, 393 - 13);
+    assert.equal(unchecked, 365 - 13);
 });
 
 QUnit.test("getCheckedDaysStreak test", function(assert) {
@@ -1077,14 +1072,10 @@ QUnit.test("getUncheckedDaysStreak test", function(assert) {
 });
 
 QUnit.test("getTotalCalendarDays test", function(assert) {
-    assert.expect(0);
+    assert.expect(1);
     
-    //var days = this.checkit.getTotalCalendarDays(this.calendar);
-    //assert.equal(days, 365);
-    
-    //this.calendar.addMonth();
-    //var days2 = this.checkit.getTotalCalendarDays(this.calendar);
-    //assert.equal(days2, 393);
+    var days = this.calendarAnalyzer.getTotalCalendarDays();
+    assert.equal(days, 365);
 });
 
 QUnit.test("getTotalCalendarWeeks test", function(assert) {
