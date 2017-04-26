@@ -218,7 +218,7 @@ CheckIt.prototype.clearDropdown = function($dropdown) {
 
 
 CheckIt.prototype.initLocalStorage = function() {
-    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10000});
+    this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
     
@@ -711,10 +711,9 @@ CheckIt.prototype.deleteCalendar = function() {
             console.error("Couldn't get active calendar id: " + err);
             // Notify user that there is no calendar on display for them
             // to delete? Should I bother notifying them of that?
-            $.notify("No Calendar On Display");
-            // exit function, does returning err cause us to exit the function?
-            // or do I need to return a rejected promise?
-            return err;
+            $.notify("No Calendar On Display", "error");
+            // exit function
+            return Promise.reject(err);
         })
         .then(function(currentCalendarId) {
             // remove calendar from dropdown
