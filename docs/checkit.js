@@ -870,15 +870,20 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
     return arrayOfStreakArrays[largestArrayIndex].length;
 };
 
-CalendarAnalyzer.prototype.getUncheckedDaysStreak = function(calObj) {
+CalendarAnalyzer.prototype.getUncheckedDaysStreak = function() {
     // Returns the longest streak of unchecked days
 };
 
-CalendarAnalyzer.prototype.getTotalCalendarWeeks = function(calObj) {
+CalendarAnalyzer.prototype.getTotalCalendarWeeks = function() {
     // Returns the total number of active weeks in the calendar
+    
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
+    var startDate = moment(this.calState.startDateString, "YYYYMMDD");
+    var totalWeeks = endDate.diff(startDate, 'weeks');
+    return totalWeeks;
 };
 
-CalendarAnalyzer.prototype.getNumOfDaysLeft = function(calObj) {
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function() {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
 };

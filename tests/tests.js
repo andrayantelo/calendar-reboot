@@ -1087,7 +1087,10 @@ QUnit.test("getTotalCalendarDays test", function(assert) {
 });
 
 QUnit.test("getTotalCalendarWeeks test", function(assert) {
-    assert.expect(0);
+    assert.expect(1);
+    
+    var weeks = this.calendarAnalyzer.getTotalCalendarWeeks();
+    assert.equal(weeks, 52);
 });
 
 QUnit.test("getNumOfDaysLeft test", function(assert) {
