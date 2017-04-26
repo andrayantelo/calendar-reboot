@@ -791,7 +791,7 @@ var CalendarAnalyzer = function(calendarState) {
 CalendarAnalyzer.prototype.getNumberOfChecked = function() {
     // Returns the number of checked days in a calendar
     
-    return Object.keys(this.calState.checkDays).length
+    return Object.keys(this.calState.checkedDays).length
 };
 
 CalendarAnalyzer.prototype.getTotalCalendarDays = function() {
@@ -811,26 +811,58 @@ CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
 CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
     // Returns the longest streak of checked days
     
-    var size = 0;
-    var key;
     var currentStreak = [];
-    var lastDate = 0;
+    var arrayOfStreakArrays = [];
     var checkedDaysArray = [];
     
-    // place keys into array and sort the array.
-    for (key in this.calState.checkedDays) {
+    // place checkedDays object's keys into array and sort the array.
+    for (var key in this.calState.checkedDays) {
         if (this.calState.checkedDays.hasOwnProperty(key)) {
             checkedDaysArray.push(key);
         }
     }
     checkedDaysArray.sort();
     
-    // Go element by element 
-    // if lastDate === 0, then lastDate = current date-element (and add it to currentStreak array)
-    // Check if current date-element is 1 day after last date-element
-    // If it is, add it to the currentStreak array (last date-element is already in there)
-    // 
+    var lastDate = 0;
+    var checkedDaysArrayLength = checkedDaysArray.length;
     
+    // for each checked day
+    for (var i = 0; i < checkedDaysArrayLength; i++) {
+        
+        if (lastDate === 0) {
+            lastDate = checkedDaysArray[i];
+            currentStreak.push(lastDate);
+            continue;
+        }
+        
+        // if the next element is the day after lastDate, add it to currentStreak
+        // if not, then add currentStreak to arrayOfStreakArrays.
+        var currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        var previousDay = moment(checkedDaysArray[i-1], "YYYYMMDD");
+        
+        var dayDiff = currentDay.diff(previousDay, 'days');
+
+        if (currentDay.diff(previousDay, 'days') === 1) {
+            currentStreak.push(checkedDaysArray[i]);
+        }
+        else {
+            arrayOfStreakArrays.push(currentStreak);
+            currentStreak = [];
+            currentStreak.push(checkedDaysArray[i]);
+        }
+        
+        // if on last element, push the currentStreak into the array of streaks
+        if (i === checkedDaysArrayLength - 1) {
+            arrayOfStreakArrays.push(currentStreak);
+        }
+        
+    }
+    
+    // Find the array with the most elements in the arrayOfStreakArrays
+    var largestArrayIndex = arrayOfStreakArrays.reduce(function(maxI, el, i, arr) {
+        return el.length > arr[maxI].length ? i : maxI;}, 0);
+   
+    return arrayOfStreakArrays[largestArrayIndex].length;
 };
 
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function(calObj) {

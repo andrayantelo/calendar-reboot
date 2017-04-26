@@ -1026,12 +1026,12 @@ QUnit.module("calendarAnalyzer tests for Calendar Facts functions", {
         //this.calendar.state.checkedDays = {
         this.state.checkedDays = {
             "20170214": 1,
-            "20170314": 1,
+            "20170215": 1,
             "20170414": 1,
             "20170514": 1,
-            "20170614": 1,
-            "20170714": 1,
-            "20170814": 1,
+            "20170515": 1,
+            "20170516": 1,
+            "20170517": 1,
             "20170914": 1,
             "20171014": 1,
             "20171114": 1,
@@ -1065,6 +1065,10 @@ QUnit.test("getNumberOfUnchecked test", function(assert) {
 
 QUnit.test("getCheckedDaysStreak test", function(assert) {
     assert.expect(0);
+    
+    var streak = this.calendarAnalyzer.getCheckedDaysStreak();
+    console.log("HERE");
+    console.log(streak);
 });
 
 QUnit.test("getUncheckedDaysStreak test", function(assert) {
