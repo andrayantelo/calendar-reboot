@@ -872,6 +872,8 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
 
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function() {
     // Returns the longest streak of unchecked days
+    
+    // Probably don't need this right?
 };
 
 CalendarAnalyzer.prototype.getTotalCalendarWeeks = function() {
@@ -886,6 +888,11 @@ CalendarAnalyzer.prototype.getTotalCalendarWeeks = function() {
 CalendarAnalyzer.prototype.getNumOfDaysLeft = function() {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
+    var today = moment();
+    
+    var daysLeft = endDate.diff(today, 'days');
+    return daysLeft;
 };
 
 

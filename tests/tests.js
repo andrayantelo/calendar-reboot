@@ -1095,4 +1095,6 @@ QUnit.test("getTotalCalendarWeeks test", function(assert) {
 
 QUnit.test("getNumOfDaysLeft test", function(assert) {
     assert.expect(0);
+    var daysLeft = this.calendarAnalyzer.getNumOfDaysLeft();
+    // Not sure how I would write this
 });
