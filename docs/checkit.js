@@ -698,8 +698,6 @@ CheckIt.prototype.deleteCalendar = function() {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
-    
-
     var confirmation = confirm("Are you sure you want to delete your calendar?");
     if (!confirmation) {
       return Promise.reject("User cancelled the delete operation.");
@@ -711,26 +709,27 @@ CheckIt.prototype.deleteCalendar = function() {
         // if rejected promise returned catch gets run
         .catch(function(err) {
             console.error("Couldn't get active calendar id: " + err);
-            // we don't return a resolved promise here, so after this, 
-            // we exit the function?
+            // Notify user that there is no calendar on display for them
+            // to delete? Should I bother notifying them of that?
+            $.notify("No Calendar On Display");
+            // exit function, does returning err cause us to exit the function?
+            // or do I need to return a rejected promise?
+            return err;
         })
-        // if getActive promise resolved .then gets run
-        // with the resolved value from getActive
         .then(function(currentCalendarId) {
             // remove calendar from dropdown
             checkit.removeFromCalendarDropdown(currentCalendarId,
                                                checkit.$calendarDropdown);
 
             // remove calendar state from storage
-            // another promise is returned 
             return checkit.store.removeById(currentCalendarId)
                 // if removeById is a rejected promise then catch is run, 
                 // if it is a resolved promise catch is ignored.
                 .catch(function(err) {
                     console.error("Unable to remove calendar from storage.");
-                    // TODO: yes this is an error, but what do we want to do now?
-                    // Do we want to plow onward and clear the div or is this worth
-                    // stopping the entire app over?
+                    // Notify user that calendar could not be removed
+                    $.notify("Unable to Remove Calendar", "error");
+                    // Exit promise chain
                     return Promise.reject(err);
                 })
                 .then(function() {
@@ -739,6 +738,7 @@ CheckIt.prototype.deleteCalendar = function() {
                     return checkit.store.removeActive()
                         .catch(function(err) {
                             console.error("Unable to remove active status from calendar");
+                            // Should I notify the user of something here?
                             return Promise.reject(err);
                         });
                 });
