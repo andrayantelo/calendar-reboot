@@ -1064,11 +1064,15 @@ QUnit.test("getNumberOfUnchecked test", function(assert) {
 });
 
 QUnit.test("getCheckedDaysStreak test", function(assert) {
-    assert.expect(0);
+    assert.expect(2);
     
     var streak = this.calendarAnalyzer.getCheckedDaysStreak();
-    console.log("HERE");
-    console.log(streak);
+    assert.equal(streak, 4);
+    
+    // test for an empty checkedDays object
+    this.state.checkedDays = {};
+    var emptyStreak = this.calendarAnalyzer.getCheckedDaysStreak();
+    assert.equal(emptyStreak, 0);
 });
 
 QUnit.test("getUncheckedDaysStreak test", function(assert) {

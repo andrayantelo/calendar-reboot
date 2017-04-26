@@ -811,6 +811,11 @@ CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
 CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
     // Returns the longest streak of checked days
     
+    // if checkedDays is an empty object, return 0;
+    if (jQuery.isEmptyObject(this.calState.checkedDays)) {
+        return 0;
+    }
+    
     var currentStreak = [];
     var arrayOfStreakArrays = [];
     var checkedDaysArray = [];
