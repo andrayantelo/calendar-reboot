@@ -828,7 +828,7 @@ QUnit.test("onActivityChanged test", function(assert) {
     
 });
 
-QUnit.test("deleteCalendar test", function(assert) { 
+QUnit.test("deleteCalendar test", function(assert) {
     assert.expect(6);
     var done = assert.async()
     
