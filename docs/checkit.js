@@ -186,23 +186,22 @@ CheckIt.prototype.displayActiveCalendar = function() {
             // is handled inside of .catch. That's why we are returning a rejected
             // promise, the .then never gets run. 
             return checkit.store.loadById(activeCalendarId)
-                // if loadById returns a rejected promise, TODO
                 .catch(function(err) {
                     console.log("There is no current active calendar " + err);
                     checkit.store.removeActive();
                     checkit.showForm(checkit.$buildCalendarForm);
-                    return err;
+                    return Promise.reject(err);
                 });
         })
-                .then(function(activeCalendarState) {
-                    if (activeCalendarState !== null) {
-                        var state = activeCalendarState;
-                        var calendar = new Calendar(state);
-                        return checkit.displayCalendar(calendar);
-                    }
-                })
+        .then(function(activeCalendarState) {
+            if (activeCalendarState !== null) {
+                var state = activeCalendarState;
+                var calendar = new Calendar(state);
+                return checkit.displayCalendar(calendar);
+            }
+        })
         // this gets run if getActive returns a rejected promise, but does it also 
-        // run if loadById returns a rejected promise?
+        // run if loadById returns a rejected promise??
         .catch(function(err) {
             console.log("Could not display active calendar" + err);
             checkit.showForm(checkit.$buildCalendarForm);
