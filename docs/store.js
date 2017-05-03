@@ -1,4 +1,7 @@
 /*jslint devel: true, es5: true */
+/*global
+    browser:true, Promise, firebase
+*/
 // Firebase storage manager.
 var FirebaseCalendarStorage = function (params) {
     "use strict";
@@ -343,9 +346,10 @@ var FirebaseCalendarStorage = function (params) {
 };
 
 
-
 // LocalStorage storage manager
 var LocalCalendarStorage = function(params) {
+    "use strict";
+    
     var self = this;
     var prefix = params.storeId || "";
     var allCalendarIdsKey = 'allCalendarIdsKey';
