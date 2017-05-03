@@ -1,7 +1,10 @@
+/*jslint devel: true, es5: true */
 // Firebase storage manager.
-var FirebaseCalendarStorage = function(params) {
-    var self = this;
-    var prefix = params.storeId || "";
+var FirebaseCalendarStorage = function (params) {
+    "use strict";
+    var self = this,
+        prefix = params.storeId || "";
+    
     // Get a reference to the database service
     self.database = firebase.database();
     // This tells you whether the storage is actively working.
@@ -10,25 +13,25 @@ var FirebaseCalendarStorage = function(params) {
     
     self.user = params.user;
     
-    self.onActivityChanged = function(func) {
+    self.onActivityChanged = function (func) {
         // Will run checkit's onActivityChanged.
         
         //TODO extend this to support multiple callbacks
         self.activityChangeFunctions.push(func);
     };
     
-        self.startWork = function() {
+    self.startWork = function () {
         // Will increment the counter and possibly fire an event.
         
         self.activeCalls += 1;
         // Will dispatch the event backgroundActivityChange 
-        self.activityChangeFunctions.forEach(function(func) {
+        self.activityChangeFunctions.forEach(function (func) {
             func(self.activeCalls);
         });
         
     };
     
-    self.endWork = function() {
+    self.endWork = function () {
         // Will decrement the counter and maybe fire an event.
         
         
@@ -38,40 +41,39 @@ var FirebaseCalendarStorage = function(params) {
         }
         
         // Dispatch the activityChanged listener
-        self.activityChangeFunctions.forEach(function(func) {
+        self.activityChangeFunctions.forEach(function (func) {
             func(self.activeCalls);
         });
       
     };
     
-    self.getAllCalendarIds = function() {
+    self.getAllCalendarIds = function () {
         // Returns a promise for the allCalendarIds object from storage
         
         var userId = self.user.uid;
         self.startWork();
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             self.database.ref('/users/' + userId + '/allCalendarIds')
-            .once('value')  
-            .then(function(allCalendarIds) {
-                self.endWork();
-                if (allCalendarIds.val() === null) {
-                    reject("allCalendarIds not found");
-                }
-                else {
-                    return resolve(allCalendarIds.val());
-                }
-            })
-            .catch(function(err) {
-                self.endWork();
-                console.error(err);
-                // return empty object for functions that need allCalendarIds
-                // like fillDropdown
-                return {};
-            })
-        })
+                .once('value')
+                .then(function (allCalendarIds) {
+                    self.endWork();
+                    if (allCalendarIds.val() === null) {
+                        reject("allCalendarIds not found");
+                    } else {
+                        return resolve(allCalendarIds.val());
+                    }
+                })
+                .catch(function (err) {
+                    self.endWork();
+                    console.error(err);
+                    // return empty object for functions that need allCalendarIds
+                    // like fillDropdown
+                    return {};
+                });
+        });
     };
     
-    self.addWriter = function(user, calObj) {
+    self.addWriter = function (user, calObj) {
         // Add a user to the writers directory in the database.
         
         var updates = {};
@@ -79,129 +81,129 @@ var FirebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error("error in save function : " + err);
                 self.endWork();
-                return err
-             })
+                return err;
+            });
     };
     
-    self.removeWriter = function(user, calObj) {
+    self.removeWriter = function (user, calObj) {
         // Remove a user form the writers directory in the database
         
         self.database.ref('calendars/' + calObj.state.uniqueId + '/writers/' + user.uid).remove()
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error('Unable to remove user: ' + err);
                 self.endWork();
-            })
+            });
     };
     
-    self.addReader = function(user, calObj) {
+    self.addReader = function (user, calObj) {
         // Add a user to the readers directory in the database
         var updates = {};
         updates['calendars/' + calObj.state.uniqueId + '/readers/' + user.uid] = true;
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error("error in save function : " + err);
                 self.endWork();
-                return err
-            })
+                return err;
+            });
         
     };
     
-    self.removeReader = function(user, calObj) {
+    self.removeReader = function (user, calObj) {
         // Remove a user from the readers directory in the database
         
         self.database.ref('calendars/' + calObj.state.uniqueId + '/readers/' + user.uid).remove()
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error('Unable to remove user: ' + err);
                 self.endWork();
-            })
+            });
     };
     
-    self.save = function(calendarObj) {
+    self.save = function (calendarObj) {
         //save an App object (like a calendar object for example) in storage
         
         // Store the calendar state in the firebase database.
         
-        var userId = self.user.uid;
-        var calUniqueId = calendarObj.state.uniqueId;
-        var calTitle = calendarObj.state.title;
-        var calState = calendarObj.state;
+        var userId = self.user.uid,
+            calUniqueId = calendarObj.state.uniqueId,
+            calTitle = calendarObj.state.title,
+            calState = calendarObj.state,
         
         // Store the calendar into allCalendarIds, store calState
-        var updates = {};
+            updates = {};
        
         updates['users/' + userId + '/allCalendarIds/' + calUniqueId] = calTitle;
         updates['calendars/' + calUniqueId + '/calendarState'] = calState;
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error("error in save function : " + err);
                 self.endWork();
-                return err
-            })
+                return err;
+            });
         
     };
     
-    self.updateUserEmail = function() {
+    self.updateUserEmail = function () {
         // Updates the user's email in the database.
-        var userId = self.user.uid;
-        var userEmail = self.user.email;
+        var userId = self.user.uid,
+            userEmail = self.user.email,
         
-        var updates = {};
+            updates = {};
         updates['users/' + userId + '/email'] = userEmail;
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error("Unable to update email: " + err);
                 self.endWork();
                 return err;
-            })
+            });
     };
     
-    self.setActiveById = function(calendarObjId) {
+    self.setActiveById = function (calendarObjId) {
         // Set the active calendar/object by using its Id
         
-        var userId = self.user.uid;
-        var updates = {};
+        var userId = self.user.uid,
+            updates = {};
         updates['users/' + userId + '/currentActiveCalendar'] = calendarObjId;
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
+            .then(function () {
                 self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error("Unable to set active Id: " + err);
                 self.endWork();
                 return err;
-            })
+            });
     };
     
-    self.remove = function(calendarObj) {
+    self.remove = function (calendarObj) {
         // Remove an app object (like a calendar) from storage
         // TODO: Determine if this method is necessary
         
@@ -209,14 +211,14 @@ var FirebaseCalendarStorage = function(params) {
         self.removeById(uniqueId);
     };
     
-    self.removeById = function(uniqueId) {
+    self.removeById = function (uniqueId) {
         // Remove a calendar from storage by using its Id.
         // First deleting it from /user/uid/allCalendarIds
         // Second removing it from calendars/
         // removing currentActive status has its own method
-        var userId = self.user.uid;
+        var userId = self.user.uid,
         
-        var updates = {};
+            updates = {};
         updates['users/' + userId + '/allCalendarIds/' + uniqueId] = null;
         updates['calendars/' + uniqueId + '/calendarState'] = null;
         updates['calendars/' + uniqueId + '/readers'] = null;
@@ -224,10 +226,10 @@ var FirebaseCalendarStorage = function(params) {
         
         self.startWork();
         return self.database.ref().update(updates)
-            .then(function() {
-                    self.endWork();
+            .then(function () {
+                self.endWork();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.error(`Problem removing calendar from database :` + err);
                 self.endWork();
                 return err;
