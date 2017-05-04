@@ -2,6 +2,7 @@
 // Initializes CheckIt
 function CheckIt(mode, calendarDiv) {
     // Shortcuts to DOM elements.
+    "use strict";
     this.mode = mode;
     
     this.$userPic = $('#user-pic');
@@ -203,7 +204,6 @@ CheckIt.prototype.displayActiveCalendar = function() {
         // this gets run if getActive returns a rejected promise, but does it also 
         // run if loadById returns a rejected promise??
         .catch(function(err) {
-            console.log("Could not display active calendar" + err);
             checkit.showForm(checkit.$buildCalendarForm);
             return err;
         });
@@ -296,7 +296,6 @@ CheckIt.prototype.updateUserDescription = function(user) {
 CheckIt.prototype.onAuthStateChanged = function(user) {
     
     if (user) { // User is signed in!
-        console.log("onAuthStateChanged running");
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
         

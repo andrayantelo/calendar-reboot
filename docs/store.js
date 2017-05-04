@@ -1,7 +1,8 @@
-/*jslint devel: true, es5: true */
+/*jslint devel: true, es5: true*/
 /*global
     browser:true, Promise, firebase
 */
+
 // Firebase storage manager.
 var FirebaseCalendarStorage = function (params) {
     "use strict";
