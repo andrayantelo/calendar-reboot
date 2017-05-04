@@ -265,11 +265,8 @@ var FirebaseCalendarStorage = function (params) {
         
         self.startWork();
         return new Promise(function (resolve, reject) {
-            // TODO analyze this, .once returns a promise? we don't
-            // have to actually write 'return'?
             self.database.ref('users/' + userId + '/currentActiveCalendar')
                 .once('value')
-                // currentActiveCalendar is the value returned by the .once promise?
                 .then(function (currentActiveCalendar) {
                     self.endWork();
                     if (currentActiveCalendar.val() === null) {
@@ -281,8 +278,7 @@ var FirebaseCalendarStorage = function (params) {
                 .catch(function (err) {
                     self.endWork();
                     console.error(err);
-                    // does this return a rejected promise?
-                    return err;
+                    return Promise.reject(err);
                 });
         });
     };
@@ -293,8 +289,6 @@ var FirebaseCalendarStorage = function (params) {
         var userId = self.user.uid;
         self.startWork();
         return new Promise(function (resolve, reject) {
-            //checkit.store.database.ref('calendar/149270802040326980/calendarState').once('value').then(function(val) {console.log(val)});
-            // TODO
             self.database.ref('calendars/' + calendarObjId + '/calendarState')
                 .once('value')
                 .then(function (calState) {
