@@ -829,7 +829,7 @@ QUnit.test("onActivityChanged test", function(assert) {
 });
 
 QUnit.test("deleteCalendar test", function(assert) {
-    assert.expect(6);
+    assert.expect(8);
     var done = assert.async()
     
     
@@ -851,6 +851,18 @@ QUnit.test("deleteCalendar test", function(assert) {
         assert.equal(ids['123'], null);
         done();
     });
+    
+    // remove current active calendar from storage
+    localStorage.removeItem('current_active_calendar');
+    // check that it has been removed
+    var currentActive = JSON.parse(localStorage.getItem('current_active_calendar'));
+    assert.equal(currentActive, null);
+    
+    this.checkit.deleteCalendar()
+        .catch(function(err) {
+            assert.equal(err, "Not found");
+        });
+
 });
 
 QUnit.test("buildCalendar test", function(assert) {
