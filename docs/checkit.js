@@ -1,4 +1,4 @@
-/*jslint devel: true, es5: true, nomen: true*/
+/*jslint devel: true, es5: true, nomen: true, plusplus: true*/
 /*global
     browser:true, Promise, firebase, $, jQuery, alert, moment, Spinner, LocalCalendarStorage, FirebaseCalendarStorage
 */
@@ -132,73 +132,81 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
 
 // calendarAnalyzer takes a calendar object and can analyze facts about it.
 
-var CalendarAnalyzer = function(calendarState) {
+var CalendarAnalyzer = function (calendarState) {
+    "use strict";
     this.calState = calendarState;
 };
 
-CalendarAnalyzer.prototype.getNumberOfChecked = function() {
+CalendarAnalyzer.prototype.getNumberOfChecked = function () {
     // Returns the number of checked days in a calendar
-    
-    return Object.keys(this.calState.checkedDays).length
+    "use strict";
+    return Object.keys(this.calState.checkedDays).length;
 };
 
-CalendarAnalyzer.prototype.getTotalCalendarDays = function() {
+CalendarAnalyzer.prototype.getTotalCalendarDays = function () {
     // Returns the total number of active days in the calendar
-    
-    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
-    var startDate = moment(this.calState.startDateString, "YYYYMMDD");
-    var totalDays = endDate.diff(startDate, 'days');
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalDays = endDate.diff(startDate, 'days');
     return totalDays;
 };
 
-CalendarAnalyzer.prototype.getNumberOfUnchecked = function(calObj) {
+CalendarAnalyzer.prototype.getNumberOfUnchecked = function (calObj) {
     // Returns number of unchecked days in a calendar
+    "use strict";
     return this.getTotalCalendarDays(calObj) - this.getNumberOfChecked(calObj);
 };
 
-CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
+CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
     // Returns the longest streak of checked days
-    
+    "use strict";
     // if checkedDays is an empty object, return 0;
     if (jQuery.isEmptyObject(this.calState.checkedDays)) {
         return 0;
     }
     
-    var currentStreak = [];
-    var arrayOfStreakArrays = [];
-    var checkedDaysArray = [];
+    var currentStreak = [],
+        arrayOfStreakArrays = [],
+        checkedDaysArray = [],
+        key,
+        lastDate,
+        checkedDaysArrayLength,
+        i,
+        currentDay,
+        previousDay,
+        dayDiff,
+        largestArrayIndex;
     
     // place checkedDays object's keys into array and sort the array.
-    for (var key in this.calState.checkedDays) {
+    for (key in this.calState.checkedDays) {
         if (this.calState.checkedDays.hasOwnProperty(key)) {
             checkedDaysArray.push(key);
         }
     }
     checkedDaysArray.sort();
-    
-    var lastDate = 0;
-    var checkedDaysArrayLength = checkedDaysArray.length;
+
+    checkedDaysArrayLength = checkedDaysArray.length;
     
     // for each checked day
-    for (var i = 0; i < checkedDaysArrayLength; i++) {
+    for (i = 0; i < checkedDaysArrayLength; i++) {
         
-        if (lastDate === 0) {
+        if (i === 0) {
             lastDate = checkedDaysArray[i];
             currentStreak.push(lastDate);
-            continue;
+            i++;
         }
         
         // if the next element is the day after lastDate, add it to currentStreak
         // if not, then add currentStreak to arrayOfStreakArrays.
-        var currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
-        var previousDay = moment(checkedDaysArray[i-1], "YYYYMMDD");
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        previousDay = moment(checkedDaysArray[i - 1], "YYYYMMDD");
         
-        var dayDiff = currentDay.diff(previousDay, 'days');
+        dayDiff = currentDay.diff(previousDay, 'days');
 
         if (currentDay.diff(previousDay, 'days') === 1) {
             currentStreak.push(checkedDaysArray[i]);
-        }
-        else {
+        } else {
             arrayOfStreakArrays.push(currentStreak);
             currentStreak = [];
             currentStreak.push(checkedDaysArray[i]);
@@ -212,34 +220,35 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function() {
     }
     
     // Find the array with the most elements in the arrayOfStreakArrays
-    var largestArrayIndex = arrayOfStreakArrays.reduce(function(maxI, el, i, arr) {
-        return el.length > arr[maxI].length ? i : maxI;}, 0);
+    largestArrayIndex = arrayOfStreakArrays.reduce(function (maxI, el, i, arr) {
+        return el.length > arr[maxI].length ? i : maxI;
+    }, 0);
    
     return arrayOfStreakArrays[largestArrayIndex].length;
 };
 
-CalendarAnalyzer.prototype.getUncheckedDaysStreak = function() {
+CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
     // Returns the longest streak of unchecked days
-    
+    "use strict";
     // Probably don't need this right?
 };
 
-CalendarAnalyzer.prototype.getTotalCalendarWeeks = function() {
+CalendarAnalyzer.prototype.getTotalCalendarWeeks = function () {
     // Returns the total number of active weeks in the calendar
-    
-    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
-    var startDate = moment(this.calState.startDateString, "YYYYMMDD");
-    var totalWeeks = endDate.diff(startDate, 'weeks');
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalWeeks = endDate.diff(startDate, 'weeks');
     return totalWeeks;
 };
 
-CalendarAnalyzer.prototype.getNumOfDaysLeft = function() {
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function () {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
-    var endDate = moment(this.calState.endDateString, "YYYYMMDD");
-    var today = moment();
-    
-    var daysLeft = endDate.diff(today, 'days');
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        today = moment(),
+        daysLeft = endDate.diff(today, 'days');
     return daysLeft;
 };
 
