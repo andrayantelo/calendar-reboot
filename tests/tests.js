@@ -1,24 +1,32 @@
+/*global
+    QUnit, LocalCalendarStorage, FirebaseCalendarStorage, $,
+    checkit, Calendar, Month, moment, generateUniqueId,
+    emptyCalendarState, CheckIt, jQuery, CalendarAnalyzer
+*/
+/*jslint devel: true, es5: true, nomen: true*/
+
 // Tests for checkit app
 
 // Tests for checkit.js
 
 // Testing Month Object
-QUnit.module( "Month Tests", {
+QUnit.module("Month Tests", {
 // Hardcoded a date for moment object because javascript's Date object
 // does not have a way to get the number of days in the month.
 
 
-beforeEach: function() {
-    // Initiate a test month object
-    this.valentine = moment("2017-02-14", "YYYY-MM-DD");
-    this.dateString = this.valentine.format("YYYYMMDD");
-    this.testmonth = new Month(this.dateString);
-}
+    beforeEach: function () {
+        // Initiate a test month object
+        "use strict";
+        this.valentine = moment("2017-02-14", "YYYY-MM-DD");
+        this.dateString = this.valentine.format("YYYYMMDD");
+        this.testmonth = new Month(this.dateString);
+    }
 
 });
 
-QUnit.test("init month object test", function(assert) {
-    
+QUnit.test("init month object test", function (assert) {
+    "use strict";
     assert.expect(13);
     assert.equal(this.testmonth.dateString, this.dateString, "dateString property");
     assert.ok(moment.isMoment(this.testmonth.date), "testmonth.date is a moment obj");
@@ -40,21 +48,23 @@ QUnit.test("init month object test", function(assert) {
 
 
 // Testing Calendar Helper functions
-QUnit.module( "Calendar helper functions tests", {
+QUnit.module("Calendar helper functions tests", {
 });
 
-QUnit.test("generateUniqueId test", function(assert) {
+QUnit.test("generateUniqueId test", function (assert) {
+    "use strict";
     assert.expect(1);
-    var uniqueId = generateUniqueId();
-    var uniqueId2 = generateUniqueId();
+    var uniqueId = generateUniqueId(),
+        uniqueId2 = generateUniqueId();
     
     assert.notEqual(uniqueId, uniqueId2);
 });
 
-QUnit.test("emptyCalendarState test", function(assert) {
+QUnit.test("emptyCalendarState test", function (assert) {
+    "use strict";
     assert.expect(9);
-    var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Hello"};
-    var state = emptyCalendarState(params);
+    var params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Hello"},
+        state = emptyCalendarState(params);
     
     assert.equal(state.title, "Hello", "Checking state title");
     assert.equal(state.startDateString, "20170214", "Checking startDateString");
@@ -63,69 +73,72 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.deepEqual(state.checkedDays, {});
     
     //assert that an exception is thrown with invalid dates.
-    var params = {startDate: "2017-02-14", endDate: "2017-01-01", calendarTitle: "hello"};
+    params = {startDate: "2017-02-14", endDate: "2017-01-01", calendarTitle: "hello"};
     
-    assert.raises(function() {
+    assert.raises(function () {
         emptyCalendarState(params);
-        }, Error, "testing invalid dates");
-    assert.raises(function() {
+    }, Error, "testing invalid dates");
+    assert.raises(function () {
         emptyCalendarState(params);
-    }, /End date must be a date after start date./, "Testing error message");
+    }, /End date must be a date after start date/, "Testing error message");
     
     params.startDate = "2017-02-14";
     params.endDate = "2017-02-20";
     params.calendarTitle = "";
     
-    assert.raises(function() {
+    assert.raises(function () {
         emptyCalendarState(params);
     }, Error, "Testing empty calendar title string");
     
-    assert.raises(function() {
+    assert.raises(function () {
         emptyCalendarState(params);
-    }, /Must provide a calendar title./, "Testing error message");
+    }, /Must provide a calendar title/, "Testing error message");
 });
 
 // Testing calendar object 
-QUnit.module( "Calendar Tests", {
+QUnit.module("Calendar Tests", {
 
-beforeEach: function() {
-    // Initiate a test calendar object for testing
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    
-    this.state = emptyCalendarState(this.params);
-    
-    this.calendar = new Calendar(this.state);
-    
-}
+    beforeEach: function () {
+        // Initiate a test calendar object for testing
+        "use strict";
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+
+        this.state = emptyCalendarState(this.params);
+
+        this.calendar = new Calendar(this.state);
+
+    }
 
 });
 
-QUnit.test("Init calendar object test", function(assert) {
+QUnit.test("Init calendar object test", function (assert) {
+    "use strict";
     assert.expect(7);
   
     assert.deepEqual(this.calendar.state, this.state, "Check state is correct");
-    assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj")); 
+    assert.ok(moment.isMoment(this.calendar.startDate, "startDate is a moment obj"));
     assert.ok(moment.isMoment(this.calendar.endDate, "endDate is a moment obj"));
     assert.equal(this.calendar.startDate.format("YYYYMMDD"), "20170214", "Checking startDate object's date");
     assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170220", "Checking endDate object's date");
     assert.equal(this.calendar.monthObjects.length, 1);
-    assert.equal(typeof(this.calendar.monthObjects[0]), "object", "Month object is object");
+    assert.equal(typeof (this.calendar.monthObjects[0]), "object", "Month object is object");
 });
 
 
 
-QUnit.test("addMonth calendar method test", function(assert) {
+QUnit.test("addMonth calendar method test", function (assert) {
+    "use strict";
     assert.expect(4);
     this.calendar.addMonth();
     
     assert.equal(this.calendar.endDate.format("YYYYMMDD"), "20170320", "Check one month was added to endDate object");
     assert.equal(this.calendar.state.endDateString, "20170320", "Check calendar endDateString added a month");
     assert.equal(this.calendar.monthObjects.length, 2, "Check month was added to monthObjects array");
-    assert.equal(typeof(this.calendar.addMonth()), "object", "addMonth returns an object");
+    assert.equal(typeof (this.calendar.addMonth()), "object", "addMonth returns an object");
 });
 
-QUnit.test("generateMonthObjects calendar method test", function(assert) {
-    
+QUnit.test("generateMonthObjects calendar method test", function (assert) {
+    "use strict";
     assert.expect(7);
     
     var monthObjects = this.calendar.generateMonthObjects(moment("20170101", "YYYYMMDD"), moment("20170214", "YYYYMMDD"));
@@ -135,33 +148,35 @@ QUnit.test("generateMonthObjects calendar method test", function(assert) {
     assert.equal(monthObjects[1].lastActiveDay, 14);
     assert.equal(monthObjects.length, 2);
     
-    assert.raises(function() {
+    assert.raises(function () {
         this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
-        }, Error, "Testing invalid dates");
-    assert.raises(function() {
+    }, Error, "Testing invalid dates");
+    assert.raises(function () {
         this.calendar.generateMonthObjects(moment("20170214", "YYYYMMDD"), moment("20170101", "YYYYMMDD"));
     }, /End date must be a date after start date/, "testing error message");
 });
 
 
 // Testing checkit object 
-QUnit.module( "CheckIt Tests", {
+QUnit.module("CheckIt Tests", {
 
-beforeEach: function() {
-    // Initialize a fresh checkit object and a dummy active calendar for every test
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
- 
-    this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    this.state = emptyCalendarState(this.params);
-    this.calendar = new Calendar(this.state);
-}
+    beforeEach: function () {
+        // Initialize a fresh checkit object and a dummy active calendar for every test
+        "use strict";
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+
+        this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+        this.state = emptyCalendarState(this.params);
+        this.calendar = new Calendar(this.state);
+    }
 
 });
 
 
-QUnit.test("addMonth test", function( assert ) {
+QUnit.test("addMonth test", function (assert) {
+    "use strict";
     assert.expect(2);
     assert.equal(this.calendar.monthObjects.length, 1);
     this.checkit.addMonth(this.calendar);
@@ -169,9 +184,11 @@ QUnit.test("addMonth test", function( assert ) {
     
 });
 
-QUnit.test("generateEmptyCalendar test", function( assert ) {
+QUnit.test("generateEmptyCalendar test", function (assert) {
+    "use strict";
     assert.expect(14);
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = this.$calendarDiv,
+        daysOfWeek;
     this.checkit.generateEmptyCalendar(this.calendar, $calendarDiv);
     assert.equal($calendarDiv.find('.calendarTitleHeading').text(), "Test Calendar");
     assert.equal($calendarDiv.find('.monthframe').attr('id'), this.calendar.monthObjects[0].monthId);
@@ -180,8 +197,8 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
     assert.equal(this.$fixture.find('td').length, 49);
     assert.equal(this.$fixture.find('.nil').length, 42);
     
-    var daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    $calendarDiv.find('#dayNames td').each(function(index, td) {
+    daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    $calendarDiv.find('#dayNames td').each(function (index, td) {
         assert.equal($(this).html(), daysOfWeek[index]);
     });
     
@@ -192,14 +209,17 @@ QUnit.test("generateEmptyCalendar test", function( assert ) {
         "Make sure second month does not have a year-header");
 });
 
-QUnit.test("fillCalendar test", function( assert ) {
+QUnit.test("fillCalendar test", function (assert) {
+    "use strict";
     assert.expect(72);
     
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = this.$calendarDiv,
+        firstMonth,
+        secondMonth;
     // Add month to calendar
     this.checkit.addMonth(this.calendar);
-    var firstMonth = this.calendar.monthObjects[0];
-    var secondMonth = this.calendar.monthObjects[1];
+    firstMonth = this.calendar.monthObjects[0];
+    secondMonth = this.calendar.monthObjects[1];
     
     this.checkit.generateEmptyCalendar(this.calendar);
     
@@ -210,49 +230,49 @@ QUnit.test("fillCalendar test", function( assert ) {
     this.checkit.fillCalendar(this.calendar);
     
     assert.equal($calendarDiv.find(".activeDay").first().children('.cell')
-       .attr('id'), 20170214, "Check start day of the month");
+        .attr('id'), 20170214, "Check start day of the month");
         
     //Check first inactiveDay is the first of the month
     assert.equal($calendarDiv.find(".inactiveDay").first().children('.cell')
         .attr('id'), 20170201, "Check first of the month");
   
-    $('#' + firstMonth.monthId).find('.cell').each( function(index) {
-        assert.equal($(this).attr('id'), '201702' + 
-        (index + 1 < 10? '0' + (index + 1).toString(): (index + 1).toString()),
-        "Checking id's of .cell divs for first month");
+    $('#' + firstMonth.monthId).find('.cell').each(function (index) {
+        assert.equal($(this).attr('id'), '201702' +
+            (index + 1 < 10 ? '0' + (index + 1).toString() : (index + 1).toString()),
+            "Checking id's of .cell divs for first month");
     });
-    $('#' + secondMonth.monthId).find('.cell').each( function(index) {
+    $('#' + secondMonth.monthId).find('.cell').each(function (index) {
         assert.equal($(this).attr('id'), '201703' +
-        (index + 1 < 10? '0' + (index + 1).toString(): (index + 1).toString()),
-        "Checking id's of .cell divs for first month");
+            (index + 1 < 10 ? '0' + (index + 1).toString() : (index + 1).toString()),
+            "Checking id's of .cell divs for first month");
     });
    
     assert.equal($('#' + firstMonth.monthId).find(".month-year").text(),
         "February 2017");
     
     assert.equal(Object.keys(firstMonth.dayIndex).length, 28,
-    "Asserting number of keys in dayIndex object of first month.");
+        "Asserting number of keys in dayIndex object of first month.");
     
     assert.equal(Object.keys(secondMonth.dayIndex).length, 31,
-    "Asserting number of keys in dayIndex object of second month.");
+        "Asserting number of keys in dayIndex object of second month.");
     
     assert.equal($('#' + firstMonth.monthId).find('.activeDay').length,
-    15, "Checking the number of .activeDay td elements in first month.");
+        15, "Checking the number of .activeDay td elements in first month.");
     
     assert.equal($('#' + secondMonth.monthId).find('.activeDay').length,
-     20, "Checking the number of .activeDay td elements in second month.");
+        20, "Checking the number of .activeDay td elements in second month.");
      
     assert.equal($('#' + firstMonth.monthId).find('.cell').length,
-    28, "Correct number of .cell elements in first month");
+        28, "Correct number of .cell elements in first month");
     
     assert.equal($('#' + secondMonth.monthId).find('.cell').length,
-    31, "Checking the number of .cell td elements in second month.");
+        31, "Checking the number of .cell td elements in second month.");
     
     assert.equal($('#' + firstMonth.monthId).find('.nil').length,
-    14, "Correct number of .nil div elements in first month");
+        14, "Correct number of .nil div elements in first month");
     
     assert.equal($('#' + secondMonth.monthId).find('.nil').length,
-    11, "Correct number of .nil div elements in second month");
+        11, "Correct number of .nil div elements in second month");
     
     //fillMonth("Checking first month html", firstMonth, $calendarDiv, 44);
     //fillMonth("Checking second month html", secondMonth, $calendarDiv, 52);
@@ -264,32 +284,35 @@ function fillMonth(testName, monthObj, $div, expected) {
     
     // this test fails when initLocalStorage method in checkit.js runs 
     // displayActiveCalendar (because it changes the html).
-    QUnit.test(testName, function(assert) {
+    "use strict";
+    QUnit.test(testName, function (assert) {
         assert.expect(expected);
 
         assert.notOk(jQuery.isEmptyObject(monthObj.dayIndex),
             "dayIndex object for month is not empty");
         
-        $div.find('#' + monthObj.monthId + ' .daynumber').each( function(index) {
+        $div.find('#' + monthObj.monthId + ' .daynumber').each(function (index) {
             assert.equal($(this).html(), index + 1,
-            "Correct daynumbers in first month");
+                "Correct daynumbers in first month");
         });
         $div.find('#' + monthObj.monthId + ' .checkmark').each(function (index) {
             assert.ok($(this).hasClass("hidden"),
-            "Check that .checkmark divs have a hidden class in first month");
+                "Check that .checkmark divs have a hidden class in first month");
         });
     });
-};
+}
 
 function selectorNameTest(testName, selectorName, expected) {
-    QUnit.test(testName, function(assert) {
+    "use strict";
+    QUnit.test(testName, function (assert) {
         assert.expect(1);
         assert.equal(selectorName.selector, expected);
     });
-};
+}
 
 
-QUnit.test("Initialize CheckIt test", function( assert ) {
+QUnit.test("Initialize CheckIt test", function (assert) {
+    "use strict";
     assert.expect(2);
     assert.equal(this.checkit.mode, 'localStorage', "Checking checkit object's mode");
     
@@ -309,7 +332,7 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
     selectorNameTest("calendarDropdown selector test", this.checkit.$calendarDropdown, '#calendarDropdown');
     selectorNameTest("startDateErrorSpan selector test", this.checkit.$srStartDateError, '#srStartDateError');
     selectorNameTest("endDateErrorSpan selector test", this.checkit.$srEndDateError, '#srEndDateError');
-    selectorNameTest("titleErrorSpan selector test", this.checkit.$srTitleError,'#srTitleError');
+    selectorNameTest("titleErrorSpan selector test", this.checkit.$srTitleError, '#srTitleError');
     selectorNameTest("titleGlyphiconTag selector test", this.checkit.$titleErrorGlyphicon, '#titleErrorGlyphicon');
     selectorNameTest("clearButton selector test", this.checkit.$clearButton, '#clearButton');
     selectorNameTest("fullForm selector test", this.checkit.$fullForm, '#fullForm');
@@ -325,28 +348,31 @@ QUnit.test("Initialize CheckIt test", function( assert ) {
 });
 
 
-QUnit.module( "Checkit Calendar DOM Manipulation Tests", {
-  beforeEach: function() {
-    // Initialize a test calendar object, checkit object, and generate
-    // the test calendar html
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    this.state = emptyCalendarState(this.params);
-    this.calendar = new Calendar(this.state);
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
-    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
-    this.checkit.fillCalendar(this.calendar);
+QUnit.module("Checkit Calendar DOM Manipulation Tests", {
+    beforeEach: function () {
+        // Initialize a test calendar object, checkit object, and generate
+        // the test calendar html
+        "use strict";
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+        this.state = emptyCalendarState(this.params);
+        this.calendar = new Calendar(this.state);
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+        this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+        this.checkit.fillCalendar(this.calendar);
 
-  },
-  afterEach: function() {
-    // clean up calendar html 
-    this.$calendarDiv.empty();
-  }
+    },
+    afterEach: function () {
+        // clean up calendar html
+        "use strict";
+        this.$calendarDiv.empty();
+    }
 });
 
 
-QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
+QUnit.test("attachCheckMarkClickHandler test", function (assert) {
+    "use strict";
     assert.expect(6);
     this.checkit.attachCheckmarkClickHandler(this.calendar,
         this.calendar.monthObjects);
@@ -365,7 +391,8 @@ QUnit.test("attachCheckMarkClickHandler test", function( assert ) {
     assert.deepEqual(storedState.checkedDays, this.calendar.state.checkedDays);
 });
 
-QUnit.test("generateCheckmarks test", function( assert ) {
+QUnit.test("generateCheckmarks test", function (assert) {
+    "use strict";
     assert.expect(1);
     this.checkit.attachCheckmarkClickHandler(this.calendar,
         this.calendar.monthObjects);
@@ -383,7 +410,8 @@ QUnit.test("generateCheckmarks test", function( assert ) {
                  .attr('hidden'), undefined);
 });
 
-QUnit.test("removeEmptyWeeks test", function( assert ) {
+QUnit.test("removeEmptyWeeks test", function (assert) {
+    "use strict";
     assert.expect(2);
     
     // Check that there are 6 .weeks
@@ -394,7 +422,8 @@ QUnit.test("removeEmptyWeeks test", function( assert ) {
     
 });
 
-QUnit.test("findCurrentDay test", function( assert ) {
+QUnit.test("findCurrentDay test", function (assert) {
+    "use strict";
     assert.expect(2);
     
     assert.equal(this.$calendarDiv.find('#20170214').attr('class'), 'cell');
@@ -403,48 +432,53 @@ QUnit.test("findCurrentDay test", function( assert ) {
     assert.equal(this.$calendarDiv.find('.currentDay').length, 0);
 });
 
-QUnit.module( "Checkit DOM manipulation tests", {
-  beforeEach: function() {
-    // Initiate a test calendar object, checkit object, and generate all
-    // the html for the test calendar. 
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    this.state = emptyCalendarState(this.params);
-    this.calendar = new Calendar(this.state);
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
-    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
-    this.checkit.fillCalendar(this.calendar);
-    this.checkit.attachCheckmarkClickHandler(this.calendar, this.calendar.monthObjects);
-    this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
-    this.checkit.removeEmptyWeeks(this.calendar, this.$calendarDiv);
-    this.checkit.findCurrentDay('20170214');
+QUnit.module("Checkit DOM manipulation tests", {
+    beforeEach: function () {
+        // Initiate a test calendar object, checkit object, and generate all
+        // the html for the test calendar. 
+        "use strict";
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+        this.state = emptyCalendarState(this.params);
+        this.calendar = new Calendar(this.state);
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+        this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+        this.checkit.fillCalendar(this.calendar);
+        this.checkit.attachCheckmarkClickHandler(this.calendar, this.calendar.monthObjects);
+        this.checkit.generateCheckmarks(this.calendar, this.$calendarDiv);
+        this.checkit.removeEmptyWeeks(this.calendar, this.$calendarDiv);
+        this.checkit.findCurrentDay('20170214');
 
-  },
-  afterEach: function() {
+    },
+    afterEach: function () {
     // clean up calendar html
-    this.$calendarDiv.empty();
-  }
+        "use strict";
+        this.$calendarDiv.empty();
+    }
 });
 
-QUnit.test("displayLoadingWheel test", function( assert ) {
+QUnit.test("displayLoadingWheel test", function (assert) {
+    "use strict";
     assert.expect(2);
-    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    this.$calendarDiv.append('<div id="loadingWheel"></div>');
     this.checkit.displayLoadingWheel(this.$calendarDiv.find('#loadingWheel'));
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 1);
     // div with class 'spinner' added to loadingWheel
     assert.equal(this.$calendarDiv.find('#loadingWheel > .spinner').length, 1);
 });
 
-QUnit.test("hideLoadingWheel test", function( assert ) {
+QUnit.test("hideLoadingWheel test", function (assert) {
+    "use strict";
     assert.expect(1);
-    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
+    this.$calendarDiv.append('<div id="loadingWheel"></div>');
     this.checkit.displayLoadingWheel(this.$calendarDiv.find('#loadingWheel'));
     this.checkit.hideLoadingWheel();
     assert.equal(this.$calendarDiv.find('#loadingWheel').children().length, 0);
 });
 
-QUnit.test("clearCalendarDiv", function(assert) {
+QUnit.test("clearCalendarDiv", function (assert) {
+    "use strict";
     assert.expect(2);
     assert.ok(this.$calendarDiv.children().length > 0);
     this.checkit.clearCalendarDiv();
@@ -452,25 +486,31 @@ QUnit.test("clearCalendarDiv", function(assert) {
     assert.notOk(this.$calendarDiv.children().length > 0);
 });
 
-QUnit.module( "CheckIt tests dropdown", {
-  beforeEach: function() {
+QUnit.module("CheckIt tests dropdown", {
+    beforeEach: function () {
     // prepare something before each test
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
-    
-    this.$fixture.append(`<div id="dropdownContainer"><ul id="dropdown"></ul>
-        </div>`);
-    this.$dropdown = this.$fixture.find('#dropdown');
-  },
-  afterEach: function() {
-    // clean up after each test
-    this.$fixture.find('#dropdown').empty();
-  }
+        "use strict";
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+
+        this.$fixture.append(
+            '<div id="dropdownContainer"><ul\
+            id="dropdown"></ul> \
+            </div>'
+        );
+        this.$dropdown = this.$fixture.find('#dropdown');
+    },
+    afterEach: function () {
+        // clean up after each test
+        "use strict";
+        this.$fixture.find('#dropdown').empty();
+    }
 });
 
 
-QUnit.test("addCalendarToDropdown test", function( assert ) {
+QUnit.test("addCalendarToDropdown test", function (assert) {
+    "use strict";
     assert.expect(5);
         // Check with items in dropdown already.
     this.$dropdown.append("<li>Hello World</li>");
@@ -484,9 +524,10 @@ QUnit.test("addCalendarToDropdown test", function( assert ) {
     assert.equal(this.$dropdown.find('#1234').length, 1);
 });
 
-QUnit.test("removeFromCalendarDropdown test", function( assert ) {
+QUnit.test("removeFromCalendarDropdown test", function (assert) {
+    "use strict";
     assert.expect(4);
-    this.$dropdown.append(`<li id="1234">Hello</li>`);
+    this.$dropdown.append('<li id="1234">Hello</li>');
     assert.equal(this.$dropdown.children().attr('id'), '1234');
     assert.equal(this.$dropdown.children().text(), "Hello");
     assert.equal(this.$dropdown.children().length, 1);
@@ -494,11 +535,12 @@ QUnit.test("removeFromCalendarDropdown test", function( assert ) {
     assert.equal(this.$dropdown.children().length, 0);
 });
 
-QUnit.test("clearDropdown test", function(assert) {
+QUnit.test("clearDropdown test", function (assert) {
+    "use strict";
     assert.expect(2);
-    this.$dropdown.append(`<li id="1">Hello</li>`);
-    this.$dropdown.append(`<li id="2">Hoi</li>`);
-    this.$dropdown.append(`<li id="3">Hola</li>`);
+    this.$dropdown.append('<li id="1">Hello</li>');
+    this.$dropdown.append('<li id="2">Hoi</li>');
+    this.$dropdown.append('<li id="3">Hola</li>');
     
     assert.equal(this.$dropdown.children().length, 3);
     this.checkit.clearDropdown(this.$dropdown);
@@ -507,53 +549,68 @@ QUnit.test("clearDropdown test", function(assert) {
 
 
 
-QUnit.module( "Form Tests", {
-  beforeEach: function() {
+QUnit.module("Form Tests", {
+    beforeEach: function () {
     // Initiate a checkit object, and html for a mock form that includes
     // hidden error elements
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    this.checkit = new CheckIt('localStorage', this.$calendarDiv);
-    var formHTML = `<form id="fullForm"><div class="form-group" 
-        id="emailFormGroup"><input type="email" class="form-control" 
-        id="exemail"><span id="sr" class="sr-only hidden">(error)</span>
-        <span id="helpBlock" class="help-block hidden">This is some help text
-        .</span><span id ="fiveYears" class="help-block hidden">Five years.
-        </span></div></form>`;
-    this.$calendarDiv.append(formHTML);
-    this.$form = this.$calendarDiv.find('#fullForm');
-    this.$formGroup = this.$form.find('#emailFormGroup');
-    this.$sr = this.$form.find('#sr');
-    this.$form.find('.form-group').append(`<span id="heart" 
-        class="glyphicon glyphicon-heart hidden glyph" aria-hidden="true"></span>`);
-    this.$heart = this.$form.find('#heart');
-    this.$helpBlock = this.$formGroup.find('#helpBlock');
-    this.$fiveYears = this.$formGroup.find('#fiveYears');
-  },
-  afterEach: function() {
-    // clean up html
-    this.$calendarDiv.empty();
-  }
+        "use strict";
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.checkit = new CheckIt('localStorage', this.$calendarDiv);
+        var formHTML =
+            '<form id="fullForm"><div class="form-group"\
+            id="emailFormGroup"><input type="email" class=\
+            "form-control"\
+            id="exemail"><span id="sr" class="sr-only\
+            hidden"> (error)</span> \
+            <span id="helpBlock" class="help-block hidden">\
+            This is some help text\
+            .</span><span id ="fiveYears" class=\
+            "help-block hidden">Five years.\
+            </span></div></form>';
+        this.$calendarDiv.append(formHTML);
+        this.$form = this.$calendarDiv.find('#fullForm');
+        this.$formGroup = this.$form.find('#emailFormGroup');
+        this.$sr = this.$form.find('#sr');
+        this.$form.find('.form-group').append(
+            '<span id="heart"\
+            class="glyphicon glyphicon-heart hidden glyph"\
+            aria-hidden="true"></span>'
+        );
+        this.$heart = this.$form.find('#heart');
+        this.$helpBlock = this.$formGroup.find('#helpBlock');
+        this.$fiveYears = this.$formGroup.find('#fiveYears');
+    },
+    afterEach: function () {
+        // clean up html
+        "use strict";
+        this.$calendarDiv.empty();
+    }
 });
 
-QUnit.test("show and hide Form test", function( assert ) {
+QUnit.test("show and hide Form test", function (assert) {
+    "use strict";
     assert.expect(1);
     
-    this.$calendarDiv.append(`<div id="testCollapse" class="collapse"></div>`);
+    this.$calendarDiv.append(
+        '<div id="testCollapse"\
+        class="collapse"></div>'
+    );
     
     var $testCollapse = this.$calendarDiv.find('#testCollapse');
     assert.equal($testCollapse.css('display'), 'none');
     this.checkit.showForm($testCollapse);
-    setTimeout(function(){ 
+    setTimeout(function () {
         assert.equal($testCollapse.css('display'), 'block');
-        }, 350);
+    }, 350);
     this.checkit.hideForm($testCollapse);
-    setTimeout(function(){ 
+    setTimeout(function () {
         assert.equal($testCollapse.css('display'), 'none');
-        }, 350);
+    }, 350);
 });
 
-QUnit.test("clearForm test", function( assert ) {
+QUnit.test("clearForm test", function (assert) {
+    "use strict";
     assert.expect(2);
 
     var $formInput = this.$form.find('input');
@@ -566,7 +623,8 @@ QUnit.test("clearForm test", function( assert ) {
     assert.equal($formInput.val(), "");
 });
 
-QUnit.test("addFieldError test", function( assert ) {
+QUnit.test("addFieldError test", function (assert) {
+    "use strict";
     assert.expect(4);
     
     assert.equal(this.$formGroup.find('has-error').length, 0);
@@ -577,7 +635,8 @@ QUnit.test("addFieldError test", function( assert ) {
     assert.notOk(this.$sr.hasClass('hidden'));
 });
 
-QUnit.test("removeFieldError test", function( assert ) {
+QUnit.test("removeFieldError test", function (assert) {
+    "use strict";
     assert.expect(4);
     // Give the form errors
     this.$formGroup.addClass('has-error has-feedback');
@@ -592,7 +651,8 @@ QUnit.test("removeFieldError test", function( assert ) {
     
 });
 
-QUnit.test("addGlyphicon test", function( assert) {
+QUnit.test("addGlyphicon test", function (assert) {
+    "use strict";
     assert.expect(3);
     
     assert.ok(this.$heart.hasClass('hidden'));
@@ -605,9 +665,10 @@ QUnit.test("addGlyphicon test", function( assert) {
     // addGlyphicon should remove the class 'hidden' from #heart
     this.checkit.addGlyphicon(this.$heart);
     assert.ok(this.$heart.hasClass('hidden'));
-});  
+});
 
-QUnit.test("removeGlyphicon test", function(assert) {
+QUnit.test("removeGlyphicon test", function (assert) {
+    "use strict";
     assert.expect(3);
     
     this.$heart.removeClass('hidden');
@@ -622,7 +683,8 @@ QUnit.test("removeGlyphicon test", function(assert) {
     assert.notOk(this.$heart.hasClass('hidden'));
 });
 
-QUnit.test("addHelpBlock test", function(assert) {
+QUnit.test("addHelpBlock test", function (assert) {
+    "use strict";
     assert.expect(2);
 
     assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
@@ -630,7 +692,8 @@ QUnit.test("addHelpBlock test", function(assert) {
     assert.notOk(this.$helpBlock.hasClass('hidden'), "helpBlock is not hidden");
 });
 
-QUnit.test("removeHelpBlock test", function(assert) {
+QUnit.test("removeHelpBlock test", function (assert) {
+    "use strict";
     assert.expect(2);
     
     assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
@@ -638,7 +701,8 @@ QUnit.test("removeHelpBlock test", function(assert) {
     assert.ok(this.$helpBlock.hasClass('hidden'), "helpBlock is hidden");
 });
 
-QUnit.test("removeFormErrors test", function(assert) {
+QUnit.test("removeFormErrors test", function (assert) {
+    "use strict";
     assert.expect(6);
     // Add errors to input field and reveal glyphicon and assert
     this.$heart.removeClass('hidden');
@@ -653,24 +717,28 @@ QUnit.test("removeFormErrors test", function(assert) {
     assert.notOk(this.$formGroup.hasClass('has-feedback'));
 });
 
-QUnit.test("validateDates test", function(assert) {
+QUnit.test("validateDates test", function (assert) {
+    "use strict";
     assert.expect(17);
     // Ensure true is returned when dates are correct (startDate before
     // endDate and no more than 5 years between them
     
-    var startDate = "2017-01-01";
-    var endDate = "2017-02-01";
+    var startDate = "2017-01-01",
+        endDate = "2017-02-01",
     
-    var validDates = this.checkit.validateDates(startDate, endDate,
-        this.$formGroup);
+        validDates = this.checkit.validateDates(startDate, endDate,
+            this.$formGroup),
+        invalidDates,
+        invalidYear,
+        moreThanFive;
     assert.ok(validDates, "endDate > startDate < 5 years");
     assert.notOk(this.$formGroup.hasClass('has-error'));
     assert.notOk(this.$formGroup.hasClass('has-feedback'));
     
     // Ensure false when endDate is before startDate but they are still
     // less than 5 years apart.
-    var endDate = "2016-12-01";
-    var invalidDates = this.checkit.validateDates(startDate, endDate,
+    endDate = "2016-12-01";
+    invalidDates = this.checkit.validateDates(startDate, endDate,
         this.$formGroup);
     assert.notOk(invalidDates, "endDate < startDate");
     assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
@@ -683,8 +751,8 @@ QUnit.test("validateDates test", function(assert) {
     // Ensure false when endDate is before startDate AND they are more than 
     // 5 years apart, in this case, the form just shows error for the 
     // end date being before the start date
-    var endDate = "2011-01-01";
-    var invalidYear = this.checkit.validateDates(startDate, endDate,
+    endDate = "2011-01-01";
+    invalidYear = this.checkit.validateDates(startDate, endDate,
         this.$formGroup);
     assert.notOk(invalidYear, "endDate < startDate and > 5 years");
     assert.ok(this.$formGroup.hasClass('has-error'), 'Has has-error class');
@@ -698,8 +766,8 @@ QUnit.test("validateDates test", function(assert) {
     this.$fiveYears.addClass('hidden');
     // Ensure false when endDate is after startDate BUT they are more than 5
     // years apart. Function should return false, add a helpBlock, and field errors
-    var endDate = "2023-01-01";
-    var moreThanFive = this.checkit.validateDates(startDate, endDate,
+    endDate = "2023-01-01";
+    moreThanFive = this.checkit.validateDates(startDate, endDate,
         this.$formGroup);
     assert.notOk(moreThanFive, "More than five years invalid");
     assert.ok(this.$formGroup.hasClass('has-error'), "does not have has-error");
@@ -709,7 +777,8 @@ QUnit.test("validateDates test", function(assert) {
 
 });
 
-QUnit.test("validateInput test", function(assert) {
+QUnit.test("validateInput test", function (assert) {
+    "use strict";
     assert.expect(4);
     // Ensure validateInput returns false for an empty string
     var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
@@ -719,79 +788,88 @@ QUnit.test("validateInput test", function(assert) {
     assert.notOk(this.$heart.hasClass('hidden'), 'glyphicon is visible');
 });
 
-QUnit.test("validateForm test", function(assert) {
+QUnit.test("validateForm test", function (assert) {
+    "use strict";
     assert.expect(0);
     // validateForm is made up of individual functions that I already tested
     // Do I need to write this?
 
 });
 
-QUnit.module( "CheckIt tests for functions that involve store", {
-  beforeEach: function() {
-    // clear localStorage, initiate checkit object, calendar object, and
-    // store in storage other test calendars. Also generate html for one
-    // of the test calendars
+QUnit.module("CheckIt tests for functions that involve store", {
+    beforeEach: function () {
+        // clear localStorage, initiate checkit object, calendar object, and
+        // store in storage other test calendars. Also generate html for one
+        // of the test calendars
+        "use strict";
+        localStorage.clear();
 
-    localStorage.clear();
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
 
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
- 
-    this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
-    this.store = this.checkit.store;
-        
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    this.state = emptyCalendarState(this.params);
-    this.calendar = new Calendar(this.state);
-    var uniqueId = this.calendar.state.uniqueId;
-    
-    this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
-    this.checkit.fillCalendar(this.calendar);
-    // Set some calendars in localStorage
-    // allCalendarIds
-    var allCalendarIdsKey = 'allCalendarIdsKey';
-    var allCalendarIds = {'1234' : 'hello', '5678': 'world'};
-    allCalendarIds[uniqueId] = 'Test Calendar';
+        this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        this.store = this.checkit.store;
 
-    localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
-    //current active calendar
-    var current_active_calendar = 'current_active_calendar';
-    localStorage.setItem(current_active_calendar, '1234');
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+        this.state = emptyCalendarState(this.params);
+        this.calendar = new Calendar(this.state);
+        var uniqueId = this.calendar.state.uniqueId,
+            allCalendarIdsKey,
+            allCalendarIds,
+            current_active_calendar;
 
-    //calendar states
-    this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
-    this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
-    localStorage.setItem(uniqueId, JSON.stringify(this.state));
-    localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
-    localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
-    //add loading wheel
-    this.$calendarDiv.append(`<div id="loadingWheel"></div>`);
-    // make calendar objects out of hello calendar and world calendar
-    this.helloCal = new Calendar(this.helloState);
-    this.worldCal = new Calendar(this.worldState);
-    
-  },
-  afterEach: function() {
+        this.checkit.generateEmptyCalendar(this.calendar, this.$calendarDiv);
+        this.checkit.fillCalendar(this.calendar);
+        // Set some calendars in localStorage
+        // allCalendarIds
+        allCalendarIdsKey = 'allCalendarIdsKey';
+        allCalendarIds = {'1234' : 'hello', '5678': 'world'};
+        allCalendarIds[uniqueId] = 'Test Calendar';
+
+        localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
+        //current active calendar
+        current_active_calendar = 'current_active_calendar';
+        localStorage.setItem(current_active_calendar, '1234');
+
+        //calendar states
+        this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
+        this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
+        localStorage.setItem(uniqueId, JSON.stringify(this.state));
+        localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
+        localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
+        //add loading wheel
+        this.$calendarDiv.append('<div id="loadingWheel"></div>');
+        // make calendar objects out of hello calendar and world calendar
+        this.helloCal = new Calendar(this.helloState);
+        this.worldCal = new Calendar(this.worldState);
+
+    },
+    afterEach: function () {
     // clean up calendar html, and reset checkit's calendar div
-    this.$calendarDiv.empty();
-  }
+        "use strict";
+        this.$calendarDiv.empty();
+    }
 });
 
 
-QUnit.test("displayActiveCalendar test", function(assert) {
+QUnit.test("displayActiveCalendar test", function (assert) {
+    "use strict";
     assert.expect(8);
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = this.$calendarDiv,
+        done,
+        displayActiveP,
+        displayNoP;
     
     // When there is a current Active Calendar
     assert.equal($calendarDiv.find('h1').text(), 'Test Calendar');
     // currentActiveCalendar
-    var done = assert.async(2);
+    done = assert.async(2);
     assert.equal($calendarDiv.find('.monthframe').length, 1);
-    var displayActiveP = this.checkit.displayActiveCalendar();
+    displayActiveP = this.checkit.displayActiveCalendar();
     displayActiveP.then(function () {
         assert.equal($calendarDiv.find('h1').text(), 'hello');
         assert.equal($calendarDiv.find('.monthframe').length, 12);
-        done()
+        done();
     });
     
     // When there isn't a current active calendar
@@ -799,16 +877,17 @@ QUnit.test("displayActiveCalendar test", function(assert) {
     assert.equal($calendarDiv.find('.monthframe').length, 0);
     localStorage.removeItem('current_active_calendar');
     assert.equal(JSON.parse(localStorage.getItem('current_active_calendar')), null);
-    var displayNoP = this.checkit.displayActiveCalendar();
-    displayNoP.then(function(val) {
+    displayNoP = this.checkit.displayActiveCalendar();
+    displayNoP.then(function (val) {
         assert.equal(val, "Not found");
         assert.equal($calendarDiv.find('.monthframe').length, 0);
-        done()
+        done();
     });
 
 });
 
-QUnit.test("onActivityChanged test", function(assert) {
+QUnit.test("onActivityChanged test", function (assert) {
+    "use strict";
     assert.expect(4);
     // check that loading wheel is displayed when active calls > 0 and hidden
     // when active calls === 0, what about if active calls < 0? throw an error?
@@ -828,23 +907,29 @@ QUnit.test("onActivityChanged test", function(assert) {
     
 });
 
-QUnit.test("deleteCalendar test", function(assert) {
+QUnit.test("deleteCalendar test", function (assert) {
+    "use strict";
     assert.expect(8);
-    var done = assert.async()
+    var done = assert.async(),
+        activeCal,
+        activeCalState,
+        allCalendarIds,
+        state,
+        ids,
+        currentActive;
     
+    activeCal =         JSON.parse(localStorage.getItem('current_active_calendar'));
+    activeCalState = JSON.parse(localStorage.getItem('1234'));
+    allCalendarIds = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
     
-    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
-    var activeCalState = JSON.parse(localStorage.getItem('1234'));
-    var allCalendarIds = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
-    
-    assert.equal(allCalendarIds['1234'], 'hello')
+    assert.equal(allCalendarIds['1234'], 'hello');
     assert.deepEqual(activeCalState, this.helloState);
     assert.equal(activeCal, '1234');
     
-    this.checkit.deleteCalendar().then(function() {
+    this.checkit.deleteCalendar().then(function () {
         var noActive = JSON.parse(localStorage.getItem('current_active_calendar'));
-        var state = JSON.parse(localStorage.getItem('1234'));
-        var ids = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+        state = JSON.parse(localStorage.getItem('1234'));
+        ids = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
         
         assert.equal(noActive, null);
         assert.deepEqual(state, null);
@@ -855,27 +940,30 @@ QUnit.test("deleteCalendar test", function(assert) {
     // remove current active calendar from storage
     localStorage.removeItem('current_active_calendar');
     // check that it has been removed
-    var currentActive = JSON.parse(localStorage.getItem('current_active_calendar'));
+    currentActive = JSON.parse(localStorage.getItem('current_active_calendar'));
     assert.equal(currentActive, null);
     
     this.checkit.deleteCalendar()
-        .catch(function(err) {
+        .catch(function (err) {
             assert.equal(err, "Not found");
         });
 
 });
 
-QUnit.test("buildCalendar test", function(assert) {
+QUnit.test("buildCalendar test", function (assert) {
+    "use strict";
     assert.expect(6);
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = this.$calendarDiv,
     // Ensure currently displayed calendar is 'Test Calendar'
-    var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
+        calTitle = $calendarDiv.find('.calendarTitleHeading').text(),
+        secondCalTitle,
+        months;
     
     assert.equal(calTitle, 'Test Calendar');
     assert.equal($calendarDiv.find('.monthContainer').length, 1);
     
     // append a div to $qunit-fixture where new calendar will be built
-    $calendarDiv.append(`<div id="test"></div>`);
+    $calendarDiv.append('<div id="test"></div>');
     // Set it as the active calendar Div
     this.checkit.setCalendarDiv($calendarDiv.find('#test'));
     // Build the calendar
@@ -885,8 +973,8 @@ QUnit.test("buildCalendar test", function(assert) {
     assert.equal($calendarDiv.find('.calendarTitleHeading').length, 2);
     
     //check the second calendar's title and number of months
-    var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
-    var months = $calendarDiv.find('#test .monthContainer').length;
+    secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
+    months = $calendarDiv.find('#test .monthContainer').length;
     
     assert.equal(secondCalTitle, 'hello');
     assert.equal(months, 12);
@@ -895,12 +983,15 @@ QUnit.test("buildCalendar test", function(assert) {
     assert.equal($calendarDiv.find('.monthContainer').length, 13);
 });
 
-QUnit.test("displayCalendar test", function(assert) {
+QUnit.test("displayCalendar test", function (assert) {
+    "use strict";
     assert.expect(7);
     // Uses functions that have all already been tested
-    var $calendarDiv = this.$calendarDiv;
+    var $calendarDiv = this.$calendarDiv,
     //Ensure currently displayed calendar is 'Test Calendar'
-    var calTitle = $calendarDiv.find('.calendarTitleHeading').text();
+        calTitle = $calendarDiv.find('.calendarTitleHeading').text(),
+        activeCal,
+        state;
     
     assert.equal(calTitle, 'Test Calendar');
     assert.equal($calendarDiv.find('.monthContainer').length, 1);
@@ -914,61 +1005,63 @@ QUnit.test("displayCalendar test", function(assert) {
     assert.equal($calendarDiv.find('.monthContainer').length, 12);
     
     // check that 'hello' is active calendar in storage
-    var activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
+    activeCal = JSON.parse(localStorage.getItem('current_active_calendar'));
     assert.equal(activeCal, '1234');
-    var state = JSON.parse(localStorage.getItem(activeCal));
+    state = JSON.parse(localStorage.getItem(activeCal));
     assert.deepEqual(this.helloState, state);
 });
 
 
-QUnit.module( "CheckIt tests for functions that involve firebase", {
-  beforeEach: function() {
-    // Initiate a checkit object, calendar object, and store other calendars
-    // in storage for testing
-    localStorage.clear();
+QUnit.module("CheckIt tests for functions that involve firebase", {
+    beforeEach: function () {
+        // Initiate a checkit object, calendar object, and store other calendars
+        // in storage for testing
+        "use strict";
+        localStorage.clear();
     
-    this.$fixture = $('#qunit-fixture');
-    this.$calendarDiv = this.$fixture.find('#calendarDiv');
-    
-    this.$fixture.append(
-        `<script>
-        $(document).ready( function() {
-        checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
-        });
-        </script>`);
-    
-    this.checkit = checkit;
-    this.store = this.checkit.store;
-        
-    this.params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Test Calendar"};
-    this.state = emptyCalendarState(this.params);
-    this.calendar = new Calendar(this.state);
-    var uniqueId = this.calendar.state.uniqueId;
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
 
-    // Set some calendars in localStorage
-    // allCalendarIds
-    var allCalendarIdsKey = 'allCalendarIdsKey';
-    var allCalendarIds = {'1234' : 'hello', '5678': 'world'};
-    allCalendarIds[uniqueId] = 'Test Calendar';
-    
-    localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
-    //current active calendar
-    var current_active_calendar = 'current_active_calendar';
-    localStorage.setItem(current_active_calendar, '1234');
-    
-    //calendar states
-    this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
-    this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
-    localStorage.setItem(uniqueId, JSON.stringify(this.state));
-    localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
-    localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
-  },
-  afterEach: function() {
-    // clean up after each test
-  }
+        this.$fixture.append(
+            '<script>\
+            $(document).ready( function() {\
+            checkit = new CheckIt(\'localStorage\',\
+            $(\'#qunit-fixture #calendarDiv\'));\
+            });\
+            </script>'
+        );
+
+        this.checkit = checkit;
+        this.store = this.checkit.store;
+
+        this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
+        this.state = emptyCalendarState(this.params);
+        this.calendar = new Calendar(this.state);
+        var uniqueId = this.calendar.state.uniqueId,
+
+        // Set some calendars in localStorage
+        // allCalendarIds
+            allCalendarIdsKey = 'allCalendarIdsKey',
+            allCalendarIds = {'1234' : 'hello', '5678': 'world'},
+            current_active_calendar;
+        allCalendarIds[uniqueId] = 'Test Calendar';
+
+        localStorage.setItem(allCalendarIdsKey, JSON.stringify(allCalendarIds));
+        //current active calendar
+        current_active_calendar = 'current_active_calendar';
+        localStorage.setItem(current_active_calendar, '1234');
+
+        //calendar states
+        this.helloState = {uniqueId: '1234', title: 'hello', startDateString: "20170101", endDateString: "20171201"};
+        this.worldState = {uniqueId: '5678', title: 'world', startDateString: "20160101", endDateString: "20161201"};
+        localStorage.setItem(uniqueId, JSON.stringify(this.state));
+        localStorage.setItem(this.helloState.uniqueId, JSON.stringify(this.helloState));
+        localStorage.setItem(this.worldState.uniqueId, JSON.stringify(this.worldState));
+    }
 });
 
-QUnit.test("initFirebase test", function(assert) {
+QUnit.test("initFirebase test", function (assert) {
+    "use strict";
     assert.expect(0);
     //console.log(this.checkit.mode);
     
@@ -976,41 +1069,41 @@ QUnit.test("initFirebase test", function(assert) {
     // should I do that?
 });
 
-QUnit.test("signIn test", function(assert) {
+QUnit.test("signIn test", function (assert) {
+    "use strict";
     assert.expect(0);
 });
 
-QUnit.test("signOut test", function(assert) {
+QUnit.test("signOut test", function (assert) {
+    "use strict";
     assert.expect(0);
 });
 
-QUnit.test("updateUserDescription test", function(assert) {
+QUnit.test("updateUserDescription test", function (assert) {
+    "use strict";
     assert.expect(0);
 });
 
-QUnit.test("onAuthStateChanged test", function(assert) {
+QUnit.test("onAuthStateChanged test", function (assert) {
+    "use strict";
     assert.expect(0);
 });
 
 // And pretty much all of the same functions as localStorage (createCalendar, etc)
 
-QUnit.module( "CheckIt tests for clickHandlers", {
-  beforeEach: function() {
-    // prepare something before each test
-  },
-  afterEach: function() {
-    // clean up after each test
-  }
+QUnit.module("CheckIt tests for clickHandlers", {
 });
 
-QUnit.test("createCalendar test", function(assert) {
+QUnit.test("createCalendar test", function (assert) {
+    "use strict";
     assert.expect(0);
     // createCalendar uses functions that have already been tested
     
 
 });
 
-QUnit.test("loadFromDropdown test", function(assert) {
+QUnit.test("loadFromDropdown test", function (assert) {
+    "use strict";
     assert.expect(0);
     // Uses functions that have already been tested
 });
@@ -1021,16 +1114,17 @@ QUnit.test("loadFromDropdown test", function(assert) {
 
 // Tests for Calendar Facts functions
 QUnit.module("calendarAnalyzer tests for Calendar Facts functions", {
-    beforeEach: function() {
+    beforeEach: function () {
         // Make a sample calendar with sample data
         // Should be able to get all the data you need from just a calendar object
         // Initiate a test calendar object for testing
-        this.params = 
-        {
-            startDate: "2017-02-14",
-            endDate: "2018-02-14" ,
-            calendarTitle: "Test Calendar"
-        };
+        "use strict";
+        this.params =
+            {
+                startDate: "2017-02-14",
+                endDate: "2018-02-14",
+                calendarTitle: "Test Calendar"
+            };
         
         this.state = emptyCalendarState(this.params);
         
@@ -1050,24 +1144,27 @@ QUnit.module("calendarAnalyzer tests for Calendar Facts functions", {
             "20171214": 1,
             "20180114": 1,
             "20180214": 1
-        }
+        };
         
         // Instantiate CalendarAnalyzer object
         this.calendarAnalyzer = new CalendarAnalyzer(this.state);
     },
-    afterEach: function() {
+    afterEach: function () {
+        "use strict";
         localStorage.clear();
     }
 });
 
-QUnit.test("getNumberOfChecked test", function(assert) {
+QUnit.test("getNumberOfChecked test", function (assert) {
+    "use strict";
     assert.expect(1);
     
     var numOfChecked = this.calendarAnalyzer.getNumberOfChecked();
     assert.equal(numOfChecked, 13);
 });
 
-QUnit.test("getNumberOfUnchecked test", function(assert) {
+QUnit.test("getNumberOfUnchecked test", function (assert) {
+    "use strict";
     assert.expect(1);
     
     var unchecked = this.calendarAnalyzer.getNumberOfUnchecked();
@@ -1075,37 +1172,43 @@ QUnit.test("getNumberOfUnchecked test", function(assert) {
     assert.equal(unchecked, 365 - 13);
 });
 
-QUnit.test("getCheckedDaysStreak test", function(assert) {
+QUnit.test("getCheckedDaysStreak test", function (assert) {
+    "use strict";
     assert.expect(2);
     
-    var streak = this.calendarAnalyzer.getCheckedDaysStreak();
+    var streak = this.calendarAnalyzer.getCheckedDaysStreak(),
+        emptyStreak;
     assert.equal(streak, 4);
     
     // test for an empty checkedDays object
     this.state.checkedDays = {};
-    var emptyStreak = this.calendarAnalyzer.getCheckedDaysStreak();
+    emptyStreak = this.calendarAnalyzer.getCheckedDaysStreak();
     assert.equal(emptyStreak, 0);
 });
 
-QUnit.test("getUncheckedDaysStreak test", function(assert) {
+QUnit.test("getUncheckedDaysStreak test", function (assert) {
+    "use strict";
     assert.expect(0);
 });
 
-QUnit.test("getTotalCalendarDays test", function(assert) {
+QUnit.test("getTotalCalendarDays test", function (assert) {
+    "use strict";
     assert.expect(1);
     
     var days = this.calendarAnalyzer.getTotalCalendarDays();
     assert.equal(days, 365);
 });
 
-QUnit.test("getTotalCalendarWeeks test", function(assert) {
+QUnit.test("getTotalCalendarWeeks test", function (assert) {
+    "use strict";
     assert.expect(1);
     
     var weeks = this.calendarAnalyzer.getTotalCalendarWeeks();
     assert.equal(weeks, 52);
 });
 
-QUnit.test("getNumOfDaysLeft test", function(assert) {
+QUnit.test("getNumOfDaysLeft test", function (assert) {
+    "use strict";
     assert.expect(0);
     var daysLeft = this.calendarAnalyzer.getNumOfDaysLeft();
     // Not sure how I would write this
