@@ -3,8 +3,6 @@
     browser:true, Promise, firebase, $, jQuery, alert, moment, Spinner, LocalCalendarStorage, FirebaseCalendarStorage
 */
 
-
-
 //CODE FOR MONTH AND CALENDAR OBJECTS
 var Month = function (dateString) {
     "use strict";
