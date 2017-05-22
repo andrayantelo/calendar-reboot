@@ -161,70 +161,40 @@ CalendarAnalyzer.prototype.getNumberOfUnchecked = function (calObj) {
 CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
     // Returns the longest streak of checked days
     "use strict";
-    // if checkedDays is an empty object, return 0;
-    if (jQuery.isEmptyObject(this.calState.checkedDays)) {
-        return 0;
-    }
     
-    var currentStreak = [],
-        arrayOfStreakArrays = [],
+    var currentStreak = 0,
         checkedDaysArray = [],
-        key,
         lastDate,
-        checkedDaysArrayLength,
+        bestStreak = 0,
         i,
         currentDay,
         previousDay,
-        dayDiff,
-        largestArrayIndex;
+        dayDiff;
     
     // place checkedDays object's keys into array and sort the array.
-    for (key in this.calState.checkedDays) {
-        if (this.calState.checkedDays.hasOwnProperty(key)) {
-            checkedDaysArray.push(key);
-        }
-    }
+    checkedDaysArray = Object.keys(this.calState.checkedDays);
     checkedDaysArray.sort();
 
-    checkedDaysArrayLength = checkedDaysArray.length;
+    lastDate = checkedDaysArray[0];
     
-    // for each checked day
-    for (i = 0; i < checkedDaysArrayLength; i++) {
-        
-        if (i === 0) {
-            lastDate = checkedDaysArray[i];
-            currentStreak.push(lastDate);
-            i++;
-        }
-        
-        // if the next element is the day after lastDate, add it to currentStreak
-        // if not, then add currentStreak to arrayOfStreakArrays.
+    for (i = 1; i < checkedDaysArray.length; i++) {
+        // if the next element is the day after lastDate, add 1 to currentStreak
         currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
         previousDay = moment(checkedDaysArray[i - 1], "YYYYMMDD");
         
         dayDiff = currentDay.diff(previousDay, 'days');
 
-        if (currentDay.diff(previousDay, 'days') === 1) {
-            currentStreak.push(checkedDaysArray[i]);
-        } else {
-            arrayOfStreakArrays.push(currentStreak);
-            currentStreak = [];
-            currentStreak.push(checkedDaysArray[i]);
+        currentStreak++;
+        if (dayDiff !== 1) {
+            if (bestStreak < currentStreak) {
+                bestStreak = currentStreak;
+            }
+            // reset currentStreak
+            currentStreak = 0;
         }
-        
-        // if on last element, push the currentStreak into the array of streaks
-        if (i === checkedDaysArrayLength - 1) {
-            arrayOfStreakArrays.push(currentStreak);
-        }
-        
     }
-    
-    // Find the array with the most elements in the arrayOfStreakArrays
-    largestArrayIndex = arrayOfStreakArrays.reduce(function (maxI, el, i, arr) {
-        return el.length > arr[maxI].length ? i : maxI;
-    }, 0);
-   
-    return arrayOfStreakArrays[largestArrayIndex].length;
+
+    return bestStreak;
 };
 
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
