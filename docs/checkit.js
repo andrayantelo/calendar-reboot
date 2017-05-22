@@ -200,7 +200,10 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
     // Returns the longest streak of unchecked days
     "use strict";
-    // Probably don't need this right?\
+    // TODO
+    // Go through all the dates between startDate and endDate, if they
+    // are not in checkedDays add them to an uncheckedDays array
+    // then find the bestStreak in that uncheckedDays array. 
 
 };
 
