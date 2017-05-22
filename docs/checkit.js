@@ -152,10 +152,10 @@ CalendarAnalyzer.prototype.getTotalCalendarDays = function () {
     return totalDays;
 };
 
-CalendarAnalyzer.prototype.getNumberOfUnchecked = function (calObj) {
+CalendarAnalyzer.prototype.getNumberOfUnchecked = function () {
     // Returns number of unchecked days in a calendar
     "use strict";
-    return this.getTotalCalendarDays(calObj) - this.getNumberOfChecked(calObj);
+    return this.getTotalCalendarDays() - this.getNumberOfChecked();
 };
 
 CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
@@ -200,7 +200,8 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
     // Returns the longest streak of unchecked days
     "use strict";
-    // Probably don't need this right?
+    // Probably don't need this right?\
+
 };
 
 CalendarAnalyzer.prototype.getTotalCalendarWeeks = function () {
