@@ -600,11 +600,11 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     var checkitApp = this;
     // Add the title of the calendar
     checkitApp.$calendarDiv.append(
-        //'<div class="calendarTitleHeading"><h1 class="page-header\
-        //text-center">' + calObj.state.title + '</h1></div>'
+        '<div class="calendarTitleHeading"><h1 class="page-header\
+        text-center">' + calObj.state.title + '</h1></div>'
         
-        '<div id="calendarTitleWrapper"><input type="text" class="calendarTitleHeading" value=' +
-            calObj.state.title + '></div>'
+        //'<div id="calendarTitleWrapper"><input type="text" class="calendarTitleHeading" value=' +
+        //    calObj.state.title + '></div>'
     );
                         
     calObj.monthObjects.forEach(function (monthObj, index) {
@@ -900,7 +900,15 @@ CheckIt.prototype.createCalendar = function () {
         calendar,
         initP,
         buildP;
-        
+    
+    // TODO
+    // if someone clicked on save, to edit their title and/or start date and/or end date
+    // then the same calendar state needs to be used as the currently displayed calendar
+    // except with the edited components changed.
+    // So validateform checks that each entry is filled in and filled in correctly,
+    // but this is only needed when creating a brand new calendar
+    // If we are already looking at a calendar then we need to isolate just the components
+    // that were edited. 
     
     if (this.validateForm(start, end)) {
         

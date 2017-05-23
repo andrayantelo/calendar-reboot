@@ -226,6 +226,23 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-offset-3 col-md-5 col-lg-offset-3 col-lg-5">
    
+<!-- put form inside of accordion -->
+         
+          <div hidden id="buildFormAccordion" class="panel-group" aria-multiselectable="true">
+              <div class="panel panel-default">
+               
+                    <div class="panel-heading" role="tab" id="headingOne">
+                      <h5 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                          Build Calendar
+                        </a>
+                      </h5>
+                    </div> <!--/.panel-heading -->
+                
+
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+              
               <form id="fullForm">
                   <div id="titleFormGroup" class="form-group">
                       <label for="calendarTitle">Calendar Title</label>
@@ -279,6 +296,12 @@
                   
               </div> <!-- /.col-md-5 -->
             </div> <!-- /.row -->
+        
+        
+      </div> <!--/.panel-body -->
+    </div> <!--/.collapseOne panel-collapse-->
+  </div> <!--/.panel -->
+</div> <!-- /.accordion panel-group -->
 
  </div> <!-- /.container -->
   
