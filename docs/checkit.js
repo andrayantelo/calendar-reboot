@@ -600,8 +600,11 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     var checkitApp = this;
     // Add the title of the calendar
     checkitApp.$calendarDiv.append(
-        '<div class="calendarTitleHeading"><h1 class="page-header\
-        text-center">' + calObj.state.title + '</h1></div>'
+        //'<div class="calendarTitleHeading"><h1 class="page-header\
+        //text-center">' + calObj.state.title + '</h1></div>'
+        
+        '<div id="calendarTitleWrapper"><input type="text" class="calendarTitleHeading" value=' +
+            calObj.state.title + '></div>'
     );
                         
     calObj.monthObjects.forEach(function (monthObj, index) {

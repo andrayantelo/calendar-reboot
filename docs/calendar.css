@@ -124,6 +124,15 @@ html {
 /* content CSS *
  * **********************************/
 
+#calendarTitleWrapper {
+    width: 100%;
+}
+
+#calendarTitleHeading {
+    display: block;
+    margin: 0 auto;
+}
+
 #getStarted {
   font-size: 18px;
   padding: 10px;
