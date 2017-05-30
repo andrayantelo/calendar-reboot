@@ -162,36 +162,42 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
     // Returns the longest streak of checked days
     "use strict";
     
-    var currentStreak = 0,
+    var currentStreak = 1,
         checkedDaysArray = [],
-        lastDate,
         bestStreak = 0,
         i,
         currentDay,
         previousDay,
         dayDiff;
     
-    // place checkedDays object's keys into array and sort the array.
+    // Place checkedDays object's keys into array and sort the array.
     checkedDaysArray = Object.keys(this.calState.checkedDays);
     checkedDaysArray.sort();
-
-    lastDate = checkedDaysArray[0];
+    
+    previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
     
     for (i = 1; i < checkedDaysArray.length; i++) {
-        // if the next element is the day after lastDate, add 1 to currentStreak
-        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
-        previousDay = moment(checkedDaysArray[i - 1], "YYYYMMDD");
         
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        
+        // Calculate how many days are between previous day
+        // and current day
         dayDiff = currentDay.diff(previousDay, 'days');
-
-        currentStreak++;
+        
+        // If they are not consecutive days 
         if (dayDiff !== 1) {
-            if (bestStreak < currentStreak) {
-                bestStreak = currentStreak;
-            }
+            // Find bestStreak
+            bestStreak = Math.max(bestStreak, currentStreak);
             // reset currentStreak
-            currentStreak = 0;
+            currentStreak = 1;
+        } else {
+            // Increment currentStreak
+            currentStreak++;
+            // Find bestStreak
+            bestStreak = Math.max(bestStreak, currentStreak);
         }
+        // Update previousDay
+        previousDay = currentDay;
     }
 
     return bestStreak;

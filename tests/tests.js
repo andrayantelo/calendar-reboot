@@ -1127,9 +1127,7 @@ QUnit.module("calendarAnalyzer tests for Calendar Facts functions", {
             };
         
         this.state = emptyCalendarState(this.params);
-        
-        //this.calendar = new Calendar(this.state);
-        //this.calendar.state.checkedDays = {
+
         this.state.checkedDays = {
             "20170214": 1,
             "20170215": 1,
@@ -1174,16 +1172,39 @@ QUnit.test("getNumberOfUnchecked test", function (assert) {
 
 QUnit.test("getCheckedDaysStreak test", function (assert) {
     "use strict";
-    assert.expect(2);
+    assert.expect(4);
     
     var streak = this.calendarAnalyzer.getCheckedDaysStreak(),
-        emptyStreak;
+        emptyStreak,
+        oneStreak,
+        oneElement;
     assert.equal(streak, 4);
     
     // test for an empty checkedDays object
     this.state.checkedDays = {};
     emptyStreak = this.calendarAnalyzer.getCheckedDaysStreak();
     assert.equal(emptyStreak, 0);
+    
+    // Test for a checkedDays object with streaks no greater than 1
+    this.state.checkedDays = {
+        "20170215": 1,
+        "20170414": 1,
+        "20170514": 1,
+        "20170914": 1,
+        "20171014": 1,
+        "20171114": 1,
+        "20171214": 1,
+        "20180114": 1,
+        "20180214": 1
+    };
+    oneStreak = this.calendarAnalyzer.getCheckedDaysStreak();
+    assert.equal(oneStreak, 1);
+    
+    // Test for a checkedDays object with one element
+    this.state.CheckedDays = {"20170215": 1};
+    oneElement = this.calendarAnalyzer.getCheckedDaysStreak();
+    assert.equal(oneElement, 1);
+    
 });
 
 QUnit.test("getUncheckedDaysStreak test", function (assert) {
