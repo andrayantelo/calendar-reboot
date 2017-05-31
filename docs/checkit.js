@@ -202,10 +202,34 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
 CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
     // Returns the longest streak of unchecked days
     "use strict";
-    // TODO
-    // Go through all the dates between startDate and endDate, if they
-    // are not in checkedDays add them to an uncheckedDays array
-    // then find the bestStreak in that uncheckedDays array. 
+
+    // The largest gap between any two checked days (minus one)
+    var checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
+        currentGap = 0,
+        longestGap = 0,
+        i,
+        currentDay,
+        previousDay,
+        dayDiff;
+    
+    previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
+    
+    for (i = 1; i < checkedDaysArray.length; i++) {
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        
+        dayDiff = currentDay.diff(previousDay, 'days');
+
+        if (dayDiff === 1) {
+            longestGap = Math.max(longestGap, currentGap);
+            currentGap = 0;
+        } else {
+            currentGap = dayDiff;
+            longestGap = Math.max(longestGap, currentGap);
+        }
+        previousDay = currentDay;
+    }
+
+    return longestGap;
 
 };
 

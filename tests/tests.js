@@ -1210,6 +1210,11 @@ QUnit.test("getCheckedDaysStreak test", function (assert) {
 QUnit.test("getUncheckedDaysStreak test", function (assert) {
     "use strict";
     assert.expect(0);
+    var gap = this.calendarAnalyzer.getUncheckedDaysStreak(),
+        noGap,
+        oneGap,
+        oneElement;
+    console.log("the gap is " + gap);
 });
 
 QUnit.test("getTotalCalendarDays test", function (assert) {
