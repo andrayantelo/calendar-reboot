@@ -163,16 +163,12 @@ CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
     "use strict";
     
     var currentStreak = 1,
-        checkedDaysArray = [],
+        checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
         bestStreak = 0,
         i,
         currentDay,
         previousDay,
         dayDiff;
-    
-    // Place checkedDays object's keys into array and sort the array.
-    checkedDaysArray = Object.keys(this.calState.checkedDays);
-    checkedDaysArray.sort();
     
     previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
     
