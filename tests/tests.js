@@ -1217,21 +1217,17 @@ QUnit.test("getUncheckedDaysStreak test", function (assert) {
     console.log("the gap is " + gap);
 });
 
-QUnit.test("getTotalCalendarDays test", function (assert) {
+QUnit.test("getTotal test", function (assert) {
     "use strict";
-    assert.expect(1);
+    assert.expect(2);
     
-    var days = this.calendarAnalyzer.getTotalCalendarDays();
+    var days = this.calendarAnalyzer.getTotalCalendarDays('days');
     assert.equal(days, 365);
-});
-
-QUnit.test("getTotalCalendarWeeks test", function (assert) {
-    "use strict";
-    assert.expect(1);
     
-    var weeks = this.calendarAnalyzer.getTotalCalendarWeeks();
+    var weeks = this.calendarAnalyzer.getTotalCalendarWeeks('weeks');
     assert.equal(weeks, 52);
 });
+
 
 QUnit.test("getNumOfDaysLeft test", function (assert) {
     "use strict";
