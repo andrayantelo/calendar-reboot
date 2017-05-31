@@ -906,9 +906,16 @@ CheckIt.prototype.createCalendar = function () {
     // then the same calendar state needs to be used as the currently displayed calendar
     // except with the edited components changed.
     // So validateform checks that each entry is filled in and filled in correctly,
-    // but this is only needed when creating a brand new calendar
+    // we still have to validate the input given...
+    
     // If we are already looking at a calendar then we need to isolate just the components
     // that were edited. 
+    
+    // Maybe I can prepopulate the buildCalendarForm with the currently displayed
+    // calendar's title, startDate, and endDate, so that if one of them gets changed, then
+    // we have all three pieces of data to do this step.
+    // Although, we'd need to get the currently displayed calendar's checkedDays data too.
+    // We could do all this in a new function called editCalendar?
     
     if (this.validateForm(start, end)) {
         
