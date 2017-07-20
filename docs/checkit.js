@@ -1089,6 +1089,12 @@ CheckIt.prototype.findCurrentDay = function () {
         .addClass('currentDay');
     return todayId;
 };
+
+CheckIt.prototype.preFillForm = function () {
+    // Prefills the build calendar form with current calendar information
+    // so that you can edit it.
+    "use strict";
+};
     
 CheckIt.prototype.getTemplate = function () {
     "use strict";
