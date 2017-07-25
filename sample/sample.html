@@ -92,8 +92,6 @@
               <!-- the list of Options inside of the dropdown -->
               <ul class="dropdown-menu" id="optionsDropdown">
                 <li>
-                    <a href="#" role="button" id="buildCalendar">Build Calendar</a>
-                    <a href="#" role="button" id="editButton">Edit Calendar</a>
                     <a href="#" role="button" id="deleteButton">Delete Calendar</a>
                     
                 </li>
@@ -132,12 +130,23 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 
                   col-lg-10">
-        <div class="calendarTitleHeading"><h1 class="page-header text-center">     Calendar Title </h1>
-        </div>
-    </div>
+        <!--<div class="calendarTitleHeading"><h1 class="page-header text-center">     Calendar Title </h1>
+        </div> -->
+    
+        
+    <div id="titleFormGroup" class="form-group">
+      <label for="calendarTitle">Calendar Title</label>
+      <input type="text" class="form-control" id="calendarTitle"
+          maxlength="140" placeholder="What Are We Tracking">
+      <span id="titleErrorGlyphicon" class="glyphicon glyphicon-remove form-control-feedback hidden glyph" aria-hidden="true"></span>
+      <span id="srTitleError" class="sr-only hidden">(error)</span>
+      <!--<small class="form-text text-muted">This field is required.</small> -->
+    </div> <!-- /#titleFormGroup -->
+        
+    </div> <!-- /.col -->
     
     
-      <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-5 
+      <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5 
                   col-lg-5">
           
         <div id="startDateContainer">
@@ -157,7 +166,7 @@
           
       </div> <!-- /.col -->
         
-        <div class="col-xs-12 col-sm-12 col-md-5">
+        <div class="col-xs-12 col-sm-6 col-md-5">
             
           <div id="endDateContainer">
             <div id="endDateFormGroup" class="form-group">
@@ -177,6 +186,16 @@
             
       </div> <!-- /.col -->
     </div> <!-- /.row -->
+    
+    <!-- Button Row -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-7 col-sm-5 col-md-offset-6 col-md-5">
+            <div id="createButtonContainer" class="btn-group-lg pull-right" role="group">
+                <button id="createButton" type="button" class="btn btn-primary">Create</button>
+                <button id="clearButton" type="button" class="btn btn-primary">Clear</button>
+            </div>
+        </div>
+    </div>
 </div>
     
     
@@ -214,7 +233,8 @@
       <table class="month">
         <tbody>
           <tr class="week">
-            <td class="nil">
+            <td>
+                <div class="nil"></div>
             </td>
             <td>
               <div class="nil"></div>

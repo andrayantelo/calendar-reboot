@@ -429,10 +429,12 @@ corresponding value from the list below*/
   }
     
   #startDateContainer {
-    padding: 0% 20% 0% 20%;
+    padding: 0% 0% 0% 0%;
+    width: 100%
   }
   #endDateContainer {
-    padding: 0% 20% 0% 20%;
+    padding: 0% 0% 0% 0%;
+    width: 100%;
   }
 }
 
