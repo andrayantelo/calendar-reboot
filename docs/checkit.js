@@ -1,4 +1,4 @@
-/*jslint devel: true, es5: true, nomen: true*/
+/*jslint devel: true, es5: true, nomen: true, plusplus: true*/
 /*global
     browser:true, Promise, firebase, $, jQuery, alert, moment, Spinner, LocalCalendarStorage, FirebaseCalendarStorage
 */
@@ -128,6 +128,102 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
 
     return monthObjects;
 
+};
+
+// calendarAnalyzer takes a calendar object and can analyze facts about it.
+
+var CalendarAnalyzer = function (calendarState) {
+    "use strict";
+    this.calState = calendarState;
+};
+
+CalendarAnalyzer.prototype.getNumberOfChecked = function () {
+    // Returns the number of checked days in a calendar
+    "use strict";
+    return Object.keys(this.calState.checkedDays).length;
+};
+
+CalendarAnalyzer.prototype.getTotalCalendarDays = function () {
+    // Returns the total number of active days in the calendar
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalDays = endDate.diff(startDate, 'days');
+    return totalDays;
+};
+
+CalendarAnalyzer.prototype.getNumberOfUnchecked = function () {
+    // Returns number of unchecked days in a calendar
+    "use strict";
+    return this.getTotalCalendarDays() - this.getNumberOfChecked();
+};
+
+CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
+    // Returns the longest streak of checked days
+    "use strict";
+    
+    var currentStreak = 0,
+        checkedDaysArray = [],
+        lastDate,
+        bestStreak = 0,
+        i,
+        currentDay,
+        previousDay,
+        dayDiff;
+    
+    // place checkedDays object's keys into array and sort the array.
+    checkedDaysArray = Object.keys(this.calState.checkedDays);
+    checkedDaysArray.sort();
+
+    lastDate = checkedDaysArray[0];
+    
+    for (i = 1; i < checkedDaysArray.length; i++) {
+        // if the next element is the day after lastDate, add 1 to currentStreak
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        previousDay = moment(checkedDaysArray[i - 1], "YYYYMMDD");
+        
+        dayDiff = currentDay.diff(previousDay, 'days');
+
+        currentStreak++;
+        if (dayDiff !== 1) {
+            if (bestStreak < currentStreak) {
+                bestStreak = currentStreak;
+            }
+            // reset currentStreak
+            currentStreak = 0;
+        }
+    }
+
+    return bestStreak;
+};
+
+CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
+    // Returns the longest streak of unchecked days
+    "use strict";
+    // TODO
+    // Go through all the dates between startDate and endDate, if they
+    // are not in checkedDays add them to an uncheckedDays array
+    // then find the bestStreak in that uncheckedDays array. 
+
+};
+
+CalendarAnalyzer.prototype.getTotalCalendarWeeks = function () {
+    // Returns the total number of active weeks in the calendar
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalWeeks = endDate.diff(startDate, 'weeks');
+    return totalWeeks;
+};
+
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function () {
+    // Returns the total number of active days left in a calendar starting from current
+    // day to end.
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        today = moment(),
+        daysLeft = endDate.diff(today, 'days');
+    return daysLeft;
 };
 
 // Initializes CheckIt
@@ -359,6 +455,7 @@ CheckIt.prototype.clearDropdown = function ($dropdown) {
 
 CheckIt.prototype.initLocalStorage = function () {
     "use strict";
+
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
@@ -505,6 +602,9 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     checkitApp.$calendarDiv.append(
         '<div class="calendarTitleHeading"><h1 class="page-header\
         text-center">' + calObj.state.title + '</h1></div>'
+        
+        //'<div id="calendarTitleWrapper"><input type="text" class="calendarTitleHeading" value=' +
+        //    calObj.state.title + '></div>'
     );
                         
     calObj.monthObjects.forEach(function (monthObj, index) {
@@ -722,18 +822,22 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
     if (startDate.isBefore(endDate)) {
+        console.log("startDate is before EndDate");
         // startDate is before endDate so errors can be removed.
         this.removeFieldError($formGroup, $sr);
         this.removeHelpBlock($helpBlock);
         // If there are more than 5 years between the dates return false for invalid
         if (difference < 5) {
+            console.log("start and end date are no more than five years apart");
             this.removeHelpBlock($fiveYears);
             return true;
         } else {
+            console.log("start date and end date are further than five years apart");
             this.addFieldError($formGroup, $sr);
             this.addHelpBlock($fiveYears);
         }
     } else {
+        console.log("startDate is after endDate");
         // Mark the endDate input field red because endDate is after startDate
         this.addFieldError($formGroup, $sr);
         this.addHelpBlock($helpBlock);
@@ -755,8 +859,10 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
     
+    console.log("inputVal: " + inputVal);
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
+        console.log("no input provided " + inputId);
         this.addFieldError($inputFormGroup, $srElement);
         // if the input field has a span element with a glyphicon
         // reveal the error glyphicon
@@ -765,6 +871,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
         }
         return false;
     } else {
+        console.log("input valid " + inputId);
         this.removeFieldError($inputFormGroup, $srElement);
         // Remove glyphicon if it exists
         if ($glyphicon.length) {
@@ -785,6 +892,8 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
     
         isValid = validateTitle && validateStartDate && validateEndDate;
     
+    console.log("boolean value for validateForm: " + isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
+    
     // Make sure input is OK before parsing and validating dates
     return (isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
    
@@ -800,10 +909,25 @@ CheckIt.prototype.createCalendar = function () {
         calendar,
         initP,
         buildP;
-        
+    
+    // TODO
+    // if someone clicked on save, to edit their title and/or start date and/or end date
+    // then the same calendar state needs to be used as the currently displayed calendar
+    // except with the edited components changed.
+    // So validateform checks that each entry is filled in and filled in correctly,
+    // we still have to validate the input given...
+    
+    // If we are already looking at a calendar then we need to isolate just the components
+    // that were edited. 
+    
+    // Maybe I can prepopulate the buildCalendarForm with the currently displayed
+    // calendar's title, startDate, and endDate, so that if one of them gets changed, then
+    // we have all three pieces of data to do this step.
+    // Although, we'd need to get the currently displayed calendar's checkedDays data too.
+    // We could do all this in a new function called editCalendar?
     
     if (this.validateForm(start, end)) {
-        
+        console.log("Form validated");
         //clear the previously displayed calendar
         this.clearCalendarDiv();
 
@@ -973,6 +1097,12 @@ CheckIt.prototype.findCurrentDay = function () {
         .filter('#' + todayId)
         .addClass('currentDay');
     return todayId;
+};
+
+CheckIt.prototype.preFillForm = function () {
+    // Prefills the build calendar form with current calendar information
+    // so that you can edit it.
+    "use strict";
 };
     
 CheckIt.prototype.getTemplate = function () {

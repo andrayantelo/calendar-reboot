@@ -162,6 +162,15 @@ html {
   border-radius: 4px;
 }
 
+#startDateContainer {
+  padding: 0px;
+}
+#endDateContainer {
+  padding: 0px;
+}
+
+
+
 /* Calendar CSS 
  * *********************************/
    
@@ -337,7 +346,7 @@ corresponding value from the list below*/
     margin-bottom: 25px;
     margin-top: 25px;
     position: relative;
-    width: 60%
+    width: 100%
 }
   .monthContainer .month .week td .cell .checkmark {
     font-size: 40px;
@@ -350,7 +359,7 @@ corresponding value from the list below*/
     left: 50%;
   }
   .monthContainer .month .week td {
-    height: 155px!important;
+    height: 136px!important;
   }
   
   #bootstrap-overrides {
@@ -362,12 +371,19 @@ corresponding value from the list below*/
   }
   
   .month-year, #dayNames {
-    padding: 10px 0 10px 0;
+    padding: 5px 0 10px 0;
+  }
+
+  #startDateContainer {
+    padding: 0px;
+  }
+  #endDateContainer {
+    padding: 0px;
   }
 
 }
 
-@media screen and (min-width: 768px) /*tablet*/ {
+@media screen and (min-width: 768px) and (max-width: 960px)/*tablet*/ {
 
   #loadingWheelContainer {
     margin-left: 80px;
@@ -410,6 +426,15 @@ corresponding value from the list below*/
     }
   .monthContainer .month .week td {
     height: 105px;
+  }
+    
+  #startDateContainer {
+    padding: 0% 0% 0% 0%;
+    width: 100%
+  }
+  #endDateContainer {
+    padding: 0% 0% 0% 0%;
+    width: 100%;
   }
 }
 
