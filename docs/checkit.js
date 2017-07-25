@@ -859,9 +859,10 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
     
+    console.log("inputVal: " + inputVal);
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
-        console.log("no input provided " + $srElement);
+        console.log("no input provided " + inputId);
         this.addFieldError($inputFormGroup, $srElement);
         // if the input field has a span element with a glyphicon
         // reveal the error glyphicon
@@ -870,7 +871,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
         }
         return false;
     } else {
-        console.log("input valid " + $srElement);
+        console.log("input valid " + inputId);
         this.removeFieldError($inputFormGroup, $srElement);
         // Remove glyphicon if it exists
         if ($glyphicon.length) {
