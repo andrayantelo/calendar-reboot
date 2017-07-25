@@ -822,18 +822,22 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
     if (startDate.isBefore(endDate)) {
+        console.log("startDate is before EndDate");
         // startDate is before endDate so errors can be removed.
         this.removeFieldError($formGroup, $sr);
         this.removeHelpBlock($helpBlock);
         // If there are more than 5 years between the dates return false for invalid
         if (difference < 5) {
+            console.log("start and end date are no more than five years apart");
             this.removeHelpBlock($fiveYears);
             return true;
         } else {
+            console.log("start date and end date are further than five years apart");
             this.addFieldError($formGroup, $sr);
             this.addHelpBlock($fiveYears);
         }
     } else {
+        console.log("startDate is after endDate");
         // Mark the endDate input field red because endDate is after startDate
         this.addFieldError($formGroup, $sr);
         this.addHelpBlock($helpBlock);
@@ -857,6 +861,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
+        console.log("no input provided " + $srElement);
         this.addFieldError($inputFormGroup, $srElement);
         // if the input field has a span element with a glyphicon
         // reveal the error glyphicon
@@ -865,6 +870,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
         }
         return false;
     } else {
+        console.log("input valid " + $srElement);
         this.removeFieldError($inputFormGroup, $srElement);
         // Remove glyphicon if it exists
         if ($glyphicon.length) {
@@ -884,6 +890,8 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
         validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate'),
     
         isValid = validateTitle && validateStartDate && validateEndDate;
+    
+    console.log("boolean value for validateForm: " + isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
     
     // Make sure input is OK before parsing and validating dates
     return (isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
@@ -918,7 +926,7 @@ CheckIt.prototype.createCalendar = function () {
     // We could do all this in a new function called editCalendar?
     
     if (this.validateForm(start, end)) {
-        
+        console.log("Form validated");
         //clear the previously displayed calendar
         this.clearCalendarDiv();
 

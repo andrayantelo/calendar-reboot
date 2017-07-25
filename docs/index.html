@@ -134,8 +134,6 @@
               <!-- the list of Options inside of the dropdown -->
               <ul class="dropdown-menu" id="optionsDropdown">
                 <li>
-                    <a href="#" role="button" id="buildCalendar">Build Calendar</a>
-                    <a href="#" role="button" id="editButton">Edit Calendar</a>
                     <a href="#" role="button" id="deleteButton">Delete Calendar</a>
                     
                 </li>
@@ -225,86 +223,80 @@
         </div> <!-- /.col -->
     </div> <!--/.row -->
     
+    
+<!-- BUILD CALENDAR CONTENT -->
+    
     <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-offset-3 col-md-5 col-lg-offset-3 col-lg-5">
-   
-<!-- put form inside of accordion -->
+      <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 
+                  col-lg-10">
+        <!--<div class="calendarTitleHeading"><h1 class="page-header text-center">     Calendar Title </h1>
+        </div> -->
+    
+        
+    <div id="titleFormGroup" class="form-group">
+      <label for="calendarTitle">Calendar Title</label>
+      <input type="text" class="form-control" id="calendarTitle"
+          maxlength="140" placeholder="What Are We Tracking">
+      <span id="titleErrorGlyphicon" class="glyphicon glyphicon-remove form-control-feedback hidden glyph" aria-hidden="true"></span>
+      <span id="srTitleError" class="sr-only hidden">(error)</span>
+      <!--<small class="form-text text-muted">This field is required.</small> -->
+    </div> <!-- /#titleFormGroup -->
+        
+    </div> <!-- /.col -->
+    
+    
+      <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5 
+                  col-lg-5">
+          
+        <div id="startDateContainer">
+            <div id="startDateFormGroup" class="form-group">
+              <label for="startDate">Start Date</label> 
+              <div class='input-group date' id='datetimepicker1'>
+
+                  <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
+                  <span class="input-group-addon">
+                      <span class="calendarIcon glyphicon glyphicon-calendar"></span>
+                  </span>
+              </div> <!-- /.input-group date -->
+
+              <span id="srStartDateError" class="sr-only hidden">(error)</span>
+            </div> <!--/.form-group -->
+        </div> <!-- /.dateContainer -->
+          
+      </div> <!-- /.col -->
+        
+        <div class="col-xs-12 col-sm-6 col-md-5">
+            
+          <div id="endDateContainer">
+            <div id="endDateFormGroup" class="form-group">
+              <label for="endDate">End Date</label> 
+              <div class='input-group date' id='datetimepicker2'>
+
+                  <input type='text' id='endDate' class="form-control" placeholder="Pick an End Date" />
+                  <span class="input-group-addon">
+                      <span class="calendarIcon glyphicon glyphicon-calendar"></span>
+                  </span>
+              </div> <!-- /.input-group date -->
+              <span id="helpBlock" class="help-block hidden">The end date must be after the start date.</span>
+              <span id ="fiveYears" class="help-block hidden">The end date can be no more than five years after the start date.</span>
+              <span id="srEndDateError" class="sr-only hidden">(error)</span>
+            </div> <!--/.form-group -->
+          </div> <!-- /.dateContainer -->
+            
+      </div> <!-- /.col -->
+    </div> <!-- /.row -->
+    
+    <!-- Button Row -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-7 col-sm-5 col-md-offset-6 col-md-5">
+            <div id="createButtonContainer" class="btn-group-lg pull-right" role="group">
+                <button id="createButton" type="button" class="btn btn-primary">Create</button>
+                <button id="clearButton" type="button" class="btn btn-primary">Clear</button>
+            </div>
+        </div>
+    </div>
+
          
-          <div hidden id="buildFormAccordion" class="panel-group" aria-multiselectable="true">
-              <div class="panel panel-default">
-               
-                    <div class="panel-heading" role="tab" id="headingOne">
-                      <h5 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          Build Calendar
-                        </a>
-                      </h5>
-                    </div> <!--/.panel-heading -->
-                
-
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-          <div class="panel-body">
-              
-              <form id="fullForm">
-                  <div id="titleFormGroup" class="form-group">
-                      <label for="calendarTitle">Calendar Title</label>
-                      <input type="text" class="form-control" id="calendarTitle"
-                          maxlength="140" placeholder="What are we tracking Eg Good Deeds Done, Days Without Smoking, etc.">
-                      <span id="titleErrorGlyphicon" class="glyphicon glyphicon-remove form-control-feedback hidden glyph" aria-hidden="true"></span>
-                      <span id="srTitleError" class="sr-only hidden">(error)</span>
-                      <!--<small class="form-text text-muted">This field is required.</small> -->
-                  </div>
-                  
-                  <div id="startDateFormGroup" class="form-group">
-                      <label for="startDate">Start Date</label> 
-                      <div class='input-group date' id='datetimepicker1'>
-                          
-                          <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
-                          <span class="input-group-addon">
-                              <span class="calendarIcon glyphicon glyphicon-calendar"></span>
-                          </span>
-                      </div> <!-- /.input-group date -->
-                         
-                      <span id="srStartDateError" class="sr-only hidden">(error)</span>
-                  </div> <!--/.form-group -->
-                  
-                   <div id="endDateFormGroup" class="form-group">
-                      <label for="endDate">End Date</label> 
-                      <div class='input-group date' id='datetimepicker2'>
-                          
-                          <input type='text' id='endDate' class="form-control" placeholder="Pick an End Date" />
-                          <span class="input-group-addon">
-                              <span class="calendarIcon glyphicon glyphicon-calendar"></span>
-                          </span>
-                      </div> <!-- /.input-group date -->
-                      <span id="helpBlock" class="help-block hidden">The end date must be after the start date.</span>
-                      <span id ="fiveYears" class="help-block hidden">The end date can be no more than five years after the start date.</span>
-                      <span id="srEndDateError" class="sr-only hidden">(error)</span>
-                  </div> <!--/.form-group -->
-        
-        
-                    
-                    <!-- TODO MAYBE CHANGE BUTTON BACK TO SUBMIT ONCE WE GET SOME BACKEND -->
-                <div class="row">
-                    <div class="col-md-12">
-                      <div id="createButtonContainer" class="btn-group-lg pull-right" role="group">
-                        <button id="clearButton" type="button" class="btn btn-primary">Clear</button>
-                        <button id="createButton" type="button" class="btn btn-primary">Save</button>
-                      </div>
-                    </div> <!--/.col-md-3-->
-                  </div>  <!-- /.row -->
-                  
-                </form>
-                  
-              </div> <!-- /.col-md-5 -->
-            </div> <!-- /.row -->
-        
-        
-      </div> <!--/.panel-body -->
-    </div> <!--/.collapseOne panel-collapse-->
-  </div> <!--/.panel -->
-</div> <!-- /.accordion panel-group -->
-
  </div> <!-- /.container -->
   
 
