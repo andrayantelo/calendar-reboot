@@ -128,6 +128,55 @@
 </div> <!-- /#navbarContainer -->
 
 <div id="contentWrapper" class="container-fluid">
+    
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 
+                  col-lg-10">
+        <div class="calendarTitleHeading"><h1 class="page-header text-center">     Calendar Title </h1>
+        </div>
+    </div>
+    
+    
+      <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-5 
+                  col-lg-5">
+          
+        <div id="startDateContainer">
+            <div id="startDateFormGroup" class="form-group">
+              <label for="startDate">Start Date</label> 
+              <div class='input-group date' id='datetimepicker1'>
+
+                  <input type='text' id='startDate' class="form-control" placeholder="Pick a Start Date" />
+                  <span class="input-group-addon">
+                      <span class="calendarIcon glyphicon glyphicon-calendar"></span>
+                  </span>
+              </div> <!-- /.input-group date -->
+
+              <span id="srStartDateError" class="sr-only hidden">(error)</span>
+            </div> <!--/.form-group -->
+        </div> <!-- /.dateContainer -->
+          
+      </div> <!-- /.col -->
+        
+        <div class="col-xs-12 col-sm-12 col-md-5">
+            
+          <div id="endDateContainer">
+            <div id="endDateFormGroup" class="form-group">
+              <label for="endDate">End Date</label> 
+              <div class='input-group date' id='datetimepicker2'>
+
+                  <input type='text' id='endDate' class="form-control" placeholder="Pick an End Date" />
+                  <span class="input-group-addon">
+                      <span class="calendarIcon glyphicon glyphicon-calendar"></span>
+                  </span>
+              </div> <!-- /.input-group date -->
+              <span id="helpBlock" class="help-block hidden">The end date must be after the start date.</span>
+              <span id ="fiveYears" class="help-block hidden">The end date can be no more than five years after the start date.</span>
+              <span id="srEndDateError" class="sr-only hidden">(error)</span>
+            </div> <!--/.form-group -->
+          </div> <!-- /.dateContainer -->
+            
+      </div> <!-- /.col -->
+    </div> <!-- /.row -->
 </div>
     
     
@@ -136,8 +185,7 @@
     <div class="container-fluid">
         <div class="row">
              <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10" id="calendarDiv"> 
-                
-    <div class="calendarTitleHeading"><h1 class="page-header text-center"> Title </h1></div>
+            
                  
     <div class="monthframe" id='sampleMonth'>
         <div class='page-header text-center year-header'>
@@ -146,7 +194,7 @@
     
                  
     <div class="header">
-      <span class="month-year"> </span>
+      <span class="month-year"> January 2017 </span>
     </div> <!-- /.header -->
     
     <div id="dayNames">
@@ -166,8 +214,7 @@
       <table class="month">
         <tbody>
           <tr class="week">
-            <td>
-              <div class="nil"></div>
+            <td class="nil">
             </td>
             <td>
               <div class="nil"></div>
