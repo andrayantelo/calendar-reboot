@@ -777,6 +777,8 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
 
 CheckIt.prototype.validateForm = function (startDateString, endDateString) {
     "use strict";
+    // First check that input was actually given for title, startDate
+    // and endDate
     var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle'),
         
         validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate'),
@@ -820,28 +822,28 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
         buildP;
     console.log("Running createCalendar function");
     console.log("Creating calendar with " + start + " " + end + " " + title);
-    if (this.validateForm(start, end)) {
+    //if (this.validateForm(start, end)) {
         
-        //clear the previously displayed calendar
-        this.clearCalendarDiv();
-        
-        //make calendar object
+    //clear the previously displayed calendar
+    this.clearCalendarDiv();
 
-        calendar = new Calendar(calState);
-        
-        // Initialize calendar in the storage
-        initP = this.store.initializeCalendar(calendar);
+    //make calendar object
 
-        //add calendar to dropdown
-        this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title,
-            this.$calendarDropdown);
-    
-        //build the calendar
-        buildP = this.buildCalendar(calendar);
-        this.hideForm(this.$buildCalendarForm);
-        
-        return Promise.all([initP, buildP]);
-    }
+    calendar = new Calendar(calState);
+
+    // Initialize calendar in the storage
+    initP = this.store.initializeCalendar(calendar);
+
+    //add calendar to dropdown
+    this.addCalendarToDropdown(calendar.state.uniqueId, calendar.state.title,
+        this.$calendarDropdown);
+
+    //build the calendar
+    buildP = this.buildCalendar(calendar);
+    this.hideForm(this.$buildCalendarForm);
+
+    return Promise.all([initP, buildP]);
+    //}
 };
 
 CheckIt.prototype.editOrCreate = function () {
@@ -860,8 +862,12 @@ CheckIt.prototype.editOrCreate = function () {
     // Should not be able to proceed without a provided
     // title, startDate, and endDate
     
+    if (checkit.validateForm(start, end)) {
+        console.log("validating");
+    }
+    
     // Check if there is a current active calendar
-    // Don't have to return promise here?
+    // Don't have to return promise here? TODO
     checkit.store.getActive()
         .then(function (activeCalId) {
             console.log("Boolean(activeCalId) = " + Boolean(activeCalId));
