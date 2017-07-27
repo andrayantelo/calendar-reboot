@@ -342,7 +342,7 @@ CheckIt.prototype.displayActiveCalendar = function () {
             }
         })
         // this gets run if getActive returns a rejected promise, but does it also 
-        // run if loadById returns a rejected promise??
+        // run if loadById returns a rejected promise?
         .catch(function (err) {
             checkit.showForm(checkit.$buildCalendarForm);
             return err;
@@ -790,19 +790,42 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
    
 };
 
-CheckIt.prototype.createCalendar = function () {
-    // Create a new calendar and display it.
+CheckIt.prototype.editCalendar = function () {
+    // Edits the calendar currently on display (current active calendar)
+    // and displays the edited version
     "use strict";
     var title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
+        end = this.$endDate.val();
+    
+    console.log("new calendar title: " + title);
+    console.log("new start date: " + start);
+    console.log("new end date: " + end);
+};
+
+CheckIt.prototype.createCalendar = function () {
+    // Create a new calendar and display it.
+    "use strict";
+    
+    var title = this.$calendarTitle.val(),
+        start = this.$startDate.val(),
         end = this.$endDate.val(),
-        state,
-        calendar,
-        initP,
-        buildP;
+        //state,
+        //calendar,
+        //initP,
+        //buildP,
+        checkit = this;
+    
+    // Check if there is a current active calendar
+    return checkit.store.getActive()
+        .then(function (activeCalId) {
+            if (activeCalId) {
+                checkit.editCalendar();
+            }
+        });
         
     
-    if (this.validateForm(start, end)) {
+    /*if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
         this.clearCalendarDiv();
@@ -826,7 +849,7 @@ CheckIt.prototype.createCalendar = function () {
         this.hideForm(this.$buildCalendarForm);
         
         return Promise.all([initP, buildP]);
-    }
+    }*/
 };
 
 CheckIt.prototype.loadFromDropdown = function (event) {
