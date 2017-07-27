@@ -790,7 +790,7 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
    
 };
 
-CheckIt.prototype.editCalendar = function (title, start, end) {
+CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     // Edits the calendar currently on display (current active calendar)
     // and displays the edited version
     "use strict";
@@ -798,7 +798,16 @@ CheckIt.prototype.editCalendar = function (title, start, end) {
     console.log("new calendar title: " + title);
     console.log("new start date: " + start);
     console.log("new end date: " + end);
-    console.log("End of editCalendar function");
+    console.log("The current active calendar id " + activeCalId);
+    
+    var stateP,
+        checkit = this;
+    stateP = checkit.store.loadById(activeCalId);
+    
+    Promise.all([stateP]).then(function (val) {
+        console.log("State: " + JSON.stringify(val));
+    });
+    
 };
 
 CheckIt.prototype.createCalendar = function (title, start, end) {
@@ -852,15 +861,14 @@ CheckIt.prototype.editOrCreate = function () {
     checkit.store.getActive()
         .then(function (activeCalId) {
             if (activeCalId) {
-                return checkit.editCalendar(title, start, end);
+                return checkit.editCalendar(title, start, end, activeCalId);
+            } else {
+                return checkit.createCalendar(title, start, end);
             }
         })
         .catch(function (err) {
-            console.log("no active calendar " + err);
-            return checkit.createCalendar(title, start, end);
+            console.log("could not create/edit calendar " + err);
         });
-    
-    // Have to resolve previous promise
 };
 
 CheckIt.prototype.loadFromDropdown = function (event) {
