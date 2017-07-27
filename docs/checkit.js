@@ -790,13 +790,10 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
    
 };
 
-CheckIt.prototype.editCalendar = function () {
+CheckIt.prototype.editCalendar = function (title, start, end) {
     // Edits the calendar currently on display (current active calendar)
     // and displays the edited version
     "use strict";
-    var title = this.$calendarTitle.val(),
-        start = this.$startDate.val(),
-        end = this.$endDate.val();
     
     console.log("new calendar title: " + title);
     console.log("new start date: " + start);
@@ -821,16 +818,12 @@ CheckIt.prototype.createCalendar = function () {
     checkit.store.getActive()
         .then(function (activeCalId) {
             if (activeCalId) {
-                checkit.editCalendar();
+                checkit.editCalendar(title, start, end);
             }
+        })
+        .catch(function (err) {
+            console.log("no active calendar " + err);
         });
-    // Don't need to catch here, because if it fails
-    // we just go on with the createCalendar function
-    
-    //    .catch(function (err) {
-    //        console.log("no active calendar " + err);    
-    //    });
-        
     
     if (this.validateForm(start, end)) {
         
