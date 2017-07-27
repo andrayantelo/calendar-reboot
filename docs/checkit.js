@@ -810,14 +810,15 @@ CheckIt.prototype.createCalendar = function () {
     var title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
         end = this.$endDate.val(),
-        //state,
-        //calendar,
-        //initP,
-        //buildP,
+        state,
+        calendar,
+        initP,
+        buildP,
         checkit = this;
     
     // Check if there is a current active calendar
-    return checkit.store.getActive()
+    // Don't have to return promise here?
+    checkit.store.getActive()
         .then(function (activeCalId) {
             if (activeCalId) {
                 checkit.editCalendar();
@@ -831,7 +832,7 @@ CheckIt.prototype.createCalendar = function () {
     //    });
         
     
-    /*if (this.validateForm(start, end)) {
+    if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
         this.clearCalendarDiv();
@@ -855,7 +856,7 @@ CheckIt.prototype.createCalendar = function () {
         this.hideForm(this.$buildCalendarForm);
         
         return Promise.all([initP, buildP]);
-    }*/
+    }
 };
 
 CheckIt.prototype.loadFromDropdown = function (event) {
