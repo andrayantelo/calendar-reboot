@@ -177,7 +177,7 @@ function CheckIt(mode, calendarDiv) {
     this.$clearButton.click(function () {
         this.clearForm(this.$fullForm);
     }.bind(this));
-    this.$createButton.click(this.createCalendar.bind(this));
+    this.$createButton.click(this.editOrCreate.bind(this));
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
     
@@ -801,32 +801,15 @@ CheckIt.prototype.editCalendar = function (title, start, end) {
     console.log("End of editCalendar function");
 };
 
-CheckIt.prototype.createCalendar = function () {
-    // Create a new calendar and display it.
+CheckIt.prototype.createCalendar = function (title, start, end) {
+    // creates a calendar
+    
     "use strict";
-    console.log("Running CreateCalendar function");
-    var title = this.$calendarTitle.val(),
-        start = this.$startDate.val(),
-        end = this.$endDate.val(),
-        state,
+    var state,
         calendar,
         initP,
-        buildP,
-        checkit = this;
-    
-    // Check if there is a current active calendar
-    // Don't have to return promise here?
-    checkit.store.getActive()
-        .then(function (activeCalId) {
-            if (activeCalId) {
-                return checkit.editCalendar(title, start, end);
-            }
-        })
-        .catch(function (err) {
-            console.log("no active calendar " + err);
-        });
-    
-    console.log("I'm back in createCalendar");
+        buildP;
+    console.log("Running createCalendar function");
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
@@ -852,6 +835,32 @@ CheckIt.prototype.createCalendar = function () {
         
         return Promise.all([initP, buildP]);
     }
+};
+
+CheckIt.prototype.editOrCreate = function () {
+    // Determine whether to edit an existing calendar
+    // or create a new one
+    "use strict";
+    console.log("Running editOrCreate function");
+    var title = this.$calendarTitle.val(),
+        start = this.$startDate.val(),
+        end = this.$endDate.val(),
+        checkit = this;
+    
+    // Check if there is a current active calendar
+    // Don't have to return promise here?
+    checkit.store.getActive()
+        .then(function (activeCalId) {
+            if (activeCalId) {
+                return checkit.editCalendar(title, start, end);
+            }
+        })
+        .catch(function (err) {
+            console.log("no active calendar " + err);
+            return checkit.createCalendar(title, start, end);
+        });
+    
+    // Have to resolve previous promise
 };
 
 CheckIt.prototype.loadFromDropdown = function (event) {
