@@ -805,16 +805,16 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     stateP = checkit.store.loadById(activeCalId);
     
     Promise.all([stateP]).then(function (val) {
-        console.log("State: " + JSON.stringify(val));
+        
     });
     
 };
 
-CheckIt.prototype.createCalendar = function (title, start, end) {
+CheckIt.prototype.createCalendar = function (title, start, end, calState) {
     // creates a calendar
     
     "use strict";
-    var state,
+    var state = calState,
         calendar,
         initP,
         buildP;
@@ -823,9 +823,6 @@ CheckIt.prototype.createCalendar = function (title, start, end) {
         
         //clear the previously displayed calendar
         this.clearCalendarDiv();
-
-        //make a calendar State
-        state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
         
         //make calendar object
 
@@ -854,20 +851,26 @@ CheckIt.prototype.editOrCreate = function () {
     var title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
         end = this.$endDate.val(),
-        checkit = this;
+        checkit = this,
+        state;
     
     // Check if there is a current active calendar
     // Don't have to return promise here?
     checkit.store.getActive()
         .then(function (activeCalId) {
-            if (activeCalId) {
+            console.log("Boolean(activeCalId) = " + Boolean(activeCalId));
+            if (activeCalId) { // I don't think I need this condition
                 return checkit.editCalendar(title, start, end, activeCalId);
-            } else {
-                return checkit.createCalendar(title, start, end);
             }
+        }, function (err) { // Runs if getActive fails
+            console.log("getActive error " + err);
+            state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
+            return checkit.createCalendar(title, start, end, state);
         })
-        .catch(function (err) {
-            console.log("could not create/edit calendar " + err);
+        .catch(function (err) { // runs if either getActive fails or
+                                // or .then fails 
+            console.log("catch all error " + err);
+            
         });
 };
 
