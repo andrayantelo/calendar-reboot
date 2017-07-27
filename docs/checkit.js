@@ -794,16 +794,17 @@ CheckIt.prototype.editCalendar = function (title, start, end) {
     // Edits the calendar currently on display (current active calendar)
     // and displays the edited version
     "use strict";
-    
+    console.log("Running editCalendar function");
     console.log("new calendar title: " + title);
     console.log("new start date: " + start);
     console.log("new end date: " + end);
+    console.log("End of editCalendar function");
 };
 
 CheckIt.prototype.createCalendar = function () {
     // Create a new calendar and display it.
     "use strict";
-    
+    console.log("Running CreateCalendar function");
     var title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
         end = this.$endDate.val(),
@@ -818,13 +819,14 @@ CheckIt.prototype.createCalendar = function () {
     checkit.store.getActive()
         .then(function (activeCalId) {
             if (activeCalId) {
-                checkit.editCalendar(title, start, end);
+                return checkit.editCalendar(title, start, end);
             }
         })
         .catch(function (err) {
             console.log("no active calendar " + err);
         });
     
+    console.log("I'm back in createCalendar");
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
