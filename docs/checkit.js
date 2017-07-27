@@ -823,6 +823,12 @@ CheckIt.prototype.createCalendar = function () {
                 checkit.editCalendar();
             }
         });
+    // Don't need to catch here, because if it fails
+    // we just go on with the createCalendar function
+    
+    //    .catch(function (err) {
+    //        console.log("no active calendar " + err);    
+    //    });
         
     
     /*if (this.validateForm(start, end)) {
