@@ -804,8 +804,8 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
         checkit = this;
     stateP = checkit.store.loadById(activeCalId);
     
-    Promise.all([stateP]).then(function (val) {
-        
+    Promise.all([stateP]).then(function (calState) {
+        checkit.createCalendar(title, start, end, calState);
     });
     
 };
@@ -814,11 +814,11 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
     // creates a calendar
     
     "use strict";
-    var state = calState,
-        calendar,
+    var calendar,
         initP,
         buildP;
     console.log("Running createCalendar function");
+    console.log("Creating calendar with " + start + " " + end + " " + title);
     if (this.validateForm(start, end)) {
         
         //clear the previously displayed calendar
@@ -826,7 +826,7 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
         
         //make calendar object
 
-        calendar = new Calendar(state);
+        calendar = new Calendar(calState);
         
         // Initialize calendar in the storage
         initP = this.store.initializeCalendar(calendar);
