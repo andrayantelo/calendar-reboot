@@ -805,7 +805,8 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     stateP = checkit.store.loadById(activeCalId);
     
     Promise.all([stateP]).then(function (calState) {
-        checkit.createCalendar(title, start, end, calState);
+        // Update the calState's title, start, and end IF
+        // they were provided, which they NEED to be. TOOD
     });
     
 };
