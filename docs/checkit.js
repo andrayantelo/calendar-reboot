@@ -847,6 +847,7 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
 CheckIt.prototype.editOrCreate = function () {
     // Determine whether to edit an existing calendar
     // or create a new one
+    
     "use strict";
     console.log("Running editOrCreate function");
     var title = this.$calendarTitle.val(),
@@ -854,6 +855,10 @@ CheckIt.prototype.editOrCreate = function () {
         end = this.$endDate.val(),
         checkit = this,
         state;
+    
+    // TODO have to check that all input was provided
+    // Should not be able to proceed without a provided
+    // title, startDate, and endDate
     
     // Check if there is a current active calendar
     // Don't have to return promise here?
