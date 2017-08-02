@@ -802,13 +802,18 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     console.log("new end date: " + end);
     console.log("The current active calendar id " + activeCalId);
     
-    var stateP,
-        checkit = this;
-    stateP = checkit.store.loadById(activeCalId);
+    var checkit = this,
+        stateP = checkit.store.loadById(activeCalId);
+        
     
     Promise.all([stateP]).then(function (calState) {
         // Update the calState's title, start, and end IF
-        // they were provided, which they NEED to be. TOOD
+        // they were provided, which they NEED to be. TODO
+        console.log("loaded state " + Object.keys(calState));
+        console.log("The state from storage: " + calState.endDateString);
+        calState.endDateString = end;
+        console.log("The edited state from storage: " + calState.endDateString);
+        
     });
     
 };
@@ -860,30 +865,33 @@ CheckIt.prototype.editOrCreate = function () {
     
     // TODO have to check that all input was provided
     // Should not be able to proceed without a provided
-    // title, startDate, and endDate
+    // valid title, startDate, and endDate
     
     if (checkit.validateForm(start, end)) {
-        console.log("validating");
-    }
-    
-    // Check if there is a current active calendar
-    // Don't have to return promise here? TODO
-    checkit.store.getActive()
-        .then(function (activeCalId) {
-            console.log("Boolean(activeCalId) = " + Boolean(activeCalId));
-            if (activeCalId) { // I don't think I need this condition
-                return checkit.editCalendar(title, start, end, activeCalId);
-            }
-        }, function (err) { // Runs if getActive fails
-            console.log("getActive error " + err);
-            state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
-            return checkit.createCalendar(title, start, end, state);
-        })
-        .catch(function (err) { // runs if either getActive fails or
-                                // or .then fails 
-            console.log("catch all error " + err);
+        console.log("valid input");
+        
+        // Check if there is a current active calendar
+        // Don't have to return promise here? TODO
+        checkit.store.getActive()
+            .then(function (activeCalId) {
+                console.log("Boolean(activeCalId) = " + Boolean(activeCalId));
+                if (activeCalId) { // I don't think I need this condition
+                    // we are editing an existing calendar
+                    return checkit.editCalendar(title, start, end, activeCalId);
+                }
+            }, function (err) { // Runs if getActive fails
+                console.log("getActive error " + err);
             
-        });
+                // we are creating a new calendar
+                state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
+                return checkit.createCalendar(title, start, end, state);
+            })
+            .catch(function (err) { // runs if either getActive fails or
+                                    // or .then fails 
+                console.log("catch all error " + err);
+
+            });
+    }
 };
 
 CheckIt.prototype.loadFromDropdown = function (event) {
