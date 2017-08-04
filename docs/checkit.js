@@ -792,25 +792,7 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
    
 };
 
-CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
-    // Edits the calendar currently on display (current active calendar)
-    // and displays the edited version
-    "use strict";
-    console.log("Running editCalendar function");
-    
-    var checkit = this,
-        startDate = moment(start, "YYYY-MM-DD"),
-        endDate = moment(end, "YYYY-MM-DD");
-    
-    return checkit.store.loadById(activeCalId)
-        .then(function (calState) {
-            calState.endDateString = endDate.format("YYYYMMDD");
-            calState.startDateString = startDate.format("YYYYMMDD");
-            calState.title = title;
-        });
-};
-
-CheckIt.prototype.createCalendar = function (title, start, end, calState) {
+CheckIt.prototype.createCalendar = function (calState) {
     // creates a calendar
     
     "use strict";
@@ -818,7 +800,6 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
         initP,
         buildP;
     console.log("Running createCalendar function");
-    console.log("Creating calendar with " + start + " " + end + " " + title);
     //if (this.validateForm(start, end)) {
         
     //clear the previously displayed calendar
@@ -843,6 +824,26 @@ CheckIt.prototype.createCalendar = function (title, start, end, calState) {
     //}
 };
 
+CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
+    // Edits the calendar currently on display (current active calendar)
+    // and displays the edited version
+    "use strict";
+    console.log("Running editCalendar function");
+    
+    var checkit = this,
+        startDate = moment(start, "YYYY-MM-DD"),
+        endDate = moment(end, "YYYY-MM-DD");
+    
+    return checkit.store.loadById(activeCalId)
+        .then(function (calState) {
+            calState.endDateString = endDate.format("YYYYMMDD");
+            calState.startDateString = startDate.format("YYYYMMDD");
+            calState.title = title;
+            checkit.createCalendar(calState);
+        });
+};
+
+
 CheckIt.prototype.editOrCreate = function () {
     // Determine whether to edit an existing calendar
     // or create a new one
@@ -866,17 +867,14 @@ CheckIt.prototype.editOrCreate = function () {
         // Don't have to return promise here? TODO
         checkit.store.getActive()
             .then(function (activeCalId) {
-                console.log("Boolean(activeCalId) = " + Boolean(activeCalId));
                 if (activeCalId) { // I don't think I need this condition
                     // we are editing an existing calendar
                     return checkit.editCalendar(title, start, end, activeCalId);
                 }
             }, function (err) { // Runs if getActive fails
-                console.log("getActive error " + err);
-            
                 // we are creating a new calendar
                 state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
-                return checkit.createCalendar(title, start, end, state);
+                return checkit.createCalendar(state);
             })
             .catch(function (err) { // runs if either getActive fails or
                                     // or .then fails 
@@ -964,6 +962,16 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     //add the calendar with unique Id, uniqueId, and title, title, to
     //the saved calendars dropdown on the navbar.
     "use strict";
+    
+    // first check if the title isn't already in the dropdown
+    if ($('#' + uniqueId).length) {
+        // title is already in dropdown
+        // but the title may have changed
+        // so just update the title
+        $('#' + uniqueId).find("a").html(title);
+        return;
+    }
+    
     $dropdown.append('<li id="' + uniqueId
             + '"><a href=#>' + title + '</a></li>');
 };
