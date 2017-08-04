@@ -797,25 +797,17 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     // and displays the edited version
     "use strict";
     console.log("Running editCalendar function");
-    console.log("new calendar title: " + title);
-    console.log("new start date: " + start);
-    console.log("new end date: " + end);
-    console.log("The current active calendar id " + activeCalId);
     
     var checkit = this,
-        stateP = checkit.store.loadById(activeCalId);
-        
+        startDate = moment(start, "YYYY-MM-DD"),
+        endDate = moment(end, "YYYY-MM-DD");
     
-    Promise.all([stateP]).then(function (calState) {
-        // Update the calState's title, start, and end IF
-        // they were provided, which they NEED to be. TODO
-        console.log("loaded state keys " + Object.keys(calState));
-        console.log("The state from storage: " + calState.endDateString);
-        calState.endDateString = end;
-        console.log("The edited state from storage: " + calState.endDateString);
-        
-    });
-    
+    return checkit.store.loadById(activeCalId)
+        .then(function (calState) {
+            calState.endDateString = endDate.format("YYYYMMDD");
+            calState.startDateString = startDate.format("YYYYMMDD");
+            calState.title = title;
+        });
 };
 
 CheckIt.prototype.createCalendar = function (title, start, end, calState) {
