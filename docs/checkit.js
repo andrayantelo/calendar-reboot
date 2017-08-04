@@ -1039,6 +1039,42 @@ CheckIt.prototype.findCurrentDay = function () {
         .addClass('currentDay');
     return todayId;
 };
+
+CheckIt.prototype.prefillForm = function () {
+    // Prefills the build/edit form with current active calendar's
+    // title, startDate, and endDate. If there is no current
+    // active cal, then leaves the form blank
+    "use strict";
+    var checkit = this,
+        startDate,
+        endDate;
+    
+    // check if there is an active calendar
+    return checkit.store.getActive()
+        .then(function (activeCalId) {
+            // if there is an active calendar
+            // prefill the build/edit form with its information
+            return checkit.store.loadById(activeCalId)
+                .catch(function (err) {
+                    console.log(err);
+                    return Promise.reject(err);
+                });
+        }, function (err) {
+            // if there isn't one, exit
+            console.log(err);
+            return Promise.reject(err);
+        })
+        .then(function (calState) {
+            // prepopulate build/edit form
+            startDate = moment(calState.startDateString, "YYYYMMDD");
+            endDate = moment(calState.endDateString, "YYYYMMDD");
+        
+            checkit.$startDate.val(startDate.format("YYYY-MM-DD"));
+            checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
+            checkit.$calendarTitle.val(calState.title);
+        });
+    
+};
     
 CheckIt.prototype.getTemplate = function () {
     "use strict";
