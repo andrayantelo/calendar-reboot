@@ -809,7 +809,7 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     Promise.all([stateP]).then(function (calState) {
         // Update the calState's title, start, and end IF
         // they were provided, which they NEED to be. TODO
-        console.log("loaded state " + Object.keys(calState));
+        console.log("loaded state keys " + Object.keys(calState));
         console.log("The state from storage: " + calState.endDateString);
         calState.endDateString = end;
         console.log("The edited state from storage: " + calState.endDateString);

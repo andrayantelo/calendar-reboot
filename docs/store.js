@@ -294,6 +294,7 @@ var FirebaseCalendarStorage = function (params) {
                 .then(function (calState) {
                     self.endWork();
                     if (calState.val() !== null) {
+                        console.log("the calState from storage " + JSON.stringify(calState.val()));
                         return resolve(calState.val());
                     } else {
                         reject("calendar not found");
