@@ -858,7 +858,7 @@ CheckIt.prototype.editOrCreate = function () {
     
     // TODO have to check that all input was provided
     // Should not be able to proceed without a provided
-    // valid title, startDate, and endDate
+    // valid title, startDate, and endDate <- TEST THIS
     
     if (checkit.validateForm(start, end)) {
         console.log("valid input");
@@ -1073,7 +1073,10 @@ CheckIt.prototype.prefillForm = function () {
             checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
             checkit.$calendarTitle.val(calState.title);
         });
-    
+    // TODO NEXT TIME
+    // prefill form at appropriate moments, so whenever a calendar
+    // is loaded, displayed, made... if there is no calendar displayed
+    // then the form should not be prefilled.
 };
     
 CheckIt.prototype.getTemplate = function () {
