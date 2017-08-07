@@ -804,7 +804,6 @@ CheckIt.prototype.createCalendar = function (calState) {
     var calendar,
         initP,
         buildP;
-    console.log("Running createCalendar function");
     //if (this.validateForm(start, end)) {
         
     //clear the previously displayed calendar
@@ -833,7 +832,6 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     // Edits the calendar currently on display (current active calendar)
     // and displays the edited version
     "use strict";
-    console.log("Running editCalendar function");
     
     var checkit = this,
         startDate = moment(start, "YYYY-MM-DD"),

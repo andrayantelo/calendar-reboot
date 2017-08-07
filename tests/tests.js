@@ -1108,3 +1108,68 @@ QUnit.test("loadFromDropdown test", function (assert) {
 // Have to have the same html in test html as my app html so that I can
 // test out the buttons and make sure the correct functions are triggered
 // should I do that?
+
+
+QUnit.module("Edit or Create Tests", {
+// Hardcoded a date for moment object because javascript's Date object
+// does not have a way to get the number of days in the month.
+
+
+    beforeEach: function () {
+    // Initiate a test month object
+        "use strict";
+        localStorage.clear();
+        this.startDateString = "2017-01-01";
+        this.endDateString = "2017-12-01";
+        this.title = "Hello World";
+        
+        // using localStorage
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+
+        this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        this.store = this.checkit.store;
+        
+        // make a calendar object to store
+        //this.state = emptyCalendarState({startDate: this.startDateString,     //endDate: this.endDateString, title: this.title});
+        
+        //this.calendar = new Calendar(this.state);
+        
+        //this.store.save(this.calendar);
+        
+
+    }
+
+});
+
+QUnit.test("editOrCreate test", function (assert) {
+    "use strict";
+    assert.expect(2);
+    var done = assert.async(2);
+    
+    // verify there is nothing in storage
+    return this.store.getAllCalendarIds()
+        .then(function (allCalendarIds) {
+        assert.deepEqual({}, allCalendarIds);
+        done();
+    }), function(err) {
+        console.log(err + " no cal ids");
+        Promise.reject(err);
+    }
+    
+    // run editOrCreate then check if cal was created
+    /*this.checkit.editOrCreate();
+    
+    return this.store.getAllCalendarIds()
+        .then(function (allCalendarIds) {
+        console.log("THE IDS " + JSON.stringify(allCalendarIds));
+        assert.equal(allCalendarIds.length, 1)
+        done();
+    }), function(err) {
+        console.log("DIDN'T wORK " + err);
+        Promise.reject(err);
+        done();
+    }*/
+    
+    
+})
