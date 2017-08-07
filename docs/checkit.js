@@ -365,6 +365,8 @@ CheckIt.prototype.initLocalStorage = function () {
     
     // Display the user's active calendar.
     this.displayActiveCalendar();
+    // Prefill the form with the active calendar's information
+    this.prefillForm();
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
@@ -464,6 +466,9 @@ CheckIt.prototype.onAuthStateChanged = function (user) {
         
         //Show the build Calendar form.
         this.$buildFormAccordion.removeAttr('hidden');
+        
+        // Prefill the form with current active calendar's information
+        this.prefillForm();
         
         //Hide the get started blurb.
         this.$getStarted.attr('hidden', 'true');
@@ -856,12 +861,7 @@ CheckIt.prototype.editOrCreate = function () {
         checkit = this,
         state;
     
-    // TODO have to check that all input was provided
-    // Should not be able to proceed without a provided
-    // valid title, startDate, and endDate <- TEST THIS
-    
     if (checkit.validateForm(start, end)) {
-        console.log("valid input");
         
         // Check if there is a current active calendar
         // Don't have to return promise here? TODO
@@ -896,6 +896,8 @@ CheckIt.prototype.loadFromDropdown = function (event) {
             var calendar = new Calendar(state);
             this.displayCalendar(calendar);
             this.hideForm(this.$buildCalendarForm);
+            // prefill the form with the calendar's information
+            this.prefillForm();
         }.bind(this))
         .catch(function () {
             console.log("Calendar not in storage");
@@ -1073,10 +1075,6 @@ CheckIt.prototype.prefillForm = function () {
             checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
             checkit.$calendarTitle.val(calState.title);
         });
-    // TODO NEXT TIME
-    // prefill form at appropriate moments, so whenever a calendar
-    // is loaded, displayed, made... if there is no calendar displayed
-    // then the form should not be prefilled.
 };
     
 CheckIt.prototype.getTemplate = function () {
