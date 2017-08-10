@@ -1119,16 +1119,24 @@ QUnit.module("Edit or Create Tests", {
     // Initiate a test month object
         "use strict";
         localStorage.clear();
-        this.startDateString = "2017-01-01";
-        this.endDateString = "2017-12-01";
-        this.title = "Hello World";
-        
         // using localStorage
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
-
+        this.$calendarDiv.append('<div><button id="createButton"\ type="button" class="btn btn-primary">Save</button></div>\
+        <div><input type="text" id="calendarTitle" value="Hello World"/>\
+        </div>\
+        <div><input type="text" id="startDate" value="2017-01-01"/></div>\
+        <div><input type="text" id="endDate" value="2017-12-01"/></div>'
+        )
+        
+        
         this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
         this.store = this.checkit.store;
+        this.checkit.$createButton = $("#createButton");
+        
+        this.start = "2017-01-01";
+        this.end = "2017-12-01";
+        this.title = "Hello World";
         
         // make a calendar object to store
         //this.state = emptyCalendarState({startDate: this.startDateString,     //endDate: this.endDateString, title: this.title});
@@ -1144,32 +1152,30 @@ QUnit.module("Edit or Create Tests", {
 
 QUnit.test("editOrCreate test", function (assert) {
     "use strict";
-    assert.expect(2);
-    var done = assert.async(2);
+    assert.expect(1);
+    var done = assert.async(1),
+        allCalendars,
+        getIdsP,
+        title = this.title,
+        start = this.start,
+        end = this.end,
+        createP;
     
     // verify there is nothing in storage
-    return this.store.getAllCalendarIds()
-        .then(function (allCalendarIds) {
-        assert.deepEqual({}, allCalendarIds);
-        done();
-    }), function(err) {
-        console.log(err + " no cal ids");
-        Promise.reject(err);
-    }
+    allCalendars = localStorage.getItem('allCalendarsIdsKey');
+    assert.equal(null, allCalendars);
     
-    // run editOrCreate then check if cal was created
-    /*this.checkit.editOrCreate();
+    // Run editOrCreate
+    createP = this.checkit.editOrCreate({title: title, start: start, end: end});
     
-    return this.store.getAllCalendarIds()
-        .then(function (allCalendarIds) {
-        console.log("THE IDS " + JSON.stringify(allCalendarIds));
-        assert.equal(allCalendarIds.length, 1)
-        done();
-    }), function(err) {
-        console.log("DIDN'T wORK " + err);
-        Promise.reject(err);
-        done();
-    }*/
+    createP.then(function (va) {
+        console.log("val " + val);
+    })
+    // Verify calendar was created
+    //allCalendars = localStorage.getItem('AllCalendarsIdsKey');
+    //console.log("checking localStorage");
+    //assert.equal(1, allCalendars.length);
+    //done();
     
     
 })

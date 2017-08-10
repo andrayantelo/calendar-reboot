@@ -177,11 +177,12 @@ function CheckIt(mode, calendarDiv) {
     this.$clearButton.click(function () {
         this.clearForm(this.$fullForm);
     }.bind(this));
-    this.$createButton.click(this.editOrCreate.bind(this));
+    this.$createButton.click({title: this.$calendarTitle.val(), start: this.$startDate.val(), end: this.$endDate.val()}, this.editOrCreate.bind(this));
+    
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
     
-      //have the calendar show when you click in the input section of the date
+    //have the calendar show when you click in the input section of the date
     //timepicker
     
     this.$startDatePicker.datetimepicker({format: "YYYY-MM-DD"});
@@ -737,6 +738,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         } else {
             this.addFieldError($formGroup, $sr);
             this.addHelpBlock($fiveYears);
+            // Shouldn't I be returning false here?
         }
     } else {
         // Mark the endDate input field red because endDate is after startDate
@@ -757,7 +759,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // Screen reader element for this input field
     "use strict";
     var $srElement = $inputFormGroup.find('.sr-only'),
-        inputVal = $form.find('#' + inputId).val(),
+        inputVal = $('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
     
     // If user hasn't written anything we fail immediately
@@ -791,7 +793,7 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
         validateEndDate = this.validateInput(this.$fullForm, this.$endDateFormGroup, 'endDate'),
     
         isValid = validateTitle && validateStartDate && validateEndDate;
-    
+
     // Make sure input is OK before parsing and validating dates
     return (isValid && this.validateDates(startDateString, endDateString, this.$endDateFormGroup));
    
@@ -805,7 +807,7 @@ CheckIt.prototype.createCalendar = function (calState) {
         initP,
         buildP;
     //if (this.validateForm(start, end)) {
-        
+    
     //clear the previously displayed calendar
     this.clearCalendarDiv();
 
@@ -823,7 +825,7 @@ CheckIt.prototype.createCalendar = function (calState) {
     //build the calendar
     buildP = this.buildCalendar(calendar);
     this.hideForm(this.$buildCalendarForm);
-
+    
     return Promise.all([initP, buildP]);
     //}
 };
@@ -843,22 +845,26 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
             calState.startDateString = startDate.format("YYYYMMDD");
             calState.title = title;
             checkit.createCalendar(calState);
+        
+            // TODO is this returning a promise?
         });
 };
 
 
-CheckIt.prototype.editOrCreate = function () {
+CheckIt.prototype.editOrCreate = function (params) {
     // Determine whether to edit an existing calendar
     // or create a new one
     
     "use strict";
     console.log("Running editOrCreate function");
-    var title = this.$calendarTitle.val(),
-        start = this.$startDate.val(),
-        end = this.$endDate.val(),
-        checkit = this,
-        state;
     
+    var checkit = this,
+        state,
+        start = params.start,
+        end = params.end,
+        title = params.title;
+    
+    console.log("With " + title + " " + start + " " + end);
     if (checkit.validateForm(start, end)) {
         
         // Check if there is a current active calendar
@@ -867,17 +873,20 @@ CheckIt.prototype.editOrCreate = function () {
             .then(function (activeCalId) {
                 if (activeCalId) { // I don't think I need this condition
                     // we are editing an existing calendar
+                    console.log("Editing calendar");
                     return checkit.editCalendar(title, start, end, activeCalId);
                 }
             }, function (err) { // Runs if getActive fails
                 // we are creating a new calendar
+                console.log("Creating calendar");
                 state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
+                console.log("Creating calendar with " + JSON.stringify(state));
                 return checkit.createCalendar(state);
             })
             .catch(function (err) { // runs if either getActive fails or
                                     // or .then fails 
                 console.log("catch all error " + err);
-
+                return Promise.reject(err);
             });
     }
 };
