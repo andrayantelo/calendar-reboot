@@ -367,7 +367,8 @@ CheckIt.prototype.initLocalStorage = function () {
     // Display the user's active calendar.
     this.displayActiveCalendar();
     // Prefill the form with the active calendar's information
-    this.prefillForm();
+    // TODO uncomment below line
+    //this.prefillForm();
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
@@ -837,9 +838,12 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     
     var checkit = this,
         startDate = moment(start, "YYYY-MM-DD"),
-        endDate = moment(end, "YYYY-MM-DD");
+        endDate = moment(end, "YYYY-MM-DD"),
+        loadP;
     
-    return checkit.store.loadById(activeCalId)
+    // I want to return a non-pending promise
+    
+    loadP = checkit.store.loadById(activeCalId)
         .then(function (calState) {
             calState.endDateString = endDate.format("YYYYMMDD");
             calState.startDateString = startDate.format("YYYYMMDD");
@@ -848,6 +852,7 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
         
             // TODO is this returning a promise?
         });
+    return Promise.all([loadP]);
 };
 
 
@@ -1069,18 +1074,22 @@ CheckIt.prototype.prefillForm = function () {
                     return Promise.reject(err);
                 });
         }, function (err) {
-            // if there isn't one, exit
+            // if there isn't an active cal, exit
             console.log(err);
             return Promise.reject(err);
         })
         .then(function (calState) {
             // prepopulate build/edit form
+            console.log("Found the state to use to prefill form");
             startDate = moment(calState.startDateString, "YYYYMMDD");
             endDate = moment(calState.endDateString, "YYYYMMDD");
         
             checkit.$startDate.val(startDate.format("YYYY-MM-DD"));
             checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
             checkit.$calendarTitle.val(calState.title);
+        }, function (err) {
+            console.log(err);
+            return Promise.reject(err);
         });
 };
     

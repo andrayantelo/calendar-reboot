@@ -1155,7 +1155,6 @@ QUnit.test("editOrCreate test", function (assert) {
     assert.expect(1);
     var done = assert.async(1),
         allCalendars,
-        getIdsP,
         title = this.title,
         start = this.start,
         end = this.end,
@@ -1167,15 +1166,7 @@ QUnit.test("editOrCreate test", function (assert) {
     
     // Run editOrCreate
     createP = this.checkit.editOrCreate({title: title, start: start, end: end});
-    
-    createP.then(function (va) {
-        console.log("val " + val);
-    })
-    // Verify calendar was created
-    //allCalendars = localStorage.getItem('AllCalendarsIdsKey');
-    //console.log("checking localStorage");
-    //assert.equal(1, allCalendars.length);
-    //done();
-    
+    console.log("createP " + createP);
+    done();
     
 })
