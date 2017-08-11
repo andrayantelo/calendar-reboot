@@ -843,16 +843,13 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
     
     // I want to return a non-pending promise
     
-    loadP = checkit.store.loadById(activeCalId)
+    return checkit.store.loadById(activeCalId)
         .then(function (calState) {
             calState.endDateString = endDate.format("YYYYMMDD");
             calState.startDateString = startDate.format("YYYYMMDD");
             calState.title = title;
             checkit.createCalendar(calState);
-        
-            // TODO is this returning a promise?
         });
-    return Promise.all([loadP]);
 };
 
 
@@ -861,7 +858,6 @@ CheckIt.prototype.editOrCreate = function (params) {
     // or create a new one
     
     "use strict";
-    console.log("Running editOrCreate function");
     
     var checkit = this,
         state,
@@ -869,30 +865,31 @@ CheckIt.prototype.editOrCreate = function (params) {
         end = params.end,
         title = params.title;
     
-    console.log("With " + title + " " + start + " " + end);
     if (checkit.validateForm(start, end)) {
         
         // Check if there is a current active calendar
         // Don't have to return promise here? TODO
-        checkit.store.getActive()
+        return checkit.store.getActive()
             .then(function (activeCalId) {
                 if (activeCalId) { // I don't think I need this condition
                     // we are editing an existing calendar
-                    console.log("Editing calendar");
+                    
                     return checkit.editCalendar(title, start, end, activeCalId);
                 }
             }, function (err) { // Runs if getActive fails
                 // we are creating a new calendar
-                console.log("Creating calendar");
+                
                 state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
-                console.log("Creating calendar with " + JSON.stringify(state));
+                
                 return checkit.createCalendar(state);
             })
-            .catch(function (err) { // runs if either getActive fails or
+            .catch(function (err) { // runs if either getActive fails
                                     // or .then fails 
-                console.log("catch all error " + err);
+                
                 return Promise.reject(err);
             });
+    } else {
+        return Promise.reject("Invalid input.");
     }
 };
 

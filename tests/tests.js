@@ -1152,21 +1152,51 @@ QUnit.module("Edit or Create Tests", {
 
 QUnit.test("editOrCreate test", function (assert) {
     "use strict";
-    assert.expect(1);
-    var done = assert.async(1),
+    assert.expect(8);
+    
+    var done = assert.async(2),
         allCalendars,
         title = this.title,
         start = this.start,
         end = this.end,
-        createP;
+        createP,
+        editP,
+        calId,
+        calState;
     
     // verify there is nothing in storage
-    allCalendars = localStorage.getItem('allCalendarsIdsKey');
+    allCalendars = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
     assert.equal(null, allCalendars);
     
     // Run editOrCreate
-    createP = this.checkit.editOrCreate({title: title, start: start, end: end});
-    console.log("createP " + createP);
-    done();
+    createP = this.checkit.editOrCreate({title: title, start: start, end: end}).then(function () {
+        assert.equal(createP instanceof Promise, true);
+
+        done();
+    })
+    
+    // Test that we can edit this newly created calendar
+    Promise.all([createP]).then(function () {
+        allCalendars = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+        assert.equal(Object.keys(allCalendars).length, 1);
+        // check the title and endDate before changing it
+        calId = JSON.parse(localStorage.getItem('current_active_calendar'));
+        calState = JSON.parse(localStorage.getItem(calId));
+        assert.equal(calState.title, "Hello World");
+        assert.equal(calState.endDateString, "20171201");
+        editP = this.checkit.editOrCreate({title: "New Title", start: start, end: 
+        "2017-02-02"})
+        
+        Promise.all([editP]).then(function () {
+            allCalendars = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
+            assert.equal(Object.keys(allCalendars).length, 1);
+            // check that calendar has updated information
+            calId = JSON.parse(localStorage.getItem('current_active_calendar'));
+            calState = JSON.parse(localStorage.getItem(calId));
+            assert.equal(calState.title, "New Title");
+            assert.equal(calState.endDateString, "20170202");
+            done()
+        })
+    }.bind(this));
     
 })

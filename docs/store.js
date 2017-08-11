@@ -525,6 +525,7 @@ var LocalCalendarStorage = function (params) {
             
             if (activeCalendarId !== null) {
                 // Signal that the promise succeeded and make the value ready to go. 
+                
                 jitter(resolve, activeCalendarId);
             } else {
                 jitter(reject, "Not found");
