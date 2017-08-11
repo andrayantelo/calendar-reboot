@@ -189,7 +189,7 @@ QUnit.test("getActive test", function(assert) {
         assert.ok(false, "getActive test when no active failed");
         done();
     }, function(reason) {
-        assert.equal(reason, "Not found");
+        assert.equal(reason, "Active Calendar Id Not found");
         done();
     });
 });

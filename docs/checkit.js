@@ -177,7 +177,7 @@ function CheckIt(mode, calendarDiv) {
     this.$clearButton.click(function () {
         this.clearForm(this.$fullForm);
     }.bind(this));
-    this.$createButton.click({title: this.$calendarTitle.val(), start: this.$startDate.val(), end: this.$endDate.val()}, this.editOrCreate.bind(this));
+    this.$createButton.click(this.editOrCreate.bind(this));
     
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
@@ -342,7 +342,7 @@ CheckIt.prototype.displayActiveCalendar = function () {
                 return checkit.displayCalendar(calendar);
             }
         })
-        // this gets run if getActive returns a rejected promise, but does it also 
+        // this gets run if getActive returns a rejected promise, but does it // also 
         // run if loadById returns a rejected promise?
         .catch(function (err) {
             checkit.showForm(checkit.$buildCalendarForm);
@@ -367,8 +367,7 @@ CheckIt.prototype.initLocalStorage = function () {
     // Display the user's active calendar.
     this.displayActiveCalendar();
     // Prefill the form with the active calendar's information
-    // TODO uncomment below line
-    //this.prefillForm();
+    this.prefillForm();
     
     //Show the build Calendar form.
     this.$buildFormAccordion.removeAttr('hidden');
@@ -720,6 +719,8 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
     //    startDateString: "YYYY-MM-DD"
     //    endDateString: "YYYY-MM-DD"
     //    $formGroup: jQuery selector for the form where you will be adding errors
+    console.log("startDatString: " + startDateString);
+    console.log("endDateString: " + endDateString);
     "use strict";
     var startDate = moment(startDateString, "YYYY-MM-DD"),
         endDate = moment(endDateString, "YYYY-MM-DD"),
@@ -728,6 +729,8 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         $fiveYears = $formGroup.find('#fiveYears'),
         difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
+    console.log("startDate : " + startDate);
+    console.log("endDate : " + endDate);    
     if (startDate.isBefore(endDate)) {
         // startDate is before endDate so errors can be removed.
         this.removeFieldError($formGroup, $sr);
@@ -743,6 +746,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         }
     } else {
         // Mark the endDate input field red because endDate is after startDate
+        console.log("endDate is after startDate");
         this.addFieldError($formGroup, $sr);
         this.addHelpBlock($helpBlock);
         return false;
@@ -861,9 +865,9 @@ CheckIt.prototype.editOrCreate = function (params) {
     
     var checkit = this,
         state,
-        start = params.start,
-        end = params.end,
-        title = params.title;
+        start = params.start || this.$startDate.val(),
+        end = params.end || this.$endDate.val(),
+        title = params.title || this.$calendarTitle.val();
     
     if (checkit.validateForm(start, end)) {
         
@@ -1066,26 +1070,23 @@ CheckIt.prototype.prefillForm = function () {
             // if there is an active calendar
             // prefill the build/edit form with its information
             return checkit.store.loadById(activeCalId)
+                .then(function (calState) {
+                    // prepopulate build/edit form
+
+                    startDate = moment(calState.startDateString, "YYYYMMDD");
+                    endDate = moment(calState.endDateString, "YYYYMMDD");
+
+                    checkit.$startDate.val(startDate.format("YYYY-MM-DD"));
+                    checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
+                    checkit.$calendarTitle.val(calState.title);
+                })
                 .catch(function (err) {
                     console.log(err);
                     return Promise.reject(err);
-                });
-        }, function (err) {
-            // if there isn't an active cal, exit
-            console.log(err);
-            return Promise.reject(err);
+                }); 
         })
-        .then(function (calState) {
-            // prepopulate build/edit form
-            console.log("Found the state to use to prefill form");
-            startDate = moment(calState.startDateString, "YYYYMMDD");
-            endDate = moment(calState.endDateString, "YYYYMMDD");
-        
-            checkit.$startDate.val(startDate.format("YYYY-MM-DD"));
-            checkit.$endDate.val(endDate.format("YYYY-MM-DD"));
-            checkit.$calendarTitle.val(calState.title);
-        }, function (err) {
-            console.log(err);
+        .catch(function (err) {
+            console.log("last catch " + err);
             return Promise.reject(err);
         });
 };

@@ -528,7 +528,7 @@ var LocalCalendarStorage = function (params) {
                 
                 jitter(resolve, activeCalendarId);
             } else {
-                jitter(reject, "Not found");
+                jitter(reject, "Active Calendar Id Not found");
             }
         });
         

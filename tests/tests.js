@@ -869,7 +869,7 @@ QUnit.test("displayActiveCalendar test", function (assert) {
     assert.equal(JSON.parse(localStorage.getItem('current_active_calendar')), null);
     displayNoP = this.checkit.displayActiveCalendar();
     displayNoP.then(function (val) {
-        assert.equal(val, "Not found");
+        assert.equal(val, "Active Calendar Id Not found");
         assert.equal($calendarDiv.find('.monthframe').length, 0);
         done();
     });
@@ -931,7 +931,7 @@ QUnit.test("deleteCalendar test", function (assert) {
     
     this.checkit.deleteCalendar()
         .catch(function (err) {
-            assert.equal(err, "Not found");
+            assert.equal(err, "Active Calendar Id Not found");
         });
 
 });
@@ -1146,6 +1146,10 @@ QUnit.module("Edit or Create Tests", {
         //this.store.save(this.calendar);
         
 
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
     }
 
 });
@@ -1200,3 +1204,38 @@ QUnit.test("editOrCreate test", function (assert) {
     }.bind(this));
     
 })
+
+QUnit.module("Prefill Form Tests", {
+// Hardcoded a date for moment object because javascript's Date object
+// does not have a way to get the number of days in the month.
+
+
+    beforeEach: function () {
+    // Initiate a test month object
+        "use strict";
+        localStorage.clear();
+        // using localStorage
+        this.$fixture = $('#qunit-fixture');
+        this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        this.$calendarDiv.append('<div><button id="createButton"\ type="button" class="btn btn-primary">Save</button></div>\
+        <div><input type="text" id="calendarTitle" value="Hello World"/>\
+        </div>\
+        <div><input type="text" id="startDate" value="2017-01-01"/></div>\
+        <div><input type="text" id="endDate" value="2017-12-01"/></div>'
+        )
+        
+        
+        this.checkit = new CheckIt('localStorage', $('#qunit-fixture #calendarDiv'));
+        this.store = this.checkit.store;
+        this.checkit.$createButton = $("#createButton");
+        
+        this.start = "2017-01-01";
+        this.end = "2017-12-01";
+        this.title = "Hello World";
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
+    }
+
+});
