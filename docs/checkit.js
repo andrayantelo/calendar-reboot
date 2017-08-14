@@ -858,9 +858,7 @@ CheckIt.prototype.editOrCreate = function (params) {
     // Determine whether to edit an existing calendar
     // or create a new one
     
-    // TODO right now I decide to run editCalendar based on whether
-    // I have a current active calendar or not
-    // maybe I can decide based on whether a user clicks on a button
+    // Run edit calendar based on whether a user clicks on a button
     // with the word "Edit" on it or a button with the word "Create"
     // on it
     "use strict";
