@@ -1271,6 +1271,9 @@ QUnit.module("Prefill Form Tests", {
         this.start = "2017-01-01";
         this.end = "2017-12-01";
         this.title = "Hello World";
+        // make an active calendar
+        this.calState = emptyCalendarState({startDate: this.start, endDate: this.end, calendarTitle: this.title});
+        this.checkit.createCalendar(this.calState);
     },
     afterEach: function () {
         "use strict";
@@ -1281,7 +1284,29 @@ QUnit.module("Prefill Form Tests", {
 
 QUnit.test("prefillForm test", function (assert) {
     "use strict";
-    assert.expect(1);
+    assert.expect(7);
+    var done = assert.async(1),
+        activeId,
+        activeCal,
+        prefillP;
     
     assert.equal(this.checkit.$calendarTitle.val(), "");
+    assert.equal(this.checkit.$startDate.val(), "");
+    assert.equal(this.checkit.$endDate.val(), "");
+    // verify we have a current active calendar
+    activeId = JSON.parse(localStorage.getItem("current_active_calendar"));
+    assert.notEqual(activeId, null);
+    activeCal = JSON.parse(localStorage.getItem(activeId));
+    
+    // run prefill form then check that the form has been filled
+    // with the current active calendar's information
+    prefillP = this.checkit.prefillForm();
+    Promise.all([prefillP]).then(function () {
+        activeId = JSON.parse(localStorage.getItem("current_active_calendar"));
+        activeCal = JSON.parse(localStorage.getItem(activeId));
+        assert.equal(this.checkit.$calendarTitle.val(), this.title);
+        assert.equal(this.checkit.$startDate.val(), this.start);
+        assert.equal(this.checkit.$endDate.val(), this.end);
+        done();
+    }.bind(this))
 });
