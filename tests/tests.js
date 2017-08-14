@@ -1115,11 +1115,13 @@ QUnit.test("onAuthStateChanged test", function (assert) {
 QUnit.module("CheckIt tests for clickHandlers", {
     beforeEach: function () {
         "use strict";
-    // prepare something before each test
+        // prepare something before each test
+        localStorage.clear();
     },
     afterEach: function () {
         "use strict";
-    // clean up after each test
+        // clean up after each test
+        localStorage.clear();
     }
 });
 
@@ -1188,7 +1190,7 @@ QUnit.module("Edit or Create Tests", {
 
 QUnit.test("editOrCreate test", function (assert) {
     "use strict";
-    assert.expect(8);
+    assert.expect(7);
     
     var done = assert.async(2),
         allCalendars,
@@ -1198,6 +1200,7 @@ QUnit.test("editOrCreate test", function (assert) {
         createP,
         editP,
         calId,
+        calId2,
         calState;
     
     // verify there is nothing in storage
@@ -1206,28 +1209,27 @@ QUnit.test("editOrCreate test", function (assert) {
     
     // Run editOrCreate
     createP = this.checkit.editOrCreate({title: title, start: start, end: end}).then(function () {
+        // check that editOrCreate returns a promise
         assert.equal(createP instanceof Promise, true);
-
         done();
     })
     
     // Test that we can edit this newly created calendar
     Promise.all([createP]).then(function () {
-        allCalendars = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
-        assert.equal(Object.keys(allCalendars).length, 1);
         // check the title and endDate before changing it
         calId = JSON.parse(localStorage.getItem('current_active_calendar'));
         calState = JSON.parse(localStorage.getItem(calId));
         assert.equal(calState.title, "Hello World");
         assert.equal(calState.endDateString, "20171201");
+        // edit the calendar's title and end date
         editP = this.checkit.editOrCreate({title: "New Title", start: start, end: 
         "2017-02-02"})
         
         Promise.all([editP]).then(function () {
-            allCalendars = JSON.parse(localStorage.getItem('allCalendarIdsKey'));
-            assert.equal(Object.keys(allCalendars).length, 1);
+            // check that we are still dealing with the same calendar
             // check that calendar has updated information
-            calId = JSON.parse(localStorage.getItem('current_active_calendar'));
+            calId2 = JSON.parse(localStorage.getItem('current_active_calendar'));
+            assert.equal(calId2, calId);
             calState = JSON.parse(localStorage.getItem(calId));
             assert.equal(calState.title, "New Title");
             assert.equal(calState.endDateString, "20170202");
@@ -1251,11 +1253,14 @@ QUnit.module("Prefill Form Tests", {
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
         
         // TODO add buildCalendar form html
-        this.$calendarDiv.append('<div><button id="createButton"\ type="button" class="btn btn-primary">Save</button></div>\
-        <div><input type="text" id="calendarTitle" value="Hello World"/>\
-        </div>\
-        <div><input type="text" id="startDate" value="2017-01-01"/></div>\
-        <div><input type="text" id="endDate" value="2017-12-01"/></div>'
+        this.$calendarDiv.append('<div><form><input type="text"\
+            class="form-control" id="calendarTitle"\
+            maxlength="140" placeholder="What are we\
+            tracking Eg Good Deeds Done, Days Without\
+            Smoking, etc./">\
+            <input type="text" id="startDate"\
+            class="form-control" placeholder="Pick a Start Date"/>\
+            <input type="text" id="endDate" class="form-control"\ placeholder="Pick an End Date" />'
         )
         
         
@@ -1272,4 +1277,11 @@ QUnit.module("Prefill Form Tests", {
         localStorage.clear();
     }
 
+});
+
+QUnit.test("prefillForm test", function (assert) {
+    "use strict";
+    assert.expect(1);
+    
+    assert.equal(this.checkit.$calendarTitle.val(), "");
 });
