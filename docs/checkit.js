@@ -952,17 +952,19 @@ CheckIt.prototype.clearCalendarDiv = function () {
 };
 
 CheckIt.prototype.findCurrentDay = function () {
-    // Finds current day to apply CSS to it and so that the browser scrolls to it.
+    // Finds current day to apply CSS to it and so that the browser scrolls to // it.
     // Pass the day you are looking for as a parameter "YYYYMMDD"
-    // Clear the page of any days in the calendar that may have the class
-    // 'currentDay' on them
+    
+
     "use strict";
+    // if we don't have a calendar on the page for some reason, exit
     if (this.$calendarDiv === undefined) {
         return;
     }
-
-    if (this.$calendarDiv.find('.currentDay').length) {
-        this.removeClass("currentDay");
+    // Clear the page of any days in the calendar that may have the class
+    // 'currentDay' on them
+    if (this.$calendarDiv.find('#currentDay').length) {
+        this.removeAttr("id");
     }
     
     var today = moment(),
@@ -971,7 +973,7 @@ CheckIt.prototype.findCurrentDay = function () {
     this.$calendarDiv.find('.activeDay')
         .children('.cell')
         .filter('#' + todayId)
-        .addClass('currentDay');
+        .attr('id', 'currentDay');
     return todayId;
 };
     
