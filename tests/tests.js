@@ -16,9 +16,14 @@ QUnit.module("Month Tests", {
     beforeEach: function () {
     // Initiate a test month object
         "use strict";
+        localStorage.clear();
         this.valentine = moment("2017-02-14", "YYYY-MM-DD");
         this.dateString = this.valentine.format("YYYYMMDD");
         this.testmonth = new Month(this.dateString);
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
     }
 
 });
@@ -48,6 +53,14 @@ QUnit.test("init month object test", function (assert) {
 
 // Testing Calendar Helper functions
 QUnit.module("Calendar helper functions tests", {
+    beforeEach: function () {
+        "use strict";
+        localStorage.clear();
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
+    }
 });
 
 QUnit.test("generateUniqueId test", function (assert) {
@@ -101,12 +114,16 @@ QUnit.module("Calendar Tests", {
     beforeEach: function () {
         "use strict";
         // Initiate a test calendar object for testing
+        localStorage.clear();
         this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
 
         this.state = emptyCalendarState(this.params);
 
         this.calendar = new Calendar(this.state);
-    
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
     }
 
 });
@@ -163,6 +180,7 @@ QUnit.module("CheckIt Tests", {
     beforeEach: function () {
         "use strict";
         // Initialize a fresh checkit object and a dummy active calendar for every test
+        localStorage.clear();
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
 
@@ -170,6 +188,10 @@ QUnit.module("CheckIt Tests", {
         this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
         this.state = emptyCalendarState(this.params);
         this.calendar = new Calendar(this.state);
+    },
+    afterEach: function () {
+        "use strict";
+        localStorage.clear();
     }
 
 });
@@ -354,6 +376,7 @@ QUnit.module("Checkit Calendar DOM Manipulation Tests", {
         "use strict";
         // Initialize a test calendar object, checkit object, and generate
         // the test calendar html
+        localStorage.clear();
         this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
         this.state = emptyCalendarState(this.params);
         this.calendar = new Calendar(this.state);
@@ -366,7 +389,8 @@ QUnit.module("Checkit Calendar DOM Manipulation Tests", {
     },
     afterEach: function () {
         "use strict";
-        // clean up calendar html 
+        // clean up calendar html
+        localStorage.clear();
         this.$calendarDiv.empty();
     }
 });
@@ -437,7 +461,8 @@ QUnit.module("Checkit DOM manipulation tests", {
     beforeEach: function () {
         "use strict";
         // Initiate a test calendar object, checkit object, and generate all
-        // the html for the test calendar. 
+        // the html for the test calendar.
+        localStorage.clear();
         this.params = {startDate: "2017-02-14", endDate: "2017-02-20", calendarTitle: "Test Calendar"};
         this.state = emptyCalendarState(this.params);
         this.calendar = new Calendar(this.state);
@@ -455,6 +480,7 @@ QUnit.module("Checkit DOM manipulation tests", {
     afterEach: function () {
         "use strict";
         // clean up calendar html
+        localStorage.clear();
         this.$calendarDiv.empty();
     }
 });
@@ -491,6 +517,7 @@ QUnit.module("CheckIt tests dropdown", {
     beforeEach: function () {
         "use strict";
         // prepare something before each test
+        localStorage.clear();
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
         this.checkit = new CheckIt('localStorage', this.$calendarDiv);
@@ -501,6 +528,7 @@ QUnit.module("CheckIt tests dropdown", {
     afterEach: function () {
         "use strict";
         // clean up after each test
+        localStorage.clear();
         this.$fixture.find('#dropdown').empty();
     }
 });
@@ -551,6 +579,7 @@ QUnit.module("Form Tests", {
         "use strict";
         // Initiate a checkit object, and html for a mock form that includes
         // hidden error elements
+        localStorage.clear();
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
         this.checkit = new CheckIt('localStorage', this.$calendarDiv);
@@ -575,6 +604,7 @@ QUnit.module("Form Tests", {
     afterEach: function () {
         "use strict";
         // clean up html
+        localStorage.clear();
         this.$calendarDiv.empty();
     }
 });
@@ -837,6 +867,7 @@ QUnit.module("CheckIt tests for functions that involve store", {
     afterEach: function () {
         "use strict";
         // clean up calendar html, and reset checkit's calendar div
+        localStorage.clear();
         this.$calendarDiv.empty();
     }
 });
@@ -1045,7 +1076,8 @@ QUnit.module("CheckIt tests for functions that involve firebase", {
     },
     afterEach: function () {
         "use strict";
-    // clean up after each test
+        // clean up after each test
+        localStorage.clear();
     }
 });
 
@@ -1217,6 +1249,8 @@ QUnit.module("Prefill Form Tests", {
         // using localStorage
         this.$fixture = $('#qunit-fixture');
         this.$calendarDiv = this.$fixture.find('#calendarDiv');
+        
+        // TODO add buildCalendar form html
         this.$calendarDiv.append('<div><button id="createButton"\ type="button" class="btn btn-primary">Save</button></div>\
         <div><input type="text" id="calendarTitle" value="Hello World"/>\
         </div>\
