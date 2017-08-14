@@ -159,6 +159,7 @@ function CheckIt(mode, calendarDiv) {
     this.$fullForm = $('#fullForm');
     this.$createButton = $('#createButton');
     this.$deleteButton = $('#deleteButton');
+    this.$editButton = $('#editButton');
     this.$calendarTitle = $('#calendarTitle');
     this.$startDate = $('#startDate');
     this.$endDate = $('#endDate');
@@ -177,7 +178,8 @@ function CheckIt(mode, calendarDiv) {
     this.$clearButton.click(function () {
         this.clearForm(this.$fullForm);
     }.bind(this));
-    this.$createButton.click(this.editOrCreate.bind(this));
+    this.$createButton.click(event, this.editOrCreate.bind(this));
+    this.$editButton.click(event, this.editOrCreate.bind(this));
     
     this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
     this.$deleteButton.click(this.deleteCalendar.bind(this));
@@ -595,7 +597,6 @@ CheckIt.prototype.generateCheckmarks = function (calObj) {
     // div is which div do you want to look through for checkmarks
     "use strict";
     if (calObj.state.checkedDays === undefined) {
-        console.log("No days are checked");
         return;
     }
     
@@ -719,8 +720,6 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
     //    startDateString: "YYYY-MM-DD"
     //    endDateString: "YYYY-MM-DD"
     //    $formGroup: jQuery selector for the form where you will be adding errors
-    console.log("startDatString: " + startDateString);
-    console.log("endDateString: " + endDateString);
     "use strict";
     var startDate = moment(startDateString, "YYYY-MM-DD"),
         endDate = moment(endDateString, "YYYY-MM-DD"),
@@ -729,8 +728,6 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         $fiveYears = $formGroup.find('#fiveYears'),
         difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true);
     
-    console.log("startDate : " + startDate);
-    console.log("endDate : " + endDate);    
     if (startDate.isBefore(endDate)) {
         // startDate is before endDate so errors can be removed.
         this.removeFieldError($formGroup, $sr);
@@ -861,37 +858,46 @@ CheckIt.prototype.editOrCreate = function (params) {
     // Determine whether to edit an existing calendar
     // or create a new one
     
+    // TODO right now I decide to run editCalendar based on whether
+    // I have a current active calendar or not
+    // maybe I can decide based on whether a user clicks on a button
+    // with the word "Edit" on it or a button with the word "Create"
+    // on it
     "use strict";
-    
+
     var checkit = this,
         state,
         start = params.start || this.$startDate.val(),
         end = params.end || this.$endDate.val(),
-        title = params.title || this.$calendarTitle.val();
+        title = params.title || this.$calendarTitle.val(),
+        buttonId = params.buttonId || event.target.id;
     
     if (checkit.validateForm(start, end)) {
         
         // Check if there is a current active calendar
         // Don't have to return promise here? TODO
-        return checkit.store.getActive()
-            .then(function (activeCalId) {
-                if (activeCalId) { // I don't think I need this condition
-                    // we are editing an existing calendar
-                    
-                    return checkit.editCalendar(title, start, end, activeCalId);
-                }
-            }, function (err) { // Runs if getActive fails
-                // we are creating a new calendar
-                
-                state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
-                
-                return checkit.createCalendar(state);
-            })
-            .catch(function (err) { // runs if either getActive fails
-                                    // or .then fails 
-                
-                return Promise.reject(err);
-            });
+        if (buttonId === "editButton") {
+            return checkit.store.getActive()
+                .then(function (activeCalId) {
+                    if (activeCalId) { // I don't think I need this condition
+                        // we are editing an existing calendar
+
+                        return checkit.editCalendar(title, start, end, activeCalId);
+                    } else {
+                        console.log("No calendar currently on display");
+                        return Promise.reject("No calendar currently on display");
+                    }
+                })
+                .catch(function (err) { // runs if either getActive fails
+                                        // or .then fails 
+
+                    return Promise.reject(err);
+                });
+        } else if (buttonId === "createButton") {
+            state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
+
+            return checkit.createCalendar(state);
+        }
     } else {
         return Promise.reject("Invalid input.");
     }
@@ -1083,7 +1089,7 @@ CheckIt.prototype.prefillForm = function () {
                 .catch(function (err) {
                     console.log(err);
                     return Promise.reject(err);
-                }); 
+                });
         })
         .catch(function (err) {
             console.log("last catch " + err);

@@ -1208,7 +1208,7 @@ QUnit.test("editOrCreate test", function (assert) {
     assert.equal(null, allCalendars);
     
     // Run editOrCreate
-    createP = this.checkit.editOrCreate({title: title, start: start, end: end}).then(function () {
+    createP = this.checkit.editOrCreate({title: title, start: start, end: end, buttonId: "createButton"}).then(function () {
         // check that editOrCreate returns a promise
         assert.equal(createP instanceof Promise, true);
         done();
@@ -1223,7 +1223,7 @@ QUnit.test("editOrCreate test", function (assert) {
         assert.equal(calState.endDateString, "20171201");
         // edit the calendar's title and end date
         editP = this.checkit.editOrCreate({title: "New Title", start: start, end: 
-        "2017-02-02"})
+        "2017-02-02", buttonId: "editButton"})
         
         Promise.all([editP]).then(function () {
             // check that we are still dealing with the same calendar
