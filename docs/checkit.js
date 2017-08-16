@@ -247,12 +247,12 @@ CalendarAnalyzer.prototype.getTotalCalendarWeeks = function () {
     return totalWeeks;
 };
 
-CalendarAnalyzer.prototype.getNumOfDaysLeft = function () {
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function (currentDayM) {
     // Returns the total number of active days left in a calendar starting from current
     // day to end.
     "use strict";
     var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
-        today = moment(),
+        today = currentDayM || moment(),
         daysLeft = endDate.diff(today, 'days');
     return daysLeft;
 };

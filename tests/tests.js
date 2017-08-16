@@ -1233,7 +1233,13 @@ QUnit.test("getTotal test", function (assert) {
 
 QUnit.test("getNumOfDaysLeft test", function (assert) {
     "use strict";
-    assert.expect(0);
-    var daysLeft = this.calendarAnalyzer.getNumOfDaysLeft();
-    // Not sure how I would write this
+    assert.expect(1);
+    var daysLeft = this.calendarAnalyzer.getNumOfDaysLeft(),
+        lastDay = moment("20180214", "YYYYMMDD"),
+        currentDay = moment(),
+        dayDiff = lastDay.diff(currentDay, 'days');
+    console.log("Days leftL " + daysLeft);
+    assert.equal(daysLeft, dayDiff);
+    
+    
 });
