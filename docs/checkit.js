@@ -210,19 +210,13 @@ CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
         i,
         currentDay,
         previousDay,
-        dayDiff;
+        dayDiff,
+        lastDay;
     
-    // what if the first checked day doesn't occur until we are
-    // well into the calendar? It's possible that the time before
-    // the first checked day is the longest streak of unchecked days
-    // this could be true for the time that comes after the last checked
-    // day. Therefore, we need to begin checking with the start day and
-    // the first checked day, and 
-    // end with comparing the last checked day with the last day in
-    // in the calendar TODO
-    previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
+    previousDay = moment(this.calState.startDateString, "YYYYMMDD");
+    lastDay = moment(this.calState.endDateString, "YYYYMMDD");
     
-    for (i = 1; i < checkedDaysArray.length; i++) {
+    for (i = 0; i < checkedDaysArray.length; i++) {
         currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
         
         dayDiff = currentDay.diff(previousDay, 'days');
@@ -236,6 +230,9 @@ CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
         }
         previousDay = currentDay;
     }
+    // check last checked day against last day in calendar
+    dayDiff = lastDay.diff(currentDay, 'days');
+    longestGap = Math.max(longestGap, currentGap);
 
     return longestGap;
 

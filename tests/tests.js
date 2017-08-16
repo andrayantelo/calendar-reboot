@@ -1209,22 +1209,24 @@ QUnit.test("getCheckedDaysStreak test", function (assert) {
 
 QUnit.test("getUncheckedDaysStreak test", function (assert) {
     "use strict";
-    assert.expect(0);
+    assert.expect(1);
     var gap = this.calendarAnalyzer.getUncheckedDaysStreak(),
         noGap,
         oneGap,
         oneElement;
-    console.log("the gap is " + gap);
+
+    assert.equal(this.calendarAnalyzer.getUncheckedDaysStreak(), 120);
+    
 });
 
 QUnit.test("getTotal test", function (assert) {
     "use strict";
     assert.expect(2);
     
-    var days = this.calendarAnalyzer.getTotalCalendarDays('days');
-    assert.equal(days, 365);
+    var days = this.calendarAnalyzer.getTotalCalendarDays('days'),
+        weeks = this.calendarAnalyzer.getTotalCalendarWeeks('weeks');
     
-    var weeks = this.calendarAnalyzer.getTotalCalendarWeeks('weeks');
+    assert.equal(days, 365);
     assert.equal(weeks, 52);
 });
 
