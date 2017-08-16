@@ -1,4 +1,4 @@
-/*jslint devel: true, es5: true, nomen: true*/
+/*jslint devel: true, es5: true, nomen: true, plusplus: true*/
 /*global
     browser:true, Promise, firebase, $, jQuery, alert, moment, Spinner, LocalCalendarStorage, FirebaseCalendarStorage
 */
@@ -128,6 +128,133 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
 
     return monthObjects;
 
+};
+
+// calendarAnalyzer takes a calendar object and can analyze facts about it.
+
+var CalendarAnalyzer = function (calendarState) {
+    "use strict";
+    this.calState = calendarState;
+};
+
+CalendarAnalyzer.prototype.getNumberOfChecked = function () {
+    // Returns the number of checked days in a calendar
+    "use strict";
+    return Object.keys(this.calState.checkedDays).length;
+};
+
+CalendarAnalyzer.prototype.getTotalCalendarDays = function () {
+    // Returns the total number of active days in the calendar
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalDays = endDate.diff(startDate, 'days');
+    return totalDays;
+};
+
+CalendarAnalyzer.prototype.getNumberOfUnchecked = function () {
+    // Returns number of unchecked days in a calendar
+    "use strict";
+    return this.getTotalCalendarDays() - this.getNumberOfChecked();
+};
+
+CalendarAnalyzer.prototype.getCheckedDaysStreak = function () {
+    // Returns the longest streak of checked days
+    "use strict";
+    
+    var currentStreak = 1,
+        checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
+        bestStreak = 0,
+        i,
+        currentDay,
+        previousDay,
+        dayDiff;
+    
+    previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
+    
+    for (i = 1; i < checkedDaysArray.length; i++) {
+        
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        
+        // Calculate how many days are between previous day
+        // and current day
+        dayDiff = currentDay.diff(previousDay, 'days');
+        
+        // If they are not consecutive days 
+        if (dayDiff !== 1) {
+            // Find bestStreak
+            bestStreak = Math.max(bestStreak, currentStreak);
+            // reset currentStreak
+            currentStreak = 1;
+        } else {
+            // Increment currentStreak
+            currentStreak++;
+            // Find bestStreak
+            bestStreak = Math.max(bestStreak, currentStreak);
+        }
+        // Update previousDay
+        previousDay = currentDay;
+    }
+
+    return bestStreak;
+};
+
+CalendarAnalyzer.prototype.getUncheckedDaysStreak = function () {
+    // Returns the longest streak of unchecked days
+    "use strict";
+
+    // The largest gap between any two checked days (minus one)
+    var checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
+        currentGap = 0,
+        longestGap = 0,
+        i,
+        currentDay,
+        previousDay,
+        dayDiff,
+        lastDay;
+    
+    previousDay = moment(this.calState.startDateString, "YYYYMMDD");
+    lastDay = moment(this.calState.endDateString, "YYYYMMDD");
+    
+    for (i = 0; i < checkedDaysArray.length; i++) {
+        currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+        
+        dayDiff = currentDay.diff(previousDay, 'days');
+
+        if (dayDiff === 1) {
+            longestGap = Math.max(longestGap, currentGap);
+            currentGap = 0;
+        } else {
+            currentGap = dayDiff;
+            longestGap = Math.max(longestGap, currentGap);
+        }
+        previousDay = currentDay;
+    }
+    // check last checked day against last day in calendar
+    dayDiff = lastDay.diff(currentDay, 'days');
+    longestGap = Math.max(longestGap, currentGap);
+
+    return longestGap;
+
+};
+
+CalendarAnalyzer.prototype.getTotalCalendarWeeks = function () {
+    // Returns the total number of active weeks in the calendar
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+        totalWeeks = endDate.diff(startDate, 'weeks');
+    return totalWeeks;
+};
+
+CalendarAnalyzer.prototype.getNumOfDaysLeft = function (currentDayM) {
+    // Returns the total number of active days left in a calendar starting from current
+    // day to end.
+    "use strict";
+    var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+        today = currentDayM || moment(),
+        daysLeft = endDate.diff(today, 'days');
+    return daysLeft;
 };
 
 // Initializes CheckIt
@@ -359,6 +486,7 @@ CheckIt.prototype.clearDropdown = function ($dropdown) {
 
 CheckIt.prototype.initLocalStorage = function () {
     "use strict";
+
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
