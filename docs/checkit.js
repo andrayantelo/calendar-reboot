@@ -732,6 +732,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         } else {
             this.addFieldError($formGroup, $sr);
             this.addHelpBlock($fiveYears);
+            return false;
         }
     } else {
         // Mark the endDate input field red because endDate is after startDate
