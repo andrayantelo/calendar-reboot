@@ -4,47 +4,48 @@
 */
 
 //CODE FOR MONTH AND CALENDAR OBJECTS
-var Month = function (dateString) {
-    "use strict";
-    var self = this;
-    //date will be of the format moment("YYYYMMDD")
-    self.dateString = dateString;
-    self.date = moment(dateString, "YYYYMMDD");
-
-    self.firstActiveDayIndex = self.date.day();
-
-    self.numberOfDays = self.date.daysInMonth();
-    self.monthYear = self.date.year();
-    self.monthIndex = self.date.month();
-
-    self.monthName = self.date.format("MMMM");
-    // Start day is the first active day
-    self.startDay = self.date.date();
+class Month {
+    constructor(dateString) {
+        "use strict";
+        let self = this;
+        //date will be of the format moment("YYYYMMDD")
+        self.dateString = dateString;
+        self.date = moment(dateString, "YYYYMMDD");
     
-    // Moment object for the first of the month
-    self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
-    // the first of the month date (always 1)
-    self.firstDay = self.firstDayDate.date();
-    // Index of the first of the month
-    self.firstDayIndex = self.firstDayDate.day();
-    self.dayIndex = {};
-    self.monthId = self.monthYear.toString() + self.monthIndex.toString();
+        self.firstActiveDayIndex = self.date.day();
     
+        self.numberOfDays = self.date.daysInMonth();
+        self.monthYear = self.date.year();
+        self.monthIndex = self.date.month();
+    
+        self.monthName = self.date.format("MMMM");
+        // Start day is the first active day
+        self.startDay = self.date.date();
+        
+        // Moment object for the first of the month
+        self.firstDayDate = moment(dateString, "YYYYMMDD").subtract((self.startDay - 1), 'days');
+        // the first of the month date (always 1)
+        self.firstDay = self.firstDayDate.date();
+        // Index of the first of the month
+        self.firstDayIndex = self.firstDayDate.day();
+        self.dayIndex = {};
+        self.monthId = self.monthYear.toString() + self.monthIndex.toString();
+    }
 };
 
 
 // Calendar Helper functions
 
-var generateUniqueId = function () {
+let generateUniqueId = function () {
     "use strict";
-    var uniqueId = (Math.floor((Math.random() + Date.now()) * 10e4)).toString();
+    let uniqueId = (Math.floor((Math.random() + Date.now()) * 10e4)).toString();
     return uniqueId;
     
 };
 
-var emptyCalendarState = function (params) {
+let emptyCalendarState = function (params) {
     "use strict";
-    var startDate = moment(params.startDate, "YYYY-MM-DD"),
+    let startDate = moment(params.startDate, "YYYY-MM-DD"),
         endDate = moment(params.endDate, "YYYY-MM-DD");
     
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
@@ -66,24 +67,26 @@ var emptyCalendarState = function (params) {
     };
 };
 
-var Calendar = function (state) {
-    "use strict";
-    var self = this;
-    self.state = state;
-    //startDate is a moment object , the argument startDateString is 
-    //"YYYYMMDD" string
-    self.startDate = moment(state.startDateString, "YYYYMMDD");
-    //endDate is a moment object
-    // End date is the last active day
-    self.endDate = moment(state.endDateString, "YYYYMMDD");
-
-    self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
+class Calendar {
+    constructor(state) {
+        "use strict";
+        let self = this;
+        self.state = state;
+        //startDate is a moment object , the argument startDateString is 
+        //"YYYYMMDD" string
+        self.startDate = moment(state.startDateString, "YYYYMMDD");
+        //endDate is a moment object
+        // End date is the last active day
+        self.endDate = moment(state.endDateString, "YYYYMMDD");
+    
+        self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
+    }
 };
 
 Calendar.prototype.addMonth = function () {
     // Add a month to the calendar.
     "use strict";
-    var self = this,
+    let self = this,
         newMonth;
     
     // Update self.endDate so that it occurs one month later.
@@ -111,7 +114,7 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
         throw new Error("End date must be a date after start date");
     }
     
-    var self = this,
+    let self = this,
         monthObjects = [],
         momentObject = moment(startDate),
         month;
@@ -131,88 +134,90 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
 };
 
 // Initializes CheckIt
-function CheckIt(mode, calendarDiv) {
-    // Shortcuts to DOM elements.
-    "use strict";
-    this.mode = mode;
+class CheckIt {
+    constructor(mode, calendarDiv) {
+        // Shortcuts to DOM elements.
+        "use strict";
+        this.mode = mode;
+        
+        this.$userPic = $('#user-pic');
+        this.$userName = $('#user-name');
+        this.$signInButton = $('#sign-in');
+        this.$signOutButton = $('#sign-out');
+       
+        this.$getStarted = $('#getStarted');
+        this.$buildFormAccordion = $('#buildFormAccordion');
+        this.$titleFormGroup = $('#titleFormGroup');
+        this.$startDateFormGroup = $('#startDateFormGroup');
+        this.$endDateFormGroup = $('#endDateFormGroup');
+        this.$startDatePicker = $('#datetimepicker1');
+        this.$startDatePickerInput = $('#datetimepicker1 input');
+        this.$endDatePicker = $('#datetimepicker2');
+        this.$endDatePickerInput = $('#datetimepicker2 input');
+        this.$calendarDropdown = $('#calendarDropdown');
+        this.$srStartDateError = $('#srStartDateError');
+        this.$srEndDateError = $('#srEndDateError');
+        this.$srTitleError = $('#srTitleError');
+        this.$titleErrorGlyphicon = $('#titleErrorGlyphicon');
+        this.$clearButton = $('#clearButton');
+        this.$fullForm = $('#fullForm');
+        this.$createButton = $('#createButton');
+        this.$deleteButton = $('#deleteButton');
+        this.$calendarTitle = $('#calendarTitle');
+        this.$startDate = $('#startDate');
+        this.$endDate = $('#endDate');
+        this.$buildCalendarForm = $('#collapseOne');
+        this.$loadingWheel = $('#loadingWheel');
+        
+        if (calendarDiv && calendarDiv.length === 0) {
+            console.error("Selector given for calendar div does not select anything.");
+        }
+        this.$calendarDiv = calendarDiv;
+        
+        
+        this.spinner = new Spinner();
+        
+        // Click handlers for the DOM
+        this.$clearButton.click(function () {
+            this.clearForm(this.$fullForm);
+        }.bind(this));
+        this.$createButton.click(this.createCalendar.bind(this));
+        this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
+        this.$deleteButton.click(this.deleteCalendar.bind(this));
+        
+          //have the calendar show when you click in the input section of the date
+        //timepicker
+        
+        this.$startDatePicker.datetimepicker({format: "YYYY-MM-DD"});
+        this.$startDatePickerInput.click(function (event) {
+            this.$startDatePicker.data("DateTimePicker").show();
+        }.bind(this));
+        
+        this.$endDatePicker.datetimepicker({format: "YYYY-MM-DD"});
+        this.$endDatePickerInput.click(function (event) {
+            this.$endDatePicker.data("DateTimePicker").show();
+        }.bind(this));
     
-    this.$userPic = $('#user-pic');
-    this.$userName = $('#user-name');
-    this.$signInButton = $('#sign-in');
-    this.$signOutButton = $('#sign-out');
-   
-    this.$getStarted = $('#getStarted');
-    this.$buildFormAccordion = $('#buildFormAccordion');
-    this.$titleFormGroup = $('#titleFormGroup');
-    this.$startDateFormGroup = $('#startDateFormGroup');
-    this.$endDateFormGroup = $('#endDateFormGroup');
-    this.$startDatePicker = $('#datetimepicker1');
-    this.$startDatePickerInput = $('#datetimepicker1 input');
-    this.$endDatePicker = $('#datetimepicker2');
-    this.$endDatePickerInput = $('#datetimepicker2 input');
-    this.$calendarDropdown = $('#calendarDropdown');
-    this.$srStartDateError = $('#srStartDateError');
-    this.$srEndDateError = $('#srEndDateError');
-    this.$srTitleError = $('#srTitleError');
-    this.$titleErrorGlyphicon = $('#titleErrorGlyphicon');
-    this.$clearButton = $('#clearButton');
-    this.$fullForm = $('#fullForm');
-    this.$createButton = $('#createButton');
-    this.$deleteButton = $('#deleteButton');
-    this.$calendarTitle = $('#calendarTitle');
-    this.$startDate = $('#startDate');
-    this.$endDate = $('#endDate');
-    this.$buildCalendarForm = $('#collapseOne');
-    this.$loadingWheel = $('#loadingWheel');
-    
-    if (calendarDiv && calendarDiv.length === 0) {
-        console.error("Selector given for calendar div does not select anything.");
-    }
-    this.$calendarDiv = calendarDiv;
-    
-    
-    this.spinner = new Spinner();
-    
-    // Click handlers for the DOM
-    this.$clearButton.click(function () {
-        this.clearForm(this.$fullForm);
-    }.bind(this));
-    this.$createButton.click(this.createCalendar.bind(this));
-    this.$calendarDropdown.on('click', 'li', this.loadFromDropdown.bind(this));
-    this.$deleteButton.click(this.deleteCalendar.bind(this));
-    
-      //have the calendar show when you click in the input section of the date
-    //timepicker
-    
-    this.$startDatePicker.datetimepicker({format: "YYYY-MM-DD"});
-    this.$startDatePickerInput.click(function (event) {
-        this.$startDatePicker.data("DateTimePicker").show();
-    }.bind(this));
-    
-    this.$endDatePicker.datetimepicker({format: "YYYY-MM-DD"});
-    this.$endDatePickerInput.click(function (event) {
-        this.$endDatePicker.data("DateTimePicker").show();
-    }.bind(this));
+        
+        // Attach click handler to sign in and sign out buttons.
+        this.$signOutButton.click(this.signOut.bind(this));
+        this.$signInButton.click(this.signIn.bind(this));
+       
+        
+        // Initialize storage
+        switch (this.mode) {
+        case 'firebase':
+            this.initFirebase();
+            break;
+        case 'localStorage':
+            this.initLocalStorage();
+            break;
+        default:
+            throw new Error("Unknown storage mode: '" + this.mode + "'");
+        }
 
-    
-    // Attach click handler to sign in and sign out buttons.
-    this.$signOutButton.click(this.signOut.bind(this));
-    this.$signInButton.click(this.signIn.bind(this));
-   
-    
-    // Initialize storage
-    switch (this.mode) {
-    case 'firebase':
-        this.initFirebase();
-        break;
-    case 'localStorage':
-        this.initLocalStorage();
-        break;
-    default:
-        throw new Error("Unknown storage mode: '" + this.mode + "'");
     }
-
-}
+};
 
 CheckIt.prototype.addMonth = function (calObj) {
     // Add a single month to the calendar
@@ -223,13 +228,13 @@ CheckIt.prototype.addMonth = function (calObj) {
 CheckIt.prototype.attachCheckmarkClickHandler = function (calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
     "use strict";
-    var checkitObj = this;
+    let checkitObj = this;
     
     monthObjArray.forEach(function (monthObj) {
-        var $monthDiv = $('#' + monthObj.monthId);
+        let $monthDiv = $('#' + monthObj.monthId);
         $monthDiv.find('.activeDay').click(function (event) {
             
-            var boxId = $(this).find('.cell').attr('id');
+            let boxId = $(this).find('.cell').attr('id');
           
             if (calObj.state.checkedDays === undefined) {
                 calObj.state.checkedDays = {};
@@ -264,7 +269,7 @@ CheckIt.prototype.displayLoadingWheel = function ($elementSelector) {
            // A jquery selector pertaining to the element
            // where you want to place the loading wheel.
     "use strict";
-    var target = $elementSelector.get()[0];
+    let target = $elementSelector.get()[0];
     this.spinner.spin(target);
     
 };
@@ -281,13 +286,13 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
     // $dropdown is the jquery selector of the element you are going to 
     // be adding these calendar titles to.
     "use strict";
-    var dropdown = $dropdown || this.$calendarDropdown;
+    let dropdown = $dropdown || this.$calendarDropdown;
     dropdown.empty();
     
     this.store.getAllCalendarIds()
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
-            var key;
+            let key;
             if (allCalendarIds) {
                 for (key in allCalendarIds) {
                     if (allCalendarIds.hasOwnProperty(key)) {
@@ -314,7 +319,7 @@ CheckIt.prototype.displayActiveCalendar = function () {
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
     "use strict";
-    var checkit = this;
+    let checkit = this;
 
     // if the first promise doesn't work, then just go to catch, don't
     // try to resolve things inside of a catch and then run .then
@@ -336,7 +341,7 @@ CheckIt.prototype.displayActiveCalendar = function () {
         })
         .then(function (activeCalendarState) {
             if (activeCalendarState !== null) {
-                var state = activeCalendarState,
+                let state = activeCalendarState,
                     calendar = new Calendar(state);
                 return checkit.displayCalendar(calendar);
             }
@@ -393,7 +398,7 @@ CheckIt.prototype.initFirebase = function () {
 CheckIt.prototype.signIn = function () {
     // Sign in Firebase using popup auth and Google as the identity provider.
     "use strict";
-    var provider = new firebase.auth.GoogleAuthProvider();
+    let provider = new firebase.auth.GoogleAuthProvider();
     
     this.auth.signInWithRedirect(provider);
 };
@@ -409,7 +414,7 @@ CheckIt.prototype.signOut = function () {
 CheckIt.prototype.onActivityChanged = function (activeCalls, id) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
     "use strict";
-    var $id = $('#' + id);
+    let $id = $('#' + id);
     if (activeCalls > 0) {
         this.displayLoadingWheel($id);
     } else if (activeCalls === 0) {
@@ -421,7 +426,7 @@ CheckIt.prototype.onActivityChanged = function (activeCalls, id) {
 CheckIt.prototype.updateUserDescription = function (user) {
     // Updates the user's picture and name
     "use strict";
-    var profilePicUrl = user.photoURL,
+    let profilePicUrl = user.photoURL,
         userName = user.displayName;
   
     this.$userName.empty();
@@ -500,7 +505,7 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
     "use strict";
-    var checkitApp = this;
+    let checkitApp = this;
     // Add the title of the calendar
     checkitApp.$calendarDiv.append(
         '<div class="calendarTitleHeading"><h1 class="page-header\
@@ -513,7 +518,7 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
         checkitApp.$calendarDiv.append('<div class="monthframe" id=' + monthObj.monthId + '></div>');
         
         if (monthObj.monthIndex === 0 || index === 0) {
-            var yearHeader = "<div class='page-header text-center year-header'>" +
+            let yearHeader = "<div class='page-header text-center year-header'>" +
                 "<h2>" + monthObj.monthYear + "</h2>" +
                 "</div>";
             checkitApp.$calendarDiv.find('#' + monthObj.monthId).append(yearHeader);
@@ -527,11 +532,11 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
 CheckIt.prototype.fillCalendar = function (calObj) {
     // Fill an empty calendar with appropriate calendar data.
     "use strict";
-    var checkit = this;
+    let checkit = this;
     
     calObj.monthObjects.forEach(function (monthObj) {
     
-        var $monthId = checkit.$calendarDiv.find('#' + monthObj.monthId);
+        let $monthId = checkit.$calendarDiv.find('#' + monthObj.monthId);
         
         $monthId.find(".month-year").text(monthObj.monthName + " " + monthObj.monthYear);
         
@@ -544,7 +549,7 @@ CheckIt.prototype.fillCalendar = function (calObj) {
             
             // dayOfMonth is equal to 1 once the indexOfTableTd is equal to 
             // the index of the first day of the month.
-            var dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.firstDay),
+            let dayOfMonth = indexOfTableTd - (monthObj.firstDayIndex - monthObj.firstDay),
                 boxId,
                 toAdd;
             
@@ -595,7 +600,7 @@ CheckIt.prototype.generateCheckmarks = function (calObj) {
     
     this.$calendarDiv.find('.cell').each(function () {
         
-        var boxId = $(this).attr('id');
+        let boxId = $(this).attr('id');
         
         if (calObj.state.checkedDays[boxId]) {
             $(this).children('.checkmark').removeClass("hidden");
@@ -697,7 +702,7 @@ CheckIt.prototype.removeGlyphicon = function ($id) {
 CheckIt.prototype.removeFormErrors = function ($fullForm) {
     // Remove the error classes and glyphicons from the form input fields
     "use strict";
-    var checkit = this;
+    let checkit = this;
     
     $fullForm.find('.form-group').each(function (index, value) {
         checkit.removeFieldError($(this), $(this).find('.sr-only'));
@@ -714,7 +719,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
     //    endDateString: "YYYY-MM-DD"
     //    $formGroup: jQuery selector for the form where you will be adding errors
     "use strict";
-    var startDate = moment(startDateString, "YYYY-MM-DD"),
+    let startDate = moment(startDateString, "YYYY-MM-DD"),
         endDate = moment(endDateString, "YYYY-MM-DD"),
         $sr = $formGroup.find('.sr-only'),
         $helpBlock = $formGroup.find('#helpBlock'),
@@ -752,7 +757,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     
     // Screen reader element for this input field
     "use strict";
-    var $srElement = $inputFormGroup.find('.sr-only'),
+    let $srElement = $inputFormGroup.find('.sr-only'),
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
     
@@ -778,7 +783,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
 
 CheckIt.prototype.validateForm = function (startDateString, endDateString) {
     "use strict";
-    var validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle'),
+    let validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle'),
         
         validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate'),
         
@@ -794,7 +799,7 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
 CheckIt.prototype.createCalendar = function () {
     // Create a new calendar and display it.
     "use strict";
-    var title = this.$calendarTitle.val(),
+    let title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
         end = this.$endDate.val(),
         state,
@@ -835,11 +840,11 @@ CheckIt.prototype.loadFromDropdown = function (event) {
     
     //load the saved calendar with the title that was clicked
     "use strict";
-    var dropdownItemId = event.currentTarget.id;
+    let dropdownItemId = event.currentTarget.id;
     
     return this.store.loadById(dropdownItemId)
         .then(function (state) {
-            var calendar = new Calendar(state);
+            let calendar = new Calendar(state);
             this.displayCalendar(calendar);
             this.hideForm(this.$buildCalendarForm);
         }.bind(this))
@@ -856,7 +861,7 @@ CheckIt.prototype.deleteCalendar = function () {
     
     // Guard against accidental clicks of the delete button
     "use strict";
-    var confirmation = confirm("Are you sure you want to delete your calendar?"),
+    let confirmation = confirm("Are you sure you want to delete your calendar?"),
         checkit;
     if (!confirmation) {
         return Promise.reject("User cancelled the delete operation.");
@@ -939,7 +944,7 @@ CheckIt.prototype.displayCalendar = function (calendarObj) {
     "use strict";
     this.clearCalendarDiv();
     this.buildCalendar(calendarObj);
-    var activeP = this.store.setActiveById(calendarObj.state.uniqueId),
+    let activeP = this.store.setActiveById(calendarObj.state.uniqueId),
         saveP = this.store.save(calendarObj);
     return Promise.all([activeP, saveP]);
 };
@@ -966,7 +971,7 @@ CheckIt.prototype.findCurrentDay = function () {
         this.removeClass("currentDay");
     }
     
-    var today = moment(),
+    let today = moment(),
         todayId = moment({"year": today.year(), "month": today.month(), "day": today.date()}).format("YYYYMMDD");
     // If current day is not actually an ACTIVE day in the calendar, don't add it
     this.$calendarDiv.find('.activeDay')
