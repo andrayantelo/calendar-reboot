@@ -539,7 +539,7 @@ QUnit.module( "Form Tests", {
   }
 });
 
-QUnit.test("show and hide Form test", function( assert ) {
+/*QUnit.test("show and hide Form test", function( assert ) {
     assert.expect(1);
     
     this.$calendarDiv.append(`<div id="testCollapse" class="collapse"></div>`);
@@ -554,7 +554,7 @@ QUnit.test("show and hide Form test", function( assert ) {
     setTimeout(function(){ 
         assert.equal($testCollapse.css('display'), 'none');
         }, 350);
-});
+});*/
 
 QUnit.test("clearForm test", function( assert ) {
     assert.expect(2);
