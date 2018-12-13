@@ -2,8 +2,16 @@
 
 // Tests for checkit.js
 
+QUnit.test("testing reference", function(assert) {
+    let testingAMonth = new Month("19861012");
+    assert.expect(0);
+    
+});
+
 
 // Testing Month Object
+/*
+
 QUnit.module( "Month Tests", {
 // Hardcoded a date for moment object because javascript's Date object
 // does not have a way to get the number of days in the month.
@@ -1019,3 +1027,5 @@ QUnit.test("loadFromDropdown test", function(assert) {
 // Have to have the same html in test html as my app html so that I can
 // test out the buttons and make sure the correct functions are triggered
 // should I do that?
+ 
+*/
