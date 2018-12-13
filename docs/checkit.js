@@ -344,8 +344,8 @@ CheckIt.prototype.displayActiveCalendar = function () {
                 return checkit.displayCalendar(calendar);
             }
         })
-        // this gets run if getActive returns a rejected promise, but does it // also 
-        // run if loadById returns a rejected promise?
+        // this gets run if getActive returns a rejected promise and if loadById returns
+        // a rejected promise
         .catch(function (err) {
             checkit.showForm(checkit.$buildCalendarForm);
             return err;
@@ -842,7 +842,6 @@ CheckIt.prototype.editCalendar = function (title, start, end, activeCalId) {
         endDate = moment(end, "YYYY-MM-DD"),
         loadP;
     
-    // I want to return a non-pending promise
     
     return checkit.store.loadById(activeCalId)
         .then(function (calState) {
@@ -886,11 +885,6 @@ CheckIt.prototype.editOrCreate = function (params) {
                         return Promise.reject("No calendar currently on display");
                     }
                 })
-                .catch(function (err) { // runs if either getActive fails
-                                        // or .then fails 
-
-                    return Promise.reject(err);
-                });
         } else if (buttonId === "createButton") {
             state = emptyCalendarState({startDate: start, endDate: end, calendarTitle: title});
 
@@ -983,6 +977,7 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     "use strict";
     
     // first check if the title isn't already in the dropdown
+    console.log($('#' + uniqueId));
     if ($('#' + uniqueId).length) {
         // title is already in dropdown
         // but the title may have changed
@@ -1287,3 +1282,4 @@ CheckIt.prototype.opts = {
     hwaccel: false, // Whether to use hardware acceleration
     position: 'absolute' // Element positioning
 };
+

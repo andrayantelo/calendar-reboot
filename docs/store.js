@@ -288,6 +288,7 @@ var FirebaseCalendarStorage = function (params) {
     
         var userId = self.user.uid;
         self.startWork();
+        
         return new Promise(function (resolve, reject) {
             self.database.ref('calendars/' + calendarObjId + '/calendarState')
                 .once('value')
