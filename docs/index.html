@@ -43,6 +43,10 @@
         <!-- Loading spinner -->
         <script src="https://cdn.jsdelivr.net/spinjs/2.3.2/spin.min.js"></script>
         
+        <!-- TODO remove DOMPurify -->
+        <!-- DOMPurify library to sanitize user input-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/1.0.9/purify.min.js"></script>
+        
         <!-- Notify JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
                 
@@ -68,6 +72,7 @@
         
           ga('create', 'UA-91404440-1', 'auto');
           ga('send', 'pageview');
+          
         
         </script>
         
@@ -90,6 +95,7 @@
         
                 //Run once first 
                 var currentDay = checkit.findCurrentDay();
+                
             });
         </script>
     </head>
