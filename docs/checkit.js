@@ -766,10 +766,12 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     let $srElement = $inputFormGroup.find('.sr-only'),
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
-    // the inputVal is what the user actually typed in. First thing
-    // that needs to be done is that this data needs to be sanitized
-    // in case user types code in that could mess with the website
-    // TODO
+        
+    // the inputVal is what the user actually typed in.
+    // Make the raw input into a text node so that we aren't
+    // using the user's raw data
+    inputVal = document.createTextNode(inputVal);
+    
     
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
@@ -932,9 +934,9 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     // title came from this.$calendarTitle.val()
     
     // add the list item
-    $dropdown.html('<li id="' + uniqueId
-            + '"><a href=#>' +'</a></li>');
- 
+    
+    $dropdown.html('<li id="' + uniqueId + '"><a href=#></a></li>');
+            
     document.getElementById(uniqueId).innerText = title;
     
     
