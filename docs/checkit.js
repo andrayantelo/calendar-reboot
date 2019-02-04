@@ -293,7 +293,7 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
             let key;
-            if (allCalendarIds) {
+            if (Object.keys(allCalendarIds).length) {
                 for (key in allCalendarIds) {
                     if (allCalendarIds.hasOwnProperty(key)) {
                         this.addCalendarToDropdown(key, allCalendarIds[key],
@@ -304,6 +304,7 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
         }.bind(this))
         .catch(function (value) {
             console.log("No calendars in storage (this is inside checkit's fillDropdown).");
+            console.log("error found: " + value);
         }.bind(this));
 };
 
@@ -934,8 +935,7 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     // title came from this.$calendarTitle.val()
     
     // add the list item
-    
-    $dropdown.html('<li id="' + uniqueId + '"><a href=#></a></li>');
+    $dropdown.append('<li id="' + uniqueId + '"><a href=#></a></li>');
             
     document.getElementById(uniqueId).innerText = title;
     
