@@ -293,7 +293,7 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
         .then(function (allCalendarIds) {
             // Add calendar titles to dropdown.
             let key;
-            if (allCalendarIds) {
+            if (!$.isEmptyObject(allCalendarIds)) {
                 for (key in allCalendarIds) {
                     if (allCalendarIds.hasOwnProperty(key)) {
                         this.addCalendarToDropdown(key, allCalendarIds[key],
@@ -935,9 +935,9 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     
     // add the list item
     
-    $dropdown.html('<li id="' + uniqueId + '"><a href=#></a></li>');
-            
-    document.getElementById(uniqueId).innerText = title;
+    $dropdown.append('<li id="' + uniqueId + '"><a href=#></a></li>');
+      
+    $('#' + uniqueId).find('a').text(title);
     
     
 };
