@@ -509,8 +509,10 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     // Add the title of the calendar
     checkitApp.$calendarDiv.append(
         '<div class="calendarTitleHeading"><h1 class="page-header\
-        text-center">' + calObj.state.title + '</h1></div>'
+        text-center" id="calTitle">' + '</h1></div>'
     );
+    
+    document.getElementById('calTitle').innerText = calObj.state.title;
                         
     calObj.monthObjects.forEach(function (monthObj, index) {
         
@@ -753,6 +755,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
 
 CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // Validate a single input field of a form
+   
     // Parameters: $form is the selector for the form element in question
     // $inputFormGroup is the selector for the div with the class .form-group
     // that surrounds the input field in question
@@ -763,6 +766,12 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     let $srElement = $inputFormGroup.find('.sr-only'),
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
+        
+    // the inputVal is what the user actually typed in.
+    // Make the raw input into a text node so that we aren't
+    // using the user's raw data
+    inputVal = document.createTextNode(inputVal);
+    
     
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
@@ -786,6 +795,11 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
 
 CheckIt.prototype.validateForm = function (startDateString, endDateString) {
     "use strict";
+    // first we check that all 3 inputs (title, start date, and end date) are valid
+    // inputs
+    // then we verify that the dates are valid dates
+    // only if all are true is the form validated
+    
     let validateTitle = this.validateInput(this.$fullForm, this.$titleFormGroup, 'calendarTitle'),
         
         validateStartDate = this.validateInput(this.$fullForm, this.$startDateFormGroup, 'startDate'),
@@ -916,8 +930,16 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     //add the calendar with unique Id, uniqueId, and title, title, to
     //the saved calendars dropdown on the navbar.
     "use strict";
-    $dropdown.append('<li id="' + uniqueId
-            + '"><a href=#>' + title + '</a></li>');
+    
+    // title came from this.$calendarTitle.val()
+    
+    // add the list item
+    
+    $dropdown.html('<li id="' + uniqueId + '"><a href=#></a></li>');
+            
+    document.getElementById(uniqueId).innerText = title;
+    
+    
 };
 
 CheckIt.prototype.removeFromCalendarDropdown = function (uniqueId, $dropdown) {
