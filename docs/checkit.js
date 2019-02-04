@@ -935,10 +935,10 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
     
     // add the list item
     
+    
     $dropdown.append('<li id="' + uniqueId + '"><a href=#></a></li>');
             
-    document.getElementById(uniqueId).innerText = title;
-    
+    $('#' + uniqueId).find('a').text(title);
     
 };
 
