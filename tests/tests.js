@@ -55,7 +55,7 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(9);
+    assert.expect(10);
     var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Hello"};
     var state = emptyCalendarState(params);
     
@@ -86,6 +86,10 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.raises(function() {
         emptyCalendarState(params);
     }, /Must provide a calendar title./, "Testing error message");
+    
+    // check when params is an empty object
+    params = {}
+    assert.deepEqual(emptyCalendarState(params), {});
 });
 
 // Testing calendar object 
@@ -716,6 +720,7 @@ QUnit.test("validateInput test", function(assert) {
     assert.expect(4);
     // Ensure validateInput returns false for an empty string
     var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
+    
     assert.notOk(empty, "validateInput returns false for empty string");
     assert.ok(this.$formGroup.hasClass('has-error'), 'error for invalid input');
     assert.ok(this.$formGroup.hasClass('has-feedback'), 'feedback for invalid input');
@@ -880,7 +885,10 @@ QUnit.test("buildCalendar test", function(assert) {
     // append a div to $qunit-fixture where new calendar will be built
     $calendarDiv.append(`<div id="test"></div>`);
     // Set it as the active calendar Div
+    
     this.checkit.setCalendarDiv($calendarDiv.find('#test'));
+    
+
     // Build the calendar
     this.checkit.buildCalendar(this.helloCal);
     
@@ -890,6 +898,7 @@ QUnit.test("buildCalendar test", function(assert) {
     //check the second calendar's title and number of months
     var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
     var months = $calendarDiv.find('#test .monthContainer').length;
+    
     
     assert.equal(secondCalTitle, 'hello');
     assert.equal(months, 12);
@@ -1022,4 +1031,94 @@ QUnit.test("loadFromDropdown test", function(assert) {
 // test out the buttons and make sure the correct functions are triggered
 // should I do that?
  
+QUnit.module( "calendarAnalyzer tests", {
+  beforeEach: function() {
+      // create a calstate for testing
+      // params for emptyCalendarState = {
+      //    startDate: "YYYY-MM-DD",
+      //    endDate: "YYYY-MM-DD",
+      //    calendarTitle: "String",
+      //}
+      localStorage.clear();
+      
+      let params = {startDate: "2019-01-01", endDate: "2019-12-31",
+           calendarTitle: "Getting a job"}
+      
+      this.calState = emptyCalendarState(params);
+           
+      this.calState.checkedDays = {20190101: 1,
+            20190102: 1, 20190103: 1, 20190104: 1, 20190105: 1,
+            20190106: 1, 20190110: 1, 20190115: 1, 20190121: 1,
+            20190201: 1, 20190202: 1}
+      
+      
+      // make a calendarAnalyzer object
+      this.stats = new CalendarAnalyzer(this.calState);
+      
+
+  },
+  afterEach: function() {
+    // clean up after each test
+  }
+
+});
+QUnit.test("getNumberChecked test", function(assert) {
+    assert.expect(1);
+    // check for a year calendar
+    assert.equal(this.stats.getNumberChecked(), 11);
+});
+
+QUnit.test("getTotalCalendarDays test", function(assert) {
+    assert.expect(5);
+    assert.equal(this.stats.getTotalCalendarDays(), 365);
+    // check for a calendar with one day on it
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190101";
+    assert.equal(this.stats.getTotalCalendarDays(), 1);
+    // calendar with 2 years
+    this.stats.calState.startDateString = "20160101";
+    this.stats.calState.endDateString = "20171231";
+    assert.equal(this.stats.getTotalCalendarDays(), 731);
+    // calendar with 3.5 months
+    this.stats.calState.startDateString = "20190201";
+    this.stats.calState.endDateString = "20190515";
+    assert.equal(this.stats.getTotalCalendarDays(), 104);
+    // calendar with 6 months
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190630";
+    assert.equal(this.stats.getTotalCalendarDays(), 181);
+});
+
+QUnit.test("getNumberUnchecked test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getNumberUnchecked(), 354);
+});
+
+QUnit.test("getCheckedDaysStreak test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getCheckedDaysStreak(), 6);
+});
+
+QUnit.test("getUncheckedDaysStreak test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getUncheckedDaysStreak(), 332);
+});
+QUnit.test("getTotalCalendarWeeks test", function(assert) {
+    assert.expect(3);
+    assert.equal(this.stats.getTotalCalendarWeeks(), 52);
+    // check for 6 weeks
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190209";
+    assert.equal(this.stats.getTotalCalendarWeeks(), 6);
+    // check for 2.5 weeks
+    this.stats.calState.endDateString = "20190118";
+    assert.equal(this.stats.getTotalCalendarWeeks(), 3);
+});
+
+QUnit.test("getNumDaysLeft test", function(assert) {
+    assert.expect(1);
+    let testDay = moment.utc("20190205", "YYYYMMDD").startOf('day');
+    
+    assert.equal(this.stats.getNumDaysLeft(testDay), 329);
+});
 
