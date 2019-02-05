@@ -716,6 +716,7 @@ QUnit.test("validateInput test", function(assert) {
     assert.expect(4);
     // Ensure validateInput returns false for an empty string
     var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
+    console.log("inside the exemail input: " + empty);
     assert.notOk(empty, "validateInput returns false for empty string");
     assert.ok(this.$formGroup.hasClass('has-error'), 'error for invalid input');
     assert.ok(this.$formGroup.hasClass('has-feedback'), 'feedback for invalid input');
@@ -880,10 +881,13 @@ QUnit.test("buildCalendar test", function(assert) {
     // append a div to $qunit-fixture where new calendar will be built
     $calendarDiv.append(`<div id="test"></div>`);
     // Set it as the active calendar Div
+    console.log($calendarDiv.children());
     this.checkit.setCalendarDiv($calendarDiv.find('#test'));
+    console.log($('#test').children())
+
     // Build the calendar
     this.checkit.buildCalendar(this.helloCal);
-    
+    console.log($('#test').children())
     // check that $calendarDiv now has two calendar titles
     assert.equal($calendarDiv.find('.calendarTitleHeading').length, 2);
     
@@ -891,6 +895,7 @@ QUnit.test("buildCalendar test", function(assert) {
     var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
     var months = $calendarDiv.find('#test .monthContainer').length;
     
+    console.log("secondCalTitle value: " + secondCalTitle);
     assert.equal(secondCalTitle, 'hello');
     assert.equal(months, 12);
   
@@ -1022,4 +1027,13 @@ QUnit.test("loadFromDropdown test", function(assert) {
 // test out the buttons and make sure the correct functions are triggered
 // should I do that?
  
+QUnit.module( "calendarAnalyzer tests", {
+  beforeEach: function() {
+      // create a calstate for testing
+      
 
+  },
+  afterEach: function() {
+    // clean up after each test
+  }
+});

@@ -3,10 +3,12 @@
     browser:true, Promise, firebase, $, jQuery, alert, moment, Spinner, LocalCalendarStorage, FirebaseCalendarStorage
 */
 
+"use strict";
+
 //CODE FOR MONTH AND CALENDAR OBJECTS
 class Month {
     constructor(dateString) {
-        "use strict";
+        
         let self = this;
         //date will be of the format moment("YYYYMMDD")
         self.dateString = dateString;
@@ -37,14 +39,14 @@ class Month {
 // Calendar Helper functions
 
 let generateUniqueId = function () {
-    "use strict";
+    
     let uniqueId = (Math.floor((Math.random() + Date.now()) * 10e4)).toString();
     return uniqueId;
     
 };
 
 let emptyCalendarState = function (params) {
-    "use strict";
+    // params = TODO write a comment explaining what params means
     let startDate = moment(params.startDate, "YYYY-MM-DD"),
         endDate = moment(params.endDate, "YYYY-MM-DD");
     
@@ -69,7 +71,7 @@ let emptyCalendarState = function (params) {
 
 class Calendar {
     constructor(state) {
-        "use strict";
+        
         let self = this;
         self.state = state;
         //startDate is a moment object , the argument startDateString is 
@@ -85,7 +87,7 @@ class Calendar {
 
 Calendar.prototype.addMonth = function () {
     // Add a month to the calendar.
-    "use strict";
+    
     let self = this,
         newMonth;
     
@@ -109,7 +111,7 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
     //instantiate all the required Month objects for the calendar
     //using the startDate moment object and the endDate moment object
     //return an array of monthObjects
-    "use strict";
+    
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
         throw new Error("End date must be a date after start date");
     }
@@ -137,7 +139,7 @@ Calendar.prototype.generateMonthObjects = function (startDate, endDate) {
 class CheckIt {
     constructor(mode, calendarDiv) {
         // Shortcuts to DOM elements.
-        "use strict";
+        
         this.mode = mode;
         
         this.$userPic = $('#user-pic');
@@ -221,13 +223,13 @@ class CheckIt {
 
 CheckIt.prototype.addMonth = function (calObj) {
     // Add a single month to the calendar
-    "use strict";
+    
     this.attachCheckmarkClickHandler(calObj, [calObj.addMonth()]);
 };
 
 CheckIt.prototype.attachCheckmarkClickHandler = function (calObj, monthObjArray) {
     // Takes an array of month objects (the array can be of length 1)
-    "use strict";
+    
     let checkitObj = this;
     
     monthObjArray.forEach(function (monthObj) {
@@ -268,14 +270,14 @@ CheckIt.prototype.displayLoadingWheel = function ($elementSelector) {
     // Parameters: elementId 
            // A jquery selector pertaining to the element
            // where you want to place the loading wheel.
-    "use strict";
+    
     let target = $elementSelector.get()[0];
     this.spinner.spin(target);
     
 };
 
 CheckIt.prototype.hideLoadingWheel = function () {
-    "use strict";
+    
     this.spinner.stop();
 };
 
@@ -285,7 +287,7 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
     // Clear the dropdown before filling it 
     // $dropdown is the jquery selector of the element you are going to 
     // be adding these calendar titles to.
-    "use strict";
+    
     let dropdown = $dropdown || this.$calendarDropdown;
     dropdown.empty();
     
@@ -312,7 +314,7 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
 CheckIt.prototype.setCalendarDiv = function ($div) {
     // Changes the calendarDiv selector. $div is the selector of the new
     // div you want to use.
-    "use strict";
+    
     this.$calendarDiv = $div;
 };
 
@@ -320,7 +322,7 @@ CheckIt.prototype.displayActiveCalendar = function () {
     // Display the active calendar if there is one.
       // Get the current active calendar from storage and display it.
     // If there is none, show build calendar menu.
-    "use strict";
+    
     let checkit = this;
 
     // if the first promise doesn't work, then just go to catch, don't
@@ -359,13 +361,13 @@ CheckIt.prototype.displayActiveCalendar = function () {
 
 CheckIt.prototype.clearDropdown = function ($dropdown) {
     // Removes all items from the Saved Items dropdown.
-    "use strict";
+    
     $dropdown.empty();
 };
 
 
 CheckIt.prototype.initLocalStorage = function () {
-    "use strict";
+    
     this.store = new LocalCalendarStorage({storeId: '', jitterTime: 10});
     // Fill the dropdown with user's saved calendar titles/
     this.fillDropdown(this.$calendarDropdown);
@@ -380,7 +382,7 @@ CheckIt.prototype.initLocalStorage = function () {
 };
 
 CheckIt.prototype.initFirebase = function () {
-    "use strict";
+    
     // Shortcuts to Firebase SDK features.
     this.auth = firebase.auth();
     // Logs debugging information to the console.
@@ -399,7 +401,7 @@ CheckIt.prototype.initFirebase = function () {
 // Signs-in Checkit
 CheckIt.prototype.signIn = function () {
     // Sign in Firebase using popup auth and Google as the identity provider.
-    "use strict";
+    
     let provider = new firebase.auth.GoogleAuthProvider();
     
     this.auth.signInWithRedirect(provider);
@@ -408,14 +410,14 @@ CheckIt.prototype.signIn = function () {
 // Signs out of Checkit.
 CheckIt.prototype.signOut = function () {
     // Signs out of Firebase.
-    "use strict";
+    
     this.auth.signOut();
 };
 
 // Triggers when there is a change in the storage.
 CheckIt.prototype.onActivityChanged = function (activeCalls, id) {
     // Will Manipulate the DOM to show the loading wheel or to hide it.
-    "use strict";
+    
     let $id = $('#' + id);
     if (activeCalls > 0) {
         this.displayLoadingWheel($id);
@@ -427,7 +429,7 @@ CheckIt.prototype.onActivityChanged = function (activeCalls, id) {
 
 CheckIt.prototype.updateUserDescription = function (user) {
     // Updates the user's picture and name
-    "use strict";
+    
     let profilePicUrl = user.photoURL,
         userName = user.displayName;
   
@@ -444,7 +446,7 @@ CheckIt.prototype.updateUserDescription = function (user) {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 CheckIt.prototype.onAuthStateChanged = function (user) {
-    "use strict";
+    
     if (user) { // User is signed in!
         // Update the user in the store so that we have access to the correct information.
         this.store.user = user;
@@ -506,7 +508,7 @@ CheckIt.prototype.onAuthStateChanged = function (user) {
 CheckIt.prototype.generateEmptyCalendar = function (calObj) {
     // Generate the html for an empty calendar of the calendar you want to 
     // display.
-    "use strict";
+    
     let checkitApp = this;
     // Add the title of the calendar
     checkitApp.$calendarDiv.append(
@@ -514,7 +516,7 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
         text-center" id="calTitle">' + '</h1></div>'
     );
     
-    document.getElementById('calTitle').innerText = calObj.state.title;
+    $('.calendarTitleHeading').find('#calTitle').text(calObj.state.title);
                         
     calObj.monthObjects.forEach(function (monthObj, index) {
         
@@ -535,7 +537,7 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
 
 CheckIt.prototype.fillCalendar = function (calObj) {
     // Fill an empty calendar with appropriate calendar data.
-    "use strict";
+    
     let checkit = this;
     
     calObj.monthObjects.forEach(function (monthObj) {
@@ -596,7 +598,7 @@ CheckIt.prototype.fillCalendar = function (calObj) {
 CheckIt.prototype.generateCheckmarks = function (calObj) {
     // Display saved checkmarks on calendar
     // div is which div do you want to look through for checkmarks
-    "use strict";
+    
     if (calObj.state.checkedDays === undefined) {
         console.log("No days are checked");
         return;
@@ -615,7 +617,7 @@ CheckIt.prototype.generateCheckmarks = function (calObj) {
 
 CheckIt.prototype.removeEmptyWeeks = function (calObj) {
     // Remove empty weeks from the calendar
-    "use strict";
+    
     this.$calendarDiv.find('.month .week').each(function (index) {
         if ($(this).find('td > .nil').length === 7) {
             $(this).remove();
@@ -626,14 +628,14 @@ CheckIt.prototype.removeEmptyWeeks = function (calObj) {
 CheckIt.prototype.hideForm = function ($form) {
     // Collapse a collapsible div (in checkit's case forms).
     // Parameter $form is the selector for a collapsible form (or div).
-    "use strict";
+    
     $form.collapse('hide');
 };
 
 CheckIt.prototype.showForm = function ($form) {
     // Show a collapsible form.
     // Parameter $form is the selector for a collapsible form (or div).
-    "use strict";
+    
     $form.collapse('show');
 };
 
@@ -641,7 +643,7 @@ CheckIt.prototype.clearForm = function ($fullForm) {
     // Clears the buildCalendar form.
     // $fullForm is the selector for the form div
     // Only removeFormErrors if there are any errors on display
-    "use strict";
+    
     if ($fullForm.find('.has-error')) {
         this.removeFormErrors($fullForm);
     }
@@ -654,7 +656,7 @@ CheckIt.prototype.addFieldError = function ($id, $srId) {
     // $id is the selector for the div with class .form-group that
     // surrounds the input field with the error
     // $srId is the selector for the screen reader element
-    "use strict";
+    
     $id.addClass('has-error has-feedback');
     $srId.removeClass('hidden');
     
@@ -665,25 +667,25 @@ CheckIt.prototype.removeFieldError = function ($id, $srId) {
     // $id is the selector for the div with class .form-group that
     // surrounds the input field with the error
     // $srId is the selector for the screen reader element
-    "use strict";
+    
     $id.removeClass('has-error has-feedback');
     $srId.addClass('hidden');
 };
 
 CheckIt.prototype.addHelpBlock = function ($helpBlock) {
     // Removes the hidden class from the $helpBlock
-    "use strict";
+    
     $helpBlock.removeClass('hidden');
 };
 
 CheckIt.prototype.removeHelpBlock = function ($helpBlock) {
-    "use strict";
+    
     $helpBlock.addClass('hidden');
 };
 
 CheckIt.prototype.addGlyphicon = function ($id) {
     // $id is the selector for the span element that contains the glyphicon
-    "use strict";
+    
     if (!$id.hasClass('glyph')) {
         console.error("No glyphicon");
         return;
@@ -694,7 +696,7 @@ CheckIt.prototype.addGlyphicon = function ($id) {
 
 CheckIt.prototype.removeGlyphicon = function ($id) {
     // $id is the selector for the span element that contains the glyphicon
-    "use strict";
+    
     if (!$id.hasClass('glyph')) {
         console.error("No glyphicon");
         return;
@@ -705,7 +707,7 @@ CheckIt.prototype.removeGlyphicon = function ($id) {
 
 CheckIt.prototype.removeFormErrors = function ($fullForm) {
     // Remove the error classes and glyphicons from the form input fields
-    "use strict";
+    
     let checkit = this;
     
     $fullForm.find('.form-group').each(function (index, value) {
@@ -722,7 +724,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
     //    startDateString: "YYYY-MM-DD"
     //    endDateString: "YYYY-MM-DD"
     //    $formGroup: jQuery selector for the form where you will be adding errors
-    "use strict";
+    
     let startDate = moment(startDateString, "YYYY-MM-DD"),
         endDate = moment(endDateString, "YYYY-MM-DD"),
         $sr = $formGroup.find('.sr-only'),
@@ -764,7 +766,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // inputId is the id of the input field we are validating.
     
     // Screen reader element for this input field
-    "use strict";
+    
     let $srElement = $inputFormGroup.find('.sr-only'),
         inputVal = $form.find('#' + inputId).val(),
         $glyphicon = $inputFormGroup.find('.glyph');
@@ -772,7 +774,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // the inputVal is what the user actually typed in.
     // Make the raw input into a text node so that we aren't
     // using the user's raw data
-    inputVal = document.createTextNode(inputVal);
+    //inputVal = document.createTextNode(inputVal);
     
     
     // If user hasn't written anything we fail immediately
@@ -796,7 +798,7 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
 };
 
 CheckIt.prototype.validateForm = function (startDateString, endDateString) {
-    "use strict";
+    
     // first we check that all 3 inputs (title, start date, and end date) are valid
     // inputs
     // then we verify that the dates are valid dates
@@ -817,7 +819,7 @@ CheckIt.prototype.validateForm = function (startDateString, endDateString) {
 
 CheckIt.prototype.createCalendar = function () {
     // Create a new calendar and display it.
-    "use strict";
+    
     let title = this.$calendarTitle.val(),
         start = this.$startDate.val(),
         end = this.$endDate.val(),
@@ -858,7 +860,7 @@ CheckIt.prototype.loadFromDropdown = function (event) {
     // Load the data, clear the page, build the saved calendar.
     
     //load the saved calendar with the title that was clicked
-    "use strict";
+    
     let dropdownItemId = event.currentTarget.id;
     
     return this.store.loadById(dropdownItemId)
@@ -879,7 +881,7 @@ CheckIt.prototype.deleteCalendar = function () {
     // clears the page.
     
     // Guard against accidental clicks of the delete button
-    "use strict";
+    
     let confirmation = confirm("Are you sure you want to delete your calendar?"),
         checkit;
     if (!confirmation) {
@@ -931,7 +933,7 @@ CheckIt.prototype.deleteCalendar = function () {
 CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) {
     //add the calendar with unique Id, uniqueId, and title, title, to
     //the saved calendars dropdown on the navbar.
-    "use strict";
+    
     
     // title came from this.$calendarTitle.val()
     
@@ -947,7 +949,7 @@ CheckIt.prototype.addCalendarToDropdown = function (uniqueId, title, $dropdown) 
 CheckIt.prototype.removeFromCalendarDropdown = function (uniqueId, $dropdown) {
     //remove the calendar with uniqueId from the saved calendars dropdown
     //in the navbar
-    "use strict";
+    
     $dropdown.children('#' + uniqueId).remove();
 };
 
@@ -956,7 +958,7 @@ CheckIt.prototype.buildCalendar = function (calendarObject) {
     //this function assumes the calendarObject already has it's
     //state updated with the correct information. 
     // Calendars must be built in an empty div
-    "use strict";
+    
     this.generateEmptyCalendar(calendarObject);
     this.fillCalendar(calendarObject);
     this.attachCheckmarkClickHandler(calendarObject, calendarObject.monthObjects);
@@ -968,7 +970,7 @@ CheckIt.prototype.buildCalendar = function (calendarObject) {
 CheckIt.prototype.displayCalendar = function (calendarObj) {
     //load a state and build the calendar on the page
     // $div is the div where you want to build the calendar
-    "use strict";
+    
     this.clearCalendarDiv();
     this.buildCalendar(calendarObj);
     let activeP = this.store.setActiveById(calendarObj.state.uniqueId),
@@ -979,7 +981,6 @@ CheckIt.prototype.displayCalendar = function (calendarObj) {
 CheckIt.prototype.clearCalendarDiv = function () {
     // Remove all checkit related divs from page
     
-    "use strict";
     this.$calendarDiv.find('.calendarTitleHeading').remove();
     this.$calendarDiv.children('.monthframe').remove();
 };
@@ -989,7 +990,7 @@ CheckIt.prototype.findCurrentDay = function () {
     // Pass the day you are looking for as a parameter "YYYYMMDD"
     // Clear the page of any days in the calendar that may have the class
     // 'currentDay' on them
-    "use strict";
+    
     if (this.$calendarDiv === undefined) {
         return;
     }
@@ -1009,7 +1010,6 @@ CheckIt.prototype.findCurrentDay = function () {
 };
     
 CheckIt.prototype.getTemplate = function () {
-    "use strict";
     return $.parseHTML(
         '<div class="header">\
           <span class="month-year"> </span>\
@@ -1200,3 +1200,143 @@ CheckIt.prototype.opts = {
     hwaccel: false, // Whether to use hardware acceleration
     position: 'absolute' // Element positioning
 };
+
+
+// calState contains:
+
+//"YYYYMMDD" string
+
+// startDateString: startDate.format("YYYYMMDD"),
+// endDateString: endDate.format("YYYYMMDD"),
+
+// list name under which it will be saved
+
+// title: params.calendarTitle,
+
+// unique ID for calendar
+
+// uniqueId: generateUniqueId(),
+
+// checkedDays day id: 1
+
+// checkedDays: {}
+    
+//self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
+
+class CalendarAnalyzer {
+    constructor(calState) {
+        this.calState = calState;
+    }
+    
+    getNumberChecked() {
+    // Returns the number of checked days in a calendar
+        return Object.keys(this.calState.checkedDays).length;
+    }
+    
+    getTotalCalendarDays() {
+    // Returns the total number of active days in the calendar
+        var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+            startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+            totalDays = endDate.diff(startDate, 'days');
+        return totalDays;
+    }
+    getNumberUnchecked() {
+    // Returns number of unchecked days in a calendar
+        return this.getTotalCalendarDays() - this.getNumberOfChecked();
+    }
+    getCheckedDaysStreak() {
+    // Returns the longest streak of checked days
+    
+        var currentStreak = 1,
+            checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
+            bestStreak = 0,
+            i,
+            currentDay,
+            previousDay,
+            dayDiff;
+        
+        previousDay = moment(checkedDaysArray[0], "YYYYMMDD");
+        
+        for (i = 1; i < checkedDaysArray.length; i++) {
+            
+            currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+            
+            // Calculate how many days are between previous day
+            // and current day
+            dayDiff = currentDay.diff(previousDay, 'days');
+            
+            // If they are not consecutive days 
+            if (dayDiff !== 1) {
+                // Find bestStreak
+                bestStreak = Math.max(bestStreak, currentStreak);
+                // reset currentStreak
+                currentStreak = 1;
+            } else {
+                // Increment currentStreak
+                currentStreak++;
+                // Find bestStreak
+                bestStreak = Math.max(bestStreak, currentStreak);
+            }
+            // Update previousDay
+            previousDay = currentDay;
+        }
+
+        return bestStreak;
+    }
+    getUncheckedDaysStreak() {
+    // Returns the longest streak of unchecked days
+    
+
+        // The largest gap between any two checked days (minus one)
+        var checkedDaysArray = (Object.keys(this.calState.checkedDays)).sort(),
+            currentGap = 0,
+            longestGap = 0,
+            i,
+            currentDay,
+            previousDay,
+            dayDiff,
+            lastDay;
+        
+        previousDay = moment(this.calState.startDateString, "YYYYMMDD");
+        lastDay = moment(this.calState.endDateString, "YYYYMMDD");
+        
+        for (i = 0; i < checkedDaysArray.length; i++) {
+            currentDay = moment(checkedDaysArray[i], "YYYYMMDD");
+            
+            dayDiff = currentDay.diff(previousDay, 'days');
+    
+            if (dayDiff === 1) {
+                longestGap = Math.max(longestGap, currentGap);
+                currentGap = 0;
+            } else {
+                currentGap = dayDiff;
+                longestGap = Math.max(longestGap, currentGap);
+            }
+            previousDay = currentDay;
+        }
+        // check last checked day against last day in calendar
+        dayDiff = lastDay.diff(currentDay, 'days');
+        longestGap = Math.max(longestGap, currentGap);
+    
+        return longestGap;
+    
+    }
+    getTotalCalendarWeeks() {
+    // Returns the total number of active weeks in the calendar
+    
+        var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+            startDate = moment(this.calState.startDateString, "YYYYMMDD"),
+            totalWeeks = endDate.diff(startDate, 'weeks');
+        return totalWeeks;
+    }
+    getNumDaysLeft(currentDayM) {
+    // Returns the total number of active days left in a calendar starting from current
+    // day to end.
+    
+        var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
+            today = currentDayM || moment(),
+            daysLeft = endDate.diff(today, 'days');
+        return daysLeft;
+    }
+};
+
