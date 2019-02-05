@@ -738,7 +738,7 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         endDate = moment(endDateString, "YYYY-MM-DD"),
         $sr = $formGroup.find('.sr-only'),
         $helpBlock = $formGroup.find('#helpBlock'),
-        $fiveYears = $formGroup.find('#fiveYears'),
+        $tenYears = $formGroup.find('#tenYears'),
         difference = endDate.diff(startDate.format("YYYY-MM-DD"), 'years', true),
         isValid = true;
     
@@ -746,14 +746,14 @@ CheckIt.prototype.validateDates = function (startDateString, endDateString, $for
         // startDate is before endDate so errors can be removed.
         this.removeFieldError($formGroup, $sr);
         this.removeHelpBlock($helpBlock);
-        // If there are more than 5 years between the dates return false for invalid
-        if (difference < 5) {
-            this.removeHelpBlock($fiveYears);
+        // If there are more than 10 years between the dates return false for invalid
+        if (difference < 10) {
+            this.removeHelpBlock($tenYears);
             return isValid;
         } else {
             isValid = false;
             this.addFieldError($formGroup, $sr);
-            this.addHelpBlock($fiveYears);
+            this.addHelpBlock($tenYears);
             return isValid;
         }
     } else {
