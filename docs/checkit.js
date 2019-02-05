@@ -783,8 +783,6 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // the inputVal is what the user actually typed in.
     // Make the raw input into a text node so that we aren't
     // using the user's raw data
-    //inputVal = document.createTextNode(inputVal);
-    
     
     // If user hasn't written anything we fail immediately
     if (!inputVal) {
