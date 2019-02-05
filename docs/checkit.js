@@ -1241,14 +1241,16 @@ class CalendarAnalyzer {
     
     getTotalCalendarDays() {
     // Returns the total number of active days in the calendar
-        var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
-            startDate = moment(this.calState.startDateString, "YYYYMMDD"),
-            totalDays = endDate.diff(startDate, 'days');
-        return totalDays;
+        var endDate = moment.utc(this.calState.endDateString, "YYYYMMDD").endOf('day'),
+            startDate = moment.utc(this.calState.startDateString, "YYYYMMDD").startOf('day'),
+            
+            totalDays = endDate.diff(startDate, 'days', true);
+
+        return Math.round(totalDays);
     }
     getNumberUnchecked() {
     // Returns number of unchecked days in a calendar
-        return this.getTotalCalendarDays() - this.getNumberOfChecked();
+        return this.getTotalCalendarDays() - this.getNumberChecked();
     }
     getCheckedDaysStreak() {
     // Returns the longest streak of checked days
@@ -1322,18 +1324,20 @@ class CalendarAnalyzer {
         }
         // check last checked day against last day in calendar
         dayDiff = lastDay.diff(currentDay, 'days');
-        longestGap = Math.max(longestGap, currentGap);
-    
+       
+        longestGap = Math.max(dayDiff, currentGap);
+        
         return longestGap;
     
     }
     getTotalCalendarWeeks() {
     // Returns the total number of active weeks in the calendar
     
-        var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
-            startDate = moment(this.calState.startDateString, "YYYYMMDD"),
-            totalWeeks = endDate.diff(startDate, 'weeks');
-        return totalWeeks;
+        var endDate = moment.utc(this.calState.endDateString, "YYYYMMDD").endOf('day'),
+            startDate = moment.utc(this.calState.startDateString, "YYYYMMDD").startOf('day'),
+            totalWeeks = endDate.diff(startDate, 'weeks', true);
+            
+        return Math.round(totalWeeks);
     }
     getNumDaysLeft(currentDayM) {
     // Returns the total number of active days left in a calendar starting from current
@@ -1342,6 +1346,7 @@ class CalendarAnalyzer {
         var endDate = moment(this.calState.endDateString, "YYYYMMDD"),
             today = currentDayM || moment(),
             daysLeft = endDate.diff(today, 'days');
+            
         return daysLeft;
     }
 };

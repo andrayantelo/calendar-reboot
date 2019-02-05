@@ -1038,15 +1038,19 @@ QUnit.module( "calendarAnalyzer tests", {
       //    startDate: "YYYY-MM-DD",
       //    endDate: "YYYY-MM-DD",
       //    calendarTitle: "String",
-      //    checkedDays: {}
-      //} 
+      //}
+      localStorage.clear();
+      
       let params = {startDate: "2019-01-01", endDate: "2019-12-31",
-           calendarTitle: "Getting a job", checkedDays: {20190101: 1,
+           calendarTitle: "Getting a job"}
+      
+      this.calState = emptyCalendarState(params);
+           
+      this.calState.checkedDays = {20190101: 1,
             20190102: 1, 20190103: 1, 20190104: 1, 20190105: 1,
             20190106: 1, 20190110: 1, 20190115: 1, 20190121: 1,
             20190201: 1, 20190202: 1}
-        }
-      this.calState = emptyCalendarState(params);
+      
       
       // make a calendarAnalyzer object
       this.stats = new CalendarAnalyzer(this.calState);
@@ -1056,10 +1060,65 @@ QUnit.module( "calendarAnalyzer tests", {
   afterEach: function() {
     // clean up after each test
   }
-});
 
+});
 QUnit.test("getNumberChecked test", function(assert) {
     assert.expect(1);
-    console.log(Object.keys(this.calState.checkedDays).length);
+    // check for a year calendar
     assert.equal(this.stats.getNumberChecked(), 11);
 });
+
+QUnit.test("getTotalCalendarDays test", function(assert) {
+    assert.expect(5);
+    assert.equal(this.stats.getTotalCalendarDays(), 365);
+    // check for a calendar with one day on it
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190101";
+    assert.equal(this.stats.getTotalCalendarDays(), 1);
+    // calendar with 2 years
+    this.stats.calState.startDateString = "20160101";
+    this.stats.calState.endDateString = "20171231";
+    assert.equal(this.stats.getTotalCalendarDays(), 731);
+    // calendar with 3.5 months
+    this.stats.calState.startDateString = "20190201";
+    this.stats.calState.endDateString = "20190515";
+    assert.equal(this.stats.getTotalCalendarDays(), 104);
+    // calendar with 6 months
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190630";
+    assert.equal(this.stats.getTotalCalendarDays(), 181);
+});
+
+QUnit.test("getNumberUnchecked test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getNumberUnchecked(), 354);
+});
+
+QUnit.test("getCheckedDaysStreak test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getCheckedDaysStreak(), 6);
+});
+
+QUnit.test("getUncheckedDaysStreak test", function(assert) {
+    assert.expect(1);
+    assert.equal(this.stats.getUncheckedDaysStreak(), 332);
+});
+QUnit.test("getTotalCalendarWeeks test", function(assert) {
+    assert.expect(3);
+    assert.equal(this.stats.getTotalCalendarWeeks(), 52);
+    // check for 6 weeks
+    this.stats.calState.startDateString = "20190101";
+    this.stats.calState.endDateString = "20190209";
+    assert.equal(this.stats.getTotalCalendarWeeks(), 6);
+    // check for 2.5 weeks
+    this.stats.calState.endDateString = "20190118";
+    assert.equal(this.stats.getTotalCalendarWeeks(), 3);
+});
+
+QUnit.test("getNumDaysLeft test", function(assert) {
+    assert.expect(1);
+    let testDay = moment.utc("20190205", "YYYYMMDD").startOf('day');
+    
+    assert.equal(this.stats.getNumDaysLeft(testDay), 329);
+});
+
