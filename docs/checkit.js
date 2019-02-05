@@ -514,7 +514,7 @@ CheckIt.prototype.generateEmptyCalendar = function (calObj) {
         text-center" id="calTitle">' + '</h1></div>'
     );
     
-    document.getElementById('calTitle').innerText = calObj.state.title;
+    $('.calendarTitleHeading').find('#calTitle').text(calObj.state.title);
                         
     calObj.monthObjects.forEach(function (monthObj, index) {
         
@@ -772,7 +772,6 @@ CheckIt.prototype.validateInput = function ($form, $inputFormGroup, inputId) {
     // the inputVal is what the user actually typed in.
     // Make the raw input into a text node so that we aren't
     // using the user's raw data
-    inputVal = document.createTextNode(inputVal);
     
     
     // If user hasn't written anything we fail immediately
