@@ -881,13 +881,13 @@ QUnit.test("buildCalendar test", function(assert) {
     // append a div to $qunit-fixture where new calendar will be built
     $calendarDiv.append(`<div id="test"></div>`);
     // Set it as the active calendar Div
-    console.log($calendarDiv.children());
+    
     this.checkit.setCalendarDiv($calendarDiv.find('#test'));
-    console.log($('#test').children())
+    
 
     // Build the calendar
     this.checkit.buildCalendar(this.helloCal);
-    console.log($('#test').children())
+    
     // check that $calendarDiv now has two calendar titles
     assert.equal($calendarDiv.find('.calendarTitleHeading').length, 2);
     
@@ -895,7 +895,7 @@ QUnit.test("buildCalendar test", function(assert) {
     var secondCalTitle = $calendarDiv.find('#test .calendarTitleHeading').text();
     var months = $calendarDiv.find('#test .monthContainer').length;
     
-    console.log("secondCalTitle value: " + secondCalTitle);
+    
     assert.equal(secondCalTitle, 'hello');
     assert.equal(months, 12);
   
@@ -1030,7 +1030,14 @@ QUnit.test("loadFromDropdown test", function(assert) {
 QUnit.module( "calendarAnalyzer tests", {
   beforeEach: function() {
       // create a calstate for testing
-      
+      // params for emptyCalendarState = {
+      //    startDate: "YYYY-MM-DD",
+      //    endDate: "YYYY-MM-DD",
+      //    calendarTitle: "String",
+      //    checkedDays: {}
+      //} 
+      let testCal = emptyCalendarState
+      console.log("this inside beforeEach: " +this);
 
   },
   afterEach: function() {

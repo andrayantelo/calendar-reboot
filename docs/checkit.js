@@ -46,7 +46,13 @@ let generateUniqueId = function () {
 };
 
 let emptyCalendarState = function (params) {
-    // params = TODO write a comment explaining what params means
+    // params = {
+    //    startDate: "YYYY-MM-DD",
+    //    endDate: "YYYY-MM-DD",
+    //    calendarTitle: "String",
+    //    checkedDays: {}
+    //} 
+            
     let startDate = moment(params.startDate, "YYYY-MM-DD"),
         endDate = moment(params.endDate, "YYYY-MM-DD");
     
@@ -1221,7 +1227,6 @@ CheckIt.prototype.opts = {
 
 // checkedDays: {}
     
-//self.monthObjects = self.generateMonthObjects(self.startDate, self.endDate);
 
 class CalendarAnalyzer {
     constructor(calState) {
