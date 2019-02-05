@@ -55,7 +55,7 @@ QUnit.test("generateUniqueId test", function(assert) {
 });
 
 QUnit.test("emptyCalendarState test", function(assert) {
-    assert.expect(9);
+    assert.expect(10);
     var params = {startDate: "2017-02-14" , endDate: "2017-02-20" , calendarTitle: "Hello"};
     var state = emptyCalendarState(params);
     
@@ -86,6 +86,10 @@ QUnit.test("emptyCalendarState test", function(assert) {
     assert.raises(function() {
         emptyCalendarState(params);
     }, /Must provide a calendar title./, "Testing error message");
+    
+    // check when params is an empty object
+    params = {}
+    assert.deepEqual(emptyCalendarState(params), {});
 });
 
 // Testing calendar object 
@@ -716,7 +720,7 @@ QUnit.test("validateInput test", function(assert) {
     assert.expect(4);
     // Ensure validateInput returns false for an empty string
     var empty = this.checkit.validateInput(this.$form, this.$formGroup, 'exemail');
-    console.log("inside the exemail input: " + empty);
+    
     assert.notOk(empty, "validateInput returns false for empty string");
     assert.ok(this.$formGroup.hasClass('has-error'), 'error for invalid input');
     assert.ok(this.$formGroup.hasClass('has-feedback'), 'feedback for invalid input');
@@ -1036,11 +1040,26 @@ QUnit.module( "calendarAnalyzer tests", {
       //    calendarTitle: "String",
       //    checkedDays: {}
       //} 
-      let testCal = emptyCalendarState
-      console.log("this inside beforeEach: " +this);
+      let params = {startDate: "2019-01-01", endDate: "2019-12-31",
+           calendarTitle: "Getting a job", checkedDays: {20190101: 1,
+            20190102: 1, 20190103: 1, 20190104: 1, 20190105: 1,
+            20190106: 1, 20190110: 1, 20190115: 1, 20190121: 1,
+            20190201: 1, 20190202: 1}
+        }
+      this.calState = emptyCalendarState(params);
+      
+      // make a calendarAnalyzer object
+      this.stats = new CalendarAnalyzer(this.calState);
+      
 
   },
   afterEach: function() {
     // clean up after each test
   }
+});
+
+QUnit.test("getNumberChecked test", function(assert) {
+    assert.expect(1);
+    console.log(Object.keys(this.calState.checkedDays).length);
+    assert.equal(this.stats.getNumberChecked(), 11);
 });

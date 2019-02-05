@@ -52,6 +52,11 @@ let emptyCalendarState = function (params) {
     //    calendarTitle: "String",
     //    checkedDays: {}
     //} 
+    
+    // if params is an empty object, return an empty object
+    if ($.isEmptyObject(params)) {
+        return {}
+    }
             
     let startDate = moment(params.startDate, "YYYY-MM-DD"),
         endDate = moment(params.endDate, "YYYY-MM-DD");
@@ -312,7 +317,6 @@ CheckIt.prototype.fillDropdown = function ($dropdown) {
             }
         }.bind(this))
         .catch(function (value) {
-            console.log("No calendars in storage (this is inside checkit's fillDropdown).");
             console.log("error found: " + value);
         }.bind(this));
 };
@@ -606,7 +610,6 @@ CheckIt.prototype.generateCheckmarks = function (calObj) {
     // div is which div do you want to look through for checkmarks
     
     if (calObj.state.checkedDays === undefined) {
-        console.log("No days are checked");
         return;
     }
     
@@ -875,8 +878,8 @@ CheckIt.prototype.loadFromDropdown = function (event) {
             this.displayCalendar(calendar);
             this.hideForm(this.$buildCalendarForm);
         }.bind(this))
-        .catch(function () {
-            console.log("Calendar not in storage");
+        .catch(function (err) {
+            console.log("Calendar not in storage " + err);
         }.bind(this));
     
 };

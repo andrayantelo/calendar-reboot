@@ -446,7 +446,7 @@ class LocalCalendarStorage {
                     return ids;
                 })
                 .catch(function (reason) {
-                    console.log("getAllCalendarIds catch function running. " + reason);
+                    console.log("allCalendarIds " + reason);
                     // return empty object to be used in functions like 
                     // fillDropdown. Empty because there was nothing store in storage
                     // for allCalendarIds
